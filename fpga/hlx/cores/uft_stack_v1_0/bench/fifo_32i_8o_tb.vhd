@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 16:27:20 2017
--- Last update : Wed Mar  7 13:37:39 2018
+-- Last update : Wed Mar  7 13:43:57 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -221,7 +221,27 @@ begin
         waitfor(3);
         read_en <= '0';
 
+        ------------------------------------------------------------------------
+        -- TEST 6: Fill full, empty full
+        -- ---------------------------------------------------------------------
+        write_en <= '1';
+        data_in <= X"55555555";
+        waitfor(FIFO_DEPTH);
+        write_en <= '0';
+        waitfor(2);
         
+        assert empty = '0' report "empty output error" severity error;
+        assert full = '1' report "full output error" severity error;
+
+        waitfor(1);
+        read_en <= '1';
+        waitfor(4*FIFO_DEPTH);
+        read_en <= '0';
+        waitfor(3);
+        
+        assert empty = '1' report "empty output error" severity error;
+        assert full = '0' report "full output error" severity error;
+
         waitfor(2);
         assert false report "All test successful" severity note;
         stop_sim <= '1';

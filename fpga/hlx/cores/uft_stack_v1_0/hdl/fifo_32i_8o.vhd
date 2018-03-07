@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 15 08:45:14 2017
--- Last update : Wed Mar  7 13:39:46 2018
+-- Last update : Wed Mar  7 13:41:58 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ USE IEEE.NUMERIC_STD.ALL;
 
 entity fifo_32i_8o is
     generic (
-        -- depth in bytes
+        -- depth in 32-bit words
         constant FIFO_DEPTH : positive := 256
     );
     Port ( 
