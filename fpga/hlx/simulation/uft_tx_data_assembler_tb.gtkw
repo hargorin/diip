@@ -1,0 +1,94 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Wed Nov 29 14:59:01 2017
+[*]
+[dumpfile] "(null)"
+[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_tx_data_assembler_tb.gtkw"
+[timestart] 982800000
+[size] 2167 1155
+[pos] -1 -1
+*-26.241072 360300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.uft_tx_data_assembler_tb.
+[treeopen] top.uft_tx_data_assembler_tb.dut.
+[sst_width] 355
+[signals_width] 347
+[sst_expanded] 1
+[sst_vpaned_height] 390
+@28
+top.uft_tx_data_assembler_tb.clk
+top.uft_tx_data_assembler_tb.rst_n
+@200
+-
+@28
+top.uft_tx_data_assembler_tb.start
+@29
+top.uft_tx_data_assembler_tb.done
+@24
+#{top.uft_tx_data_assembler_tb.size[10:0]} top.uft_tx_data_assembler_tb.size[10] top.uft_tx_data_assembler_tb.size[9] top.uft_tx_data_assembler_tb.size[8] top.uft_tx_data_assembler_tb.size[7] top.uft_tx_data_assembler_tb.size[6] top.uft_tx_data_assembler_tb.size[5] top.uft_tx_data_assembler_tb.size[4] top.uft_tx_data_assembler_tb.size[3] top.uft_tx_data_assembler_tb.size[2] top.uft_tx_data_assembler_tb.size[1] top.uft_tx_data_assembler_tb.size[0]
+@200
+-
+@28
+top.uft_tx_data_assembler_tb.tx_tready
+top.uft_tx_data_assembler_tb.tx_tlast
+top.uft_tx_data_assembler_tb.tx_tvalid
+@22
+#{top.uft_tx_data_assembler_tb.tx_tdata[7:0]} top.uft_tx_data_assembler_tb.tx_tdata[7] top.uft_tx_data_assembler_tb.tx_tdata[6] top.uft_tx_data_assembler_tb.tx_tdata[5] top.uft_tx_data_assembler_tb.tx_tdata[4] top.uft_tx_data_assembler_tb.tx_tdata[3] top.uft_tx_data_assembler_tb.tx_tdata[2] top.uft_tx_data_assembler_tb.tx_tdata[1] top.uft_tx_data_assembler_tb.tx_tdata[0]
+@200
+-
+@24
+#{top.uft_tx_data_assembler_tb.dut.n_bytes[10:0]} top.uft_tx_data_assembler_tb.dut.n_bytes[10] top.uft_tx_data_assembler_tb.dut.n_bytes[9] top.uft_tx_data_assembler_tb.dut.n_bytes[8] top.uft_tx_data_assembler_tb.dut.n_bytes[7] top.uft_tx_data_assembler_tb.dut.n_bytes[6] top.uft_tx_data_assembler_tb.dut.n_bytes[5] top.uft_tx_data_assembler_tb.dut.n_bytes[4] top.uft_tx_data_assembler_tb.dut.n_bytes[3] top.uft_tx_data_assembler_tb.dut.n_bytes[2] top.uft_tx_data_assembler_tb.dut.n_bytes[1] top.uft_tx_data_assembler_tb.dut.n_bytes[0]
+#{top.uft_tx_data_assembler_tb.dut.ctr[10:0]} top.uft_tx_data_assembler_tb.dut.ctr[10] top.uft_tx_data_assembler_tb.dut.ctr[9] top.uft_tx_data_assembler_tb.dut.ctr[8] top.uft_tx_data_assembler_tb.dut.ctr[7] top.uft_tx_data_assembler_tb.dut.ctr[6] top.uft_tx_data_assembler_tb.dut.ctr[5] top.uft_tx_data_assembler_tb.dut.ctr[4] top.uft_tx_data_assembler_tb.dut.ctr[3] top.uft_tx_data_assembler_tb.dut.ctr[2] top.uft_tx_data_assembler_tb.dut.ctr[1] top.uft_tx_data_assembler_tb.dut.ctr[0]
+@200
+-
+-AXI Master burst
+@28
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mstrd_req
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_type
+@22
+#{top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[31:0]} top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[31] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[30] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[29] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[28] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[27] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[26] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[25] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[24] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[23] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[22] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[21] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[20] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[19] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[18] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[17] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[16] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[15] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[14] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[13] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[12] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[11] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[10] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[9] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[8] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[7] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[6] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[5] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[4] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[3] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[2] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[1] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_addr[0]
+#{top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_be[3:0]} top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_be[3] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_be[2] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_be[1] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_be[0]
+@24
+#{top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[11:0]} top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[11] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[10] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[9] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[8] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[7] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[6] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[5] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[4] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[3] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[2] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[1] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_length[0]
+@28
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_lock
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mst_reset
+@200
+-
+@28
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mst_cmdack
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mst_cmplt
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mst_error
+@200
+-
+@24
+#{top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[31:0]} top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[31] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[30] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[29] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[28] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[27] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[26] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[25] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[24] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[23] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[22] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[21] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[20] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[19] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[18] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[17] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[16] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[15] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[14] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[13] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[12] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[11] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[10] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[9] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[8] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[7] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[6] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[5] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[4] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[3] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[2] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[1] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_d[0]
+@22
+#{top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_rem[3:0]} top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_rem[3] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_rem[2] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_rem[1] top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_rem[0]
+@28
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_sof_n
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_eof_n
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_src_rdy_n
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.bus2ip_mstrd_src_dsc_n
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mstrd_dst_rdy_n
+top.uft_tx_data_assembler_tb.axi_master_burst_model_1.ip2bus_mstrd_dst_dsc_n
+@200
+-
+@420
+top.uft_tx_data_assembler_tb.dut.din_cur_state
+top.uft_tx_data_assembler_tb.dut.din_nex_state
+@200
+-
+@22
+#{top.uft_tx_data_assembler_tb.dut.fifo_data_in[31:0]} top.uft_tx_data_assembler_tb.dut.fifo_data_in[31] top.uft_tx_data_assembler_tb.dut.fifo_data_in[30] top.uft_tx_data_assembler_tb.dut.fifo_data_in[29] top.uft_tx_data_assembler_tb.dut.fifo_data_in[28] top.uft_tx_data_assembler_tb.dut.fifo_data_in[27] top.uft_tx_data_assembler_tb.dut.fifo_data_in[26] top.uft_tx_data_assembler_tb.dut.fifo_data_in[25] top.uft_tx_data_assembler_tb.dut.fifo_data_in[24] top.uft_tx_data_assembler_tb.dut.fifo_data_in[23] top.uft_tx_data_assembler_tb.dut.fifo_data_in[22] top.uft_tx_data_assembler_tb.dut.fifo_data_in[21] top.uft_tx_data_assembler_tb.dut.fifo_data_in[20] top.uft_tx_data_assembler_tb.dut.fifo_data_in[19] top.uft_tx_data_assembler_tb.dut.fifo_data_in[18] top.uft_tx_data_assembler_tb.dut.fifo_data_in[17] top.uft_tx_data_assembler_tb.dut.fifo_data_in[16] top.uft_tx_data_assembler_tb.dut.fifo_data_in[15] top.uft_tx_data_assembler_tb.dut.fifo_data_in[14] top.uft_tx_data_assembler_tb.dut.fifo_data_in[13] top.uft_tx_data_assembler_tb.dut.fifo_data_in[12] top.uft_tx_data_assembler_tb.dut.fifo_data_in[11] top.uft_tx_data_assembler_tb.dut.fifo_data_in[10] top.uft_tx_data_assembler_tb.dut.fifo_data_in[9] top.uft_tx_data_assembler_tb.dut.fifo_data_in[8] top.uft_tx_data_assembler_tb.dut.fifo_data_in[7] top.uft_tx_data_assembler_tb.dut.fifo_data_in[6] top.uft_tx_data_assembler_tb.dut.fifo_data_in[5] top.uft_tx_data_assembler_tb.dut.fifo_data_in[4] top.uft_tx_data_assembler_tb.dut.fifo_data_in[3] top.uft_tx_data_assembler_tb.dut.fifo_data_in[2] top.uft_tx_data_assembler_tb.dut.fifo_data_in[1] top.uft_tx_data_assembler_tb.dut.fifo_data_in[0]
+@28
+top.uft_tx_data_assembler_tb.dut.fifo_read_en
+@22
+#{top.uft_tx_data_assembler_tb.dut.fifo_data_out[7:0]} top.uft_tx_data_assembler_tb.dut.fifo_data_out[7] top.uft_tx_data_assembler_tb.dut.fifo_data_out[6] top.uft_tx_data_assembler_tb.dut.fifo_data_out[5] top.uft_tx_data_assembler_tb.dut.fifo_data_out[4] top.uft_tx_data_assembler_tb.dut.fifo_data_out[3] top.uft_tx_data_assembler_tb.dut.fifo_data_out[2] top.uft_tx_data_assembler_tb.dut.fifo_data_out[1] top.uft_tx_data_assembler_tb.dut.fifo_data_out[0]
+@28
+top.uft_tx_data_assembler_tb.dut.fifo_write_en
+top.uft_tx_data_assembler_tb.dut.fifo_empty
+top.uft_tx_data_assembler_tb.dut.fifo_full
+top.uft_tx_data_assembler_tb.dut.fifo_data_valid
+[pattern_trace] 1
+[pattern_trace] 0

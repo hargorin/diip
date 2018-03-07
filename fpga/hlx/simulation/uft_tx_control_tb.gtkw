@@ -1,0 +1,78 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Wed Nov 29 16:29:32 2017
+[*]
+[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/uft_tx_control_tb.ghw"
+[dumpfile_mtime] "Wed Nov 29 16:29:26 2017"
+[dumpfile_size] 5172
+[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_tx_control_tb.gtkw"
+[timestart] 335200000
+[size] 1931 1171
+[pos] -1 -1
+*-25.658550 463300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.uft_tx_control_tb.
+[treeopen] top.uft_tx_control_tb.dut.
+[sst_width] 193
+[signals_width] 358
+[sst_expanded] 1
+[sst_vpaned_height] 369
+@28
+top.uft_tx_control_tb.clk
+top.uft_tx_control_tb.rst_n
+@200
+-
+-User
+@24
+#{top.uft_tx_control_tb.data_size[31:0]} top.uft_tx_control_tb.data_size[31] top.uft_tx_control_tb.data_size[30] top.uft_tx_control_tb.data_size[29] top.uft_tx_control_tb.data_size[28] top.uft_tx_control_tb.data_size[27] top.uft_tx_control_tb.data_size[26] top.uft_tx_control_tb.data_size[25] top.uft_tx_control_tb.data_size[24] top.uft_tx_control_tb.data_size[23] top.uft_tx_control_tb.data_size[22] top.uft_tx_control_tb.data_size[21] top.uft_tx_control_tb.data_size[20] top.uft_tx_control_tb.data_size[19] top.uft_tx_control_tb.data_size[18] top.uft_tx_control_tb.data_size[17] top.uft_tx_control_tb.data_size[16] top.uft_tx_control_tb.data_size[15] top.uft_tx_control_tb.data_size[14] top.uft_tx_control_tb.data_size[13] top.uft_tx_control_tb.data_size[12] top.uft_tx_control_tb.data_size[11] top.uft_tx_control_tb.data_size[10] top.uft_tx_control_tb.data_size[9] top.uft_tx_control_tb.data_size[8] top.uft_tx_control_tb.data_size[7] top.uft_tx_control_tb.data_size[6] top.uft_tx_control_tb.data_size[5] top.uft_tx_control_tb.data_size[4] top.uft_tx_control_tb.data_size[3] top.uft_tx_control_tb.data_size[2] top.uft_tx_control_tb.data_size[1] top.uft_tx_control_tb.data_size[0]
+@22
+#{top.uft_tx_control_tb.data_src_addr[31:0]} top.uft_tx_control_tb.data_src_addr[31] top.uft_tx_control_tb.data_src_addr[30] top.uft_tx_control_tb.data_src_addr[29] top.uft_tx_control_tb.data_src_addr[28] top.uft_tx_control_tb.data_src_addr[27] top.uft_tx_control_tb.data_src_addr[26] top.uft_tx_control_tb.data_src_addr[25] top.uft_tx_control_tb.data_src_addr[24] top.uft_tx_control_tb.data_src_addr[23] top.uft_tx_control_tb.data_src_addr[22] top.uft_tx_control_tb.data_src_addr[21] top.uft_tx_control_tb.data_src_addr[20] top.uft_tx_control_tb.data_src_addr[19] top.uft_tx_control_tb.data_src_addr[18] top.uft_tx_control_tb.data_src_addr[17] top.uft_tx_control_tb.data_src_addr[16] top.uft_tx_control_tb.data_src_addr[15] top.uft_tx_control_tb.data_src_addr[14] top.uft_tx_control_tb.data_src_addr[13] top.uft_tx_control_tb.data_src_addr[12] top.uft_tx_control_tb.data_src_addr[11] top.uft_tx_control_tb.data_src_addr[10] top.uft_tx_control_tb.data_src_addr[9] top.uft_tx_control_tb.data_src_addr[8] top.uft_tx_control_tb.data_src_addr[7] top.uft_tx_control_tb.data_src_addr[6] top.uft_tx_control_tb.data_src_addr[5] top.uft_tx_control_tb.data_src_addr[4] top.uft_tx_control_tb.data_src_addr[3] top.uft_tx_control_tb.data_src_addr[2] top.uft_tx_control_tb.data_src_addr[1] top.uft_tx_control_tb.data_src_addr[0]
+@28
+top.uft_tx_control_tb.tx_ready
+top.uft_tx_control_tb.tx_start
+@200
+-
+-cmd assembler
+@22
+#{top.uft_tx_control_tb.cmd_tcid[6:0]} top.uft_tx_control_tb.cmd_tcid[6] top.uft_tx_control_tb.cmd_tcid[5] top.uft_tx_control_tb.cmd_tcid[4] top.uft_tx_control_tb.cmd_tcid[3] top.uft_tx_control_tb.cmd_tcid[2] top.uft_tx_control_tb.cmd_tcid[1] top.uft_tx_control_tb.cmd_tcid[0]
+@24
+#{top.uft_tx_control_tb.cmd_nseq[31:0]} top.uft_tx_control_tb.cmd_nseq[31] top.uft_tx_control_tb.cmd_nseq[30] top.uft_tx_control_tb.cmd_nseq[29] top.uft_tx_control_tb.cmd_nseq[28] top.uft_tx_control_tb.cmd_nseq[27] top.uft_tx_control_tb.cmd_nseq[26] top.uft_tx_control_tb.cmd_nseq[25] top.uft_tx_control_tb.cmd_nseq[24] top.uft_tx_control_tb.cmd_nseq[23] top.uft_tx_control_tb.cmd_nseq[22] top.uft_tx_control_tb.cmd_nseq[21] top.uft_tx_control_tb.cmd_nseq[20] top.uft_tx_control_tb.cmd_nseq[19] top.uft_tx_control_tb.cmd_nseq[18] top.uft_tx_control_tb.cmd_nseq[17] top.uft_tx_control_tb.cmd_nseq[16] top.uft_tx_control_tb.cmd_nseq[15] top.uft_tx_control_tb.cmd_nseq[14] top.uft_tx_control_tb.cmd_nseq[13] top.uft_tx_control_tb.cmd_nseq[12] top.uft_tx_control_tb.cmd_nseq[11] top.uft_tx_control_tb.cmd_nseq[10] top.uft_tx_control_tb.cmd_nseq[9] top.uft_tx_control_tb.cmd_nseq[8] top.uft_tx_control_tb.cmd_nseq[7] top.uft_tx_control_tb.cmd_nseq[6] top.uft_tx_control_tb.cmd_nseq[5] top.uft_tx_control_tb.cmd_nseq[4] top.uft_tx_control_tb.cmd_nseq[3] top.uft_tx_control_tb.cmd_nseq[2] top.uft_tx_control_tb.cmd_nseq[1] top.uft_tx_control_tb.cmd_nseq[0]
+@28
+top.uft_tx_control_tb.cmd_en_start
+top.uft_tx_control_tb.cmd_done
+@200
+-
+-data assembler
+@24
+#{top.uft_tx_control_tb.data_data_src_addr[31:0]} top.uft_tx_control_tb.data_data_src_addr[31] top.uft_tx_control_tb.data_data_src_addr[30] top.uft_tx_control_tb.data_data_src_addr[29] top.uft_tx_control_tb.data_data_src_addr[28] top.uft_tx_control_tb.data_data_src_addr[27] top.uft_tx_control_tb.data_data_src_addr[26] top.uft_tx_control_tb.data_data_src_addr[25] top.uft_tx_control_tb.data_data_src_addr[24] top.uft_tx_control_tb.data_data_src_addr[23] top.uft_tx_control_tb.data_data_src_addr[22] top.uft_tx_control_tb.data_data_src_addr[21] top.uft_tx_control_tb.data_data_src_addr[20] top.uft_tx_control_tb.data_data_src_addr[19] top.uft_tx_control_tb.data_data_src_addr[18] top.uft_tx_control_tb.data_data_src_addr[17] top.uft_tx_control_tb.data_data_src_addr[16] top.uft_tx_control_tb.data_data_src_addr[15] top.uft_tx_control_tb.data_data_src_addr[14] top.uft_tx_control_tb.data_data_src_addr[13] top.uft_tx_control_tb.data_data_src_addr[12] top.uft_tx_control_tb.data_data_src_addr[11] top.uft_tx_control_tb.data_data_src_addr[10] top.uft_tx_control_tb.data_data_src_addr[9] top.uft_tx_control_tb.data_data_src_addr[8] top.uft_tx_control_tb.data_data_src_addr[7] top.uft_tx_control_tb.data_data_src_addr[6] top.uft_tx_control_tb.data_data_src_addr[5] top.uft_tx_control_tb.data_data_src_addr[4] top.uft_tx_control_tb.data_data_src_addr[3] top.uft_tx_control_tb.data_data_src_addr[2] top.uft_tx_control_tb.data_data_src_addr[1] top.uft_tx_control_tb.data_data_src_addr[0]
+@22
+#{top.uft_tx_control_tb.data_tcid[6:0]} top.uft_tx_control_tb.data_tcid[6] top.uft_tx_control_tb.data_tcid[5] top.uft_tx_control_tb.data_tcid[4] top.uft_tx_control_tb.data_tcid[3] top.uft_tx_control_tb.data_tcid[2] top.uft_tx_control_tb.data_tcid[1] top.uft_tx_control_tb.data_tcid[0]
+#{top.uft_tx_control_tb.data_seq[23:0]} top.uft_tx_control_tb.data_seq[23] top.uft_tx_control_tb.data_seq[22] top.uft_tx_control_tb.data_seq[21] top.uft_tx_control_tb.data_seq[20] top.uft_tx_control_tb.data_seq[19] top.uft_tx_control_tb.data_seq[18] top.uft_tx_control_tb.data_seq[17] top.uft_tx_control_tb.data_seq[16] top.uft_tx_control_tb.data_seq[15] top.uft_tx_control_tb.data_seq[14] top.uft_tx_control_tb.data_seq[13] top.uft_tx_control_tb.data_seq[12] top.uft_tx_control_tb.data_seq[11] top.uft_tx_control_tb.data_seq[10] top.uft_tx_control_tb.data_seq[9] top.uft_tx_control_tb.data_seq[8] top.uft_tx_control_tb.data_seq[7] top.uft_tx_control_tb.data_seq[6] top.uft_tx_control_tb.data_seq[5] top.uft_tx_control_tb.data_seq[4] top.uft_tx_control_tb.data_seq[3] top.uft_tx_control_tb.data_seq[2] top.uft_tx_control_tb.data_seq[1] top.uft_tx_control_tb.data_seq[0]
+@24
+#{top.uft_tx_control_tb.packet_data_size[10:0]} top.uft_tx_control_tb.packet_data_size[10] top.uft_tx_control_tb.packet_data_size[9] top.uft_tx_control_tb.packet_data_size[8] top.uft_tx_control_tb.packet_data_size[7] top.uft_tx_control_tb.packet_data_size[6] top.uft_tx_control_tb.packet_data_size[5] top.uft_tx_control_tb.packet_data_size[4] top.uft_tx_control_tb.packet_data_size[3] top.uft_tx_control_tb.packet_data_size[2] top.uft_tx_control_tb.packet_data_size[1] top.uft_tx_control_tb.packet_data_size[0]
+@28
+top.uft_tx_control_tb.dut.data_start
+top.uft_tx_control_tb.dut.data_done
+@200
+-
+@420
+top.uft_tx_control_tb.dut.current_state
+top.uft_tx_control_tb.dut.next_state
+@200
+-
+-UDP Stack signals
+@28
+top.uft_tx_control_tb.dut.udp_tx_start
+@24
+#{top.uft_tx_control_tb.udp_tx_hdr_data_length[15:0]} top.uft_tx_control_tb.udp_tx_hdr_data_length[15] top.uft_tx_control_tb.udp_tx_hdr_data_length[14] top.uft_tx_control_tb.udp_tx_hdr_data_length[13] top.uft_tx_control_tb.udp_tx_hdr_data_length[12] top.uft_tx_control_tb.udp_tx_hdr_data_length[11] top.uft_tx_control_tb.udp_tx_hdr_data_length[10] top.uft_tx_control_tb.udp_tx_hdr_data_length[9] top.uft_tx_control_tb.udp_tx_hdr_data_length[8] top.uft_tx_control_tb.udp_tx_hdr_data_length[7] top.uft_tx_control_tb.udp_tx_hdr_data_length[6] top.uft_tx_control_tb.udp_tx_hdr_data_length[5] top.uft_tx_control_tb.udp_tx_hdr_data_length[4] top.uft_tx_control_tb.udp_tx_hdr_data_length[3] top.uft_tx_control_tb.udp_tx_hdr_data_length[2] top.uft_tx_control_tb.udp_tx_hdr_data_length[1] top.uft_tx_control_tb.udp_tx_hdr_data_length[0]
+@22
+#{top.uft_tx_control_tb.udp_tx_hdr_checksum[15:0]} top.uft_tx_control_tb.udp_tx_hdr_checksum[15] top.uft_tx_control_tb.udp_tx_hdr_checksum[14] top.uft_tx_control_tb.udp_tx_hdr_checksum[13] top.uft_tx_control_tb.udp_tx_hdr_checksum[12] top.uft_tx_control_tb.udp_tx_hdr_checksum[11] top.uft_tx_control_tb.udp_tx_hdr_checksum[10] top.uft_tx_control_tb.udp_tx_hdr_checksum[9] top.uft_tx_control_tb.udp_tx_hdr_checksum[8] top.uft_tx_control_tb.udp_tx_hdr_checksum[7] top.uft_tx_control_tb.udp_tx_hdr_checksum[6] top.uft_tx_control_tb.udp_tx_hdr_checksum[5] top.uft_tx_control_tb.udp_tx_hdr_checksum[4] top.uft_tx_control_tb.udp_tx_hdr_checksum[3] top.uft_tx_control_tb.udp_tx_hdr_checksum[2] top.uft_tx_control_tb.udp_tx_hdr_checksum[1] top.uft_tx_control_tb.udp_tx_hdr_checksum[0]
+@200
+-
+-Arbiter
+@28
+top.uft_tx_control_tb.arb_sel
+@25
+#{top.uft_tx_control_tb.dut.packet_data_size_int[10:0]} top.uft_tx_control_tb.dut.packet_data_size_int[10] top.uft_tx_control_tb.dut.packet_data_size_int[9] top.uft_tx_control_tb.dut.packet_data_size_int[8] top.uft_tx_control_tb.dut.packet_data_size_int[7] top.uft_tx_control_tb.dut.packet_data_size_int[6] top.uft_tx_control_tb.dut.packet_data_size_int[5] top.uft_tx_control_tb.dut.packet_data_size_int[4] top.uft_tx_control_tb.dut.packet_data_size_int[3] top.uft_tx_control_tb.dut.packet_data_size_int[2] top.uft_tx_control_tb.dut.packet_data_size_int[1] top.uft_tx_control_tb.dut.packet_data_size_int[0]
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,0 +1,38 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+    \coordinate (test)      at (-3,0);
+    \coordinate (alg)       at (3,0);
+    \coordinate (c_sim)     at (0,-1);
+    \coordinate (c_synth)   at (0,-2);
+    \coordinate (VHDL)      at (0,-3);
+    \coordinate (rtl_sim)   at (0,-4);
+    \coordinate (ip)        at (0,-5);
+    \coordinate (hlx)       at (0,-6);
+
+    %nodes
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center, rounded corners=3mm] (A) at (test) {C/C++ Testbench};
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center, rounded corners=3mm] (B) at (alg) {C/C++ Algorithm};
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (C) at (c_sim) {C/C++ Simulation};
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (D) at (c_synth) {C/C++ Synthesis};
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center, rounded corners=3mm] (E) at (VHDL) {VHDL};
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (F) at (rtl_sim) {RTL Simulation};
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (G) at (ip) {Package IP};
+    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (H) at (hlx) {Vivado HLx};
+
+    %path
+    \path [draw,-] (A) -- (B);
+    \path[draw,-{Latex[length=2.5mm]}] (A) -| (C);
+    \path[draw,-{Latex[length=2.5mm]}] (C.east) -- ++(3.5,0) |- (B.east);
+    \path[draw,-{Latex[length=2.5mm]}] (C) -- (D);
+    \path[draw,-{Latex[length=2.5mm]}] (D) -- (E);
+    \path[draw,-{Latex[length=2.5mm]}] (E) -- (F);
+    \path[draw,-{Latex[length=2.5mm]}] (E.west) -- ++(-0.5,0) |- (G.west);
+    \path[draw,-{Latex[length=2.5mm]}] (F.east) -- ++(3.5,0) |- (B.east);
+    \path[draw,-{Latex[length=2.5mm]}] (G) -- (H);
+
+
+\end{tikzpicture}

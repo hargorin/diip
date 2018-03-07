@@ -1,0 +1,62 @@
+\chapter*{}
+\begin{abstract}
+% \linespread{2}\selectfont
+
+In the world of self-driving cars and virtual reality games it is becoming
+increasingly important to represent digitally what we see.
+Therefore, using high resolution
+cameras, images of the environment have been recorded.
+These large images are processed to be presented three dimensionally. 
+This image processing task needs to be accelerated to have a fast work flow. 
+A dedicated hardware approach using Field Programmable Gate Arrays (FPGA) was
+implemented that is scalable onto multiple FPGAs.
+High level synthesis was used to describe a Sobel filter operation in
+C language that was then synthesized to hardware description language.
+Simulations were used to ensure correct operation. The result is an image
+processing core and a file transfer protocol stack on top of the User Datagram
+Protocol (UDP) to transfer the images from a computer to the FPGA. The
+processing core takes image data from FPGA block memory and processes data at
+one
+pixel per clock at 100MHz which corresponds to 100 megapixels per second. The
+project
+runs on
+an Artix 7 evaluation board and can simply be extended due to a clean source code
+structure. 
+With some additions, workload distribution is possible. This study proves 
+that a dedicated hardware approach for image processing is possible and will
+speed up the process of creating virtual representations of
+reality.
+
+\vspace{3em}
+\begin{tabular}{l p{.95\textwidth}}
+    \textbf{Team members}  & Noah H\"utter, Jan Stocker \\
+    \textbf{Keywords}      & FPGA, UDP, Image Processing, Sobel Filter \\
+\end{tabular}
+
+\end{abstract}
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Motivation:
+% Why do we care about the problem and the results? If the problem isn't obviously "interesting" it might be better to put motivation first; but if your work is incremental progress on a problem that is widely recognized as important, then it is probably better to put the problem statement first to indicate which piece of the larger problem you are breaking off to work on. This section should include the importance of your work, the difficulty of the area, and the impact it might have if successful.
+% 
+% Why do we care about the problem? 
+% What practical, scientific, theoretical or artistic gap is your research filling?
+% 
+% 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Problem statement:
+% What problem are you trying to solve? What is the scope of your work (a generalized approach, or for a specific situation)? Be careful not to use too much jargon. In some cases it is appropriate to put the problem statement before the motivation, but usually this only works if most readers already understand why the problem is important.
+% 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Approach:
+% How did you go about solving or making progress on the problem? Did you use simulation, analytic models, prototype construction, or analysis of field data for an actual product? What was the extent of your work (did you look at one application program or a hundred programs in twenty different programming languages?) What important variables did you control, ignore, or measure?
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Results:
+% What's the answer? Specifically, most good computer architecture papers conclude that something is so many percent faster, cheaper, smaller, or otherwise better than something else. Put the result there, in numbers. Avoid vague, hand-waving results such as "very", "small", or "significant." If you must be vague, you are only given license to do so when you can talk about orders-of-magnitude improvement. There is a tension here in that you should not provide numbers that can be easily misinterpreted, but on the other hand you don't have room for all the caveats.
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Conclusions:
+% What are the implications of your answer? Is it going to change the world (unlikely), be a significant "win", be a nice hack, or simply serve as a road sign indicating that this path is a waste of time (all of the previous results are useful). Are your results general, potentially generalizable, or specific to a particular case?
+% 
+% https://users.ece.cmu.edu/~koopman/essays/abstract.html

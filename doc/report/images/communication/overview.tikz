@@ -1,0 +1,64 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+    \coordinate (c1)        at (2.5,0);
+    \coordinate (c2)        at (6,0);
+    \coordinate (c3)        at (0,0);
+    \coordinate (c4)        at (0,0);
+
+
+
+    \coordinate (otemacsup) at (4,0);
+    \coordinate (ophy)      at (0,-2);
+    \coordinate (omac)      at (0,0);
+    \coordinate (oudp)      at (8,0);
+    \coordinate (ouft)      at (12,0);
+    \coordinate (oamb1)     at (16,1);
+    \coordinate (oamb2)     at (16,3);
+
+    %nodes
+
+    \begin{pgfonlayer}{main}
+        \node[draw, fill=white, minimum width=2cm, minimum height=3cm, anchor=west, text width=2cm, align=center] (mac) at (c1) {Xilinx Tri-Mode Ethernet MAC};
+        \begin{scope}[yshift=0cm,node distance=1.5cm]
+            \node[draw, fill=white, right = of mac, minimum width=2cm, minimum height=3cm, anchor=west, text width=2cm, align=center] (udp) {Opencores UDP IP Stack};
+            \node[draw, fill=white, right = of udp, minimum width=2cm, minimum height=3cm, anchor=west, text width=2cm, align=center] (uft) {UDP File Transfer};
+        \end{scope}
+        \node[right = 0.8cm of uft, minimum width=2cm, minimum height=1cm, anchor=west, text width=2cm, align=center] (axi) {AXI Memory Mapped};
+
+        \node[draw, below = 1.8cm of mac, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1cm, align=center] (phy) {PHY};
+        \node[fill=white, left = 3.0cm of phy, minimum width=1.5cm, minimum height=1cm, anchor=west, text width=1.5cm, align=center] (eth) {Gigabit Ethernet};
+    \end{pgfonlayer}
+
+    % FPGA box
+    \begin{pgfonlayer}{main}
+        \node[] (FPGA) at ($(mac) + (-1.0,2.0)$) { FPGA };
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{foreground}
+        \node (f_fpga) [draw=black, fill=gray!20, inner sep=5, fit={(FPGA) (mac) (udp) (uft) (axi)}] {};
+    \end{pgfonlayer} 
+
+    % Board box
+    \begin{pgfonlayer}{main}
+        \node[] (board) at ($(mac) + (-0.0,3.0)$) { AC701 Evaluation Kit };
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{background}
+        \node (f_board) [draw=black, fill=gray!40, inner sep=5, fit={(board) (f_fpga) (phy)}] {};
+    \end{pgfonlayer} 
+
+    
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (eth) -- (phy) ;
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (phy) -- (mac) node [midway, label=right:RGMII] {};
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (mac) -- (udp) node [midway, label=above:AXI\_S] {};
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(udp.0) + (0,1.5/2)$) -- ($(uft.180) + (0,1.5/2)$) node [midway, label=above:AXI\_S] {};
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (udp) -- (uft) node [midway, label=above:control] {};
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(udp.0) + (0,-1.5/2)$) -- ($(uft.180) + (0,-1.5/2)$) node [midway, label=above:hdr] {};
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (uft) -- (axi) ;
+
+    % \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (B) |- ($(B)!1/2!(B |- D)$) coordinate (xx) -| ($(D.270) + (0,0)$);
+    % \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (C) |- ($(C)!1/2!(C |- D)$) coordinate (xx) -| ($(D.270) + (1/2,0)$);
+  
+\end{tikzpicture}

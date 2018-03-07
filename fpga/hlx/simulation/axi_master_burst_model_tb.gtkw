@@ -1,0 +1,83 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Sat Dec  2 08:46:16 2017
+[*]
+[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/axi_master_burst_model_tb.ghw"
+[dumpfile_mtime] "Sat Dec  2 08:43:02 2017"
+[dumpfile_size] 4879
+[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/axi_master_burst_model_tb.gtkw"
+[timestart] 665700000
+[size] 2131 1204
+[pos] -1 -1
+*-25.249849 845000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.axi_master_burst_model_tb.
+[treeopen] top.axi_master_burst_model_tb.axi_master_burst_model_1.
+[sst_width] 193
+[signals_width] 375
+[sst_expanded] 1
+[sst_vpaned_height] 380
+@28
+top.axi_master_burst_model_tb.m_axi_aclk
+top.axi_master_burst_model_tb.m_axi_aresetn
+@200
+-
+@28
+top.axi_master_burst_model_tb.ip2bus_mstrd_req
+top.axi_master_burst_model_tb.ip2bus_mstwr_req
+top.axi_master_burst_model_tb.ip2bus_mst_type
+@22
+#{top.axi_master_burst_model_tb.ip2bus_mst_addr[31:0]} top.axi_master_burst_model_tb.ip2bus_mst_addr[31] top.axi_master_burst_model_tb.ip2bus_mst_addr[30] top.axi_master_burst_model_tb.ip2bus_mst_addr[29] top.axi_master_burst_model_tb.ip2bus_mst_addr[28] top.axi_master_burst_model_tb.ip2bus_mst_addr[27] top.axi_master_burst_model_tb.ip2bus_mst_addr[26] top.axi_master_burst_model_tb.ip2bus_mst_addr[25] top.axi_master_burst_model_tb.ip2bus_mst_addr[24] top.axi_master_burst_model_tb.ip2bus_mst_addr[23] top.axi_master_burst_model_tb.ip2bus_mst_addr[22] top.axi_master_burst_model_tb.ip2bus_mst_addr[21] top.axi_master_burst_model_tb.ip2bus_mst_addr[20] top.axi_master_burst_model_tb.ip2bus_mst_addr[19] top.axi_master_burst_model_tb.ip2bus_mst_addr[18] top.axi_master_burst_model_tb.ip2bus_mst_addr[17] top.axi_master_burst_model_tb.ip2bus_mst_addr[16] top.axi_master_burst_model_tb.ip2bus_mst_addr[15] top.axi_master_burst_model_tb.ip2bus_mst_addr[14] top.axi_master_burst_model_tb.ip2bus_mst_addr[13] top.axi_master_burst_model_tb.ip2bus_mst_addr[12] top.axi_master_burst_model_tb.ip2bus_mst_addr[11] top.axi_master_burst_model_tb.ip2bus_mst_addr[10] top.axi_master_burst_model_tb.ip2bus_mst_addr[9] top.axi_master_burst_model_tb.ip2bus_mst_addr[8] top.axi_master_burst_model_tb.ip2bus_mst_addr[7] top.axi_master_burst_model_tb.ip2bus_mst_addr[6] top.axi_master_burst_model_tb.ip2bus_mst_addr[5] top.axi_master_burst_model_tb.ip2bus_mst_addr[4] top.axi_master_burst_model_tb.ip2bus_mst_addr[3] top.axi_master_burst_model_tb.ip2bus_mst_addr[2] top.axi_master_burst_model_tb.ip2bus_mst_addr[1] top.axi_master_burst_model_tb.ip2bus_mst_addr[0]
+#{top.axi_master_burst_model_tb.ip2bus_mst_be[3:0]} top.axi_master_burst_model_tb.ip2bus_mst_be[3] top.axi_master_burst_model_tb.ip2bus_mst_be[2] top.axi_master_burst_model_tb.ip2bus_mst_be[1] top.axi_master_burst_model_tb.ip2bus_mst_be[0]
+#{top.axi_master_burst_model_tb.ip2bus_mst_length[11:0]} top.axi_master_burst_model_tb.ip2bus_mst_length[11] top.axi_master_burst_model_tb.ip2bus_mst_length[10] top.axi_master_burst_model_tb.ip2bus_mst_length[9] top.axi_master_burst_model_tb.ip2bus_mst_length[8] top.axi_master_burst_model_tb.ip2bus_mst_length[7] top.axi_master_burst_model_tb.ip2bus_mst_length[6] top.axi_master_burst_model_tb.ip2bus_mst_length[5] top.axi_master_burst_model_tb.ip2bus_mst_length[4] top.axi_master_burst_model_tb.ip2bus_mst_length[3] top.axi_master_burst_model_tb.ip2bus_mst_length[2] top.axi_master_burst_model_tb.ip2bus_mst_length[1] top.axi_master_burst_model_tb.ip2bus_mst_length[0]
+@28
+top.axi_master_burst_model_tb.ip2bus_mst_lock
+top.axi_master_burst_model_tb.ip2bus_mst_reset
+@200
+-
+@28
+top.axi_master_burst_model_tb.bus2ip_mst_cmdack
+top.axi_master_burst_model_tb.bus2ip_mst_cmplt
+top.axi_master_burst_model_tb.bus2ip_mst_error
+top.axi_master_burst_model_tb.bus2ip_mst_rearbitrate
+top.axi_master_burst_model_tb.bus2ip_mst_cmd_timeout
+@200
+-
+-read
+@22
+#{top.axi_master_burst_model_tb.bus2ip_mstrd_d[31:0]} top.axi_master_burst_model_tb.bus2ip_mstrd_d[31] top.axi_master_burst_model_tb.bus2ip_mstrd_d[30] top.axi_master_burst_model_tb.bus2ip_mstrd_d[29] top.axi_master_burst_model_tb.bus2ip_mstrd_d[28] top.axi_master_burst_model_tb.bus2ip_mstrd_d[27] top.axi_master_burst_model_tb.bus2ip_mstrd_d[26] top.axi_master_burst_model_tb.bus2ip_mstrd_d[25] top.axi_master_burst_model_tb.bus2ip_mstrd_d[24] top.axi_master_burst_model_tb.bus2ip_mstrd_d[23] top.axi_master_burst_model_tb.bus2ip_mstrd_d[22] top.axi_master_burst_model_tb.bus2ip_mstrd_d[21] top.axi_master_burst_model_tb.bus2ip_mstrd_d[20] top.axi_master_burst_model_tb.bus2ip_mstrd_d[19] top.axi_master_burst_model_tb.bus2ip_mstrd_d[18] top.axi_master_burst_model_tb.bus2ip_mstrd_d[17] top.axi_master_burst_model_tb.bus2ip_mstrd_d[16] top.axi_master_burst_model_tb.bus2ip_mstrd_d[15] top.axi_master_burst_model_tb.bus2ip_mstrd_d[14] top.axi_master_burst_model_tb.bus2ip_mstrd_d[13] top.axi_master_burst_model_tb.bus2ip_mstrd_d[12] top.axi_master_burst_model_tb.bus2ip_mstrd_d[11] top.axi_master_burst_model_tb.bus2ip_mstrd_d[10] top.axi_master_burst_model_tb.bus2ip_mstrd_d[9] top.axi_master_burst_model_tb.bus2ip_mstrd_d[8] top.axi_master_burst_model_tb.bus2ip_mstrd_d[7] top.axi_master_burst_model_tb.bus2ip_mstrd_d[6] top.axi_master_burst_model_tb.bus2ip_mstrd_d[5] top.axi_master_burst_model_tb.bus2ip_mstrd_d[4] top.axi_master_burst_model_tb.bus2ip_mstrd_d[3] top.axi_master_burst_model_tb.bus2ip_mstrd_d[2] top.axi_master_burst_model_tb.bus2ip_mstrd_d[1] top.axi_master_burst_model_tb.bus2ip_mstrd_d[0]
+#{top.axi_master_burst_model_tb.bus2ip_mstrd_rem[3:0]} top.axi_master_burst_model_tb.bus2ip_mstrd_rem[3] top.axi_master_burst_model_tb.bus2ip_mstrd_rem[2] top.axi_master_burst_model_tb.bus2ip_mstrd_rem[1] top.axi_master_burst_model_tb.bus2ip_mstrd_rem[0]
+@28
+top.axi_master_burst_model_tb.bus2ip_mstrd_sof_n
+top.axi_master_burst_model_tb.bus2ip_mstrd_eof_n
+top.axi_master_burst_model_tb.bus2ip_mstrd_src_rdy_n
+top.axi_master_burst_model_tb.bus2ip_mstrd_src_dsc_n
+top.axi_master_burst_model_tb.ip2bus_mstrd_dst_rdy_n
+top.axi_master_burst_model_tb.ip2bus_mstrd_dst_dsc_n
+@200
+-
+-write
+@22
+#{top.axi_master_burst_model_tb.ip2bus_mstwr_d[31:0]} top.axi_master_burst_model_tb.ip2bus_mstwr_d[31] top.axi_master_burst_model_tb.ip2bus_mstwr_d[30] top.axi_master_burst_model_tb.ip2bus_mstwr_d[29] top.axi_master_burst_model_tb.ip2bus_mstwr_d[28] top.axi_master_burst_model_tb.ip2bus_mstwr_d[27] top.axi_master_burst_model_tb.ip2bus_mstwr_d[26] top.axi_master_burst_model_tb.ip2bus_mstwr_d[25] top.axi_master_burst_model_tb.ip2bus_mstwr_d[24] top.axi_master_burst_model_tb.ip2bus_mstwr_d[23] top.axi_master_burst_model_tb.ip2bus_mstwr_d[22] top.axi_master_burst_model_tb.ip2bus_mstwr_d[21] top.axi_master_burst_model_tb.ip2bus_mstwr_d[20] top.axi_master_burst_model_tb.ip2bus_mstwr_d[19] top.axi_master_burst_model_tb.ip2bus_mstwr_d[18] top.axi_master_burst_model_tb.ip2bus_mstwr_d[17] top.axi_master_burst_model_tb.ip2bus_mstwr_d[16] top.axi_master_burst_model_tb.ip2bus_mstwr_d[15] top.axi_master_burst_model_tb.ip2bus_mstwr_d[14] top.axi_master_burst_model_tb.ip2bus_mstwr_d[13] top.axi_master_burst_model_tb.ip2bus_mstwr_d[12] top.axi_master_burst_model_tb.ip2bus_mstwr_d[11] top.axi_master_burst_model_tb.ip2bus_mstwr_d[10] top.axi_master_burst_model_tb.ip2bus_mstwr_d[9] top.axi_master_burst_model_tb.ip2bus_mstwr_d[8] top.axi_master_burst_model_tb.ip2bus_mstwr_d[7] top.axi_master_burst_model_tb.ip2bus_mstwr_d[6] top.axi_master_burst_model_tb.ip2bus_mstwr_d[5] top.axi_master_burst_model_tb.ip2bus_mstwr_d[4] top.axi_master_burst_model_tb.ip2bus_mstwr_d[3] top.axi_master_burst_model_tb.ip2bus_mstwr_d[2] top.axi_master_burst_model_tb.ip2bus_mstwr_d[1] top.axi_master_burst_model_tb.ip2bus_mstwr_d[0]
+#{top.axi_master_burst_model_tb.ip2bus_mstwr_rem[3:0]} top.axi_master_burst_model_tb.ip2bus_mstwr_rem[3] top.axi_master_burst_model_tb.ip2bus_mstwr_rem[2] top.axi_master_burst_model_tb.ip2bus_mstwr_rem[1] top.axi_master_burst_model_tb.ip2bus_mstwr_rem[0]
+@28
+top.axi_master_burst_model_tb.ip2bus_mstwr_sof_n
+top.axi_master_burst_model_tb.ip2bus_mstwr_eof_n
+top.axi_master_burst_model_tb.ip2bus_mstwr_src_rdy_n
+top.axi_master_burst_model_tb.ip2bus_mstwr_src_dsc_n
+top.axi_master_burst_model_tb.bus2ip_mstwr_dst_rdy_n
+top.axi_master_burst_model_tb.bus2ip_mstwr_dst_dsc_n
+@200
+-
+-dbg
+@420
+top.axi_master_burst_model_tb.axi_master_burst_model_1.current_state
+top.axi_master_burst_model_tb.axi_master_burst_model_1.count_mode
+@22
+#{top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[15:0]} top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[15] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[14] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[13] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[12] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[11] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[10] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[9] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[8] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[7] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[6] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[5] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[4] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[3] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[2] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[1] top.axi_master_burst_model_tb.axi_master_burst_model_1.ctr[0]
+@23
+#{top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[11:0]} top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[11] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[10] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[9] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[8] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[7] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[6] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[5] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[4] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[3] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[2] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[1] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_len[0]
+@22
+#{top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[15:0]} top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[15] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[14] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[13] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[12] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[11] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[10] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[9] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[8] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[7] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[6] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[5] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[4] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[3] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[2] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[1] top.axi_master_burst_model_tb.axi_master_burst_model_1.data_ctr[0]
+[pattern_trace] 1
+[pattern_trace] 0

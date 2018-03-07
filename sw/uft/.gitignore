@@ -1,0 +1,6 @@
+*.o
+sender
+receiver
+/Debug/
+*.bin
+

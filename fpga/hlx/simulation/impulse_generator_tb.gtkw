@@ -1,0 +1,26 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Thu Nov 30 08:40:41 2017
+[*]
+[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/impulse_generator_tb.ghw"
+[dumpfile_mtime] "Thu Nov 30 08:40:18 2017"
+[dumpfile_size] 829
+[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/impulse_generator_tb.gtkw"
+[timestart] 0
+[size] 1240 600
+[pos] -1 -1
+*-25.520142 92300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.impulse_generator_tb.
+[sst_width] 193
+[signals_width] 90
+[sst_expanded] 1
+[sst_vpaned_height] 168
+@28
+top.impulse_generator_tb.clk
+top.impulse_generator_tb.enable
+top.impulse_generator_tb.impulse
+@420
+top.impulse_generator_tb.dut.state
+[pattern_trace] 1
+[pattern_trace] 0

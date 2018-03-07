@@ -1,0 +1,78 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Wed Nov 29 17:31:14 2017
+[*]
+[dumpfile] "(null)"
+[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_tx_tb.gtkw"
+[timestart] 1446500000
+[size] 1629 1334
+[pos] -1 -1
+*-26.016615 1558100000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.uft_tx_tb.
+[sst_width] 310
+[signals_width] 283
+[sst_expanded] 1
+[sst_vpaned_height] 426
+@28
+top.uft_tx_tb.clk
+top.uft_tx_tb.rst_n
+@200
+-
+-User
+@22
+#{top.uft_tx_tb.data_size[31:0]} top.uft_tx_tb.data_size[31] top.uft_tx_tb.data_size[30] top.uft_tx_tb.data_size[29] top.uft_tx_tb.data_size[28] top.uft_tx_tb.data_size[27] top.uft_tx_tb.data_size[26] top.uft_tx_tb.data_size[25] top.uft_tx_tb.data_size[24] top.uft_tx_tb.data_size[23] top.uft_tx_tb.data_size[22] top.uft_tx_tb.data_size[21] top.uft_tx_tb.data_size[20] top.uft_tx_tb.data_size[19] top.uft_tx_tb.data_size[18] top.uft_tx_tb.data_size[17] top.uft_tx_tb.data_size[16] top.uft_tx_tb.data_size[15] top.uft_tx_tb.data_size[14] top.uft_tx_tb.data_size[13] top.uft_tx_tb.data_size[12] top.uft_tx_tb.data_size[11] top.uft_tx_tb.data_size[10] top.uft_tx_tb.data_size[9] top.uft_tx_tb.data_size[8] top.uft_tx_tb.data_size[7] top.uft_tx_tb.data_size[6] top.uft_tx_tb.data_size[5] top.uft_tx_tb.data_size[4] top.uft_tx_tb.data_size[3] top.uft_tx_tb.data_size[2] top.uft_tx_tb.data_size[1] top.uft_tx_tb.data_size[0]
+#{top.uft_tx_tb.data_src_addr[31:0]} top.uft_tx_tb.data_src_addr[31] top.uft_tx_tb.data_src_addr[30] top.uft_tx_tb.data_src_addr[29] top.uft_tx_tb.data_src_addr[28] top.uft_tx_tb.data_src_addr[27] top.uft_tx_tb.data_src_addr[26] top.uft_tx_tb.data_src_addr[25] top.uft_tx_tb.data_src_addr[24] top.uft_tx_tb.data_src_addr[23] top.uft_tx_tb.data_src_addr[22] top.uft_tx_tb.data_src_addr[21] top.uft_tx_tb.data_src_addr[20] top.uft_tx_tb.data_src_addr[19] top.uft_tx_tb.data_src_addr[18] top.uft_tx_tb.data_src_addr[17] top.uft_tx_tb.data_src_addr[16] top.uft_tx_tb.data_src_addr[15] top.uft_tx_tb.data_src_addr[14] top.uft_tx_tb.data_src_addr[13] top.uft_tx_tb.data_src_addr[12] top.uft_tx_tb.data_src_addr[11] top.uft_tx_tb.data_src_addr[10] top.uft_tx_tb.data_src_addr[9] top.uft_tx_tb.data_src_addr[8] top.uft_tx_tb.data_src_addr[7] top.uft_tx_tb.data_src_addr[6] top.uft_tx_tb.data_src_addr[5] top.uft_tx_tb.data_src_addr[4] top.uft_tx_tb.data_src_addr[3] top.uft_tx_tb.data_src_addr[2] top.uft_tx_tb.data_src_addr[1] top.uft_tx_tb.data_src_addr[0]
+@28
+top.uft_tx_tb.tx_ready
+top.uft_tx_tb.tx_start
+@200
+-
+-AXI Master Burst
+@28
+top.uft_tx_tb.ip2bus_mstrd_req
+top.uft_tx_tb.bus2ip_mst_cmdack
+top.uft_tx_tb.bus2ip_mst_cmplt
+top.uft_tx_tb.bus2ip_mst_error
+top.uft_tx_tb.ip2bus_mst_type
+@22
+#{top.uft_tx_tb.ip2bus_mst_addr[31:0]} top.uft_tx_tb.ip2bus_mst_addr[31] top.uft_tx_tb.ip2bus_mst_addr[30] top.uft_tx_tb.ip2bus_mst_addr[29] top.uft_tx_tb.ip2bus_mst_addr[28] top.uft_tx_tb.ip2bus_mst_addr[27] top.uft_tx_tb.ip2bus_mst_addr[26] top.uft_tx_tb.ip2bus_mst_addr[25] top.uft_tx_tb.ip2bus_mst_addr[24] top.uft_tx_tb.ip2bus_mst_addr[23] top.uft_tx_tb.ip2bus_mst_addr[22] top.uft_tx_tb.ip2bus_mst_addr[21] top.uft_tx_tb.ip2bus_mst_addr[20] top.uft_tx_tb.ip2bus_mst_addr[19] top.uft_tx_tb.ip2bus_mst_addr[18] top.uft_tx_tb.ip2bus_mst_addr[17] top.uft_tx_tb.ip2bus_mst_addr[16] top.uft_tx_tb.ip2bus_mst_addr[15] top.uft_tx_tb.ip2bus_mst_addr[14] top.uft_tx_tb.ip2bus_mst_addr[13] top.uft_tx_tb.ip2bus_mst_addr[12] top.uft_tx_tb.ip2bus_mst_addr[11] top.uft_tx_tb.ip2bus_mst_addr[10] top.uft_tx_tb.ip2bus_mst_addr[9] top.uft_tx_tb.ip2bus_mst_addr[8] top.uft_tx_tb.ip2bus_mst_addr[7] top.uft_tx_tb.ip2bus_mst_addr[6] top.uft_tx_tb.ip2bus_mst_addr[5] top.uft_tx_tb.ip2bus_mst_addr[4] top.uft_tx_tb.ip2bus_mst_addr[3] top.uft_tx_tb.ip2bus_mst_addr[2] top.uft_tx_tb.ip2bus_mst_addr[1] top.uft_tx_tb.ip2bus_mst_addr[0]
+#{top.uft_tx_tb.ip2bus_mst_be[3:0]} top.uft_tx_tb.ip2bus_mst_be[3] top.uft_tx_tb.ip2bus_mst_be[2] top.uft_tx_tb.ip2bus_mst_be[1] top.uft_tx_tb.ip2bus_mst_be[0]
+#{top.uft_tx_tb.ip2bus_mst_length[11:0]} top.uft_tx_tb.ip2bus_mst_length[11] top.uft_tx_tb.ip2bus_mst_length[10] top.uft_tx_tb.ip2bus_mst_length[9] top.uft_tx_tb.ip2bus_mst_length[8] top.uft_tx_tb.ip2bus_mst_length[7] top.uft_tx_tb.ip2bus_mst_length[6] top.uft_tx_tb.ip2bus_mst_length[5] top.uft_tx_tb.ip2bus_mst_length[4] top.uft_tx_tb.ip2bus_mst_length[3] top.uft_tx_tb.ip2bus_mst_length[2] top.uft_tx_tb.ip2bus_mst_length[1] top.uft_tx_tb.ip2bus_mst_length[0]
+@200
+-
+@22
+#{top.uft_tx_tb.bus2ip_mstrd_d[31:0]} top.uft_tx_tb.bus2ip_mstrd_d[31] top.uft_tx_tb.bus2ip_mstrd_d[30] top.uft_tx_tb.bus2ip_mstrd_d[29] top.uft_tx_tb.bus2ip_mstrd_d[28] top.uft_tx_tb.bus2ip_mstrd_d[27] top.uft_tx_tb.bus2ip_mstrd_d[26] top.uft_tx_tb.bus2ip_mstrd_d[25] top.uft_tx_tb.bus2ip_mstrd_d[24] top.uft_tx_tb.bus2ip_mstrd_d[23] top.uft_tx_tb.bus2ip_mstrd_d[22] top.uft_tx_tb.bus2ip_mstrd_d[21] top.uft_tx_tb.bus2ip_mstrd_d[20] top.uft_tx_tb.bus2ip_mstrd_d[19] top.uft_tx_tb.bus2ip_mstrd_d[18] top.uft_tx_tb.bus2ip_mstrd_d[17] top.uft_tx_tb.bus2ip_mstrd_d[16] top.uft_tx_tb.bus2ip_mstrd_d[15] top.uft_tx_tb.bus2ip_mstrd_d[14] top.uft_tx_tb.bus2ip_mstrd_d[13] top.uft_tx_tb.bus2ip_mstrd_d[12] top.uft_tx_tb.bus2ip_mstrd_d[11] top.uft_tx_tb.bus2ip_mstrd_d[10] top.uft_tx_tb.bus2ip_mstrd_d[9] top.uft_tx_tb.bus2ip_mstrd_d[8] top.uft_tx_tb.bus2ip_mstrd_d[7] top.uft_tx_tb.bus2ip_mstrd_d[6] top.uft_tx_tb.bus2ip_mstrd_d[5] top.uft_tx_tb.bus2ip_mstrd_d[4] top.uft_tx_tb.bus2ip_mstrd_d[3] top.uft_tx_tb.bus2ip_mstrd_d[2] top.uft_tx_tb.bus2ip_mstrd_d[1] top.uft_tx_tb.bus2ip_mstrd_d[0]
+@28
+top.uft_tx_tb.dut.bus2ip_mstrd_sof_n
+top.uft_tx_tb.dut.bus2ip_mstrd_eof_n
+top.uft_tx_tb.dut.bus2ip_mstrd_src_rdy_n
+top.uft_tx_tb.dut.ip2bus_mstrd_dst_rdy_n
+@200
+-
+-AXI Stream
+@28
+top.uft_tx_tb.dut.udp_tx_tvalid
+top.uft_tx_tb.dut.udp_tx_tlast
+@22
+#{top.uft_tx_tb.udp_tx_tdata[7:0]} top.uft_tx_tb.udp_tx_tdata[7] top.uft_tx_tb.udp_tx_tdata[6] top.uft_tx_tb.udp_tx_tdata[5] top.uft_tx_tb.udp_tx_tdata[4] top.uft_tx_tb.udp_tx_tdata[3] top.uft_tx_tb.udp_tx_tdata[2] top.uft_tx_tb.udp_tx_tdata[1] top.uft_tx_tb.udp_tx_tdata[0]
+@28
+top.uft_tx_tb.udp_tx_tready
+@200
+-
+-CMD
+@28
+top.uft_tx_tb.dut.cmd_asm.tx_tvalid
+top.uft_tx_tb.dut.cmd_asm.tx_tlast
+@24
+#{top.uft_tx_tb.dut.cmd_asm.ctr[5:0]} top.uft_tx_tb.dut.cmd_asm.ctr[5] top.uft_tx_tb.dut.cmd_asm.ctr[4] top.uft_tx_tb.dut.cmd_asm.ctr[3] top.uft_tx_tb.dut.cmd_asm.ctr[2] top.uft_tx_tb.dut.cmd_asm.ctr[1] top.uft_tx_tb.dut.cmd_asm.ctr[0]
+@200
+-
+-Ctrl
+@22
+#{top.uft_tx_tb.dut.controll.tcid[6:0]} top.uft_tx_tb.dut.controll.tcid[6] top.uft_tx_tb.dut.controll.tcid[5] top.uft_tx_tb.dut.controll.tcid[4] top.uft_tx_tb.dut.controll.tcid[3] top.uft_tx_tb.dut.controll.tcid[2] top.uft_tx_tb.dut.controll.tcid[1] top.uft_tx_tb.dut.controll.tcid[0]
+@420
+top.uft_tx_tb.dut.controll.current_state
+top.uft_tx_tb.dut.controll.next_state
+[pattern_trace] 1
+[pattern_trace] 0

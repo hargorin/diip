@@ -1,0 +1,49 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    \coordinate (orig)   at (0,0);
+    \coordinate (pc)    at (0,0);
+    \coordinate (phy)    at (3,0);
+    \coordinate (eth)    at (9,0);
+    \coordinate (mem1)    at (12,-2);
+    \coordinate (mem2)    at (6,-2);
+    \coordinate (sob)    at (9,-2);
+
+    %nodes
+    \begin{pgfonlayer}{main}
+        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.5cm, align=center] (A) at (pc) {PC};
+        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.5cm, align=center] (B) at (phy) {PHY};
+        \node[draw, fill=white, minimum width=8cm, minimum height=1cm, anchor=south, text width=4cm, align=center] (C) at (eth) {Communication};
+        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.7cm, align=center] (D) at (mem1) {Memory};
+        \node[draw, fill=white, minimum width=2.5cm, minimum height=1cm, anchor=south, text width=1.7cm, align=center] (E) at (sob) {Processing};
+        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.7cm, align=center] (F) at (mem2) {Memory};
+    \end{pgfonlayer}
+
+    \begin{pgfonlayer}{main}
+        \node (FPGA) at (5.6, 1.5) { FPGA };
+    \end{pgfonlayer} 
+    \begin{pgfonlayer}{foreground}
+        \node (f_fpga) [draw=black, fill=gray!20, inner sep=10, fit={(FPGA) (C) (D) (E) (F)}] {};
+    \end{pgfonlayer} 
+    
+    \begin{pgfonlayer}{main}
+        \node (eva) at (3.45 , 2.5) { Evaluation Board };
+    \end{pgfonlayer}    
+
+    \begin{pgfonlayer}{background}
+        \node [draw=black, fill=gray!40, inner sep=10, fit={(eva) (f_fpga)}] {};
+    \end{pgfonlayer}
+
+
+    \begin{pgfonlayer}{main}
+        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (A) -- (B);
+        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (B) -- (C);
+        \path[draw,-{Latex[length=2.5mm]}] ($(C.south)!0.75!(C.south east)$) -- (D);
+        \path[draw,-{Latex[length=2.5mm]}] (D) -- (E);
+        \path[draw,-{Latex[length=2.5mm]}] (E) -- (F);
+        \path[draw,-{Latex[length=2.5mm]}] (F) -- ($(C.south)!0.75!(C.south west)$);
+    \end{pgfonlayer}
+
+\end{tikzpicture}
