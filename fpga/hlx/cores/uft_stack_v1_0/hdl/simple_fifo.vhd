@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:04:30 2017
--- Last update : Wed Nov 15 10:47:16 2017
+-- Last update : Wed Mar  7 13:08:09 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -62,6 +62,8 @@ begin
                 
                 Full  <= '0';
                 Empty <= '1';
+
+                DataOut <= (others => '0');
             else
                 if (ReadEn = '1') then
                     if ((Looped = true) or (Head /= Tail)) then
