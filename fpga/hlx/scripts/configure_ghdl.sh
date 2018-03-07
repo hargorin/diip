@@ -7,7 +7,7 @@ then
 fi 
 
 mkdir -p build/ghdl
-rm build/ghdl/*
+rm -f build/ghdl/*
 cd build/ghdl/
 
 TOP=$1
