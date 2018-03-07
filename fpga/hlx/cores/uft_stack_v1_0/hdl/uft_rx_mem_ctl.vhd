@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Sat Dec  2 16:28:42 2017
+-- Last update : Wed Mar  7 16:32:35 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -144,13 +144,15 @@ begin
     ip2bus_mstwr_rem <= (others => '0');
 
     ----------------------------------------------------------------------------
-    p_state_proc_clocked : process( clk, rst_n )
+    p_state_proc_clocked : process( clk )
     ----------------------------------------------------------------------------
     begin
-        if rst_n = '0' then
-            current_state <= IDLE;
-        elsif rising_edge(clk) then
-            current_state <= next_state;
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                current_state <= IDLE;
+            else
+                current_state <= next_state;
+            end if;
         end if;
     end process ; -- p_state_proc_clocked
 

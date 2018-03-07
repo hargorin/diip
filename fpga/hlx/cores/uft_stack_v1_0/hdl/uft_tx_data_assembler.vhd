@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 15:13:40 2017
--- Last update : Sat Dec  2 11:26:09 2017
+-- Last update : Wed Mar  7 16:41:23 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -141,41 +141,44 @@ begin
     ----------------------------------------------------------------------------
     -- Stores the required data at start
     -- -------------------------------------------------------------------------
-    p_init : process( clk, rst_n )
+    p_init : process( clk )
     ----------------------------------------------------------------------------
     begin
-        if rst_n = '0' then
-            n_bytes  <= (others => '0');
-        elsif rising_edge(clk) then
-            if start = '1' and running = '0' then
-                n_bytes <= unsigned(size) + 4; -- 4 bytes header + data
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                n_bytes  <= (others => '0');
             else
-                n_bytes <= n_bytes;
+                if start = '1' and running = '0' then
+                    n_bytes <= unsigned(size) + 4; -- 4 bytes header + data
+                else
+                    n_bytes <= n_bytes;
+                end if;
             end if;
         end if;
     end process ; -- p_init
 
     ----------------------------------------------------------------------------
     -- Enable process
-    p_en : process (clk, rst_n)
+    p_en : process ( clk )
     ----------------------------------------------------------------------------
     begin    
-        if rst_n = '0' then
-            running <= '0';
-            done <= '0';
-        elsif rising_edge(clk) then
-            done <= '0';
-
-            if start = '1' and running = '0' then
-                running <= '1';
-            elsif ctr = (n_bytes-1) then
+        if rising_edge(clk) then
+            if rst_n = '0' then
                 running <= '0';
-                done <= '1';
+                done <= '0';
             else
-                running <= running;
+                done <= '0';
+
+                if start = '1' and running = '0' then
+                    running <= '1';
+                elsif ctr = (n_bytes-1) then
+                    running <= '0';
+                    done <= '1';
+                else
+                    running <= running;
+                end if;
             end if;
         end if;
-                
     end process p_en;
 
     ----------------------------------------------------------------------------
@@ -183,28 +186,30 @@ begin
     -- 
     -- Increment if AXI stream is ready and data packet generator is running
     -- -------------------------------------------------------------------------
-    p_ctr : process (clk, rst_n)
+    p_ctr : process ( clk )
     ----------------------------------------------------------------------------
     begin    
-        if rst_n = '0' then
-            ctr <= (others => '0');
-        elsif rising_edge(clk) then
-            ctr <= ctr;
-            if running = '1' then
-                if ctr < 4 then
-                    -- if sending header, we can increment if dst is ready
-                    if  tx_tready = '1' then
-                        ctr <= ctr + 1;
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                ctr <= (others => '0');
+            else
+                ctr <= ctr;
+                if running = '1' then
+                    if ctr < 4 then
+                        -- if sending header, we can increment if dst is ready
+                        if  tx_tready = '1' then
+                            ctr <= ctr + 1;
+                        end if;
+                    else
+                        -- if sending data, we can only increment if the fifo has data
+                        if fifo_empty = '0' then
+                            ctr <= ctr + 1;
+                            end if;
                     end if;
                 else
-                    -- if sending data, we can only increment if the fifo has data
-                    if fifo_empty = '0' then
-                        ctr <= ctr + 1;
-                        end if;
+                    -- clear counter if not running
+                    ctr <= (others => '0');
                 end if;
-            else
-                -- clear counter if not running
-                ctr <= (others => '0');
             end if;
         end if;
     end process p_ctr;
@@ -215,7 +220,7 @@ begin
     -- 
     -- Reads the required number of bytes into the FIFO
     -- -------------------------------------------------------------------------
-    p_in_nex : process (clk, rst_n)
+    p_in_nex : process ( clk )
     ----------------------------------------------------------------------------
     begin
         -- nex state set
@@ -312,15 +317,17 @@ begin
     -- enable read if running, output is data and tx is ready
     fifo_read_en <= '1' when running = '1' and ctr >= 3 and tx_tready = '1' else '0';
 
-    p_fifo_data_valid : process( clk, rst_n )
+    p_fifo_data_valid : process( clk )
     begin
-        if rst_n = '0' then
-            fifo_data_valid <= '0';
-        elsif rising_edge(clk) then
-            if fifo_empty = '0' then
-                fifo_data_valid <= '1';
-            else
+        if rising_edge(clk) then
+            if rst_n = '0' then
                 fifo_data_valid <= '0';
+            else
+                if fifo_empty = '0' then
+                    fifo_data_valid <= '1';
+                else
+                    fifo_data_valid <= '0';
+                end if;
             end if;
         end if;
     end process ; -- p_fifo_data_valid

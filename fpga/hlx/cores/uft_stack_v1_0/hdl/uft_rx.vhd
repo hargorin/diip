@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.ocom>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 11:19:21 2017
--- Last update : Wed Nov 22 16:30:34 2017
+-- Last update : Wed Mar  7 16:32:02 2018
 -- Platform    : Default Part Number
 -- Standard    : VHDL-2008
 -------------------------------------------------------------------------------
@@ -79,13 +79,15 @@ architecture rtl of uft_rx is
 
 begin
     ----------------------------------------------------------------------------
-    p_state_proc_clocked : process( clk, rst_n )
+    p_state_proc_clocked : process( clk )
     ----------------------------------------------------------------------------
     begin
-        if rst_n = '0' then
-            current_state <= IDLE;
-        elsif rising_edge(clk) then
-            current_state <= next_state;
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                current_state <= IDLE;
+            else
+                current_state <= next_state;
+            end if;
         end if;
     end process ; -- p_state_proc_clocked
 
@@ -93,10 +95,14 @@ begin
     p_data_in_buf : process( clk, rst_n )
     ----------------------------------------------------------------------------
     begin
-        if rst_n = '0' then
-            data_in <= x"00";
-        elsif rising_edge(clk) AND (udp_rx_tvalid = '1') then
-            data_in <= udp_rx_tdata;
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                data_in <= x"00";
+            else
+                if (udp_rx_tvalid = '1') then
+                    data_in <= udp_rx_tdata;
+                end if;
+            end if;
         end if;
     end process;
 
@@ -203,58 +209,60 @@ begin
         end case;
     end process p_next_state;
 
-    p_output_latched : process( rst_n, clk )
+    p_output_latched : process( clk )
     begin
-        if rst_n = '0' then
-            command_data1 <= (others  => '0');
-            command_data2 <= (others  => '0');
-            command_code <= (others  => '0');
-            data_seq <= (others  => '0');
-            data_tcid <= (others  => '0');
-            is_data <= '0';
-            is_command <= '0';
-        elsif rising_edge(clk) then
-            case (current_state) is
-                when IDLE =>
-                    is_command <= '0';
-                    is_data <= '0';
-                when RX_START =>
-                    if (data_in(7) = '0' ) then
-                        is_command <= '1';
-                        command_code <= data_in(6 downto 0);
-                    elsif (data_in(7) = '1' ) then
-                        is_data <= '1';
-                        data_tcid <= data_in(6 downto 0);
-                    end if;
-                when CMD1_2 =>
-                    command_data1(23 downto 16) <= data_in;
-                when CMD1_1 =>
-                    command_data1(15 downto 8) <= data_in;
-                when CMD1_0 =>
-                    command_data1(7 downto 0) <= data_in;
-                when CMD2_3 =>
-                    command_data2(31 downto 24) <= data_in;
-                when CMD2_2 =>
-                    command_data2(23 downto 16) <= data_in;
-                when CMD2_1 =>
-                    command_data2(15 downto 8) <= data_in;
-                when CMD2_0 =>
-                    command_data2(7 downto 0) <= data_in;
-                when RX_CMD_COMPLETE =>
-                    
-                when DATA_SEQ2 =>
-                    data_seq(23 downto 16)  <= data_in;
-                when DATA_SEQ1 =>
-                    data_seq(15 downto 8)  <= data_in;
-                when DATA_SEQ0 =>
-                    data_seq(7 downto 0)  <= data_in;
-                when PAYLOAD =>
-                    
-                when PAYLOAD_LAST =>
-                    
-                when RX_DATA_COMPLETE =>
-                    
-            end case;
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                command_data1 <= (others  => '0');
+                command_data2 <= (others  => '0');
+                command_code <= (others  => '0');
+                data_seq <= (others  => '0');
+                data_tcid <= (others  => '0');
+                is_data <= '0';
+                is_command <= '0';
+            else
+                case (current_state) is
+                    when IDLE =>
+                        is_command <= '0';
+                        is_data <= '0';
+                    when RX_START =>
+                        if (data_in(7) = '0' ) then
+                            is_command <= '1';
+                            command_code <= data_in(6 downto 0);
+                        elsif (data_in(7) = '1' ) then
+                            is_data <= '1';
+                            data_tcid <= data_in(6 downto 0);
+                        end if;
+                    when CMD1_2 =>
+                        command_data1(23 downto 16) <= data_in;
+                    when CMD1_1 =>
+                        command_data1(15 downto 8) <= data_in;
+                    when CMD1_0 =>
+                        command_data1(7 downto 0) <= data_in;
+                    when CMD2_3 =>
+                        command_data2(31 downto 24) <= data_in;
+                    when CMD2_2 =>
+                        command_data2(23 downto 16) <= data_in;
+                    when CMD2_1 =>
+                        command_data2(15 downto 8) <= data_in;
+                    when CMD2_0 =>
+                        command_data2(7 downto 0) <= data_in;
+                    when RX_CMD_COMPLETE =>
+                        
+                    when DATA_SEQ2 =>
+                        data_seq(23 downto 16)  <= data_in;
+                    when DATA_SEQ1 =>
+                        data_seq(15 downto 8)  <= data_in;
+                    when DATA_SEQ0 =>
+                        data_seq(7 downto 0)  <= data_in;
+                    when PAYLOAD =>
+                        
+                    when PAYLOAD_LAST =>
+                        
+                    when RX_DATA_COMPLETE =>
+                        
+                end case;
+            end if;
         end if;
     end process ; -- p_output_latched
 
