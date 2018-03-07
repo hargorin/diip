@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Thu Nov 30 08:58:18 2017
--- Last update : Thu Nov 30 09:46:22 2017
+-- Last update : Wed Mar  7 11:25:35 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -32,6 +32,7 @@ entity debounce is
         ); --counter size (21 bits gives 16.8ms with 125MHz clock)
     port(
         clk     : IN  std_logic;  --input clock
+        rst     : IN  std_logic;  --reset input
         button  : IN  std_logic;  --input signal to be debounced
         result  : OUT std_logic := '0'
     ); --debounced signal
@@ -48,15 +49,21 @@ architecture logic OF debounce is
         process(clk)
         begin
             if rising_edge(clk) then
-                flipflops(0) <= button;
-                flipflops(1) <= flipflops(0);
-                if(counter_set = '1') then                  --reset counter because input is changing
-                        counter_out <= (others => '0');
+                if (rst = '1') then
+                    flipflops <= (others => '0');
+                    result <= '0';
+                    counter_out <= (others => '0');
+                else
+                    flipflops(0) <= button;
+                    flipflops(1) <= flipflops(0);
+                    if(counter_set = '1') then                  --reset counter because input is changing
+                            counter_out <= (others => '0');
                     elsif(counter_out(C_COUNTER_SIZE) = '0') then --stable input time is not yet met
                         counter_out <= counter_out + 1;
                     else                                        --stable input time is met
                         result <= flipflops(1);
-                end if;    
+                    end if;    
+                end if;
             end if;
         end process;
 end architecture logic;

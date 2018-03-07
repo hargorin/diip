@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Thu Nov 30 09:41:26 2017
--- Last update : Thu Nov 30 09:45:36 2017
+-- Last update : Wed Mar  7 11:31:43 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -37,6 +37,7 @@ architecture testbench of debounce_tb is
 
     -- Testbench signals
     signal clk    : std_logic;
+    signal rst    : std_logic;
     signal button : std_logic;
     signal result : std_logic;
 
@@ -69,23 +70,37 @@ begin
             wait until rising_edge(clk);
         end procedure waitfor;
     begin
+        rst <= '1';
+        button <= '0';
+
+        waitfor(3);
+        rst <= '0';
+
         waitfor(3);
         button <= '1';
-        waitfor(5);
+        waitfor(2);
         button <= '0';
+        assert (result = '0') report "Did not debounce" severity error;
         
         waitfor(5);
         button <= '1';
         waitfor(1);
         button <= '0';
         waitfor(5);
+        assert (result = '0') report "Did not debounce" severity error;
         
         waitfor(5);
         button <= '1';
-        wait for 20 ms;
+        wait for 7 * C_CLK_PERIOD;
         button <= '0';
+        waitfor(1);
+        assert (result = '1') report "Did not set" severity error;
+        wait for 5 * C_CLK_PERIOD;
+        waitfor(1);
+        assert (result = '0') report "Did not clear" severity error;
         waitfor(5);
 
+        assert false report "All test successful" severity note;
         stop_sim <= '1';
         wait;
     end process ; -- p_sim
@@ -95,10 +110,11 @@ begin
     -----------------------------------------------------------
     DUT : entity work.debounce
         generic map (
-            C_COUNTER_SIZE => 21
+            C_COUNTER_SIZE => 2
         )
         port map (
             clk    => clk,
+            rst    => rst,
             button => button,
             result => result
         );
