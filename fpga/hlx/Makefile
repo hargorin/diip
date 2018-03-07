@@ -97,10 +97,19 @@ flash: $(BUILD)/$(NAME).bit
 #
 # Simulation
 # 
-sim: $(BUILD)/ghdl/Makefile
+LASTTOP:=$(shell cat $(BUILD)/ghdl/stamp 2>/dev/null)
+sim:
+	echo $(LASTTOP)
+	echo $(TOP)
+ifeq ($(LASTTOP),$(TOP))
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-$(BUILD)/ghdl/Makefile:
+else
+	$(RM) $(BUILD)/ghdl/*
 	scripts/configure_ghdl.sh ${TOP}
+	@echo "$(TOP)" > $(BUILD)/ghdl/stamp
+	cd $(BUILD)/ghdl/ && $(MAKE) run
+endif
+
 clean-sim:
 	$(RM) $(BUILD)/ghdl/*
 
