@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Oct 18 09:36:54 2017
--- Last update : Sat Dec  2 14:02:12 2017
+-- Last update : Fri Mar  9 10:40:45 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -39,8 +39,8 @@ entity axi_master_burst_model_tb is
             C_LENGTH_WIDTH      : INTEGER range 12 to 20  := 12;
             C_FAMILY            : string                  := "virtex7";
 
-            -- Burst length for read and write burst operations
-            C_BURST_LEN         : integer := 32
+            -- Burst length in bytes for read and write burst operations
+            C_BURST_LEN         : integer := 80
         );
 end entity axi_master_burst_model_tb;
 
@@ -228,7 +228,7 @@ begin
         ip2bus_mstrd_req <= '1';
         ip2bus_mst_type <= '1';
         ip2bus_mstrd_dst_rdy_n <= '0';
-        ip2bus_mst_length <= std_logic_vector(to_unsigned(9, ip2bus_mst_length'length));
+        ip2bus_mst_length <= std_logic_vector(to_unsigned(C_BURST_LEN, ip2bus_mst_length'length));
         waitfor(2);
         assert bus2ip_mst_cmdack = '1' report "bus2ip_mst_cmdack error" severity error;
         ip2bus_mstrd_req <= '0';
@@ -307,7 +307,7 @@ begin
         ip2bus_mstrd_req <= '1';
         ip2bus_mst_type <= '1';
         ip2bus_mstrd_dst_rdy_n <= '0';
-        ip2bus_mst_length <= std_logic_vector(to_unsigned(9, ip2bus_mst_length'length));
+        ip2bus_mst_length <= std_logic_vector(to_unsigned(1, ip2bus_mst_length'length));
         waitfor(2);
         assert bus2ip_mst_cmdack = '1' report "bus2ip_mst_cmdack error" severity warning;
         ip2bus_mstrd_req <= '0';
