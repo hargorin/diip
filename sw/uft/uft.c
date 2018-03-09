@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-09 14:16:35
+* @Last Modified time: 2018-03-09 14:34:27
 */
 
 #include "uft.h"
@@ -54,6 +54,11 @@ typedef enum uftControll
 // ========================================================
 // Function declarations
 // ========================================================
+
+// Socket related
+static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in *sa );
+static int create_recv_socket(uint16_t port, struct sockaddr_in *sa );
+
 static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq);
 static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tcid, uint32_t seq);
 static uint32_t get_filesize_bytes (FILE *fp);
@@ -81,10 +86,11 @@ static uint8_t get_data_tcid (uint8_t *buf);
 int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 {
     int sockfd;
-    uint8_t *controll;
-    uint8_t *dbuf;
     struct sockaddr_in sa;
     int slen = sizeof(sa);
+
+    uint8_t *controll;
+    uint8_t *dbuf;
     uint32_t num;
 
     uint8_t tcid = 12;
@@ -98,23 +104,14 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         nseq++;
     }
 
-    // convert ip and port
-    inet_aton(ip, &(sa.sin_addr));
-    sa.sin_port = htons(port);
-    sa.sin_family = AF_INET;
+    // Create send socket
+    sockfd = create_send_socket(ip, port, &sa);
+    if (sockfd < 0) return -1;
 
     // send file start control
     controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
     memset(controll, 0x0, UFT_CONTROLL_SIZE);
     assemble_uft_controll(controll, tcid, nseq);
-    
-    // send control packet
-    sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (sockfd < 0) 
-    {
-        printf("ERROR opening socket\n");
-        return -1;
-    }
 
     //send the message
     if (sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen)==-1)
@@ -143,6 +140,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     return 0;
 }
 
+
 /**
  * @brief      Receive a file
  *
@@ -155,9 +153,9 @@ int uft_receive_file( FILE *fp,  uint16_t port)
 {
     int recv_state = 0;
 
-    struct sockaddr_in si_me, si_other;
+    struct sockaddr_in si_other;
      
-    int s, slen = sizeof(si_other) , recv_len;
+    int sockfd, slen = sizeof(si_other) , recv_len;
     uint8_t buf[1500];
 
     // data output
@@ -168,26 +166,9 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     double start, end;
     struct timeval tv;
 
-    //create a UDP socket
-    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
-    {
-        printf("socket error: %s\n", strerror(errno));
-        return -1;
-    }
-     
-    // zero out the structure
-    memset((uint8_t *) &si_me, 0, sizeof(si_me));
-     
-    si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(port);
-    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-     
-    //bind socket to port
-    if( bind(s , (struct sockaddr*)&si_me, sizeof(si_me) ) == -1)
-    {
-        printf("bind error: %s\n", strerror(errno));
-        return -1;
-    }
+    // create UDP receive socket
+    sockfd = create_recv_socket(port, &si_other);
+    if(sockfd < 0) return -1;
      
     //keep listening for data
     do_receive = 1;
@@ -195,7 +176,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     while(do_receive)
     {    
         //try to receive some data, this is a blocking call
-        if ((recv_len = recvfrom(s, buf, 1500, 0, (struct sockaddr *) &si_other, (socklen_t *) &slen)) == -1)
+        if ((recv_len = recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &si_other, (socklen_t *) &slen)) == -1)
         {
             printf("rcvfrom error: %s\n", strerror(errno));
             return -1;
@@ -260,7 +241,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
         }
     }
     
-    close(s);
+    close(sockfd);
 
     printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", (end-start),  1.0*get_filesize_bytes(fp) / 1024.0 / 1024.0 / ((end-start) / 1000000.0));
     printf("Filesize: %d\n", get_filesize_bytes(fp));
@@ -272,6 +253,70 @@ int uft_receive_file( FILE *fp,  uint16_t port)
 // ========================================================
 // Modul private functions
 // ========================================================
+// 
+/**
+ * @brief      Creates a UDP socket to send data
+ *
+ * @param[in]  ip    Destination IP address
+ * @param[in]  port  Destination port
+ * @param      sa    socket address structure pointer
+ *
+ * @return     socket id if success
+ */
+static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in *sa )
+{
+    int sockfd;
+
+    // convert ip and port
+    inet_aton(ip, &(sa->sin_addr));
+    sa->sin_port = htons(port);
+    sa->sin_family = AF_INET;
+
+    // send control packet
+    sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (sockfd < 0) 
+    {
+        printf("ERROR opening socket\n");
+        return -1;
+    }
+    return sockfd;
+}
+
+/**
+ * @brief      Creates a UDP receive socket to receive data
+ *
+ * @param[in]  port  listen port
+ * @param      sa    socket address structure pointer
+ *
+ * @return     socket id if success
+ */
+static int create_recv_socket(uint16_t port, struct sockaddr_in *sa )
+{
+    int sockfd;
+
+    //create a UDP socket
+    if ((sockfd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    {
+        printf("socket error: %s\n", strerror(errno));
+        return -1;
+    }
+     
+    // zero out the structure
+    memset((uint8_t *) sa, 0, sizeof(*sa));
+     
+    sa->sin_family = AF_INET;
+    sa->sin_port = htons(port);
+    sa->sin_addr.s_addr = htonl(INADDR_ANY);
+     
+    //bind socket to port
+    if( bind(sockfd , (struct sockaddr*)sa, sizeof(*sa) ) == -1)
+    {
+        printf("bind error: %s\n", strerror(errno));
+        return -1;
+    }
+    return sockfd;
+}
+
 static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq)
 {
     buf[0] = CONTROLL_FTS;
