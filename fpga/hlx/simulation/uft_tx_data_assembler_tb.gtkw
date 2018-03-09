@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
 [*] Wed Nov 29 14:59:01 2017
 [*]
-[dumpfile] "(null)"
+[dumpfile] "../build/ghdl/uft_tx_data_assembler_tb.ghw"
 [savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_tx_data_assembler_tb.gtkw"
 [timestart] 982800000
 [size] 2167 1155

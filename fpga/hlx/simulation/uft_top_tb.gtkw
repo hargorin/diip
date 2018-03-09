@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
 [*] Sat Dec  2 12:55:09 2017
 [*]
-[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/uft_top_tb.ghw"
+[dumpfile] "../build/ghdl/uft_top_tb.ghw"
 [dumpfile_mtime] "Sat Dec  2 12:52:09 2017"
 [dumpfile_size] 251549
 [savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_top_tb.gtkw"
