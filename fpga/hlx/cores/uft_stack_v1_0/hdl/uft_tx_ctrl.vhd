@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Fri Mar  9 10:54:17 2018
+-- Last update : Fri Mar  9 11:31:17 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ architecture structural of uft_tx_control is
     signal packet_data_size_int : std_logic_vector (10 downto 0);
     signal data_size_int : integer;
     signal remaining_bytes : unsigned(31 downto 0) := (others => '0');
-    signal data_offset : unsigned(31 downto 0);
+    signal data_offset : unsigned(31 downto 0) := (others => '0');
 
     -- Number of bytes per Packet. Use a power of 2: The start command packet 
     --  sends the number of data packets to be sent. For this calculation, the

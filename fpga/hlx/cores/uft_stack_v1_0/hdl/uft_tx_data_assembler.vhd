@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 15:13:40 2017
--- Last update : Fri Mar  9 10:25:58 2018
+-- Last update : Fri Mar  9 11:28:53 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -270,7 +270,7 @@ begin
         end case;
     end process p_in_next_state;
     ----------------------------------------------------------------------------
-    p_in_outs : process( din_cur_state )
+    p_in_outs : process( din_cur_state, data_src_addr, size )
     ----------------------------------------------------------------------------
     begin
         ip2bus_mstrd_req        <= '0';
