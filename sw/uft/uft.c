@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-09 14:34:27
+* @Last Modified time: 2018-03-09 16:07:48
 */
 
 #include "uft.h"
@@ -58,16 +58,22 @@ typedef enum uftControll
 // Socket related
 static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in *sa );
 static int create_recv_socket(uint16_t port, struct sockaddr_in *sa );
+static int create_reply_socket(uint16_t port, struct sockaddr_in *sa);
 
 static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq);
+static void assemble_uft_ackfp (uint8_t *buf, uint8_t tcid, uint32_t seqnbr);
 static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tcid, uint32_t seq);
+
 static uint32_t get_filesize_bytes (FILE *fp);
+
 static int is_command_packet(uint8_t *buf);
 static int get_command (uint8_t *buf);
 static uint8_t get_tcid (uint8_t *buf);
 static uint32_t get_nseq (uint8_t *buf);
 static uint32_t get_seq (uint8_t *buf);
 static uint8_t get_data_tcid (uint8_t *buf);
+static uint32_t get_data_seqnbr (uint8_t *buf);
+static uint32_t get_command_ackfp_seqnbr (uint8_t *buf);
 
 
 // ========================================================
@@ -85,9 +91,10 @@ static uint8_t get_data_tcid (uint8_t *buf);
  */
 int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 {
-    int sockfd;
-    struct sockaddr_in sa;
+    int sockfd, rxsockfd;
+    struct sockaddr_in sa, sr;
     int slen = sizeof(sa);
+    int srlen = sizeof(sr);
 
     uint8_t *controll;
     uint8_t *dbuf;
@@ -95,6 +102,10 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 
     uint8_t tcid = 12;
     uint32_t nseq; 
+    int count, recv_len;
+    uint8_t buf[1500];
+
+    uint8_t *ack_buf;
 
     // calculate nseq
     int32_t filesize_bytes = get_filesize_bytes(fp);
@@ -104,9 +115,17 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         nseq++;
     }
 
+    // make room for ack array and set all to 0
+    ack_buf = malloc( nseq * sizeof(uint8_t) );
+    memset(ack_buf, 0, nseq * sizeof(uint8_t));
+
     // Create send socket
     sockfd = create_send_socket(ip, port, &sa);
     if (sockfd < 0) return -1;
+
+    // create UDP receive socket
+    rxsockfd = create_recv_socket(port+1, &sr);
+    if(rxsockfd < 0) return -1;
 
     // send file start control
     controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
@@ -132,11 +151,88 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             printf("Error in: sendto()");
             return -1;
         }
+        // Check if packet received
+        ioctl(rxsockfd, FIONREAD, &count);
+        if(count > 0)
+        {
+            printf("Received %d bytes\n",count);
+            if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
+            {
+                printf("\nrcvfrom error: %s\n", strerror(errno));
+                return -1;
+            }
+            printf("Command %d\n",get_command(buf));   
+            // Check for ACK package
+            if(get_command(buf) == CONTROLL_ACKFP)
+            {
+                printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
+            }
+        }
 
-        usleep(50);
+
+        usleep(20);
+    }
+
+    // wait a bit for the last few acks
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 100000;
+    if (setsockopt(rxsockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0) {
+        perror("Error");
+    }
+    int do_it = 1;
+    while(do_it)
+    {
+        if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
+        {
+            if(errno == EAGAIN)
+            {
+                // this means timeout
+                do_it = 0;
+            }
+            else
+            {
+                printf("\nrcvfrom error: %s\n", strerror(errno));
+                return -1;
+            }
+        }
+        if(do_it != 0)
+        {
+            printf("Command %d\n",get_command(buf));   
+            // Check for ACK package
+            if(get_command(buf) == CONTROLL_ACKFP)
+            {
+                printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
+            }
+        }
+    }
+
+
+    // ack statistics
+    int nack_ctr = 0;
+    for(int i = 0; i < nseq; i++)
+    {
+        if(ack_buf[i] == 0)
+        {
+            nack_ctr++;
+            printf("NACK for package %d\n", i);
+        }
+    }
+
+    // statistics
+    if(nack_ctr != 0)
+    {
+        printf("%d packets have not been acknowledged\n", nack_ctr);
+    }
+    else
+    {
+        printf("HURRAY! All packets have been acknowledged.\n");
     }
 
     close(sockfd);
+    close(rxsockfd);
     return 0;
 }
 
@@ -153,9 +249,10 @@ int uft_receive_file( FILE *fp,  uint16_t port)
 {
     int recv_state = 0;
 
-    struct sockaddr_in si_other;
+    struct sockaddr_in si_other, st;
      
-    int sockfd, slen = sizeof(si_other) , recv_len;
+    int sockfd, txsockfd, slen = sizeof(si_other) , recv_len, stlen = sizeof(si_other);
+
     uint8_t buf[1500];
 
     // data output
@@ -165,6 +262,8 @@ int uft_receive_file( FILE *fp,  uint16_t port)
      
     double start, end;
     struct timeval tv;
+
+    uint8_t *controll;
 
     // create UDP receive socket
     sockfd = create_recv_socket(port, &si_other);
@@ -181,6 +280,10 @@ int uft_receive_file( FILE *fp,  uint16_t port)
             printf("rcvfrom error: %s\n", strerror(errno));
             return -1;
         }
+
+        // Create send socket
+        txsockfd = create_reply_socket(port+1, &si_other);
+        if (txsockfd < 0) return -1;
          
         //print details of the client/peer and the data received
         // printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
@@ -223,6 +326,18 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                     memcpy(&outbuf[ get_seq(buf) * payload_size ], &buf[4], recv_len - 4);
                     data_ctr += recv_len - 4;
                     // printf("buf_idx: %d len: %d payload_size: %d\n", (get_seq(buf) * payload_size), (recv_len - 4), payload_size);
+                    
+                    // send acknowledge
+                    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+                    memset(controll, 0x0, UFT_CONTROLL_SIZE);
+                    assemble_uft_ackfp(controll, tcid, get_data_seqnbr(buf));
+                    //send the message
+                    if (sendto(txsockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &si_other, slen)==-1)
+                    {
+                        printf("Error in: sendto()");
+                        return -1;
+                    }
+
                     if(++seqctr == nseq)
                     {
                         printf("start writing file\n");
@@ -242,6 +357,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     }
     
     close(sockfd);
+    close(txsockfd);
 
     printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", (end-start),  1.0*get_filesize_bytes(fp) / 1024.0 / 1024.0 / ((end-start) / 1000000.0));
     printf("Filesize: %d\n", get_filesize_bytes(fp));
@@ -317,6 +433,32 @@ static int create_recv_socket(uint16_t port, struct sockaddr_in *sa )
     return sockfd;
 }
 
+/**
+ * @brief      Creates a socket to reply to the sender specified in sa
+ *
+ * @param      sa    sender info
+ *
+ * @return     socket, -1 if failed
+ */
+static int create_reply_socket(uint16_t port, struct sockaddr_in *sa)
+{
+    int sockfd;
+
+    // convert ip and port
+    // inet_aton(ip, &(sa->sin_addr));
+    sa->sin_port = htons(port);
+    sa->sin_family = AF_INET;
+
+    // send control packet
+    sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (sockfd < 0) 
+    {
+        printf("ERROR opening socket\n");
+        return -1;
+    }
+    return sockfd;
+}
+
 static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq)
 {
     buf[0] = CONTROLL_FTS;
@@ -329,6 +471,27 @@ static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq)
     buf[5] = ((nseq & 0x00ff0000) >> 16);
     buf[6] = ((nseq & 0x0000ff00) >>  8);
     buf[7] = ((nseq & 0x000000ff) >>  0);
+}
+
+/**
+ * @brief      Assembles a packet acknowledgment packet
+ *
+ * @param      buf     The buffer
+ * @param[in]  tcid    transaction ID
+ * @param[in]  seqnbr  sequence number to acknowledge
+ */
+static void assemble_uft_ackfp (uint8_t *buf, uint8_t tcid, uint32_t seqnbr)
+{
+    buf[0] = CONTROLL_ACKFP;
+
+    buf[1] = 0;
+    buf[2] = 0;
+    buf[3] = tcid & 0x7f;
+
+    buf[4] = ((seqnbr & 0xff000000) >> 24);
+    buf[5] = ((seqnbr & 0x00ff0000) >> 16);
+    buf[6] = ((seqnbr & 0x0000ff00) >>  8);
+    buf[7] = ((seqnbr & 0x000000ff) >>  0);
 }
 
 /**
@@ -489,8 +652,30 @@ static uint8_t get_data_tcid (uint8_t *buf)
     return -1;
 }
 
+/**
+ * @brief      Extracts the current sequence number from a received data packet
+ *
+ * @param      buf   The buffer
+ *
+ * @return     The data sequqnce number
+ */
+static uint32_t get_data_seqnbr (uint8_t *buf)
+{
+    if (is_command_packet(buf) == 0)
+    {
+        return (buf[1] << 16) | (buf[2] << 8) | (buf[3] << 0);
+    }
+    return -1;
+}
 
-
+static uint32_t get_command_ackfp_seqnbr (uint8_t *buf)
+{
+    if (is_command_packet(buf))
+    {
+        return ( (buf[4] << 24) | (buf[5] << 16) | (buf[6] << 8) | (buf[7] << 0) );
+    }
+    return -1;
+}
 
 
 
