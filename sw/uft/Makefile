@@ -14,11 +14,11 @@ default: $(TARGET)
 all: default
 
 # OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
-OBJECTS = sender.o ufp.o
+OBJECTS = sender.o uft.o
 
 HEADERS = $(wildcard *.h)
 
-RECEIVEROBJ = receiver.o ufp.o
+RECEIVEROBJ = receiver.o uft.o
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@

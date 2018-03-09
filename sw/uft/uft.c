@@ -2,10 +2,10 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2017-12-02 13:35:44
+* @Last Modified time: 2018-03-09 14:16:35
 */
 
-#include "ufp.h"
+#include "uft.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,18 +26,18 @@
 #include <unistd.h>
 #include <netdb.h>
 
-#include <time.h>
+#include <sys/time.h>
 
 // ========================================================
 // Data types
 // ========================================================
-typedef enum udfControll 
+typedef enum uftControll 
 {
     FTS,
     FTP,
     ACKFP,
     ACKFT
-} tUDFControll;
+} tUFTControll;
 
 
 // Command field values
@@ -46,15 +46,15 @@ typedef enum udfControll
 #define CONTROLL_ACKFP       0x02
 #define CONTROLL_ACKFT       0x03
 
-#define UDF_CONTROLL_SIZE    34 // data plus padding
-#define UDF_DATA_PAYLOAD     1464 // remaining data size in data packet
-#define UDF_DATA_SIZEW       1472 // data packet size
+#define UFT_CONTROLL_SIZE    34 // data plus padding
+#define UFT_DATA_PAYLOAD     1464 // remaining data size in data packet
+#define UFT_DATA_SIZEW       1472 // data packet size
 
 
 // ========================================================
 // Function declarations
 // ========================================================
-static void assemble_fts_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq);
+static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq);
 static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tcid, uint32_t seq);
 static uint32_t get_filesize_bytes (FILE *fp);
 static int is_command_packet(uint8_t *buf);
@@ -78,7 +78,7 @@ static uint8_t get_data_tcid (uint8_t *buf);
  *
  * @return     status
  */
-int udf_send_file( FILE *fp,  const char* ip, uint16_t port)
+int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 {
     int sockfd;
     uint8_t *controll;
@@ -92,8 +92,8 @@ int udf_send_file( FILE *fp,  const char* ip, uint16_t port)
 
     // calculate nseq
     int32_t filesize_bytes = get_filesize_bytes(fp);
-    nseq = filesize_bytes / UDF_DATA_PAYLOAD;
-    if( (filesize_bytes % UDF_DATA_PAYLOAD) != 0)
+    nseq = filesize_bytes / UFT_DATA_PAYLOAD;
+    if( (filesize_bytes % UFT_DATA_PAYLOAD) != 0)
     {
         nseq++;
     }
@@ -104,9 +104,9 @@ int udf_send_file( FILE *fp,  const char* ip, uint16_t port)
     sa.sin_family = AF_INET;
 
     // send file start control
-    controll = malloc( UDF_CONTROLL_SIZE * sizeof(uint8_t) );
-    memset(controll, 0x0, UDF_CONTROLL_SIZE);
-    assemble_fts_controll(controll, tcid, nseq);
+    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+    memset(controll, 0x0, UFT_CONTROLL_SIZE);
+    assemble_uft_controll(controll, tcid, nseq);
     
     // send control packet
     sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
@@ -117,15 +117,15 @@ int udf_send_file( FILE *fp,  const char* ip, uint16_t port)
     }
 
     //send the message
-    if (sendto(sockfd, controll, UDF_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen)==-1)
+    if (sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen)==-1)
     {
         printf("Error in: sendto()");
         return -1;
     }
 
     // start data transmission
-    dbuf = malloc( UDF_DATA_SIZEW * sizeof(uint8_t) );
-    memset(dbuf, 0x0, UDF_DATA_SIZEW);
+    dbuf = malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
+    memset(dbuf, 0x0, UFT_DATA_SIZEW);
     for(int i = 0; i < nseq; i++)
     {
         num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
@@ -151,7 +151,7 @@ int udf_send_file( FILE *fp,  const char* ip, uint16_t port)
  *
  * @return     status
  */
-int udf_receive_file( FILE *fp,  uint16_t port)
+int uft_receive_file( FILE *fp,  uint16_t port)
 {
     int recv_state = 0;
 
@@ -206,62 +206,64 @@ int udf_receive_file( FILE *fp,  uint16_t port)
         // printf("Data: %s\n" , buf);
         // printf("Size: %d\n", recv_len);
         // printf("%3.2f %%\r", 100.0/(float)nseq*seqctr);
-         
-        switch(recv_state)
+     
+        // first packet
+        if(recv_state == 0)
         {
-            case 0:
-                if( get_command(buf) == CONTROLL_FTS )
+            if( get_command(buf) == CONTROLL_FTS )
+            {
+                gettimeofday(&tv,NULL);
+                start = 1000000 * tv.tv_sec + tv.tv_usec;
+                // start of data transmission
+                recv_state++;
+                tcid = get_tcid(buf);
+                nseq = get_nseq(buf);
+                seqctr = 0;
+                data_ctr = 0;
+                obuf_ptr = 0;
+                payload_size = 0; // will be set on first data packet
+                // allocate enough space to hold the data
+                outbuf = malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
+                memset(outbuf, 0x0, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t));
+                // printf("nseq = %d\n", nseq);
+            }
+        }
+        // all subsequent packets
+        else
+        {
+            if( is_command_packet(buf) == 0 )
+            {
+            // printf("seqctr = %d\n",seqctr);
+                if( get_data_tcid(buf) == tcid)
                 {
-                    gettimeofday(&tv,NULL);
-                    start = 1000000 * tv.tv_sec + tv.tv_usec;
-                    // start of data transmission
-                    recv_state++;
-                    tcid = get_tcid(buf);
-                    nseq = get_nseq(buf);
-                    seqctr = 0;
-                    data_ctr = 0;
-                    obuf_ptr = 0;
-                    payload_size = 0; // will be set on first data packet
-                    // allocate enough space to hold the data
-                    outbuf = malloc( nseq * UDF_DATA_PAYLOAD * sizeof(uint8_t) );
-                    memset(outbuf, 0x0, nseq * UDF_DATA_PAYLOAD * sizeof(uint8_t));
-                    printf("nseq = %d\n", nseq);
-                }
-                break;
-            case 1:
-                if( is_command_packet(buf) == 0 )
-                {
-                printf("seqctr = %d\n",seqctr);
-                    if( get_data_tcid(buf) == tcid)
+                    // copy valid data to large buffer
+                    // this assumes that the payload is constant until the last packet
+                    if(payload_size == 0) payload_size = recv_len - 4;
+                    memcpy(&outbuf[ get_seq(buf) * payload_size ], &buf[4], recv_len - 4);
+                    data_ctr += recv_len - 4;
+                    // printf("buf_idx: %d len: %d payload_size: %d\n", (get_seq(buf) * payload_size), (recv_len - 4), payload_size);
+                    if(++seqctr == nseq)
                     {
-                        printf("get_data_tcid(buf) == tcid\n");
-                        // copy valid data to large buffer
-                        // this assumes that the payload is constant until the last packet
-                        if(payload_size == 0) payload_size = recv_len - 4;
-                        memcpy(&outbuf[ get_seq(buf) * payload_size ], &buf[4], recv_len - 4);
-                        data_ctr += recv_len - 4;
-                        printf("buf_idx: %d len: %d payload_size: %d\n", (get_seq(buf) * payload_size), (recv_len - 4), payload_size);
-                        if(++seqctr == nseq)
+                        printf("start writing file\n");
+                        // transaction is complete, store file
+                        if(fwrite(outbuf, 1, data_ctr, fp) != data_ctr)
                         {
-                            printf("start writing file\n");
-                            // transaction is complete, store file
-                            if(fwrite(outbuf, 1, data_ctr, fp) != data_ctr)
-                            {
-                                printf("fwrite error: %s\n", strerror(errno));
-                                return -1;
-                            }
-                            gettimeofday(&tv,NULL);
-                            end = 1000000 * tv.tv_sec + tv.tv_usec;
-                            do_receive = 0;
+                            printf("fwrite error: %s\n", strerror(errno));
+                            return -1;
                         }
+                        gettimeofday(&tv,NULL);
+                        end = 1000000 * tv.tv_sec + tv.tv_usec;
+                        do_receive = 0;
                     }
                 }
+            }
         }
     }
     
     close(s);
 
-    printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", (end-start),  get_filesize_bytes(fp) / 1024 / 1024 / ((end-start) / 1000000));
+    printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", (end-start),  1.0*get_filesize_bytes(fp) / 1024.0 / 1024.0 / ((end-start) / 1000000.0));
+    printf("Filesize: %d\n", get_filesize_bytes(fp));
     return 0;
 }
 
@@ -270,7 +272,7 @@ int udf_receive_file( FILE *fp,  uint16_t port)
 // ========================================================
 // Modul private functions
 // ========================================================
-static void assemble_fts_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq)
+static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq)
 {
     buf[0] = CONTROLL_FTS;
 
@@ -305,16 +307,16 @@ static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tc
     buf[2] = ((seq & 0x0000ff00) >>  8);
     buf[3] = ((seq & 0x000000ff) >>  0);
 
-    fseek(fd, seq * UDF_DATA_PAYLOAD, SEEK_SET);
+    fseek(fd, seq * UFT_DATA_PAYLOAD, SEEK_SET);
     long curr = ftell(fd);
 
     // enough data for a full data packet
-    if((fsize - curr) > UDF_DATA_PAYLOAD)
+    if((fsize - curr) > UFT_DATA_PAYLOAD)
     {
-        num = fread(&buf[4], 1, UDF_DATA_PAYLOAD, fd);
-        if(num != UDF_DATA_PAYLOAD)
+        num = fread(&buf[4], 1, UFT_DATA_PAYLOAD, fd);
+        if(num != UFT_DATA_PAYLOAD)
         {
-            printf("Error in: assemble_data(): File read num: %d should be %d", (int)num, UDF_DATA_PAYLOAD);
+            printf("Error in: assemble_data(): File read num: %d should be %d", (int)num, UFT_DATA_PAYLOAD);
         }
     }
     else
