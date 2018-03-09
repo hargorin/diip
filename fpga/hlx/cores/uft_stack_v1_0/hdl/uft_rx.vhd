@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.ocom>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 11:19:21 2017
--- Last update : Wed Mar  7 16:32:02 2018
+-- Last update : Fri Mar  9 10:22:17 2018
 -- Platform    : Default Part Number
 -- Standard    : VHDL-2008
 -------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ begin
     end process ; -- p_state_proc_clocked
 
     ----------------------------------------------------------------------------
-    p_data_in_buf : process( clk, rst_n )
+    p_data_in_buf : process( clk )
     ----------------------------------------------------------------------------
     begin
         if rising_edge(clk) then

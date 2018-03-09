@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 15:13:40 2017
--- Last update : Wed Mar  7 16:41:23 2018
+-- Last update : Fri Mar  9 10:25:58 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -335,7 +335,6 @@ begin
     ----------------------------------------------------------------------------
     -- Controls the AXI stream output
     -- -------------------------------------------------------------------------
-    --p_out : process (clk, rst_n)
     p_out : process (ctr, running, fifo_data_valid, n_bytes, fifo_data_out, seq,
         tcid, size)
     ----------------------------------------------------------------------------
