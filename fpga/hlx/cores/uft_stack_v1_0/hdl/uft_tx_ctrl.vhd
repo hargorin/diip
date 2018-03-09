@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Wed Mar  7 16:39:00 2018
+-- Last update : Fri Mar  9 10:54:17 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,7 +27,8 @@ use ieee.math_real.all;
 
 entity uft_tx_control is
     generic (
-        C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32
+        C_M_AXI_ADDR_WIDTH  : integer range 32 to  64  := 32;
+        C_PACKET_DELAY_US   : integer range  1 to 150  := 100
     );
     port (
         -- Control
@@ -104,7 +105,7 @@ architecture structural of uft_tx_control is
 
     -- Delay between packets
     signal delay_ctr : integer range 0 to 15000;
-    constant c_packet_delay : integer := 100*(125); -- 100us delay between packets
+    constant c_packet_delay : integer := C_PACKET_DELAY_US*(125); -- 100us delay between packets
 begin
     ----------------------------------------------------------------------------
     -- next state process

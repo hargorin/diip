@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 15:20:24 2017
--- Last update : Wed Nov 29 17:09:29 2017
+-- Last update : Fri Mar  9 11:04:16 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ begin
         waitfor(1);
         data_done <= '0';
         wait until tx_ready = '1';
-        waitfor(1);
+        waitfor(10);
 
         ------------------------------------------------------------------------
         -- TEST 2: Send 2000 bytes
@@ -141,18 +141,18 @@ begin
         cmd_done <= '1';
         waitfor(1);
         cmd_done <= '0';
-        waitfor(5);
 
-        data_done <= '1';
-        waitfor(1);
-        data_done <= '0';
-        waitfor(2);
+        -- 2000 bytes will be split into 2 data packets
+        for i in 1 to 2 loop
+            wait until data_start = '1';
+            waitfor(5);
+            data_done <= '1';
+            waitfor(1);
+            data_done <= '0';
+        end loop;
 
-        data_done <= '1';
-        waitfor(1);
-        data_done <= '0';
         wait until tx_ready = '1';
-        waitfor(1);
+        waitfor(10);
 
         ------------------------------------------------------------------------
         -- TEST 3: Send 10'000 bytes
@@ -170,13 +170,14 @@ begin
         cmd_done <= '1';
         waitfor(1);
         cmd_done <= '0';
-        waitfor(5);
 
+        -- 10'000 bytes will be split into 10 data packets
         for i in 1 to 10 loop
+            wait until data_start = '1';
+            waitfor(5);
             data_done <= '1';
             waitfor(1);
             data_done <= '0';
-            waitfor(2);
         end loop;
 
 
@@ -190,7 +191,8 @@ begin
     -----------------------------------------------------------
     DUT : entity work.uft_tx_control
         generic map (
-            C_M_AXI_ADDR_WIDTH => C_M_AXI_ADDR_WIDTH
+            C_M_AXI_ADDR_WIDTH => C_M_AXI_ADDR_WIDTH,
+            C_PACKET_DELAY_US => 1
         )
         port map (
             clk                    => clk,
