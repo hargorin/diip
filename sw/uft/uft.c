@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-09 16:07:48
+* @Last Modified time: 2018-03-14 09:10:27
 */
 
 #include "uft.h"
@@ -50,6 +50,7 @@ typedef enum uftControll
 #define UFT_DATA_PAYLOAD     1464 // remaining data size in data packet
 #define UFT_DATA_SIZEW       1472 // data packet size
 
+#define N_PACK_RETRY            10  // how many times to resend a packets
 
 // ========================================================
 // Function declarations
@@ -75,6 +76,7 @@ static uint8_t get_data_tcid (uint8_t *buf);
 static uint32_t get_data_seqnbr (uint8_t *buf);
 static uint32_t get_command_ackfp_seqnbr (uint8_t *buf);
 
+static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq);
 
 // ========================================================
 // Modul public functions
@@ -101,7 +103,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     uint32_t num;
 
     uint8_t tcid = 12;
-    uint32_t nseq; 
+    uint32_t nseq, nack_ctr; 
     int count, recv_len;
     uint8_t buf[1500];
 
@@ -135,7 +137,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     //send the message
     if (sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen)==-1)
     {
-        printf("Error in: sendto()");
+        printf("Error in: sendto() %s:%d", __FILE__, __LINE__);
         return -1;
     }
 
@@ -148,30 +150,31 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         //send the message
         if (sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen)==-1)
         {
-            printf("Error in: sendto()");
+            printf("Error in: sendto() %s:%d", __FILE__, __LINE__);
             return -1;
         }
         // Check if packet received
         ioctl(rxsockfd, FIONREAD, &count);
         if(count > 0)
         {
-            printf("Received %d bytes\n",count);
+            // printf("Received %d bytes\n",count);
             if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
             {
-                printf("\nrcvfrom error: %s\n", strerror(errno));
+                printf("\nrcvfrom error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
                 return -1;
             }
-            printf("Command %d\n",get_command(buf));   
+            // printf("Command %d\n",get_command(buf));   
             // Check for ACK package
             if(get_command(buf) == CONTROLL_ACKFP)
             {
-                printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                // printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
 
 
-        usleep(20);
+        usleep(5); // local: gets some trouble
+        // usleep(20); // local: no problem at all
     }
 
     // wait a bit for the last few acks
@@ -179,7 +182,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     tv.tv_sec = 0;
     tv.tv_usec = 100000;
     if (setsockopt(rxsockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0) {
-        perror("Error");
+        printf("Error %s %s:%d", strerror(errno), __FILE__, __LINE__);
     }
     int do_it = 1;
     while(do_it)
@@ -193,49 +196,71 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             }
             else
             {
-                printf("\nrcvfrom error: %s\n", strerror(errno));
+                printf("\nrcvfrom error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
                 return -1;
             }
         }
         if(do_it != 0)
         {
-            printf("Command %d\n",get_command(buf));   
+            // printf("Command %d\n",get_command(buf));   
             // Check for ACK package
             if(get_command(buf) == CONTROLL_ACKFP)
             {
-                printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                // printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
     }
+    
+    nack_ctr = ack_stats(ack_buf, nseq);
 
-
-    // ack statistics
-    int nack_ctr = 0;
-    for(int i = 0; i < nseq; i++)
+    for (int retrycnt = 0; (retrycnt < N_PACK_RETRY) && nack_ctr; retrycnt++)
     {
-        if(ack_buf[i] == 0)
+        // Resend packages that were not acknowledged
+        for(int i = 0; i < nseq; i++)
         {
-            nack_ctr++;
-            printf("NACK for package %d\n", i);
+            // Check if sequence was acknowledged
+            if (ack_buf[i])
+            {
+                continue;
+            }
+            // printf("Resending seq %d\n",i);
+            // else, send packet
+            num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
+            //send the message
+            if (sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen)==-1)
+            {
+                printf("Error in: sendto() %s:%d", __FILE__, __LINE__);
+                return -1;
+            }
+            // Check if packet received
+            ioctl(rxsockfd, FIONREAD, &count);
+            if(count > 0)
+            {
+                // printf("Received %d bytes\n",count);
+                if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
+                {
+                    printf("\nrcvfrom error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
+                    return -1;
+                }
+                // printf("Command %d\n",get_command(buf));   
+                // Check for ACK package
+                if(get_command(buf) == CONTROLL_ACKFP)
+                {
+                    // printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                    ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
+                }
+            }
+            usleep(20);
         }
-    }
 
-    // statistics
-    if(nack_ctr != 0)
-    {
-        printf("%d packets have not been acknowledged\n", nack_ctr);
-    }
-    else
-    {
-        printf("HURRAY! All packets have been acknowledged.\n");
+        nack_ctr = ack_stats(ack_buf, nseq);
     }
 
     close(sockfd);
     close(rxsockfd);
     return 0;
 }
-
 
 /**
  * @brief      Receive a file
@@ -277,7 +302,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
         //try to receive some data, this is a blocking call
         if ((recv_len = recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &si_other, (socklen_t *) &slen)) == -1)
         {
-            printf("rcvfrom error: %s\n", strerror(errno));
+            printf("rcvfrom error: %s %s,%d\n", strerror(errno), __FILE__, __LINE__);
             return -1;
         }
 
@@ -334,7 +359,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                     //send the message
                     if (sendto(txsockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &si_other, slen)==-1)
                     {
-                        printf("Error in: sendto()");
+                        printf("Error in: sendto() %s:%d\n", __FILE__, __LINE__);
                         return -1;
                     }
 
@@ -344,7 +369,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                         // transaction is complete, store file
                         if(fwrite(outbuf, 1, data_ctr, fp) != data_ctr)
                         {
-                            printf("fwrite error: %s\n", strerror(errno));
+                            printf("fwrite error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
                             return -1;
                         }
                         gettimeofday(&tv,NULL);
@@ -392,7 +417,7 @@ static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in 
     sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd < 0) 
     {
-        printf("ERROR opening socket\n");
+        printf("ERROR opening socket %s:%d\n", __FILE__, __LINE__);
         return -1;
     }
     return sockfd;
@@ -413,7 +438,7 @@ static int create_recv_socket(uint16_t port, struct sockaddr_in *sa )
     //create a UDP socket
     if ((sockfd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
     {
-        printf("socket error: %s\n", strerror(errno));
+        printf("socket error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
         return -1;
     }
      
@@ -427,7 +452,7 @@ static int create_recv_socket(uint16_t port, struct sockaddr_in *sa )
     //bind socket to port
     if( bind(sockfd , (struct sockaddr*)sa, sizeof(*sa) ) == -1)
     {
-        printf("bind error: %s\n", strerror(errno));
+        printf("bind error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
         return -1;
     }
     return sockfd;
@@ -453,7 +478,7 @@ static int create_reply_socket(uint16_t port, struct sockaddr_in *sa)
     sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sockfd < 0) 
     {
-        printf("ERROR opening socket\n");
+        printf("ERROR opening socket %s:%d\n", __FILE__, __LINE__);
         return -1;
     }
     return sockfd;
@@ -675,6 +700,39 @@ static uint32_t get_command_ackfp_seqnbr (uint8_t *buf)
         return ( (buf[4] << 24) | (buf[5] << 16) | (buf[6] << 8) | (buf[7] << 0) );
     }
     return -1;
+}
+
+/**
+ * @brief      Runs packet acknowledgment statistics
+ *
+ * @param      ack_buf  The acknowledge buffer
+ * @param[in]  nseq     number of sequences in ack_buf
+ *
+ * @return     number of nack
+ */
+static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq)
+{
+    // ack statistics
+    int nack_ctr = 0;
+    for(int i = 0; i < nseq; i++)
+    {
+        if(ack_buf[i] == 0)
+        {
+            nack_ctr++;
+            // printf("NACK for package %d\n", i);
+        }
+    }
+    // statistics
+    if(nack_ctr != 0)
+    {
+        printf("%d of %d (%.1f%%) packets have not been acknowledged\n", 
+            nack_ctr, nseq, 100.0 / nseq * nack_ctr);
+    }
+    else
+    {
+        printf("HURRAY! All packets have been acknowledged.\n");
+    }
+    return nack_ctr;
 }
 
 
