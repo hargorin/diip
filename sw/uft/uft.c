@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-14 09:10:27
+* @Last Modified time: 2018-03-14 14:01:17
 */
 
 #include "uft.h"
@@ -173,8 +173,8 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         }
 
 
-        usleep(5); // local: gets some trouble
-        // usleep(20); // local: no problem at all
+        // usleep(5); // local: gets some trouble
+        usleep(15); // local: no problem at all
     }
 
     // wait a bit for the last few acks
