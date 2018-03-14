@@ -2,13 +2,14 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-14 14:01:17
+* @Last Modified time: 2018-03-14 14:18:19
 */
 
 #include "uft.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include <sys/stat.h>
@@ -77,6 +78,19 @@ static uint32_t get_data_seqnbr (uint8_t *buf);
 static uint32_t get_command_ackfp_seqnbr (uint8_t *buf);
 
 static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq);
+
+int dbgprintf(const char *fmt, ...);
+
+// ========================================================
+// Module static data
+// ========================================================
+static int verbosity = 1;
+
+// ========================================================
+// Macros
+// ========================================================
+// Debug verbosity 1
+#define DBG_V1(...) if(verbosity > 0) dbgprintf(__VA_ARGS__)
 
 // ========================================================
 // Modul public functions
@@ -157,17 +171,16 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         ioctl(rxsockfd, FIONREAD, &count);
         if(count > 0)
         {
-            // printf("Received %d bytes\n",count);
             if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
             {
                 printf("\nrcvfrom error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
                 return -1;
             }
-            // printf("Command %d\n",get_command(buf));   
             // Check for ACK package
             if(get_command(buf) == CONTROLL_ACKFP)
             {
-                // printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                DBG_V1("Command %d: ",get_command(buf));   
+                DBG_V1("ack %d\n", get_command_ackfp_seqnbr(buf));
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
@@ -202,11 +215,11 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         }
         if(do_it != 0)
         {
-            // printf("Command %d\n",get_command(buf));   
             // Check for ACK package
             if(get_command(buf) == CONTROLL_ACKFP)
             {
-                // printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                DBG_V1("Command %d: ",get_command(buf));   
+                DBG_V1("ack %d\n", get_command_ackfp_seqnbr(buf));
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
@@ -224,7 +237,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             {
                 continue;
             }
-            // printf("Resending seq %d\n",i);
+            DBG_V1("Resending seq %d\n",i);
             // else, send packet
             num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
             //send the message
@@ -237,17 +250,16 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             ioctl(rxsockfd, FIONREAD, &count);
             if(count > 0)
             {
-                // printf("Received %d bytes\n",count);
                 if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
                 {
                     printf("\nrcvfrom error: %s %s:%d\n", strerror(errno), __FILE__, __LINE__);
                     return -1;
                 }
-                // printf("Command %d\n",get_command(buf));   
                 // Check for ACK package
                 if(get_command(buf) == CONTROLL_ACKFP)
                 {
-                    // printf(" ack %d\n", get_command_ackfp_seqnbr(buf));
+                    DBG_V1("Command %d: ",get_command(buf));   
+                    DBG_V1("ack %d\n", get_command_ackfp_seqnbr(buf));
                     ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
                 }
             }
@@ -394,7 +406,27 @@ int uft_receive_file( FILE *fp,  uint16_t port)
 // ========================================================
 // Modul private functions
 // ========================================================
-// 
+
+/**
+ * @brief      Debug line to stdout
+ *
+ * @param[in]  fmt        The format
+ * @param[in]  <unnamed>  variable arguments
+ *
+ * @return     printf ret
+ */
+int dbgprintf(const char *fmt, ...)
+{
+    // printf("(%s) ", "UFT");
+
+    va_list ap;
+    va_start(ap, fmt);
+    int ret = vprintf(fmt, ap);
+    va_end(ap);
+
+    return ret;
+}
+
 /**
  * @brief      Creates a UDP socket to send data
  *
