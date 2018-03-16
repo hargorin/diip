@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <cv.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <sys/time.h>
 
 using namespace cv;
 using namespace std;
@@ -30,6 +32,7 @@ int main(int argc, const char * argv[]) {
 	int arr_length = 256;
 	int hist[arr_length] = {};
 	long mean = 0;
+	
 
     if(argc < 4)
     {
@@ -169,3 +172,64 @@ int main(int argc, const char * argv[]) {
     }
     return 0;
 }
+
+
+
+
+// *************************************************************
+// Calculate the mean and standard deviation from an image
+// *************************************************************
+
+
+/*    Mat g_img;
+    Mat img = imread(infile, CV_LOAD_IMAGE_COLOR);
+    cvtColor(img, g_img, COLOR_RGB2GRAY);
+
+    long start, end;
+    struct timeval timecheck;
+
+    gettimeofday(&timecheck, NULL);
+    start = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
+
+
+    
+    for (int y = 0; y < g_img.rows; y++) {
+        for (int x = 0; x < g_img.cols; x++) {
+           	mean += g_img.at<uchar>(Point(x, y));
+        }
+    }
+
+
+    gettimeofday(&timecheck, NULL);
+    end = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
+
+    printf("%ld milliseconds elapsed\n", (end - start));
+
+
+    mean = mean / (g_img.rows * g_img.cols);
+    printf("Mean: %ld\n", mean);
+
+
+
+    gettimeofday(&timecheck, NULL);
+    start = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
+
+    long tmp;
+    long var;
+    
+    for (int y = 0; y < g_img.rows; y++) {
+        for (int x = 0; x < g_img.cols; x++) {
+           	tmp = g_img.at<uchar>(Point(x, y));
+           	var += pow((tmp - mean), 2);
+        }
+    }
+    var = var / ((g_img.rows * g_img.cols) - 1);
+    std = sqrt(var);
+
+
+    gettimeofday(&timecheck, NULL);
+    end = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
+
+    printf("%ld milliseconds elapsed\n", (end - start));
+
+    printf("STD: %ld\n", std);*/
