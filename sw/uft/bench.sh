@@ -2,14 +2,14 @@
 # @Author: Noah Huetter
 # @Date:   2018-03-09 13:46:33
 # @Last Modified by:   Noah Huetter
-# @Last Modified time: 2018-03-16 09:31:54
+# @Last Modified time: 2018-03-14 14:26:10
 
 # Runs a UFT test transmission to a server in the network
 
 ##
 ## How many characters to transmit
 ##
-COUNT=10000000   
+COUNT=1000000   
 
 ##
 ## Server settings
@@ -35,6 +35,7 @@ sleep 0.1
 
 # start transmit
 ./sender $SRV_IP 2222 infile.txt
+sleep 2
 
 # Wait for complete
 # while ps | grep " $rx_pid "     # might also need  | grep -v grep  here
@@ -50,4 +51,4 @@ ssh $SRV_USER@$SRV_IP \
     else echo \"ERROR: Files differ\"; fi "
 
 # Cleanup
-rm infile.txt
+# rm infile.txt
