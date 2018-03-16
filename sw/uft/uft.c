@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-16 09:38:26
+* @Last Modified time: 2018-03-16 15:58:37
 */
 
 #include "uft.h"
@@ -123,6 +123,8 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 
     uint8_t *ack_buf;
 
+    fd_set rset; // for select
+
     // calculate nseq
     int32_t filesize_bytes = get_filesize_bytes(fp);
     nseq = filesize_bytes / UFT_DATA_PAYLOAD;
@@ -162,6 +164,12 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     {
         DBG_V1("Sending %d of %d\n",i,nseq);
         num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
+        // wait until send buffer is not full
+        FD_ZERO(&rset);
+        FD_SET(sockfd, &rset);
+        // select(sockfd+1 , NULL, &rset, NULL, NULL);
+        usleep(10);
+        // printf("select %d\n", FD_ISSET(sockfd, &rset));
         //send the message
         if (sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen)==-1)
         {
