@@ -65,7 +65,6 @@ int main(int argc, const char * argv[]) {
     int loc_std = 0;
 
 
-
     // ************************************************************
     // Calculate local mean
     for (int y = 0; y < img.rows; y++) {
@@ -80,7 +79,7 @@ int main(int argc, const char * argv[]) {
 
     // ************************************************************
     // Calculate local standard deviation
-    long tmp = 0;
+    int tmp = 0;
     long var = 0;
     
     for (int y = 0; y < img.rows; y++) {
