@@ -2,14 +2,15 @@
 # @Author: Noah Huetter
 # @Date:   2018-03-09 13:46:33
 # @Last Modified by:   Noah Huetter
-# @Last Modified time: 2018-03-20 15:41:28
+# @Last Modified time: 2018-03-20 17:28:20
 
 # Runs a UFT test transmission to a server in the network
 
 ##
 ## How many characters to transmit
 ##
-COUNT=100
+COUNT=100000000
+MBS=1000
 
 ##
 ## Server settings
@@ -23,21 +24,26 @@ SRV_TMPDIR=/tmp/uft
 make
 
 # Generate testfile
-base64 /dev/urandom | head -c $COUNT > infile.txt
+# base64 /dev/urandom | head -c $COUNT > infile.txt
+if [ ! -f infile.dat ]; then
+    dd if=/dev/random of=infile.dat  bs=1m  count=$MBS
+fi
+shasum infile.dat | cut -d ' ' -f 1 > checksum
 
 # Copy source and testfile to server
 ssh $SRV_USER@$SRV_IP "mkdir -p $SRV_TMPDIR"
-scp -q -r * $SRV_USER@$SRV_IP:$SRV_TMPDIR/
+# scp -q -r * $SRV_USER@$SRV_IP:$SRV_TMPDIR/
+rsync -qavr -e "ssh -l $SRV_USER" --exclude 'infile*' * $SRV_IP:$SRV_TMPDIR/
 
 # compile
 ssh $SRV_USER@$SRV_IP "cd $SRV_TMPDIR && make clean && make"
 
 # start receiver
-ssh -f $SRV_USER@$SRV_IP "$SRV_TMPDIR/receiver 2222 $SRV_TMPDIR/outfile.txt > /dev/null"
+ssh -f $SRV_USER@$SRV_IP "$SRV_TMPDIR/receiver 2222 $SRV_TMPDIR/outfile.dat > /dev/null"
 sleep 0.1
 
 # start transmit
-./sender $SRV_IP 2222 infile.txt
+./sender $SRV_IP 2222 infile.dat
 
 # Wait for complete
 # while ps | grep " $rx_pid "     # might also need  | grep -v grep  here
@@ -47,8 +53,14 @@ sleep 0.1
 # done
 
 # compare two files
+
+# ssh $SRV_USER@$SRV_IP \
+#     "if cmp --silent $SRV_TMPDIR/infile.txt $SRV_TMPDIR/outfile.txt; \
+#     then echo \"Success! Files are identical\"; \
+#     else echo \"ERROR: Files differ\"; fi "
 ssh $SRV_USER@$SRV_IP \
-    "if cmp --silent $SRV_TMPDIR/infile.txt $SRV_TMPDIR/outfile.txt; \
+    "shasum $SRV_TMPDIR/outfile.dat | cut -d ' ' -f 1 > $SRV_TMPDIR/rxchecksum;\
+    if cmp --silent $SRV_TMPDIR/rxchecksum $SRV_TMPDIR/checksum; \
     then echo \"Success! Files are identical\"; \
     else echo \"ERROR: Files differ\"; fi "
 

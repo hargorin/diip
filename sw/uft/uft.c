@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-20 15:39:46
+* @Last Modified time: 2018-03-20 17:07:06
 */
 
 #include "uft.h"
@@ -21,6 +21,8 @@
 #include <sys/ioctl.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <poll.h>
+#include <fcntl.h>
 
 #include <errno.h>
 
@@ -39,6 +41,15 @@ typedef enum uftControll
     ACKFP,
     ACKFT
 } tUFTControll;
+
+// typedef struct timeval tv_t;
+typedef struct tictocstruct
+{
+    struct timeval tv;
+    double start;
+    double end;
+    FILE* fp;
+} tictoc_t;
 
 
 // Command field values
@@ -78,6 +89,8 @@ static uint32_t get_data_seqnbr (uint8_t *buf);
 static uint32_t get_command_ackfp_seqnbr (uint8_t *buf);
 
 static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq);
+static void tic(tictoc_t *tt);
+static void toc(tictoc_t *tt);
 
 int dbgprintf(const char *fmt, ...);
 
@@ -125,6 +138,11 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 
     fd_set rset; // for select
 
+    tictoc_t tt;
+    tt.fp = fp;
+
+    struct pollfd fds; // for send buffer polling
+
     // calculate nseq
     int32_t filesize_bytes = get_filesize_bytes(fp);
     nseq = filesize_bytes / UFT_DATA_PAYLOAD;
@@ -161,6 +179,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     // start data transmission
     dbuf = malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
     memset(dbuf, 0x0, UFT_DATA_SIZEW);
+    tic(&tt);
     for(int i = 0; i < nseq; i++)
     {
         DBG_V1("Sending %d of %d\n",i,nseq);
@@ -169,13 +188,23 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         FD_ZERO(&rset);
         FD_SET(sockfd, &rset);
         // select(sockfd+1 , NULL, &rset, NULL, NULL);
-        usleep(10);
+        // usleep(10);
         // printf("select %d\n", FD_ISSET(sockfd, &rset));
         //send the message
+        fds.fd = sockfd;
+        fds.events = POLLOUT;
+        do
+        {
+            poll(&fds, 1, 0);
+        } while (fds.revents == 0);
         if (sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen)==-1)
         {
-            printf("%s:%d Error in: sendto(): %s\n", __FILE__, __LINE__, strerror(errno));
-            return -1;
+            // ignore if send buffer is full: ENOBUFS
+            if(errno != ENOBUFS)
+            {
+                printf("%s:%d Error in: sendto(): %d %s\n", __FILE__, __LINE__, errno, strerror(errno));
+                return -1;
+            }
         }
         // Check if packet received
         ioctl(rxsockfd, FIONREAD, &count);
@@ -279,6 +308,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         nack_ctr = ack_stats(ack_buf, nseq);
     }
 
+    toc(&tt);
     close(sockfd);
     close(rxsockfd);
     return 0;
@@ -456,7 +486,7 @@ int dbgprintf(const char *fmt, ...)
  */
 static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in *sa )
 {
-    int sockfd;
+    int sockfd, flags;
 
     // convert ip and port
     inet_aton(ip, &(sa->sin_addr));
@@ -470,6 +500,13 @@ static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in 
         printf("%s:%d ERROR opening socket: %s\n", __FILE__, __LINE__, strerror(errno));
         return -1;
     }
+
+    // Set flags
+    flags = fcntl(sockfd, F_GETFL, 0);
+    // set blocking
+    flags &= ~O_NONBLOCK;
+    fcntl(sockfd, F_SETFL, flags);
+
     return sockfd;
 }
 
@@ -785,5 +822,19 @@ static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq)
     return nack_ctr;
 }
 
+static void tic(tictoc_t *tt)
+{
+    gettimeofday(&tt->tv,NULL);
+    tt->start = 1000000 * tt->tv.tv_sec + tt->tv.tv_usec;
+}
+
+static void toc(tictoc_t *tt)
+{
+    gettimeofday(&tt->tv,NULL);
+    tt->end = 1000000 * tt->tv.tv_sec + tt->tv.tv_usec;
+    printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", 
+        (tt->end-tt->start),  
+        1.0*get_filesize_bytes(tt->fp) / 1024.0 / 1024.0 / ((tt->end-tt->start) / 1000000.0));
+}
 
 
