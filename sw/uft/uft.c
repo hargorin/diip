@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-16 15:58:37
+* @Last Modified time: 2018-03-20 15:39:46
 */
 
 #include "uft.h"
@@ -84,7 +84,7 @@ int dbgprintf(const char *fmt, ...);
 // ========================================================
 // Module static data
 // ========================================================
-static int verbosity = 1;
+static int verbosity = 0;
 
 // ========================================================
 // Macros
@@ -142,8 +142,9 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     if (sockfd < 0) return -1;
 
     // create UDP receive socket
-    rxsockfd = create_recv_socket(port+1, &sr);
-    if(rxsockfd < 0) return -1;
+    rxsockfd = sockfd;
+    // rxsockfd = create_recv_socket(port+1, &sr);
+    // if(rxsockfd < 0) return -1;
 
     // send file start control
     controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
@@ -328,8 +329,8 @@ int uft_receive_file( FILE *fp,  uint16_t port)
         }
 
         // Create send socket
-        txsockfd = create_reply_socket(port+1, &si_other);
-        if (txsockfd < 0) return -1;
+        // txsockfd = create_reply_socket(port+1, &si_other);
+        // if (txsockfd < 0) return -1;
          
         //print details of the client/peer and the data received
         // p%s:%d rintf("Received packet from\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
@@ -378,7 +379,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                     memset(controll, 0x0, UFT_CONTROLL_SIZE);
                     assemble_uft_ackfp(controll, tcid, get_data_seqnbr(buf));
                     //send the message
-                    if (sendto(txsockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &si_other, slen)==-1)
+                    if (sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &si_other, slen)==-1)
                     {
                         printf("%s:%d Error in: sendto()\n", __FILE__, __LINE__);
                         return -1;
@@ -403,14 +404,22 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     }
     
     close(sockfd);
-    close(txsockfd);
+    // close(txsockfd);
 
     printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", (end-start),  1.0*get_filesize_bytes(fp) / 1024.0 / 1024.0 / ((end-start) / 1000000.0));
     printf("Filesize: %d\n", get_filesize_bytes(fp));
     return 0;
 }
 
-
+/**
+ * @brief      Set verbosity level, default 0
+ *
+ * @param[in]  v     verbosity level
+ */
+void uft_set_verbosity(int v)
+{
+    verbosity = v;
+}
 
 // ========================================================
 // Modul private functions
@@ -771,7 +780,7 @@ static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq)
     }
     else
     {
-        printf("HURRAY! All packets have been acknowledged.\n");
+        printf("HURRAY! All %d packets have been acknowledged.\n", nseq);
     }
     return nack_ctr;
 }

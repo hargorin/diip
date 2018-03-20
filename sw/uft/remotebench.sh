@@ -2,14 +2,14 @@
 # @Author: Noah Huetter
 # @Date:   2018-03-09 13:46:33
 # @Last Modified by:   Noah Huetter
-# @Last Modified time: 2018-03-16 09:31:54
+# @Last Modified time: 2018-03-20 15:41:28
 
 # Runs a UFT test transmission to a server in the network
 
 ##
 ## How many characters to transmit
 ##
-COUNT=10000000   
+COUNT=100
 
 ##
 ## Server settings
@@ -18,6 +18,9 @@ COUNT=10000000
 SRV_IP=192.168.5.32
 SRV_USER=noah
 SRV_TMPDIR=/tmp/uft
+
+# compile locally
+make
 
 # Generate testfile
 base64 /dev/urandom | head -c $COUNT > infile.txt
@@ -30,7 +33,7 @@ scp -q -r * $SRV_USER@$SRV_IP:$SRV_TMPDIR/
 ssh $SRV_USER@$SRV_IP "cd $SRV_TMPDIR && make clean && make"
 
 # start receiver
-ssh -f $SRV_USER@$SRV_IP "$SRV_TMPDIR/receiver 2222 $SRV_TMPDIR/outfile.txt"
+ssh -f $SRV_USER@$SRV_IP "$SRV_TMPDIR/receiver 2222 $SRV_TMPDIR/outfile.txt > /dev/null"
 sleep 0.1
 
 # start transmit
