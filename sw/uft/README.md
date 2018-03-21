@@ -26,7 +26,11 @@ sudo tcpdump -i enp5s0 -l -e -n 'udp port 2222' | ./netbps
 ```
 
 ## Progress
+Total syscalls are only picked randomly from tests. No mean values.
 
 | Commit hash | Change | Speed | filesize tested | Total syscalls |
 | ----------- | ------ | ----- | --------------- | -------------- |
 | 43a75ac     | Retransmission | 61.558 MB/s | 100MB | 7042 |
+| 54f899b     | Sender connect() | 64.669 MB/s | 100MB | 4754 |
+| 54f899b     | Receiver connect() | 63.661 MB/s | 100MB | 4754 |
+
