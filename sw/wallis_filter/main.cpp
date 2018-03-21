@@ -29,9 +29,12 @@ int main(int argc, const char * argv[]) {
 
 	// Declerations
     const int MEAN = 127;			// Mean of the input image
-    const int STD = 60;			// Standard Deviation fo rthe input image
-    const int CONTRAST = 0.8;		// Contrast expansion factor
-    const int BRIGHTNESS = 1;		// Brigthness forcing factor
+    const int STD = 60;			// Standard Deviation for the input image
+    const int CONTRAST = 5;		// Contrast expansion factor
+    const int BRIGHTNESS = 0.7;		// Brightness forcing factor
+
+    const int LOC_LENGTH = 10;
+    const int LOC_WIDTH = 10;
 
 
     if(argc < 3)
@@ -58,54 +61,92 @@ int main(int argc, const char * argv[]) {
 
 	// Read input image
     Mat img = imread(infile, IMREAD_GRAYSCALE);
+    Mat w_img(img.rows, img.cols, CV_8UC1, Scalar(0));
     int img_size = img.rows * img.cols;
   
 
     int loc_mean = 0;
     int loc_std = 0;
 
+    int mean_y = 0;
+    int std_y = 0;
+    int wal_y = 0;
+    int loop_y = 0;
+    int loop_x = 0;
+    int mean_x = 0;
 
-    // ************************************************************
-    // Calculate local mean
-    for (int y = 0; y < img.rows; y++) {
-        for (int x = 0; x < img.cols; x++) {
-           	loc_mean += img.at<uchar>(Point(x, y));
-        }
+    for(int i = 0; i < img.rows; ) {
+    	loop_x = 0;
+
+		if((i + LOC_WIDTH) >= img.rows) {
+			loop_y += img.rows - i; 
+		}
+		else {
+			loop_y += LOC_WIDTH;
+		}
+
+    	for (int j = 0; j < img.cols; ) {
+    		mean_y = i;
+    		std_y = i;
+    		wal_y = i;
+
+    		if((j + LOC_LENGTH) >= img.cols) {
+    			loop_x += img.cols - j; 
+    		}
+    		else {
+    			loop_x += LOC_LENGTH;
+    		}
+
+
+		    // ************************************************************
+		    // Calculate local mean
+		    for (; mean_y < loop_y; mean_y++) {
+		        for (mean_x = j; mean_x < loop_x; mean_x++) {
+		           	loc_mean += img.at<uchar>(Point(mean_x, mean_y));
+		        }
+		    }
+		    loc_mean = loc_mean / img_size;
+
+
+
+		    // ************************************************************
+		    // Calculate local standard deviation
+		    int tmp = 0;
+		    long var = 0;
+		    
+		    for (; std_y < loop_y; std_y++) {
+		        for (int std_x = j; std_x < loop_x; std_x++) {
+		           	tmp = img.at<uchar>(Point(std_x, std_y));
+		           	var += pow((tmp - loc_mean), 2);
+		        }
+		    }
+		    var = var / (img_size - 1);
+		    loc_std = sqrt(var);
+
+
+
+		    // ************************************************************
+		    // Wallis filtering
+		    tmp = 0;
+
+		    for (; wal_y < loop_y; wal_y++) {
+		        for (int wal_x = j; wal_x < loop_x; wal_x++) {
+		        	tmp = STD * (img.at<uchar>(Point(wal_x, wal_y)) - loc_mean);
+		        	tmp = tmp / (loc_std + CONTRAST);
+		        	tmp = tmp + (MEAN * BRIGHTNESS);
+		        	tmp = tmp + (loc_mean * (1 - BRIGHTNESS));
+		        	w_img.at<uchar>(Point(wal_x, wal_y)) = tmp;
+		        }
+		    }
+    		
+
+
+
+    		j += LOC_LENGTH;
+    	}
+    	i += LOC_WIDTH;
     }
 
-    loc_mean = loc_mean / img_size;
-
-
-
-    // ************************************************************
-    // Calculate local standard deviation
-    int tmp = 0;
-    long var = 0;
-    
-    for (int y = 0; y < img.rows; y++) {
-        for (int x = 0; x < img.cols; x++) {
-           	tmp = img.at<uchar>(Point(x, y));
-           	var += pow((tmp - loc_mean), 2);
-        }
-    }
-    var = var / (img_size - 1);
-    loc_std = sqrt(var);
-
-
-
-    // ************************************************************
-    // Wallis filtering
-    Mat w_img(img.rows, img.cols, CV_8UC1, Scalar(0));
-
-    for (int y = 0; y < img.rows; y++) {
-        for (int x = 0; x < img.cols; x++) {
-        	tmp = STD * (img.at<uchar>(Point(x, y)) - loc_mean);
-        	tmp = tmp / (loc_std + CONTRAST);
-        	tmp = tmp + (MEAN * BRIGHTNESS);
-        	tmp = tmp + (loc_mean * (1 - BRIGHTNESS));
-        	w_img.at<uchar>(Point(x, y)) = tmp;
-        }
-    }
 
 
 
@@ -113,7 +154,7 @@ int main(int argc, const char * argv[]) {
     // Output
     if (argc == 4 && strcmp(argv[3], "-s") == 0)
     {
-        imshow( "Original", img ); 
+        //imshow( "Original", img ); 
         imshow( "Wallis Filter", w_img );                   
         waitKey(0);  
     }
