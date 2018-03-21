@@ -2,7 +2,7 @@
 # @Author: Noah Huetter
 # @Date:   2018-03-09 13:46:33
 # @Last Modified by:   Noah Huetter
-# @Last Modified time: 2018-03-21 13:40:10
+# @Last Modified time: 2018-03-21 14:05:14
 
 # Runs a UFT test transmission to a server in the network
 
@@ -10,7 +10,7 @@
 ## How many characters to transmit
 ##
 # COUNT=100000000
-MBS=10
+MBS=100
 
 ##
 ## Server settings
