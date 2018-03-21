@@ -29,9 +29,10 @@ void printUsage () {
 }
 
 int main(int argc, const char * argv[]) {
-	int arr_length = 256;
-	int hist[arr_length] = {};
+	const int ARR_LENGTH = 256;
+	int hist[ARR_LENGTH] = {};
 	long mean = 0;
+	double pix_tile = 0.0;
 	
 
     if(argc < 4)
@@ -57,6 +58,7 @@ int main(int argc, const char * argv[]) {
 
     // Read input image
     Mat img = imread(infile, IMREAD_GRAYSCALE);
+    Mat img_clahe(img.rows, img.cols, CV_8UC1, Scalar(0));
 
 
     // *********************************************************
@@ -74,7 +76,7 @@ int main(int argc, const char * argv[]) {
     mean = mean / (img.rows * img.cols);	// mean value
     printf("mean: %ld\n", mean);
 
-    for (int i = 0; i < arr_length; ++i) {
+    for (int i = 0; i < ARR_LENGTH; i++) {
     	printf("%d ", hist[i]);
     	sum += hist[i];
     }
@@ -84,9 +86,9 @@ int main(int argc, const char * argv[]) {
 
     // *********************************************************
     // Histogram clipping
-    thr = mean * 4;
+    thr = mean * 12;
     int excess = 0;
-    for (int i = 0; i < arr_length; ++i) {
+    for (int i = 0; i < ARR_LENGTH; i++) {
     	if(hist[i] > thr) {
     		excess += hist[i] - thr;
     		hist[i] = thr;
@@ -94,18 +96,19 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    for (int i = 0; i < arr_length; ++i) {
+    for (int i = 0; i < ARR_LENGTH; i++) {
 		printf("%d ", hist[i]);
 		sum += hist[i];
     }
     printf("\n");
     printf("SUM (clipping): %ld\n", sum);
     printf("excess: %d\n", excess);
+    sum = 0;
 
     // *********************************************************
     // Initial distribution
-    int m = excess/arr_length;
-    for (int i = 0; i < arr_length; ++i) {
+    int m = excess/ARR_LENGTH;
+    for (int i = 0; i < ARR_LENGTH; i++) {
     	if(excess > 0) {
     		if(hist[i] < (thr - m)) {
     			hist[i] = hist[i] + m; 
@@ -119,18 +122,19 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    for (int i = 0; i < arr_length; ++i) {
+    for (int i = 0; i < ARR_LENGTH; i++) {
 		printf("%d ", hist[i]);
 		sum += hist[i];
     }
     printf("\n");
     printf("SUM (distribution): %ld\n", sum);
     printf("excess: %d\n", excess);
+    sum = 0;
 
     // *********************************************************
     // Iterative redistribution of excess pixels
     while(excess > 0) {
-    	for (int i = 0; i < arr_length; ++i) { 
+    	for (int i = 0; i < ARR_LENGTH; i++) { 
     		if(excess > 0 ) {
     			if(hist[i] < thr) {
     				excess = excess - 1;
@@ -141,14 +145,51 @@ int main(int argc, const char * argv[]) {
     }
 
 
-    for (int i = 0; i < arr_length; ++i) {
+    for (int i = 0; i < ARR_LENGTH; i++) {
 		printf("%d ", hist[i]);
 		sum += hist[i];
+		pix_tile += hist[i];
     }
     printf("\n");
     printf("SUM (redistribution): %ld\n", sum);
     printf("excess: %d\n", excess);
+    sum = 0;
 
+    // *********************************************************
+    // CDF calculation
+    float cdf[ARR_LENGTH] = {};
+
+    cdf[0] = hist[0] * ARR_LENGTH / pix_tile;
+    for (int i = 1; i < ARR_LENGTH; i++) {
+    	cdf[i] = cdf[i-1] + (hist[i] * ARR_LENGTH / pix_tile);
+    }
+
+    for (int i = 0; i < ARR_LENGTH; i++) {
+		printf("%.2f ", cdf[i]);
+		sum += cdf[i];
+    }
+    printf("\n");
+    printf("SUM (CDF): %ld\n", sum);
+    printf("excess: %d\n", excess);
+    sum = 0;
+
+    // *********************************************************
+    // Remapping Pixels
+    int hist_clahe[ARR_LENGTH] = {};
+
+    for (int y = 0; y<img.rows; y++) {
+        for (int x = 0; x < img.cols; x++) {
+            img_clahe.at<uchar>(Point(x, y)) = cdf[img.at<uchar>(Point(x, y))];
+            hist_clahe[img_clahe.at<uchar>(Point(x, y))] += 1;
+        }
+    }
+
+    for (int i = 0; i < ARR_LENGTH; i++) {
+		printf("%d ", hist_clahe[i]);
+		sum += hist_clahe[i];
+    }
+    printf("\n");
+    printf("SUM (CLAHE): %ld\n", sum);
 
 
 
@@ -167,7 +208,8 @@ int main(int argc, const char * argv[]) {
 
     if (argc == 5 && strcmp(argv[4], "-s") == 0)
     {
-        imshow( "Original Image", img );                   
+        imshow( "Original Image", img );    
+        imshow( "CLAHE Image", img_clahe );                 
         waitKey(0);  
     }
     return 0;
