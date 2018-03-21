@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2018-03-21 11:49:07
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-21 12:16:59
+* @Last Modified time: 2018-03-21 15:07:11
 */
 /**
  * socket wrapper functions. Source: http://unpbook.com/src.html
@@ -35,6 +35,24 @@ void Bind(int fd, const struct sockaddr *sa, socklen_t salen)
 }
 
 /**
+ * @brief      Connect wrapper
+ */
+void Connect(int fd, const struct sockaddr *sa, socklen_t salen)
+{
+    if (connect(fd, sa, salen) < 0)
+        err_sys("connect error");
+}
+
+/**
+ * @brief      Send wrapper
+ */
+void Send(int fd, const void *ptr, size_t nbytes, int flags)
+{
+    if (send(fd, ptr, nbytes, flags) != (ssize_t)nbytes)
+        err_sys("send error");
+}
+
+/**
  * @brief      sendto wrapper
  */
 void Sendto(int fd, const void *ptr, size_t nbytes, int flags,
@@ -44,6 +62,18 @@ void Sendto(int fd, const void *ptr, size_t nbytes, int flags,
     {
         err_sys("sendto error");
     }
+}
+
+/**
+ * @brief      recv wrapper
+ */
+ssize_t Recv(int fd, void *ptr, size_t nbytes, int flags)
+{
+    ssize_t     n;
+
+    if ( (n = recv(fd, ptr, nbytes, flags)) < 0)
+        err_sys("recv error");
+    return(n);
 }
 
 /**

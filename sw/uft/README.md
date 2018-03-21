@@ -27,6 +27,6 @@ sudo tcpdump -i enp5s0 -l -e -n 'udp port 2222' | ./netbps
 
 ## Progress
 
-| Commit hash | Change | Speed | filesize tested |
-| ----------- | ------ | ----- | --------------- |
-| 43a75ac     | Retransmission | 61.558 MB/s | 100MB | 
+| Commit hash | Change | Speed | filesize tested | Total syscalls |
+| ----------- | ------ | ----- | --------------- | -------------- |
+| 43a75ac     | Retransmission | 61.558 MB/s | 100MB | 7042 |

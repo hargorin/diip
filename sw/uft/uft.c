@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-21 13:47:28
+* @Last Modified time: 2018-03-21 15:42:00
 */
 
 #include "uft.h"
@@ -138,7 +138,8 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     assemble_uft_controll(controll, tcid, nseq);
 
     //send the message
-    Sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen);
+    Send(sockfd, controll, UFT_CONTROLL_SIZE, 0);
+    // Sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen);
 
     // start data transmission
     dbuf = malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
@@ -155,12 +156,14 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         {
             poll(&fds, 1, 0);
         } while (fds.revents == 0);
-        Sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen);
+        Send(sockfd, dbuf, num , 0);
+        // Sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen);
         // Check if packet received
         ioctl(sockfd, FIONREAD, &count);
         if(count > 0)
         {   
-            Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
+            Recv(sockfd, buf, 1500, 0);
+            // Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
             // Check for ACK package
             if(get_command(buf) == CONTROLL_ACKFP)
             {
@@ -184,7 +187,8 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     while(do_it)
     {
         // Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
-        if ((recv_len = recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
+        if ((recv_len = recv(sockfd, buf, 1500, 0)) == -1)
+        // if ((recv_len = recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
         {
             if(errno == EAGAIN)
             {
@@ -225,12 +229,14 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             // else, send packet
             num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
             //send the message
-            Sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen);
+            Send(sockfd, dbuf, num , 0);
+            // Sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen);
             // Check if packet received
             ioctl(sockfd, FIONREAD, &count);
             if(count > 0)
             {
-                recv_len = Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
+                recv_len = Recv(sockfd, buf, 1500, 0);
+                // recv_len = Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
                 // Check for ACK package
                 if(get_command(buf) == CONTROLL_ACKFP)
                 {
@@ -418,6 +424,9 @@ static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in 
     // set blocking
     flags &= ~O_NONBLOCK;
     fcntl(sockfd, F_SETFL, flags);
+
+    // connect socket: Limits UDP connection to single peer
+    Connect(sockfd, (const struct sockaddr*)sa, sizeof(*sa));
 
     return sockfd;
 }
@@ -723,9 +732,10 @@ static void toc(tictoc_t *tt)
 {
     gettimeofday(&tt->tv,NULL);
     tt->end = 1000000 * tt->tv.tv_sec + tt->tv.tv_usec;
-    printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", 
+    printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s Size: %.3f MB\n", 
         (tt->end-tt->start),  
-        1.0*get_filesize_bytes(tt->fp) / 1024.0 / 1024.0 / ((tt->end-tt->start) / 1000000.0));
+        1.0*get_filesize_bytes(tt->fp) / 1024.0 / 1024.0 / ((tt->end-tt->start) / 1000000.0),
+        get_filesize_bytes(tt->fp)/1024.0/1024.0);
 }
 
 
