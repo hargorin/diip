@@ -29,12 +29,12 @@ int main(int argc, const char * argv[]) {
 
 	// Declerations
     const int MEAN = 127;			// Mean of the input image
-    const int STD = 60;			// Standard Deviation for the input image
-    const int CONTRAST = 5;		// Contrast expansion factor
-    const int BRIGHTNESS = 0.7;		// Brightness forcing factor
+    const int STD = 60;				// Standard Deviation for the input image
+    const float CONTRAST = 1.6;		// Contrast expansion factor
+    const float BRIGHTNESS = 0.6;		// Brightness forcing factor
 
-    const int LOC_LENGTH = 10;
-    const int LOC_WIDTH = 10;
+    const int LOC_LENGTH = 25;
+    const int LOC_WIDTH = 25;
 
 
     if(argc < 3)
@@ -111,8 +111,8 @@ int main(int argc, const char * argv[]) {
 
 		    // ************************************************************
 		    // Calculate local standard deviation
-		    int tmp = 0;
-		    long var = 0;
+		    float tmp = 0;
+		    double var = 0;
 		    
 		    for (; std_y < loop_y; std_y++) {
 		        for (int std_x = j; std_x < loop_x; std_x++) {
