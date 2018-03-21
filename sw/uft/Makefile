@@ -13,23 +13,23 @@ CFLAGS = -g -Wall
 default: $(TARGET)
 all: default
 
-# OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
-OBJECTS = sender.o uft.o
+OBJECTS = uft.o wrapper.o error.o
 
 HEADERS = $(wildcard *.h)
 
-RECEIVEROBJ = receiver.o uft.o
+RECEIVEROBJ = receiver.o
+SENDEROBJ = sender.o
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .PRECIOUS: $(TARGET) $(OBJECTS)
 
-$(SENDER): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
+$(SENDER): $(OBJECTS) $(SENDEROBJ)
+	$(CC) $(CFLAGS) $(SENDEROBJ) $(OBJECTS) $(LIBS) -o $@
 
-$(RECEIVER) : $(RECEIVEROBJ)
-	$(CC) $(RECEIVEROBJ) -Wall $(LIBS) -o $@
+$(RECEIVER) : $(RECEIVEROBJ) $(RECEIVEROBJ)
+	$(CC) $(CFLAGS) $(RECEIVEROBJ) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
 	-rm -f *.o

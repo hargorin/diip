@@ -2,15 +2,15 @@
 # @Author: Noah Huetter
 # @Date:   2018-03-09 13:46:33
 # @Last Modified by:   Noah Huetter
-# @Last Modified time: 2018-03-20 17:28:20
+# @Last Modified time: 2018-03-21 13:40:10
 
 # Runs a UFT test transmission to a server in the network
 
 ##
 ## How many characters to transmit
 ##
-COUNT=100000000
-MBS=1000
+# COUNT=100000000
+MBS=10
 
 ##
 ## Server settings
@@ -39,7 +39,8 @@ rsync -qavr -e "ssh -l $SRV_USER" --exclude 'infile*' * $SRV_IP:$SRV_TMPDIR/
 ssh $SRV_USER@$SRV_IP "cd $SRV_TMPDIR && make clean && make"
 
 # start receiver
-ssh -f $SRV_USER@$SRV_IP "$SRV_TMPDIR/receiver 2222 $SRV_TMPDIR/outfile.dat > /dev/null"
+ssh -f $SRV_USER@$SRV_IP "killall receiver; \
+    $SRV_TMPDIR/receiver 2222 $SRV_TMPDIR/outfile.dat > /dev/null"
 sleep 0.1
 
 # start transmit

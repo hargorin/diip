@@ -2,34 +2,11 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-20 17:07:06
+* @Last Modified time: 2018-03-21 13:47:28
 */
 
 #include "uft.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-
-#include <sys/stat.h>
-
-#include <unistd.h>
-#include <sys/types.h> 
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <sys/ioctl.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <poll.h>
-#include <fcntl.h>
-
-#include <errno.h>
-
-#include <unistd.h>
-#include <netdb.h>
-
-#include <sys/time.h>
 
 // ========================================================
 // Data types
@@ -71,7 +48,6 @@ typedef struct tictocstruct
 // Socket related
 static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in *sa );
 static int create_recv_socket(uint16_t port, struct sockaddr_in *sa );
-static int create_reply_socket(uint16_t port, struct sockaddr_in *sa);
 
 static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq);
 static void assemble_uft_ackfp (uint8_t *buf, uint8_t tcid, uint32_t seqnbr);
@@ -120,7 +96,7 @@ static int verbosity = 0;
  */
 int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 {
-    int sockfd, rxsockfd;
+    int sockfd;
     struct sockaddr_in sa, sr;
     int slen = sizeof(sa);
     int srlen = sizeof(sr);
@@ -135,8 +111,6 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     uint8_t buf[1500];
 
     uint8_t *ack_buf;
-
-    fd_set rset; // for select
 
     tictoc_t tt;
     tt.fp = fp;
@@ -159,22 +133,12 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     sockfd = create_send_socket(ip, port, &sa);
     if (sockfd < 0) return -1;
 
-    // create UDP receive socket
-    rxsockfd = sockfd;
-    // rxsockfd = create_recv_socket(port+1, &sr);
-    // if(rxsockfd < 0) return -1;
-
     // send file start control
     controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
-    memset(controll, 0x0, UFT_CONTROLL_SIZE);
     assemble_uft_controll(controll, tcid, nseq);
 
     //send the message
-    if (sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen)==-1)
-    {
-        printf("%s:%d Error in: sendto()\n", __FILE__, __LINE__);
-        return -1;
-    }
+    Sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &sa, slen);
 
     // start data transmission
     dbuf = malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
@@ -184,12 +148,6 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     {
         DBG_V1("Sending %d of %d\n",i,nseq);
         num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
-        // wait until send buffer is not full
-        FD_ZERO(&rset);
-        FD_SET(sockfd, &rset);
-        // select(sockfd+1 , NULL, &rset, NULL, NULL);
-        // usleep(10);
-        // printf("select %d\n", FD_ISSET(sockfd, &rset));
         //send the message
         fds.fd = sockfd;
         fds.events = POLLOUT;
@@ -197,24 +155,12 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         {
             poll(&fds, 1, 0);
         } while (fds.revents == 0);
-        if (sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen)==-1)
-        {
-            // ignore if send buffer is full: ENOBUFS
-            if(errno != ENOBUFS)
-            {
-                printf("%s:%d Error in: sendto(): %d %s\n", __FILE__, __LINE__, errno, strerror(errno));
-                return -1;
-            }
-        }
+        Sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen);
         // Check if packet received
-        ioctl(rxsockfd, FIONREAD, &count);
+        ioctl(sockfd, FIONREAD, &count);
         if(count > 0)
-        {
-            if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
-            {
-                printf("%s:%d rcvfrom error: %s\n", __FILE__, __LINE__, strerror(errno));
-                return -1;
-            }
+        {   
+            Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
             // Check for ACK package
             if(get_command(buf) == CONTROLL_ACKFP)
             {
@@ -225,21 +171,20 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         }
 
 
-        // usleep(5); // local: gets some trouble
-        // usleep(1); // local: no problem at all
+        usleep(5); 
     }
 
     // wait a bit for the last few acks
     struct timeval tv;
     tv.tv_sec = 0;
     tv.tv_usec = 100000;
-    if (setsockopt(rxsockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0) {
-        printf("%s:%d Error %s", __FILE__, __LINE__, strerror(errno));
-    }
+    Setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv));
+
     int do_it = 1;
     while(do_it)
     {
-        if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
+        // Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
+        if ((recv_len = recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
         {
             if(errno == EAGAIN)
             {
@@ -280,20 +225,12 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             // else, send packet
             num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
             //send the message
-            if (sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen)==-1)
-            {
-                printf("%s:%d Error in: sendto()", __FILE__, __LINE__);
-                return -1;
-            }
+            Sendto(sockfd, dbuf, num , 0 , (struct sockaddr *) &sa, slen);
             // Check if packet received
-            ioctl(rxsockfd, FIONREAD, &count);
+            ioctl(sockfd, FIONREAD, &count);
             if(count > 0)
             {
-                if ((recv_len = recvfrom(rxsockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen)) == -1)
-                {
-                    printf("%s:%d \nrcvfrom error: %s\n", __FILE__, __LINE__, strerror(errno));
-                    return -1;
-                }
+                recv_len = Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &sr, (socklen_t *) &srlen);
                 // Check for ACK package
                 if(get_command(buf) == CONTROLL_ACKFP)
                 {
@@ -310,7 +247,6 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
 
     toc(&tt);
     close(sockfd);
-    close(rxsockfd);
     return 0;
 }
 
@@ -328,7 +264,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
 
     struct sockaddr_in si_other;
      
-    int sockfd, txsockfd, slen = sizeof(si_other) , recv_len;
+    int sockfd, slen = sizeof(si_other) , recv_len;
 
     uint8_t buf[1500];
 
@@ -336,11 +272,12 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     uint8_t *outbuf;
     uint32_t nseq, seqctr, data_ctr, payload_size, obuf_ptr;
     uint8_t tcid, do_receive;
-     
-    double start, end;
-    struct timeval tv;
+    
 
     uint8_t *controll;
+
+    tictoc_t tt;
+    tt.fp = fp;
 
     // create UDP receive socket
     sockfd = create_recv_socket(port, &si_other);
@@ -352,29 +289,14 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     while(do_receive)
     {    
         //try to receive some data, this is a blocking call
-        if ((recv_len = recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &si_other, (socklen_t *) &slen)) == -1)
-        {
-            printf("rcvfrom error: %s %s,%d\n", strerror(errno), __FILE__, __LINE__);
-            return -1;
-        }
+        recv_len = Recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &si_other, (socklen_t *) &slen);
 
-        // Create send socket
-        // txsockfd = create_reply_socket(port+1, &si_other);
-        // if (txsockfd < 0) return -1;
-         
-        //print details of the client/peer and the data received
-        // p%s:%d rintf("Received packet from\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
-        // printf("Data: %s\n" , buf);
-        // printf("Size: %d\n", recv_len);
-        // printf("%3.2f %%\r", 100.0/(float)nseq*seqctr);
-     
         // first packet
         if(recv_state == 0)
         {
             if( get_command(buf) == CONTROLL_FTS )
             {
-                gettimeofday(&tv,NULL);
-                start = 1000000 * tv.tv_sec + tv.tv_usec;
+                tic(&tt);
                 // start of data transmission
                 recv_state++;
                 tcid = get_tcid(buf);
@@ -402,19 +324,14 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                     if(payload_size == 0) payload_size = recv_len - 4;
                     memcpy(&outbuf[ get_seq(buf) * payload_size ], &buf[4], recv_len - 4);
                     data_ctr += recv_len - 4;
-                    // printf("buf_idx: %d len: %d payload_size: %d\n", (get_seq(buf) * payload_size), (recv_len - 4), payload_size);
-                    
+
                     // send acknowledge
                     controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
                     memset(controll, 0x0, UFT_CONTROLL_SIZE);
                     assemble_uft_ackfp(controll, tcid, get_data_seqnbr(buf));
                     //send the message
-                    if (sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &si_other, slen)==-1)
-                    {
-                        printf("%s:%d Error in: sendto()\n", __FILE__, __LINE__);
-                        return -1;
-                    }
-
+                    Sendto(sockfd, controll, UFT_CONTROLL_SIZE , 0 , (struct sockaddr *) &si_other, slen);
+                    
                     if(++seqctr == nseq)
                     {
                         printf("start writing file\n");
@@ -424,8 +341,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                             printf("%s:%d fwrite error: %s\n", __FILE__, __LINE__, strerror(errno));
                             return -1;
                         }
-                        gettimeofday(&tv,NULL);
-                        end = 1000000 * tv.tv_sec + tv.tv_usec;
+                        toc(&tt);
                         do_receive = 0;
                     }
                 }
@@ -434,10 +350,6 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     }
     
     close(sockfd);
-    // close(txsockfd);
-
-    printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s\n", (end-start),  1.0*get_filesize_bytes(fp) / 1024.0 / 1024.0 / ((end-start) / 1000000.0));
-    printf("Filesize: %d\n", get_filesize_bytes(fp));
     return 0;
 }
 
@@ -494,12 +406,12 @@ static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in 
     sa->sin_family = AF_INET;
 
     // send control packet
-    sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (sockfd < 0) 
-    {
-        printf("%s:%d ERROR opening socket: %s\n", __FILE__, __LINE__, strerror(errno));
-        return -1;
-    }
+    sockfd = Socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    // if (sockfd < 0) 
+    // {
+    //     printf("%s:%d ERROR opening socket: %s\n", __FILE__, __LINE__, strerror(errno));
+    //     return -1;
+    // }
 
     // Set flags
     flags = fcntl(sockfd, F_GETFL, 0);
@@ -523,11 +435,12 @@ static int create_recv_socket(uint16_t port, struct sockaddr_in *sa )
     int sockfd;
 
     //create a UDP socket
-    if ((sockfd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
-    {
-        printf("%s:%d socket error: %s\n", __FILE__, __LINE__, strerror(errno));
-        return -1;
-    }
+    sockfd = Socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    // if ((sockfd=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    // {
+    //     printf("%s:%d socket error: %s\n", __FILE__, __LINE__, strerror(errno));
+    //     return -1;
+    // }
      
     // zero out the structure
     memset((uint8_t *) sa, 0, sizeof(*sa));
@@ -537,42 +450,20 @@ static int create_recv_socket(uint16_t port, struct sockaddr_in *sa )
     sa->sin_addr.s_addr = htonl(INADDR_ANY);
      
     //bind socket to port
-    if( bind(sockfd , (struct sockaddr*)sa, sizeof(*sa) ) == -1)
-    {
-        printf("%s:%d bind error: %s\n", __FILE__, __LINE__, strerror(errno));
-        return -1;
-    }
+    Bind(sockfd , (struct sockaddr*)sa, sizeof(*sa) );
+    // if( bind(sockfd , (struct sockaddr*)sa, sizeof(*sa) ) == -1)
+    // {
+    //     printf("%s:%d bind error: %s\n", __FILE__, __LINE__, strerror(errno));
+    //     return -1;
+    // }
     return sockfd;
 }
 
-/**
- * @brief      Creates a socket to reply to the sender specified in sa
- *
- * @param      sa    sender info
- *
- * @return     socket, -1 if failed
- */
-static int create_reply_socket(uint16_t port, struct sockaddr_in *sa)
-{
-    int sockfd;
-
-    // convert ip and port
-    // inet_aton(ip, &(sa->sin_addr));
-    sa->sin_port = htons(port);
-    sa->sin_family = AF_INET;
-
-    // send control packet
-    sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (sockfd < 0) 
-    {
-        printf("%s:%d ERROR opening socket: %s\n", __FILE__, __LINE__, strerror(errno));
-        return -1;
-    }
-    return sockfd;
-}
 
 static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq)
 {
+    memset(buf, 0x0, UFT_CONTROLL_SIZE);
+
     buf[0] = CONTROLL_FTS;
 
     buf[1] = 0;
