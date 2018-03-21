@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-21 15:57:41
+* @Last Modified time: 2018-03-21 16:42:31
 */
 
 #include "uft.h"
@@ -39,7 +39,7 @@ typedef struct tictocstruct
 #define UFT_DATA_PAYLOAD     1464 // remaining data size in data packet
 #define UFT_DATA_SIZEW       1472 // data packet size
 
-#define N_PACK_RETRY            10  // how many times to resend a packets
+#define N_PACK_RETRY            30  // how many times to resend a packets
 
 // ========================================================
 // Function declarations
@@ -67,6 +67,8 @@ static uint32_t get_command_ackfp_seqnbr (uint8_t *buf);
 static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq);
 static void tic(tictoc_t *tt);
 static void toc(tictoc_t *tt);
+
+static int is_all_set (uint8_t* buf, size_t len);
 
 int dbgprintf(const char *fmt, ...);
 
@@ -155,7 +157,18 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         {
             poll(&fds, 1, 0);
         } while (fds.revents == 0);
-        Send(sockfd, dbuf, num , 0);
+        // Send(sockfd, dbuf, num , 0);
+        if (send(sockfd, dbuf, num, 0) != (ssize_t)num)
+        {
+            if(errno == ENOBUFS)
+            {
+
+            }
+            else
+            {
+                err_sys("send error");
+            }
+        }
         // Check if packet received
         ioctl(sockfd, FIONREAD, &count);
         if(count > 0)
@@ -224,7 +237,18 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             // else, send packet
             num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
             //send the message
-            Send(sockfd, dbuf, num , 0);
+            // Send(sockfd, dbuf, num , 0);
+            if (send(sockfd, dbuf, num, 0) != (ssize_t)num)
+            {
+                if(errno == ENOBUFS)
+                {
+
+                }
+                else
+                {
+                    err_sys("send error");
+                }
+            }
             // Check if packet received
             ioctl(sockfd, FIONREAD, &count);
             if(count > 0)
@@ -238,7 +262,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
                     ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
                 }
             }
-            usleep(20);
+            usleep(5);
         }
 
         nack_ctr = ack_stats(ack_buf, nseq);
@@ -272,6 +296,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
     uint32_t nseq, seqctr, data_ctr, payload_size, obuf_ptr;
     uint8_t tcid, do_receive;
     
+    uint8_t *ack_buf;
 
     uint8_t *controll;
 
@@ -310,6 +335,10 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                 // allocate enough space to hold the data
                 outbuf = malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
                 memset(outbuf, 0x0, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t));
+                // make room for ack array and set all to 0
+                ack_buf = malloc( nseq * sizeof(uint8_t) );
+                memset(ack_buf, 0, nseq * sizeof(uint8_t));
+                // Connect Socket to receive only from this host
                 Connect(sockfd, (const struct sockaddr*)&si_other, sizeof(si_other));
                 // printf("nseq = %d\n", nseq);
             }
@@ -334,8 +363,12 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                     assemble_uft_ackfp(controll, tcid, get_data_seqnbr(buf));
                     //send the message
                     Send(sockfd, controll, UFT_CONTROLL_SIZE , 0);
-                    
-                    if(++seqctr == nseq)
+                        
+                    // store acknowledged
+                    ack_buf[get_seq(buf)] = 1;
+
+                    // if(++seqctr == nseq)
+                    if(is_all_set(ack_buf, nseq))
                     {
                         printf("start writing file\n");
                         // transaction is complete, store file
@@ -735,4 +768,20 @@ static void toc(tictoc_t *tt)
         get_filesize_bytes(tt->fp)/1024.0/1024.0);
 }
 
-
+/**
+ * @brief      Tests an array for all elements not zero
+ *
+ * @param      buf   The buffer
+ * @param[in]  len   The length
+ *
+ * @return     True if all set, False otherwise.
+ */
+static int is_all_set (uint8_t* buf, size_t len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        if(buf[i] == 0)
+            return 0;
+    }
+    return 1;
+}
