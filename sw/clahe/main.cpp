@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <stdlib.h>
 #include <stdio.h>
 #include <cv.h>
@@ -31,6 +32,9 @@ void printUsage () {
 int main(int argc, const char * argv[]) {
 	const int ARR_LENGTH = 256;
 	int hist[ARR_LENGTH] = {};
+
+	FILE *fp;
+
 	long mean = 0;
 	double pix_tile = 0.0;
 	
@@ -73,20 +77,26 @@ int main(int argc, const char * argv[]) {
         }
     }
 
+    // Output
     mean = mean / (img.rows * img.cols);	// mean value
     printf("mean: %ld\n", mean);
+
+    fp = fopen("matlab/clahe_data.txt", "wb");
 
     for (int i = 0; i < ARR_LENGTH; i++) {
     	printf("%d ", hist[i]);
     	sum += hist[i];
+    	fprintf(fp, "%d ", hist[i]);
     }
+    fprintf(fp, "\n");
+
     printf("\n");
     printf("SUM histogram: %ld\n", sum);
     sum = 0;
 
     // *********************************************************
     // Histogram clipping
-    thr = mean * 12;
+    thr = mean * 10;
     int excess = 0;
     for (int i = 0; i < ARR_LENGTH; i++) {
     	if(hist[i] > thr) {
@@ -96,10 +106,14 @@ int main(int argc, const char * argv[]) {
     }
 
 
+    // Output
     for (int i = 0; i < ARR_LENGTH; i++) {
 		printf("%d ", hist[i]);
 		sum += hist[i];
+    	fprintf(fp, "%d ", hist[i]);
     }
+    fprintf(fp, "\n");
+
     printf("\n");
     printf("SUM (clipping): %ld\n", sum);
     printf("excess: %d\n", excess);
@@ -122,10 +136,14 @@ int main(int argc, const char * argv[]) {
     }
 
 
+    // Output
     for (int i = 0; i < ARR_LENGTH; i++) {
 		printf("%d ", hist[i]);
 		sum += hist[i];
+	    fprintf(fp, "%d ", hist[i]);
     }
+    fprintf(fp, "\n");
+
     printf("\n");
     printf("SUM (distribution): %ld\n", sum);
     printf("excess: %d\n", excess);
@@ -145,11 +163,15 @@ int main(int argc, const char * argv[]) {
     }
 
 
+    // Output
     for (int i = 0; i < ARR_LENGTH; i++) {
 		printf("%d ", hist[i]);
 		sum += hist[i];
 		pix_tile += hist[i];
+    	fprintf(fp, "%d ", hist[i]);
     }
+    fprintf(fp, "\n");
+
     printf("\n");
     printf("SUM (redistribution): %ld\n", sum);
     printf("excess: %d\n", excess);
@@ -164,10 +186,15 @@ int main(int argc, const char * argv[]) {
     	cdf[i] = cdf[i-1] + (hist[i] * ARR_LENGTH / pix_tile);
     }
 
+
+    // Output
     for (int i = 0; i < ARR_LENGTH; i++) {
 		printf("%.2f ", cdf[i]);
 		sum += cdf[i];
+    	fprintf(fp, "%.1f ", cdf[i]);
     }
+    fprintf(fp, "\n");
+
     printf("\n");
     printf("SUM (CDF): %ld\n", sum);
     printf("excess: %d\n", excess);
@@ -175,23 +202,27 @@ int main(int argc, const char * argv[]) {
 
     // *********************************************************
     // Remapping Pixels
-    int hist_clahe[ARR_LENGTH] = {};
+    int h_clahe[ARR_LENGTH] = {};
 
     for (int y = 0; y<img.rows; y++) {
         for (int x = 0; x < img.cols; x++) {
             img_clahe.at<uchar>(Point(x, y)) = cdf[img.at<uchar>(Point(x, y))];
-            hist_clahe[img_clahe.at<uchar>(Point(x, y))] += 1;
+            h_clahe[img_clahe.at<uchar>(Point(x, y))] += 1;
         }
     }
 
+
+    // Output
     for (int i = 0; i < ARR_LENGTH; i++) {
-		printf("%d ", hist_clahe[i]);
-		sum += hist_clahe[i];
+		printf("%d ", h_clahe[i]);
+		sum += h_clahe[i];
+    	fprintf(fp, "%d ", h_clahe[i]);
     }
+    fprintf(fp, "\n");
+    fclose(fp);
+
     printf("\n");
     printf("SUM (CLAHE): %ld\n", sum);
-
-
 
 
 
