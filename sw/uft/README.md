@@ -1,6 +1,16 @@
 
+## Targets
+### benchmark
+Runs several benchmarks.
+| number | description |
+|--------|-------------|
+|      0 | ```txBufBench``` different methods for writing into Tx buffer without loosing data |
 
-## from IRC ##linux freenode
+## Notes
+### Blocking vs Nonblocking
+On Mac OSX the UDP socket can not be set blocking for ```ENOBUFS```. Linux default UDP socket is blocking for ```ENOBUFS``` and can be set non blocking.
+
+### from IRC ##linux freenode
 <ayecee> noahh: poll(), test for ready to write
 <ayecee> or set the fd as nonblocking and handle the EAGAIN/EWOULDBLOCK that's returned from sendto.
 
@@ -33,5 +43,5 @@ Total syscalls are only picked randomly from tests. No mean values.
 | 43a75ac     | Retransmission | 61.558 MB/s | 100MB | 7042 |
 | 54f899b     | Sender connect() | 64.669 MB/s | 100MB | 4754 |
 | 12b0196     | Receiver connect() | 63.661 MB/s | 100MB |  |
-|      | Ignore send ENOBUFS | 66.481 MB/s | 100MB |   |
+| 6117e17     | Ignore send ENOBUFS | 66.481 MB/s | 100MB |   |
 

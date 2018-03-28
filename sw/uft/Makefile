@@ -1,8 +1,9 @@
 
 SENDER = sender
 RECEIVER = receiver
+BENCHMARK = benchmark
 
-TARGET = $(SENDER) $(RECEIVER)
+TARGET = $(SENDER) $(RECEIVER) $(BENCHMARK)
 
 LIBS = -lm
 CC = gcc
@@ -13,12 +14,13 @@ CFLAGS = -g -Wall
 default: $(TARGET)
 all: default
 
-OBJECTS = uft.o wrapper.o error.o
+OBJECTS = uft.o wrapper.o error.o util.o
 
 HEADERS = $(wildcard *.h)
 
 RECEIVEROBJ = receiver.o
 SENDEROBJ = sender.o
+BENCHMARKOBJ = benchmark.o
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -28,8 +30,11 @@ SENDEROBJ = sender.o
 $(SENDER): $(OBJECTS) $(SENDEROBJ)
 	$(CC) $(CFLAGS) $(SENDEROBJ) $(OBJECTS) $(LIBS) -o $@
 
-$(RECEIVER) : $(RECEIVEROBJ) $(RECEIVEROBJ)
+$(RECEIVER) : $(OBJECTS) $(RECEIVEROBJ)
 	$(CC) $(CFLAGS) $(RECEIVEROBJ) $(OBJECTS) -Wall $(LIBS) -o $@
+
+$(BENCHMARK) : $(OBJECTS) $(BENCHMARKOBJ)
+	$(CC) $(CFLAGS) $(BENCHMARKOBJ) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
 	-rm -f *.o

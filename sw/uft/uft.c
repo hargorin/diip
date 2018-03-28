@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-21 16:42:31
+* @Last Modified time: 2018-03-28 11:38:13
 */
 
 #include "uft.h"
@@ -18,16 +18,6 @@ typedef enum uftControll
     ACKFP,
     ACKFT
 } tUFTControll;
-
-// typedef struct timeval tv_t;
-typedef struct tictocstruct
-{
-    struct timeval tv;
-    double start;
-    double end;
-    FILE* fp;
-} tictoc_t;
-
 
 // Command field values
 #define CONTROLL_FTS         0x00
@@ -53,8 +43,6 @@ static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq);
 static void assemble_uft_ackfp (uint8_t *buf, uint8_t tcid, uint32_t seqnbr);
 static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tcid, uint32_t seq);
 
-static uint32_t get_filesize_bytes (FILE *fp);
-
 static int is_command_packet(uint8_t *buf);
 static int get_command (uint8_t *buf);
 static uint8_t get_tcid (uint8_t *buf);
@@ -65,8 +53,6 @@ static uint32_t get_data_seqnbr (uint8_t *buf);
 static uint32_t get_command_ackfp_seqnbr (uint8_t *buf);
 
 static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq);
-static void tic(tictoc_t *tt);
-static void toc(tictoc_t *tt);
 
 static int is_all_set (uint8_t* buf, size_t len);
 
@@ -581,20 +567,6 @@ static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tc
 }
 
 /**
- * @brief      Returns the file size in bytes
- *
- * @param      fp    pointer to an open file descriptor
- *
- * @return     The filesize bytes.
- */
-static uint32_t get_filesize_bytes (FILE *fp)
-{
-    struct stat stat_buf;
-    int rc = fstat(fileno(fp), &stat_buf);
-    return rc == 0 ? stat_buf.st_size : -1;
-}
-
-/**
  * @brief      Returns 1 if the received packet is a command, 0 if data
  *
  * @param      buf   received packet
@@ -752,21 +724,6 @@ static uint32_t ack_stats(uint8_t* ack_buf, uint32_t nseq)
     return nack_ctr;
 }
 
-static void tic(tictoc_t *tt)
-{
-    gettimeofday(&tt->tv,NULL);
-    tt->start = 1000000 * tt->tv.tv_sec + tt->tv.tv_usec;
-}
-
-static void toc(tictoc_t *tt)
-{
-    gettimeofday(&tt->tv,NULL);
-    tt->end = 1000000 * tt->tv.tv_sec + tt->tv.tv_usec;
-    printf( "\r\n\r\ntime elapsed: %.0fus Speed: %.3f MB/s Size: %.3f MB\n", 
-        (tt->end-tt->start),  
-        1.0*get_filesize_bytes(tt->fp) / 1024.0 / 1024.0 / ((tt->end-tt->start) / 1000000.0),
-        get_filesize_bytes(tt->fp)/1024.0/1024.0);
-}
 
 /**
  * @brief      Tests an array for all elements not zero
