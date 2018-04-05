@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-04-05 11:14:19
+* @Last Modified time: 2018-04-05 12:48:13
 */
 
 #include "uft.h"
@@ -176,7 +176,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     // wait a bit for the last few acks
     struct timeval tv;
     tv.tv_sec = 0;
-    tv.tv_usec = 100000;
+    tv.tv_usec = 1000;
     Setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv));
 
     int do_it = 1;
@@ -446,7 +446,9 @@ static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in 
     // Set flags
     flags = fcntl(sockfd, F_GETFL, 0);
     // set blocking
-    flags &= ~O_NONBLOCK;
+    // flags &= ~O_NONBLOCK;
+    // set nonblocking
+    flags |= O_NONBLOCK;
     fcntl(sockfd, F_SETFL, flags);
 
     // connect socket: Limits UDP connection to single peer
@@ -572,6 +574,46 @@ static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tc
         }
     }
     return  num+4;  
+
+    // Method using a local buffer of the file. Turns out to be slower
+    // static uint8_t *fbuf = 0;
+    // size_t num;
+
+    // // check if file is in buffer
+    // if(fbuf == 0)
+    // {
+    //     // allocate memory
+    //     fbuf = malloc( fsize );
+    //     if(!fbuf) err_sys ("memory allocation for input file failed");
+    //     // copy file to buffer
+    //     // num = read(fd, fbuf, fsize);
+    //     num = fread(fbuf, 1, fsize, fd);
+    //     if (num != fsize)
+    //     {
+    //         err_quit("Read only %d of %d bytes into buffer", num, fsize);
+    //     }
+    // }
+
+    // buf[0] = (tcid & 0x7f) | 0x80;
+
+    // buf[1] = ((seq & 0x00ff0000) >> 16);
+    // buf[2] = ((seq & 0x0000ff00) >>  8);
+    // buf[3] = ((seq & 0x000000ff) >>  0);
+
+    // long curr = seq * UFT_DATA_PAYLOAD;
+
+    // // enough data for a full data packet
+    // if((fsize - curr) > UFT_DATA_PAYLOAD)
+    // {
+    //     num = UFT_DATA_PAYLOAD;
+    //     memcpy(&buf[4], &fbuf[seq * UFT_DATA_PAYLOAD], num);
+    // }
+    // else
+    // {
+    //     num = fsize - curr;
+    //     memcpy(&buf[4], &fbuf[seq * UFT_DATA_PAYLOAD], num);
+    // }
+    // return  num+4;  
 }
 
 /**
@@ -596,18 +638,7 @@ static int is_command_packet (uint8_t *buf)
  */
 static int get_command (uint8_t *buf)
 {
-    if (is_command_packet(buf))
-    {
-        switch( buf[0] & 0x7f )
-        {
-            case CONTROLL_FTS: return CONTROLL_FTS;
-            case CONTROLL_FTP: return CONTROLL_FTP;
-            case CONTROLL_ACKFP: return CONTROLL_ACKFP;
-            case CONTROLL_ACKFT: return CONTROLL_ACKFT;
-            default: return -1;
-        }
-    }
-    return -1;
+    return buf[0] & 0x7f;
 }
 
 /**
