@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-04-05 13:39:10
+* @Last Modified time: 2018-04-05 16:39:16
 */
 
 #include "uft.h"
@@ -143,7 +143,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
         // Send(sockfd, dbuf, num , 0);
         if (send(sockfd, dbuf, num, 0) != (ssize_t)num)
         {
-            if(errno == ENOBUFS)
+            if(errno == ENOBUFS || errno == EAGAIN)
             {
 
             }
@@ -170,9 +170,8 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
-        usleep(1); 
     }
-
+    usleep(100); 
     // wait a bit for the last few acks
     struct timeval tv;
     tv.tv_sec = 0;
@@ -228,7 +227,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             // Send(sockfd, dbuf, num , 0);
             if (send(sockfd, dbuf, num, 0) != (ssize_t)num)
             {
-                if(errno == ENOBUFS)
+                if(errno == ENOBUFS || errno == EAGAIN)
                 {
 
                 }

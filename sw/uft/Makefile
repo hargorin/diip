@@ -7,7 +7,7 @@ TARGET = $(SENDER) $(RECEIVER) $(BENCHMARK)
 
 LIBS = -lm
 CC = gcc
-CFLAGS = -pg -g -Wall
+CFLAGS = -O3 -g -Wall
 
 .PHONY: default all clean
 
