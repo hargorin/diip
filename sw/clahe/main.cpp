@@ -57,6 +57,8 @@ int main(int argc, const char * argv[]) {
 
 	uint16_t excess = 0;
 	uint16_t fullbin = 0;
+	uint16_t dist = 0;
+	uint16_t spill_over = 0;
 	double num_pixel = 0.0;
 
 
@@ -102,7 +104,6 @@ int main(int argc, const char * argv[]) {
 		// ********************************************************************
 		// Iteration throught Window
 	    for (uint8_t win_itr = 0; win_itr < (WIN_SIZE * WIN_SIZE); win_itr++) {
-	    	excess = 0;
 
 	    	// ****************************************************************
 	    	// Calculate Histogram
@@ -114,49 +115,52 @@ int main(int argc, const char * argv[]) {
 	    	}
 
 	    	// *********************************************************
-		    // Histogram clipping
+		    // Histogram Clipping
+		   	excess = 0;
+	    	fullbin = 0;
+
 		    for (uint8_t i = 0; i < NUM_BINS; i++) {
 		    	if(win[win_itr].hist[i] > thr) {
 		    		excess += win[win_itr].hist[i] - thr;
+		    		fullbin += 1;
 		    		win[win_itr].hist[i] = thr;
 		    	}
 		    }
 
-		    // *********************************************************
-		    // Initial distribution
-		    uint16_t m = excess/NUM_BINS;
-		    for (uint8_t i = 0; i < NUM_BINS; i++) {
-		    	if(excess > 0) {
-		    		if(win[win_itr].hist[i] < (thr - m)) {
-		    			win[win_itr].hist[i] = win[win_itr].hist[i] + m; 
-		    			excess -= m;
-		    		}
-		    		else if(win[win_itr].hist[i] < thr) {
-		    			win[win_itr].hist[i] = thr;
-		    			//excess = excess - thr + win[win_itr].hist[i];
-		    		}
-		    	}
-		    }
-
-		    // *********************************************************
-		    // Iterative redistribution of excess pixels
+		   	// *********************************************************
+		    // Histogram Distribution
 		    while(excess > 0) {
-		    	for (uint8_t i = 0; i < NUM_BINS; i++) { 
+		    	dist = excess / (NUM_BINS - fullbin);
+		    	spill_over = 0;
+
+		    	for (uint8_t i = 0; i < NUM_BINS; i++) {
 		    		if(excess > 0) {
-		    			if(win[win_itr].hist[i] < thr) {
-		    				excess = excess - 1;
-		    				win[win_itr].hist[i] = win[win_itr].hist[i] + 1;
+		    			if(win[win_itr].hist[i] < (thr - dist)) {
+		    				if(spill_over > 0) {
+		    					win[win_itr].hist[i] += (dist + 1);
+		    					spill_over -= 1;
+		    					excess -= (dist - 1); 
+		    				}
+		    				else {
+		    					win[win_itr].hist[i] += dist;
+		    					excess -= dist;
+		    				}
+		    			}
+		    			else if(win[win_itr].hist[i] < thr) {
+		    				win[win_itr].hist[i] = thr;
 		    			}
 		    		}
+		    		spill_over += (dist - thr + win[win_itr].hist[i]);
+		    		excess += (win[win_itr].hist[i] - thr);
 		    	}
-		    }
-
-		    for (uint8_t i = 0; i < NUM_BINS; i++) {
-				num_pixel += win[win_itr].hist[i];
 		    }
 
 	        // *********************************************************
     		// CDF calculation
+			for (uint8_t i = 0; i < NUM_BINS; i++) {
+				num_pixel += win[win_itr].hist[i];
+		    }
+
     		win[win_itr].cdf[0] = win[win_itr].hist[0] * NUM_BINS / num_pixel;
     		for (uint8_t i = 1; i < NUM_BINS; i++) {
     			win[win_itr].cdf[i] = win[win_itr].cdf[i-1] + (win[win_itr].hist[i] * NUM_BINS / num_pixel);
