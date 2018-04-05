@@ -6,6 +6,7 @@
 //  Copyright © 2017 Jan Stocker. All rights reserved.
 //
 
+#include <stdint.h>
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
@@ -13,7 +14,6 @@
 #include <cv.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-#include <sys/time.h>
 
 using namespace cv;
 using namespace std;
@@ -29,15 +29,40 @@ void printUsage () {
     printf("    example: ./clahe input_files/landscape.jpg clahe_landscape.jpg 32 -s\n");
 }
 
+
+// ****************************************************************************
+// Declares
+#define WIN_SIZE 	4
+#define BLOCK_SIZE 	64
+#define NUM_BINS 	256
+
+
+// ****************************************************************************
+// MAIN
+// ****************************************************************************
 int main(int argc, const char * argv[]) {
-	const int ARR_LENGTH = 256;
-	int hist[ARR_LENGTH] = {};
 
+	// ************************************************************************
+	// Defines
+	typedef uint16_t Hist_t[NUM_BINS] ;
+	typedef uint8_t Cdf_t[NUM_BINS] ;
+
+	typedef struct Window {
+		Cdf_t cdf;
+		Hist_t hist;
+	} Window_t;
+
+	Window_t win[WIN_SIZE * WIN_SIZE];
+	Cdf_t cdf_store[WIN_SIZE] = {}; // CDF Storage for the next iteration
+
+	uint16_t excess = 0;
+	uint16_t fullbin = 0;
+	double num_pixel = 0.0;
+
+
+	// ************************************************************************
+	// Console Input
 	FILE *fp;
-
-	long mean = 0;
-	double pix_tile = 0.0;
-	
 
     if(argc < 4)
     {
@@ -57,7 +82,7 @@ int main(int argc, const char * argv[]) {
     const char * infile = argv[1];
     const char * outfile = argv[2];
     char * pEnd;
-    int thr = strtol(argv[3], &pEnd, 10);
+    uint8_t thr = strtol(argv[3], &pEnd, 10);
 
 
     // Read input image
@@ -65,180 +90,99 @@ int main(int argc, const char * argv[]) {
     Mat img_clahe(img.rows, img.cols, CV_8UC1, Scalar(0));
 
 
-    // *********************************************************
-    // Calculate the histogram
-    int intensity = 0;
-    long sum = 0;
-    for (int y = 0; y < img.rows; y++) {
-        for (int x = 0; x < img.cols; x++) {
-            intensity = img.at<uchar>(Point(x, y));
-            hist[intensity] += 1;
-            mean += intensity;
-        }
-    }
-
-    // Output
-    mean = mean / (img.rows * img.cols);	// mean value
-    printf("mean: %ld\n", mean);
-
-    fp = fopen("matlab/clahe_data.txt", "wb");
-
-    for (int i = 0; i < ARR_LENGTH; i++) {
-    	printf("%d ", hist[i]);
-    	sum += hist[i];
-    	fprintf(fp, "%d ", hist[i]);
-    }
-    fprintf(fp, "\n");
-
-    printf("\n");
-    printf("SUM histogram: %ld\n", sum);
-    sum = 0;
-
-    // *********************************************************
-    // Histogram clipping
-    thr = mean * 10;
-    int excess = 0;
-    for (int i = 0; i < ARR_LENGTH; i++) {
-    	if(hist[i] > thr) {
-    		excess += hist[i] - thr;
-    		hist[i] = thr;
-    	}
-    }
+	// ************************************************************************
+	// Iteration throught Image
+	// ************************************************************************
+   	uint16_t x_tmp = 0;
+   	uint16_t x_win = 0;
+	uint16_t y_img = 0;
+	uint8_t intensity = 0;
 
 
-    // Output
-    for (int i = 0; i < ARR_LENGTH; i++) {
-		printf("%d ", hist[i]);
-		sum += hist[i];
-    	fprintf(fp, "%d ", hist[i]);
-    }
-    fprintf(fp, "\n");
+		// ********************************************************************
+		// Iteration throught Window
+	    for (uint8_t win_itr = 0; win_itr < (WIN_SIZE * WIN_SIZE); win_itr++) {
+	    	excess = 0;
 
-    printf("\n");
-    printf("SUM (clipping): %ld\n", sum);
-    printf("excess: %d\n", excess);
-    sum = 0;
+	    	// ****************************************************************
+	    	// Calculate Histogram
+	    	for (; y_img < BLOCK_SIZE; y_img++) {
+		        for (uint16_t x_img = x_tmp; x_img < (x_tmp + BLOCK_SIZE); x_img++) {
+		            intensity = img.at<uchar>(Point(x_img, y_img));
+		            win[win_itr].hist[intensity] += 1;
+		        }
+	    	}
 
-    // *********************************************************
-    // Initial distribution
-    int m = excess/ARR_LENGTH;
-    for (int i = 0; i < ARR_LENGTH; i++) {
-    	if(excess > 0) {
-    		if(hist[i] < (thr - m)) {
-    			hist[i] = hist[i] + m; 
-    			excess -= m;
+	    	// *********************************************************
+		    // Histogram clipping
+		    for (uint8_t i = 0; i < NUM_BINS; i++) {
+		    	if(win[win_itr].hist[i] > thr) {
+		    		excess += win[win_itr].hist[i] - thr;
+		    		win[win_itr].hist[i] = thr;
+		    	}
+		    }
+
+		    // *********************************************************
+		    // Initial distribution
+		    uint16_t m = excess/NUM_BINS;
+		    for (uint8_t i = 0; i < NUM_BINS; i++) {
+		    	if(excess > 0) {
+		    		if(win[win_itr].hist[i] < (thr - m)) {
+		    			win[win_itr].hist[i] = win[win_itr].hist[i] + m; 
+		    			excess -= m;
+		    		}
+		    		else if(win[win_itr].hist[i] < thr) {
+		    			win[win_itr].hist[i] = thr;
+		    			//excess = excess - thr + win[win_itr].hist[i];
+		    		}
+		    	}
+		    }
+
+		    // *********************************************************
+		    // Iterative redistribution of excess pixels
+		    while(excess > 0) {
+		    	for (uint8_t i = 0; i < NUM_BINS; i++) { 
+		    		if(excess > 0) {
+		    			if(win[win_itr].hist[i] < thr) {
+		    				excess = excess - 1;
+		    				win[win_itr].hist[i] = win[win_itr].hist[i] + 1;
+		    			}
+		    		}
+		    	}
+		    }
+
+		    for (uint8_t i = 0; i < NUM_BINS; i++) {
+				num_pixel += win[win_itr].hist[i];
+		    }
+
+	        // *********************************************************
+    		// CDF calculation
+    		win[win_itr].cdf[0] = win[win_itr].hist[0] * NUM_BINS / num_pixel;
+    		for (uint8_t i = 1; i < NUM_BINS; i++) {
+    			win[win_itr].cdf[i] = win[win_itr].cdf[i-1] + (win[win_itr].hist[i] * NUM_BINS / num_pixel);
     		}
-    		else if(hist[i] < thr) {
-    			hist[i] = thr;
-    			excess = excess - thr + hist[i];
-    		}
-    	}
-    }
-
-
-    // Output
-    for (int i = 0; i < ARR_LENGTH; i++) {
-		printf("%d ", hist[i]);
-		sum += hist[i];
-	    fprintf(fp, "%d ", hist[i]);
-    }
-    fprintf(fp, "\n");
-
-    printf("\n");
-    printf("SUM (distribution): %ld\n", sum);
-    printf("excess: %d\n", excess);
-    sum = 0;
-
-    // *********************************************************
-    // Iterative redistribution of excess pixels
-    while(excess > 0) {
-    	for (int i = 0; i < ARR_LENGTH; i++) { 
-    		if(excess > 0 ) {
-    			if(hist[i] < thr) {
-    				excess = excess - 1;
-    				hist[i] = hist[i] + 1;
-    			}
-    		}
-    	}
-    }
-
-
-    // Output
-    for (int i = 0; i < ARR_LENGTH; i++) {
-		printf("%d ", hist[i]);
-		sum += hist[i];
-		pix_tile += hist[i];
-    	fprintf(fp, "%d ", hist[i]);
-    }
-    fprintf(fp, "\n");
-
-    printf("\n");
-    printf("SUM (redistribution): %ld\n", sum);
-    printf("excess: %d\n", excess);
-    sum = 0;
-
-    // *********************************************************
-    // CDF calculation
-    float cdf[ARR_LENGTH] = {};
-
-    cdf[0] = hist[0] * ARR_LENGTH / pix_tile;
-    for (int i = 1; i < ARR_LENGTH; i++) {
-    	cdf[i] = cdf[i-1] + (hist[i] * ARR_LENGTH / pix_tile);
-    }
-
-
-    // Output
-    for (int i = 0; i < ARR_LENGTH; i++) {
-		printf("%.2f ", cdf[i]);
-		sum += cdf[i];
-    	fprintf(fp, "%.1f ", cdf[i]);
-    }
-    fprintf(fp, "\n");
-
-    printf("\n");
-    printf("SUM (CDF): %ld\n", sum);
-    printf("excess: %d\n", excess);
-    sum = 0;
-
-    // *********************************************************
-    // Remapping Pixels
-    int h_clahe[ARR_LENGTH] = {};
-
-    for (int y = 0; y<img.rows; y++) {
-        for (int x = 0; x < img.cols; x++) {
-            img_clahe.at<uchar>(Point(x, y)) = cdf[img.at<uchar>(Point(x, y))];
-            h_clahe[img_clahe.at<uchar>(Point(x, y))] += 1;
-        }
-    }
-
-
-    // Output
-    for (int i = 0; i < ARR_LENGTH; i++) {
-		printf("%d ", h_clahe[i]);
-		sum += h_clahe[i];
-    	fprintf(fp, "%d ", h_clahe[i]);
-    }
-    fprintf(fp, "\n");
-    fclose(fp);
-
-    printf("\n");
-    printf("SUM (CLAHE): %ld\n", sum);
 
 
 
 
 
-/*    FILE* f_data0 = fopen(infile, "rb");
-    buffer = (unsigned char*)malloc(sizeof(unsigned char)*filter_width*filter_height);
-    result = fread(buffer, sizeof(unsigned char), filter_width*filter_height, f_data0);
 
-    Mat img(filter_width, filter_height, CV_8UC1, buffer);
-    fclose(f_data0);*/
+	    	if( ((win_itr+1) % WIN_SIZE) == 0 ) {
+	    		x_tmp = x_win;
+	    	}
+	    	else {
+	    		x_tmp += BLOCK_SIZE;
+	    	}
+	    }
 
-    //imwrite( outfile, img);
+	    x_win += WIN_SIZE;
 
-    if (argc == 5 && strcmp(argv[4], "-s") == 0)
-    {
+
+
+
+  	// ************************************************************************
+	// Output and show Image
+    if (argc == 5 && strcmp(argv[4], "-s") == 0) {
         imshow( "Original Image", img );    
         imshow( "CLAHE Image", img_clahe );                 
         waitKey(0);  
@@ -246,63 +190,3 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
-
-
-
-// *************************************************************
-// Calculate the mean and standard deviation from an image
-// *************************************************************
-
-
-/*    Mat g_img;
-    Mat img = imread(infile, CV_LOAD_IMAGE_COLOR);
-    cvtColor(img, g_img, COLOR_RGB2GRAY);
-
-    long start, end;
-    struct timeval timecheck;
-
-    gettimeofday(&timecheck, NULL);
-    start = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
-
-
-    
-    for (int y = 0; y < g_img.rows; y++) {
-        for (int x = 0; x < g_img.cols; x++) {
-           	mean += g_img.at<uchar>(Point(x, y));
-        }
-    }
-
-
-    gettimeofday(&timecheck, NULL);
-    end = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
-
-    printf("%ld milliseconds elapsed\n", (end - start));
-
-
-    mean = mean / (g_img.rows * g_img.cols);
-    printf("Mean: %ld\n", mean);
-
-
-
-    gettimeofday(&timecheck, NULL);
-    start = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
-
-    long tmp;
-    long var;
-    
-    for (int y = 0; y < g_img.rows; y++) {
-        for (int x = 0; x < g_img.cols; x++) {
-           	tmp = g_img.at<uchar>(Point(x, y));
-           	var += pow((tmp - mean), 2);
-        }
-    }
-    var = var / ((g_img.rows * g_img.cols) - 1);
-    std = sqrt(var);
-
-
-    gettimeofday(&timecheck, NULL);
-    end = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
-
-    printf("%ld milliseconds elapsed\n", (end - start));
-
-    printf("STD: %ld\n", std);*/
