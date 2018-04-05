@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-04-05 11:14:19
+* @Last Modified time: 2018-04-05 13:35:29
 */
 
 #include "uft.h"
@@ -176,7 +176,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     // wait a bit for the last few acks
     struct timeval tv;
     tv.tv_sec = 0;
-    tv.tv_usec = 100000;
+    tv.tv_usec = 1000;
     Setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv));
 
     int do_it = 1;
@@ -446,7 +446,8 @@ static int create_send_socket(const char* ip, uint16_t port, struct sockaddr_in 
     // Set flags
     flags = fcntl(sockfd, F_GETFL, 0);
     // set blocking
-    flags &= ~O_NONBLOCK;
+    // flags &= ~O_NONBLOCK;
+    flags |= O_NONBLOCK;
     fcntl(sockfd, F_SETFL, flags);
 
     // connect socket: Limits UDP connection to single peer
@@ -596,18 +597,20 @@ static int is_command_packet (uint8_t *buf)
  */
 static int get_command (uint8_t *buf)
 {
-    if (is_command_packet(buf))
-    {
-        switch( buf[0] & 0x7f )
-        {
-            case CONTROLL_FTS: return CONTROLL_FTS;
-            case CONTROLL_FTP: return CONTROLL_FTP;
-            case CONTROLL_ACKFP: return CONTROLL_ACKFP;
-            case CONTROLL_ACKFT: return CONTROLL_ACKFT;
-            default: return -1;
-        }
-    }
-    return -1;
+    // if (is_command_packet(buf))
+    // {
+    //     switch( buf[0] & 0x7f )
+    //     {
+    //         case CONTROLL_FTS: return CONTROLL_FTS;
+    //         case CONTROLL_FTP: return CONTROLL_FTP;
+    //         case CONTROLL_ACKFP: return CONTROLL_ACKFP;
+    //         case CONTROLL_ACKFT: return CONTROLL_ACKFT;
+    //         default: return -1;
+    //     }
+    // }
+    // return -1;
+    
+    return buf[0] & 0x7f;
 }
 
 /**
