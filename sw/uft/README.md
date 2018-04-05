@@ -15,6 +15,12 @@ On Mac OSX the UDP socket can not be set blocking for ```ENOBUFS```. Linux defau
 <ayecee> noahh: poll(), test for ready to write
 <ayecee> or set the fd as nonblocking and handle the EAGAIN/EWOULDBLOCK that's returned from sendto.
 
+### trace on Mac
+Lists all syscalls and a summary:
+```
+sudo dtruss -c ./sender 192.168.5.32 2222 infile.dat
+```
+
 ## Benchmark using iperf3
 ### Receiver
 ```bash
@@ -37,7 +43,7 @@ sudo tcpdump -i enp5s0 -l -e -n 'udp port 2222' | ./netbps
 ```
 
 ## Progress
-Total syscalls are only picked randomly from tests. No mean values.
+Total syscalls are only picked randomly from tests. No mean values. Mac to Linux machine.
 
 | Commit hash | Change | Speed | filesize tested | Total syscalls |
 | ----------- | ------ | ----- | --------------- | -------------- |
@@ -46,5 +52,5 @@ Total syscalls are only picked randomly from tests. No mean values.
 | 12b0196     | Receiver connect() | 63.661 MB/s | 100MB |  |
 | 6117e17     | Ignore send ENOBUFS | 66.481 MB/s | 100MB |   |
 | 16b5d7b     | txbenchmark showed looping to be the best solution to the tx socket buffer problem. This version implements it to UFT | 82.829 MB/s | 100MB |   |
-| 6c2e821     | Shorter timeout, faster parse function and non blocking socket | 72.054 MB/s | 100MB |   |
+| 8dba2c1     | Shorter timeout, faster parse function and non blocking socket | 88.097 MB/s | 100MB |   |
 
