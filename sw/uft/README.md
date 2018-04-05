@@ -45,7 +45,7 @@ sudo tcpdump -i enp5s0 -l -e -n 'udp port 2222' | ./netbps
 ## Progress
 Total syscalls are only picked randomly from tests. No mean values. Mac to Linux machine.
 
-| Commit hash | Change | Speed | filesize tested | Total syscalls |
+| Commit | Change | Speed | filesize | n syscalls |
 | ----------- | ------ | ----- | --------------- | -------------- |
 | 43a75ac     | Retransmission | 61.558 MB/s | 100MB | 7042 |
 | 54f899b     | Sender connect() | 64.669 MB/s | 100MB | 4754 |
@@ -53,4 +53,4 @@ Total syscalls are only picked randomly from tests. No mean values. Mac to Linux
 | 6117e17     | Ignore send ENOBUFS | 66.481 MB/s | 100MB |   |
 | 16b5d7b     | txbenchmark showed looping to be the best solution to the tx socket buffer problem. This version implements it to UFT | 82.829 MB/s | 100MB |   |
 | 8dba2c1     | Shorter timeout, faster parse function and non blocking socket | 88.097 MB/s | 100MB |   |
-
+| a490d7a     | Removed delay between sending and handled EAGAIN error for Linux machines | 103.626 MB/s | 100MB |  4516 |
