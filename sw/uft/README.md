@@ -45,5 +45,5 @@ Total syscalls are only picked randomly from tests. No mean values.
 | 54f899b     | Sender connect() | 64.669 MB/s | 100MB | 4754 |
 | 12b0196     | Receiver connect() | 63.661 MB/s | 100MB |  |
 | 6117e17     | Ignore send ENOBUFS | 66.481 MB/s | 100MB |   |
-|      | txbenchmark showed looping to be the best solution to the tx socket buffer problem. This version implements it to UFT | 66.481 MB/s | 100MB |   |
+| 16b5d7b     | txbenchmark showed looping to be the best solution to the tx socket buffer problem. This version implements it to UFT | 82.829 MB/s | 100MB |   |
 
