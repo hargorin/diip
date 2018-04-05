@@ -2,7 +2,7 @@
 * @Author: Noah Huetter
 * @Date:   2017-10-27 08:44:34
 * @Last Modified by:   Noah Huetter
-* @Last Modified time: 2018-03-28 11:38:13
+* @Last Modified time: 2018-04-05 11:14:19
 */
 
 #include "uft.h"
@@ -29,6 +29,7 @@ typedef enum uftControll
 #define UFT_DATA_PAYLOAD     1464 // remaining data size in data packet
 #define UFT_DATA_SIZEW       1472 // data packet size
 
+#define USE_RETRANSMISSION
 #define N_PACK_RETRY            30  // how many times to resend a packets
 
 // ========================================================
@@ -108,6 +109,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     // calculate nseq
     int32_t filesize_bytes = get_filesize_bytes(fp);
     nseq = filesize_bytes / UFT_DATA_PAYLOAD;
+    printf("nseq=%d\n",nseq);
     if( (filesize_bytes % UFT_DATA_PAYLOAD) != 0)
     {
         nseq++;
@@ -132,17 +134,12 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     dbuf = malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
     memset(dbuf, 0x0, UFT_DATA_SIZEW);
     tic(&tt);
-    for(int i = 0; i < nseq; i++)
+    int seq_ctr = 0;
+    for(; seq_ctr < nseq; )
     {
-        DBG_V1("Sending %d of %d\n",i,nseq);
-        num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
+        DBG_V1("Sending %d of %d\n",seq_ctr,nseq);
+        num = assemble_data(dbuf, fp, filesize_bytes, tcid, seq_ctr);
         //send the message
-        fds.fd = sockfd;
-        fds.events = POLLOUT;
-        do
-        {
-            poll(&fds, 1, 0);
-        } while (fds.revents == 0);
         // Send(sockfd, dbuf, num , 0);
         if (send(sockfd, dbuf, num, 0) != (ssize_t)num)
         {
@@ -154,6 +151,11 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
             {
                 err_sys("send error");
             }
+        }
+        else
+        {
+            // packet got sent successfuly , increment counter
+            seq_ctr++;
         }
         // Check if packet received
         ioctl(sockfd, FIONREAD, &count);
@@ -168,9 +170,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
-
-
-        usleep(5); 
+        usleep(1); 
     }
 
     // wait a bit for the last few acks
@@ -209,19 +209,21 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     
     nack_ctr = ack_stats(ack_buf, nseq);
 
+#ifdef USE_RETRANSMISSION
     for (int retrycnt = 0; (retrycnt < N_PACK_RETRY) && nack_ctr; retrycnt++)
     {
         // Resend packages that were not acknowledged
-        for(int i = 0; i < nseq; i++)
+        for(seq_ctr = 0; seq_ctr < nseq; )
         {
             // Check if sequence was acknowledged
-            if (ack_buf[i])
+            if (ack_buf[seq_ctr])
             {
+                seq_ctr++;
                 continue;
             }
-            DBG_V1("Resending seq %d\n",i);
+            DBG_V1("Resending seq %d\n",seq_ctr);
             // else, send packet
-            num = assemble_data(dbuf, fp, filesize_bytes, tcid, i);
+            num = assemble_data(dbuf, fp, filesize_bytes, tcid, seq_ctr);
             //send the message
             // Send(sockfd, dbuf, num , 0);
             if (send(sockfd, dbuf, num, 0) != (ssize_t)num)
@@ -234,6 +236,11 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
                 {
                     err_sys("send error");
                 }
+            }
+            else
+            {
+                // packet got sent successfuly , increment counter
+                seq_ctr++;
             }
             // Check if packet received
             ioctl(sockfd, FIONREAD, &count);
@@ -248,11 +255,12 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
                     ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
                 }
             }
-            usleep(5);
+            usleep(1);
         }
 
         nack_ctr = ack_stats(ack_buf, nseq);
     }
+#endif
 
     toc(&tt);
     close(sockfd);
