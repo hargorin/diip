@@ -179,6 +179,52 @@ set_property physical_name tx_ip2bus_mstrd_dst_dsc_n [ipx::get_port_maps tx_ip2b
 # associate clock
 ipx::associate_bus_interfaces -busif axi_master_burst_tx -clock clk [ipx::current_core]
 
+# uft tx interface
+ipx::add_bus_interface udp_tx_ctrl [ipx::current_core]
+set bus [ipx::get_bus_interfaces udp_tx_ctrl -of_objects [ipx::current_core]]
+set_property abstraction_type_vlnv IME:user:udp_tx_ctrl_rtl:1.0 $bus
+set_property bus_type_vlnv Xilinx:user:udp_tx_ctrl:1.0 $bus
+set_property interface_mode master $bus
+# mapping
+ipx::add_port_map udp_tx_start $bus
+set_property physical_name udp_tx_start [ipx::get_port_maps udp_tx_start -of_objects $bus]
+ipx::add_port_map udp_tx_result $bus
+set_property physical_name udp_tx_result [ipx::get_port_maps udp_tx_result -of_objects $bus]
+ipx::add_port_map udp_tx_hdr_dst_ip_addr $bus
+set_property physical_name udp_tx_hdr_dst_ip_addr [ipx::get_port_maps udp_tx_hdr_dst_ip_addr -of_objects $bus]
+ipx::add_port_map udp_tx_hdr_dst_port $bus
+set_property physical_name udp_tx_hdr_dst_port [ipx::get_port_maps udp_tx_hdr_dst_port -of_objects $bus]
+ipx::add_port_map udp_tx_hdr_src_port $bus
+set_property physical_name udp_tx_hdr_src_port [ipx::get_port_maps udp_tx_hdr_src_port -of_objects $bus]
+ipx::add_port_map udp_tx_hdr_data_length $bus
+set_property physical_name udp_tx_hdr_data_length [ipx::get_port_maps udp_tx_hdr_data_length -of_objects $bus]
+ipx::add_port_map udp_tx_hdr_checksum $bus
+set_property physical_name udp_tx_hdr_checksum [ipx::get_port_maps udp_tx_hdr_checksum -of_objects $bus]
+# associate clock
+ipx::associate_bus_interfaces -busif udp_tx_ctrl -clock clk [ipx::current_core]
+
+# uft rx interface
+ipx::add_bus_interface udp_rx_ctrl [ipx::current_core]
+set bus [ipx::get_bus_interfaces udp_rx_ctrl -of_objects [ipx::current_core]]
+set_property abstraction_type_vlnv IME:user:udp_rx_ctrl_rtl:1.0 $bus
+set_property bus_type_vlnv Xilinx:user:udp_rx_ctrl:1.0 $bus
+set_property interface_mode slave $bus
+# mapping
+ipx::add_port_map udp_rx_start $bus
+set_property physical_name udp_rx_start [ipx::get_port_maps udp_rx_start -of_objects $bus]
+ipx::add_port_map udp_rx_hdr_is_valid $bus
+set_property physical_name udp_rx_hdr_is_valid [ipx::get_port_maps udp_rx_hdr_is_valid -of_objects $bus]
+ipx::add_port_map udp_rx_hdr_src_ip_addr $bus
+set_property physical_name udp_rx_hdr_src_ip_addr [ipx::get_port_maps udp_rx_hdr_src_ip_addr -of_objects $bus]
+ipx::add_port_map udp_rx_hdr_src_port $bus
+set_property physical_name udp_rx_hdr_src_port [ipx::get_port_maps udp_rx_hdr_src_port -of_objects $bus]
+ipx::add_port_map udp_rx_hdr_dst_port $bus
+set_property physical_name udp_rx_hdr_dst_port [ipx::get_port_maps udp_rx_hdr_dst_port -of_objects $bus]
+ipx::add_port_map udp_rx_hdr_data_length $bus
+set_property physical_name udp_rx_hdr_data_length [ipx::get_port_maps udp_rx_hdr_data_length -of_objects $bus]
+# associate clock
+ipx::associate_bus_interfaces -busif udp_rx_ctrl -clock clk [ipx::current_core]
+
 
 # AXI  bus clocks
 
