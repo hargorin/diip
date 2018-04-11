@@ -9,7 +9,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstrd_req</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -24,7 +23,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstwr_req</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -39,7 +37,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mst_type</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -54,7 +51,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mst_lock</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -69,7 +65,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mst_reset</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -84,7 +79,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstrd_dst_rdy_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -99,7 +93,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstrd_dst_dsc_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -114,7 +107,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstwr_sof_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -129,7 +121,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstwr_eof_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -144,7 +135,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstwr_src_rdy_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -159,7 +149,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mstwr_src_dsc_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -174,7 +163,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mst_cmdack</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -189,7 +177,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mst_cmplt</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -204,7 +191,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mst_error</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -219,7 +205,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mst_rearbitrate</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -234,7 +219,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mst_cmd_timeout</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -249,7 +233,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mstrd_sof_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -264,7 +247,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mstrd_eof_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -279,7 +261,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mstrd_src_rdy_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -294,7 +275,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mstrd_src_dsc_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -309,7 +289,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mstwr_dst_rdy_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -324,7 +303,6 @@
     <spirit:port>
       <spirit:logicalName>bus2ip_mstwr_dst_dsc_n</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>1</spirit:width>
@@ -356,7 +334,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mst_length</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>12</spirit:width>
@@ -371,7 +348,6 @@
     <spirit:port>
       <spirit:logicalName>ip2bus_mst_be</spirit:logicalName>
       <spirit:wire>
-        <spirit:qualifier/>
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>4</spirit:width>
@@ -406,6 +382,7 @@
         <spirit:onMaster>
           <spirit:presence>required</spirit:presence>
           <spirit:width>4</spirit:width>
+          <spirit:direction>in</spirit:direction>
         </spirit:onMaster>
         <spirit:onSlave>
           <spirit:presence>required</spirit:presence>

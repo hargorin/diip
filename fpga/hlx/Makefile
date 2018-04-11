@@ -71,7 +71,9 @@ clean-cores:
 
 $(BUILD)/cores/%: cores/%/core_config.tcl cores/%/hdl/*.vhd
 	mkdir -p $(@D)
+	cp cores/$*/*.xml $(BUILD)/cores/  || :
 	$(VIVADO) -source scripts/core.tcl -tclargs $* $(PART) $(BUILD)/cores/
+
 
 #
 # Synth and impl

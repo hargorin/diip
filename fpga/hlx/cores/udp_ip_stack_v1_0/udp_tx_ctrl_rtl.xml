@@ -2,7 +2,7 @@
 <spirit:abstractionDefinition xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>IME</spirit:vendor>
   <spirit:library>user</spirit:library>
-  <spirit:name>udp_tx_ctrl</spirit:name>
+  <spirit:name>udp_tx_ctrl_rtl</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busType spirit:vendor="IME" spirit:library="user" spirit:name="udp_tx_ctrl" spirit:version="1.0"/>
   <spirit:ports>
