@@ -10,7 +10,7 @@
 
 
 # Project name
-NAME = sobel
+NAME = diip
 # FPGA Part number
 PART = xc7a200tfbg676-2
 
@@ -47,6 +47,9 @@ bit: $(BUILD)/$(NAME).bit
 # Synth and Impl only
 impl: $(BUILD)/projects/$(NAME).runs/impl_1
 
+# Synth only
+synth: $(BUILD)/projects/$(NAME).runs/synth_1
+
 #
 # Project
 # Depends on project sources and cores
@@ -80,6 +83,11 @@ $(BUILD)/cores/%: cores/%/core_config.tcl cores/%/hdl/*.vhd
 # 
 $(BUILD)/projects/$(NAME).runs/impl_1: $(addprefix $(BUILD)/cores/, $(CORES)) $(BUILD)/projects/$(NAME).xpr
 	$(VIVADO) -source scripts/synthimpl.tcl -tclargs $(NAME) $(BUILD)/projects/
+#
+# impl
+# 
+$(BUILD)/projects/$(NAME).runs/synth_1: $(addprefix $(BUILD)/cores/, $(CORES)) $(BUILD)/projects/$(NAME).xpr
+	$(VIVADO) -source scripts/synth.tcl -tclargs $(NAME) $(BUILD)/projects/
 
 #
 # Bitstream
