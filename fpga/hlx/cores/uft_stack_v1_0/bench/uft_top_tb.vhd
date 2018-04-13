@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Sat Dec  2 16:29:45 2017
+-- Last update : Fri Apr 13 14:49:48 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -182,9 +182,9 @@ architecture testbench of uft_top_tb is
 
     -- UFT Tx
     -- -------------------------------------------------------------------------
-    signal tx_data_size    : std_logic_vector(31 downto 0);
+    signal tx_data_size    : std_logic_vector(31 downto 0) := (others => '0');
     signal tx_ready        : std_logic;
-    signal tx_start        : std_logic;
+    signal tx_start        : std_logic := '0';
 
     -- UDP IP Stack
     -- -------------------------------------------------------------------------
@@ -202,7 +202,7 @@ architecture testbench of uft_top_tb is
     
     signal mac_tx_tdata               : std_logic_vector(7 downto 0);
     signal mac_tx_tvalid              : std_logic;
-    signal mac_tx_tready              : std_logic;
+    signal mac_tx_tready              : std_logic := '0';
     signal mac_tx_tfirst              : std_logic;
     signal mac_tx_tlast               : std_logic;
     signal mac_rx_tdata               : std_logic_vector(7 downto 0);
@@ -235,6 +235,13 @@ begin
                  '1' after 20.0*clk_period;
         wait;
     end process RESET_GEN;
+
+    RESET_GEN_UDP : process
+    begin
+        reset <= '1',
+                 '0' after 20.0*clk_period;
+        wait;
+    end process RESET_GEN_UDP;
 
     -- Settings
     -- -------------------------------------------------------------------------
