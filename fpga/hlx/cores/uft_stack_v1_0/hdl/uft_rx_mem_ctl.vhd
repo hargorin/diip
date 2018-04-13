@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Wed Mar  7 16:32:35 2018
+-- Last update : Fri Apr 13 15:18:13 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -53,6 +53,17 @@ entity utf_rx_mem_ctl is
         data_tvalid             : in std_logic;
         data_tlast              : in std_logic;
         data_tdata              : in std_logic_vector( 7 downto 0);
+
+        -- Commands for acknowledgment
+        ack_cmd_nseq    : out std_logic; -- acknowledge a sequence
+        ack_cmd_ft      : out std_logic; -- acknowledge a file transfer
+        ack_cmd_nseq_done    : in std_logic;
+        ack_cmd_ft_done      : in std_logic;
+        -- data for commands
+        ack_seqnbr              : out std_logic_vector (23 downto 0);
+        ack_tcid                : out std_logic_vector ( 6 downto 0);
+        ack_dst_port            : out std_logic_vector (15 downto 0);
+        ack_dst_ip              : out std_logic_vector (31 downto 0);
 
         -- RX Memory IP Interface
         -- ---------------------------------------------------------------------

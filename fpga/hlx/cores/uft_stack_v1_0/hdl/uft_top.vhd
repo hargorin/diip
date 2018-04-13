@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Sat Dec  2 16:19:55 2017
+-- Last update : Fri Apr 13 15:19:31 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -219,6 +219,14 @@ architecture structural of uft_top is
             data_tvalid            : in  std_logic;
             data_tlast             : in  std_logic;
             data_tdata             : in  std_logic_vector( 7 downto 0);
+            ack_cmd_nseq           : out std_logic;
+            ack_cmd_ft             : out std_logic;
+            ack_cmd_nseq_done      : in  std_logic;
+            ack_cmd_ft_done        : in  std_logic;
+            ack_seqnbr             : out std_logic_vector (23 downto 0);
+            ack_tcid               : out std_logic_vector ( 6 downto 0);
+            ack_dst_port           : out std_logic_vector (15 downto 0);
+            ack_dst_ip             : out std_logic_vector (31 downto 0);
             ip2bus_mstrd_req       : out std_logic;
             ip2bus_mstwr_req       : out std_logic;
             ip2bus_mst_addr        : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
@@ -249,8 +257,7 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component utf_rx_mem_ctl;  
-
+    end component utf_rx_mem_ctl;    
     component uft_tx is
         generic (
             C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32;
@@ -271,6 +278,14 @@ architecture structural of uft_top is
             dst_ip_addr            : in  std_logic_vector (31 downto 0);
             dst_port               : in  std_logic_vector (15 downto 0);
             src_port               : in  std_logic_vector (15 downto 0);
+            ack_cmd_nseq           : in  std_logic;
+            ack_cmd_ft             : in  std_logic;
+            ack_cmd_nseq_done      : out std_logic;
+            ack_cmd_ft_done        : out std_logic;
+            ack_seqnbr             : in  std_logic_vector (23 downto 0);
+            ack_tcid               : in  std_logic_vector ( 6 downto 0);
+            ack_dst_port           : in  std_logic_vector (15 downto 0);
+            ack_dst_ip             : in  std_logic_vector (31 downto 0);
             udp_tx_start           : out std_logic;
             udp_tx_result          : in  std_logic_vector (1 downto 0);
             udp_tx_hdr_dst_ip_addr : out std_logic_vector (31 downto 0);
@@ -312,7 +327,7 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component uft_tx;     
+    end component uft_tx;   
 
     signal is_command             : std_logic;
     signal command_code           : std_logic_vector(6 downto 0);
@@ -419,7 +434,15 @@ begin
             ip2bus_mstwr_src_rdy_n => ip2bus_mstwr_src_rdy_n,
             ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
+            bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n,
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip
         ); 
 
     tx : uft_tx

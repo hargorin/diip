@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Fri Mar  9 11:31:17 2018
+-- Last update : Fri Apr 13 15:14:18 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -47,6 +47,17 @@ entity uft_tx_control is
         -- assert high to start a transmission
         tx_start        : in  std_logic;
 
+        -- Commands for acknowledgment
+        ack_cmd_nseq    : in std_logic; -- acknowledge a sequence
+        ack_cmd_ft      : in std_logic; -- acknowledge a file transfer
+        ack_cmd_nseq_done    : out std_logic;
+        ack_cmd_ft_done      : out std_logic;
+        -- data for commands
+        ack_seqnbr              : in std_logic_vector (23 downto 0);
+        ack_tcid                : in std_logic_vector ( 6 downto 0);
+        ack_dst_port            : in std_logic_vector (15 downto 0);
+        ack_dst_ip              : in std_logic_vector (31 downto 0);
+
         -- UDP Stack
         -- ---------------------------------------------------------------------
         udp_tx_start                : out std_logic;
@@ -82,7 +93,8 @@ entity uft_tx_control is
 end entity uft_tx_control;
 
 architecture structural of uft_tx_control is
-    type state_type is (IDLE, CMD, CMD_WAIT, DATA, DATA_WAIT, DELAY, CPLT);
+    type state_type is (IDLE, CMD, CMD_WAIT, DATA, DATA_WAIT, DELAY, CPLT,
+        ACK_SEQ, ACK_SEQ_WAIT, ACK_FT, ACK_FT_WAIT);
     signal current_state : state_type;
     signal next_state : state_type;
     -- number of data sequences to be sent
@@ -123,13 +135,17 @@ begin
     end process ; -- p_ns
     ----------------------------------------------------------------------------
     p_next_state : process( current_state, tx_start, cmd_done, data_done, 
-        remaining_bytes, delay_ctr )
+        remaining_bytes, delay_ctr, ack_cmd_nseq, ack_cmd_ft)
     ----------------------------------------------------------------------------
     begin
         next_state <= current_state;
         case (current_state) is
             when IDLE => 
-                if tx_start = '1' then
+                if ack_cmd_nseq = '1' then
+                    next_state <= ACK_SEQ;
+                elsif ack_cmd_ft = '1' then
+                    next_state <= ACK_FT;
+                elsif tx_start = '1' then
                     next_state <= CMD;
                 end if;
             when CMD => 
@@ -142,7 +158,12 @@ begin
                 next_state <= DATA_WAIT;
             when DATA_WAIT => 
                 if data_done = '1' then
-                    if remaining_bytes <= c_nbytes_per_packet then
+                    -- interrupt regular transfer with ack package
+                    if ack_cmd_nseq = '1' then
+                        next_state <= ACK_SEQ;
+                    elsif ack_cmd_ft = '1' then
+                        next_state <= ACK_FT;
+                    elsif remaining_bytes <= c_nbytes_per_packet then
                         next_state <= CPLT;
                     elsif c_packet_delay /= 0 then
                         next_state <= DELAY;
@@ -156,6 +177,32 @@ begin
                 end if;
             when CPLT => 
                 next_state <= IDLE;
+            when ACK_SEQ => 
+                next_state <= ACK_SEQ_WAIT;
+            when ACK_SEQ_WAIT => 
+                if cmd_done = '1' then
+                    -- if data transmission was interrupted, continue
+                    if remaining_bytes <= c_nbytes_per_packet then
+                        next_state <= CPLT;
+                    elsif c_packet_delay /= 0 then
+                        next_state <= DELAY;
+                    else
+                        next_state <= DATA;
+                    end if;
+                end if;
+            when ACK_FT => 
+                next_state <= ACK_FT_WAIT;
+            when ACK_FT_WAIT => 
+                if cmd_done = '1' then
+                    -- if data transmission was interrupted, continue
+                    if remaining_bytes <= c_nbytes_per_packet then
+                        next_state <= CPLT;
+                    elsif c_packet_delay /= 0 then
+                        next_state <= DELAY;
+                    else
+                        next_state <= DATA;
+                    end if;
+                end if;
         end case;
     end process ; -- p_next_state
     ----------------------------------------------------------------------------
@@ -167,6 +214,10 @@ begin
         data_start <= '0';
         arb_sel <= '0';
         udp_tx_start <= '0';
+
+        -- output transaction id
+        cmd_tcid <= std_logic_vector(tcid);
+        data_tcid <= std_logic_vector(tcid);
 
         case (current_state) is
             when IDLE =>
@@ -183,6 +234,18 @@ begin
                 arb_sel <= '1';
             when DELAY => 
             when CPLT => 
+            when ACK_SEQ => 
+                cmd_tcid <= ack_tcid;
+                udp_tx_start <= '1';
+                cmd_en_start <= '1';
+            when ACK_SEQ_WAIT => 
+                cmd_tcid <= ack_tcid;
+            when ACK_FT =>  
+                cmd_tcid <= ack_tcid;
+                udp_tx_start <= '1';
+                cmd_en_start <= '1';
+            when ACK_FT_WAIT => 
+                cmd_tcid <= ack_tcid;
         end case;
     end process ; -- p_out
     ----------------------------------------------------------------------------
@@ -219,6 +282,10 @@ begin
                         else
                             tcid <= tcid + 1;
                         end if;
+                    when ACK_SEQ => 
+                    when ACK_SEQ_WAIT => 
+                    when ACK_FT =>  
+                    when ACK_FT_WAIT => 
                 end case;
             end if;
         end if;
@@ -262,6 +329,14 @@ begin
                 udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(to_integer(unsigned(packet_data_size_int))+4 ,udp_tx_hdr_data_length'length));
             when DELAY => 
             when CPLT => 
+            when ACK_SEQ => 
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
+            when ACK_SEQ_WAIT => 
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
+            when ACK_FT =>  
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
+            when ACK_FT_WAIT => 
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
         end case;
     end process ; -- p_udp_header_len
 
@@ -275,9 +350,6 @@ begin
         when data_size(1 downto 0) = "00" else
         std_logic_vector( to_unsigned(to_integer(unsigned(data_size)) / c_nbytes_per_packet, cmd_nseq'length) + 1);
     --cmd_nseq <= std_logic_vector(shift_right(unsigned(data_size), 10) + 1);
-    -- output transaction id
-    cmd_tcid <= std_logic_vector(tcid);
-    data_tcid <= std_logic_vector(tcid);
 
     -- data pointer offset by data_src_addr and number of sequence number 
     -- times the maximum number of bytes per data packet

@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Mon Nov 27 15:32:28 2017
--- Last update : Wed Nov 29 18:13:11 2017
+-- Last update : Fri Apr 13 15:16:26 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -57,6 +57,17 @@ entity uft_tx is
         dst_ip_addr      : in std_logic_vector (31 downto 0);
         dst_port         : in std_logic_vector (15 downto 0);
         src_port         : in std_logic_vector (15 downto 0);
+
+        -- Commands for acknowledgment
+        ack_cmd_nseq    : in std_logic; -- acknowledge a sequence
+        ack_cmd_ft      : in std_logic; -- acknowledge a file transfer
+        ack_cmd_nseq_done    : out std_logic;
+        ack_cmd_ft_done      : out std_logic;
+        -- data for commands
+        ack_seqnbr              : in std_logic_vector (23 downto 0);
+        ack_tcid                : in std_logic_vector ( 6 downto 0);
+        ack_dst_port            : in std_logic_vector (15 downto 0);
+        ack_dst_ip              : in std_logic_vector (31 downto 0);
         
         -- UDP Transmitter
         -- ---------------------------------------------------------------------
@@ -124,6 +135,14 @@ architecture structural of uft_tx is
             data_src_addr          : in  std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
             tx_ready               : out std_logic;
             tx_start               : in  std_logic;
+            ack_cmd_nseq           : in  std_logic;
+            ack_cmd_ft             : in  std_logic;
+            ack_cmd_nseq_done      : out std_logic;
+            ack_cmd_ft_done        : out std_logic;
+            ack_seqnbr             : in  std_logic_vector (23 downto 0);
+            ack_tcid               : in  std_logic_vector ( 6 downto 0);
+            ack_dst_port           : in  std_logic_vector (15 downto 0);
+            ack_dst_ip             : in  std_logic_vector (31 downto 0);
             udp_tx_start           : out std_logic;
             udp_tx_result          : in  std_logic_vector (1 downto 0);
             udp_tx_hdr_data_length : out std_logic_vector (15 downto 0);
@@ -140,7 +159,7 @@ architecture structural of uft_tx is
             data_start             : out std_logic;
             data_done              : in  std_logic
         );
-    end component uft_tx_control;    
+    end component uft_tx_control;
 
     ----------------------------------------------------------------------------
     -- Component declaration
@@ -299,7 +318,15 @@ begin
             data_seq               => data_seq,
             packet_data_size       => packet_data_size,
             data_start             => data_start,
-            data_done              => data_done
+            data_done              => data_done,
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip
         );    
 
     ----------------------------------------------------------------------------
