@@ -3,7 +3,7 @@
 ## Please DO NOT edit it.
 ## Copyright (C) 1986-2017 Xilinx, Inc. All Rights Reserved.
 ############################################################
-open_project -reset clahe
+open_project -reset clahe_proj
 set_top clahe
 add_files ../user/source/clahe.cpp
 add_files -tb ../user/input_files/landscape.jpg
@@ -11,7 +11,7 @@ add_files -tb ../user/testbench/tb_clahe.cpp
 
 
 # Solution
-open_solution -reset "clahe"
+open_solution -reset "clahe_sol"
 set_part {xc7a200tfbg676-2} -tool vivado
 create_clock -period 8 -name default
 #source "./sobel/sobel/directives.tcl"

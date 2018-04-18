@@ -1,45 +1,49 @@
 //
-//  sobel.h
+//  clahe.h
 //
-//  Created by Jan Stocker on 08/11/17.
-//  Copyright © 2017 Jan Stocker. All rights reserved.
+//  Created by Jan Stocker on 11.04.2018
+//  Copyright © 2018 Jan Stocker. All rights reserved.
 //
 
-#ifndef SOBEL_H_
-#define SOBEL_H_
+#ifndef _CLAHE_H_
+#define _CLAHE_H_
 #endif
 
-#include <iostream>
-#include <stdio.h>
 #include <stdint.h>
+#include <hls_stream.h>
+#include <ap_int.h>
+#include <ap_axi_sdata.h>
 
-using namespace std;
 
-// ***********************************************
+// ****************************************************************************
 // *** Global Variables ***
-// ***********************************************
-
-// image block size
-#define block_width 512 // one 36Kb BRAM -> FPGA Memory Resources
-
-// Filter-Matrix
-static int sobel_x [3][3] = {{1,0,-1},
-					  	  	 {2,0,-2},
-							 {1,0,-1}};
-
-static int sobel_y [3][3] =	{{-1,-2,-1},
-					  	  	  {0,0,0},
-							  {1,2,1}};
+// ****************************************************************************
+typedef ap_uint<8>	uint8;
+typedef ap_uint<16>	uint16;
 
 
-// ***********************************************
+#define WIN_SIZE 	4
+#define BLOCK_SIZE 	64
+#define NUM_BINS 	256
+
+typedef uint8 Pixel_t[BLOCK_SIZE * BLOCK_SIZE];
+typedef uint16 Hist_t[NUM_BINS];
+typedef uint8 Cdf_t[NUM_BINS];
+
+typedef struct Block {
+	Pixel_t pixel;
+	Hist_t hist;
+	Cdf_t cdf;
+} Block_t;
+
+typedef ap_axiu<8,1,1,1> AXI_VALUE;		// <TDATA, TUSER, TID, TDEST>
+typedef hls::stream<AXI_VALUE> AXI_STREAM;
+
+
+// ****************************************************************************
 // *** Functions ***
-// ***********************************************
+// ****************************************************************************
 
 // Top-Function
-void sobel_abs(uint64_t pixel_r0[block_width], uint64_t pixel_r1[block_width], uint64_t pixel_r2[block_width], uint64_t cal_pixel[block_width - 2]);
-
-// calculate pixel
-uint8_t cal_pixel_value(uint8_t pixel_00, uint8_t pixel_01, uint8_t pixel_02, uint8_t pixel_10, uint8_t pixel_12, uint8_t pixel_20, uint8_t pixel_21, uint8_t pixel_22);
-
-
+void clahe(AXI_STREAM &inData0, AXI_STREAM &inData1, AXI_STREAM &inData2, AXI_STREAM &inData3,
+			AXI_STREAM &outData0, AXI_STREAM &outData1, AXI_STREAM &outData2, AXI_STREAM &outData3);

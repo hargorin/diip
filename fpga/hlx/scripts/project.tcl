@@ -26,6 +26,7 @@ create_project -part $part_name $project_name $build_location -force
 
 # Link to IPs
 set_property IP_REPO_PATHS "$ip_location/ ../hls/sobel/project/sobel/sobel/impl/ip" [current_project]
+set_property IP_REPO_PATHS "$ip_location/ ../hls/clahe/project/clahe_proj/clahe_sol/impl/ip" [current_project]
 
 # Project settings
 set obj [current_project]

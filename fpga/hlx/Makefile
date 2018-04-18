@@ -10,7 +10,7 @@
 
 
 # Project name
-NAME = sobel
+NAME = clahe
 # FPGA Part number
 PART = xc7a200tfbg676-2
 
