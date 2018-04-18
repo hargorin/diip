@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 13:44:06 2017
--- Last update : Tue Nov 28 14:28:53 2017
+-- Last update : Wed Apr 18 08:48:24 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -40,7 +40,10 @@ architecture testbench of uft_tx_cmd_assembler_tb is
     signal rst_n     : std_logic;
     signal data_size : std_logic_vector (31 downto 0);
     signal tcid      : std_logic_vector (6 downto 0);
+    signal seqnbr    : std_logic_vector (23 downto 0);
     signal en_start  : std_logic;
+    signal en_ackseq : std_logic; -- generate acknowledge sequence
+    signal en_ackft  : std_logic; -- generate acknowledge transfer
     signal done      : std_logic;
     signal tx_tvalid : std_logic;
     signal tx_tlast  : std_logic;
@@ -80,7 +83,10 @@ begin
     begin
         data_size <= std_logic_vector(to_unsigned(100, data_size'length));
         tcid <= std_logic_vector(to_unsigned(0, tcid'length));
+        seqnbr <= std_logic_vector(to_unsigned(0, seqnbr'length));
         en_start <= '0';
+        en_ackseq <= '0';
+        en_ackft <= '0';
         tx_tready <= '0';
 
         wait for 25*C_CLK_PERIOD;
@@ -140,6 +146,20 @@ begin
         tx_tready <= '0';
         wait for 3*C_CLK_PERIOD;
 
+        ------------------------------------------------------------------------
+        -- TEST 4: Ack sequence number
+        -- ---------------------------------------------------------------------
+        report "-- TEST 4: Ack sequence number";
+        en_ackseq <= '1';
+        tcid <= std_logic_vector(to_unsigned(120, tcid'length));
+        seqnbr <= std_logic_vector(to_unsigned(0, seqnbr'length));
+        tx_tready <= '1';
+        wait for 1*C_CLK_PERIOD;        
+        en_ackseq <= '0';
+        wait until done = '1';
+        tx_tready <= '0';
+        wait for 3*C_CLK_PERIOD;
+
 
         stop_sim <= '1';
         wait;
@@ -154,12 +174,15 @@ begin
             rst_n     => rst_n,
             data_size => data_size,
             tcid      => tcid,
+            seqnbr    => seqnbr,
             en_start  => en_start,
+            en_ackseq => en_ackseq,
+            en_ackft  => en_ackft,
             done      => done,
             tx_tvalid => tx_tvalid,
             tx_tlast  => tx_tlast,
             tx_tdata  => tx_tdata,
             tx_tready => tx_tready
-        );
+        ); 
 
 end architecture testbench;

@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Mon Nov 27 15:32:28 2017
--- Last update : Fri Apr 13 15:16:26 2018
+-- Last update : Wed Apr 18 08:38:28 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -126,7 +126,8 @@ architecture structural of uft_tx is
     -- -------------------------------------------------------------------------
     component uft_tx_control is
         generic (
-            C_M_AXI_ADDR_WIDTH : integer range 32 to 64 := 32
+            C_M_AXI_ADDR_WIDTH : integer range 32 to 64 := 32;
+            C_PACKET_DELAY_US  : integer range 1 to 150 := 100
         );
         port (
             clk                    : in  std_logic;
@@ -135,6 +136,8 @@ architecture structural of uft_tx is
             data_src_addr          : in  std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
             tx_ready               : out std_logic;
             tx_start               : in  std_logic;
+            dst_ip_addr            : in  std_logic_vector (31 downto 0);
+            dst_port               : in  std_logic_vector (15 downto 0);
             ack_cmd_nseq           : in  std_logic;
             ack_cmd_ft             : in  std_logic;
             ack_cmd_nseq_done      : out std_logic;
@@ -147,6 +150,9 @@ architecture structural of uft_tx is
             udp_tx_result          : in  std_logic_vector (1 downto 0);
             udp_tx_hdr_data_length : out std_logic_vector (15 downto 0);
             udp_tx_hdr_checksum    : out std_logic_vector (15 downto 0);
+            udp_tx_hdr_dst_ip_addr : out std_logic_vector (31 downto 0);
+            udp_tx_hdr_dst_port    : out std_logic_vector (15 downto 0);
+            udp_tx_hdr_src_port    : out std_logic_vector (15 downto 0);
             arb_sel                : out std_logic;
             cmd_tcid               : out std_logic_vector (6 downto 0);
             cmd_en_start           : out std_logic;
@@ -159,7 +165,7 @@ architecture structural of uft_tx is
             data_start             : out std_logic;
             data_done              : in  std_logic
         );
-    end component uft_tx_control;
+    end component uft_tx_control;    
 
     ----------------------------------------------------------------------------
     -- Component declaration
@@ -293,9 +299,10 @@ begin
     ----------------------------------------------------------------------------
     -- Control instance
     -- -------------------------------------------------------------------------
-    controll : entity work.uft_tx_control
+    control : uft_tx_control
         generic map (
-            C_M_AXI_ADDR_WIDTH => C_M_AXI_ADDR_WIDTH
+            C_M_AXI_ADDR_WIDTH => C_M_AXI_ADDR_WIDTH,
+            C_PACKET_DELAY_US  => C_PACKET_DELAY_US
         )
         port map (
             clk                    => clk,
@@ -304,10 +311,23 @@ begin
             data_src_addr          => data_src_addr,
             tx_ready               => tx_ready,
             tx_start               => tx_start,
+            dst_ip_addr            => dst_ip_addr,
+            dst_port               => dst_port,
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip,
             udp_tx_start           => udp_tx_start,
             udp_tx_result          => udp_tx_result,
             udp_tx_hdr_data_length => udp_tx_hdr_data_length,
             udp_tx_hdr_checksum    => udp_tx_hdr_checksum,
+            udp_tx_hdr_dst_ip_addr => udp_tx_hdr_dst_ip_addr,
+            udp_tx_hdr_dst_port    => udp_tx_hdr_dst_port,
+            udp_tx_hdr_src_port    => udp_tx_hdr_src_port,
             arb_sel                => arb_sel,
             cmd_tcid               => cmd_tcid,
             cmd_en_start           => cmd_en_start,
@@ -318,16 +338,8 @@ begin
             data_seq               => data_seq,
             packet_data_size       => packet_data_size,
             data_start             => data_start,
-            data_done              => data_done,
-            ack_cmd_nseq           => ack_cmd_nseq,
-            ack_cmd_ft             => ack_cmd_ft,
-            ack_cmd_nseq_done      => ack_cmd_nseq_done,
-            ack_cmd_ft_done        => ack_cmd_ft_done,
-            ack_seqnbr             => ack_seqnbr,
-            ack_tcid               => ack_tcid,
-            ack_dst_port           => ack_dst_port,
-            ack_dst_ip             => ack_dst_ip
-        );    
+            data_done              => data_done
+        );      
 
     ----------------------------------------------------------------------------
     -- Command packet instance
@@ -424,8 +436,4 @@ begin
             tdata    => udp_tx_tdata,
             tready   => udp_tx_tready
         );    
-
-    udp_tx_hdr_dst_port <= dst_port;
-    udp_tx_hdr_src_port <= src_port;
-    udp_tx_hdr_dst_ip_addr <= dst_ip_addr;
 end architecture structural;

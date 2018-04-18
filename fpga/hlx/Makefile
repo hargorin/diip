@@ -109,8 +109,6 @@ flash: $(BUILD)/$(NAME).bit
 # 
 LASTTOP:=$(shell cat $(BUILD)/ghdl/stamp 2>/dev/null)
 sim:
-	echo $(LASTTOP)
-	echo $(TOP)
 ifeq ($(LASTTOP),$(TOP))
 	cd $(BUILD)/ghdl/ && $(MAKE) run
 else
