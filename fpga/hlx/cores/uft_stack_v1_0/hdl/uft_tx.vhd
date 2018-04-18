@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Mon Nov 27 15:32:28 2017
--- Last update : Wed Apr 18 08:38:28 2018
+-- Last update : Wed Apr 18 11:36:30 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -156,8 +156,11 @@ architecture structural of uft_tx is
             arb_sel                : out std_logic;
             cmd_tcid               : out std_logic_vector (6 downto 0);
             cmd_en_start           : out std_logic;
+            cmd_en_ackseq          : out std_logic;
+            cmd_en_ackft           : out std_logic;
             cmd_done               : in  std_logic;
             cmd_nseq               : out std_logic_vector (31 downto 0);
+            cmd_seqnbr             : out std_logic_vector (23 downto 0);
             data_data_src_addr     : out std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
             data_tcid              : out std_logic_vector (6 downto 0);
             data_seq               : out std_logic_vector (23 downto 0);
@@ -165,7 +168,7 @@ architecture structural of uft_tx is
             data_start             : out std_logic;
             data_done              : in  std_logic
         );
-    end component uft_tx_control;    
+    end component uft_tx_control;     
 
     ----------------------------------------------------------------------------
     -- Component declaration
@@ -176,14 +179,17 @@ architecture structural of uft_tx is
             rst_n     : in  std_logic;
             data_size : in  std_logic_vector (31 downto 0);
             tcid      : in  std_logic_vector (6 downto 0);
+            seqnbr    : in  std_logic_vector (23 downto 0);
             en_start  : in  std_logic;
+            en_ackseq : in  std_logic;
+            en_ackft  : in  std_logic;
             done      : out std_logic;
             tx_tvalid : out std_logic;
             tx_tlast  : out std_logic;
             tx_tdata  : out std_logic_vector (7 downto 0);
             tx_tready : in  std_logic
         );
-    end component uft_tx_cmd_assembler;
+    end component uft_tx_cmd_assembler;    
 
     ----------------------------------------------------------------------------
     -- Component declaration
@@ -272,8 +278,11 @@ architecture structural of uft_tx is
     -- Ctrl to data and command
     signal cmd_tcid                 : std_logic_vector (6 downto 0);
     signal cmd_en_start             : std_logic; -- generate start packet
+    signal cmd_en_ackseq             : std_logic; 
+    signal cmd_en_ackft             : std_logic; 
     signal cmd_done                 : std_logic; -- asserted if packet is sent
     signal cmd_nseq                 : std_logic_vector (31 downto 0);
+    signal cmd_seqnbr               : std_logic_vector (23 downto 0);
     signal data_data_src_addr       : std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
     signal data_tcid                : std_logic_vector (6 downto 0);
     signal data_seq                 : std_logic_vector (23 downto 0);
@@ -299,10 +308,10 @@ begin
     ----------------------------------------------------------------------------
     -- Control instance
     -- -------------------------------------------------------------------------
-    control : uft_tx_control
+    control : entity work.uft_tx_control
         generic map (
             C_M_AXI_ADDR_WIDTH => C_M_AXI_ADDR_WIDTH,
-            C_PACKET_DELAY_US  => C_PACKET_DELAY_US
+            C_PACKET_DELAY_US  => 1
         )
         port map (
             clk                    => clk,
@@ -331,15 +340,18 @@ begin
             arb_sel                => arb_sel,
             cmd_tcid               => cmd_tcid,
             cmd_en_start           => cmd_en_start,
+            cmd_en_ackseq          => cmd_en_ackseq,
+            cmd_en_ackft           => cmd_en_ackft,
             cmd_done               => cmd_done,
             cmd_nseq               => cmd_nseq,
+            cmd_seqnbr             => cmd_seqnbr,
             data_data_src_addr     => data_data_src_addr,
             data_tcid              => data_tcid,
             data_seq               => data_seq,
             packet_data_size       => packet_data_size,
             data_start             => data_start,
             data_done              => data_done
-        );      
+        );           
 
     ----------------------------------------------------------------------------
     -- Command packet instance
@@ -350,14 +362,16 @@ begin
             rst_n     => rst_n,
             data_size => cmd_nseq,
             tcid      => cmd_tcid,
+            seqnbr    => cmd_seqnbr,
             en_start  => cmd_en_start,
+            en_ackseq => cmd_en_ackseq,
+            en_ackft  => cmd_en_ackft,
             done      => cmd_done,
             tx_tvalid => cmd_tvalid,
             tx_tlast  => cmd_tlast,
             tx_tdata  => cmd_tdata,
             tx_tready => cmd_tready
-        );    
-
+        );
     ----------------------------------------------------------------------------
     -- Data packet instance
     -- -------------------------------------------------------------------------
