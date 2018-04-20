@@ -31,10 +31,10 @@ fpga:
     - vivado
   image: docker-vivado:2017.3
   before_script:
-    - sudo apt-get update
-    - sudo apt-get --yes --force-yes install libjpeg62 libtiff5 libgtk-3-dev libgtk2.0-0
+    # - sudo apt-get update
+    # - sudo apt-get --yes --force-yes install libjpeg62 libtiff5 libgtk-3-dev libgtk2.0-0
     # Create link to libtiff5
-    - sudo ln -sf /usr/lib/x86_64-linux-gnu/libtiff.so.5 /usr/lib/x86_64-linux-gnu/libtiff.so.3
+    # - sudo ln -sf /usr/lib/x86_64-linux-gnu/libtiff.so.5 /usr/lib/x86_64-linux-gnu/libtiff.so.3
   script: 
     - source /opt/Xilinx/Vivado/2017.3/settings64.sh
     - pwd
@@ -42,7 +42,7 @@ fpga:
     - id
     - cd fpga/hls/sobel && make
     - cd ../../hlx/
-    - make NAME=sobel impl
+    # - make NAME=sobel impl
     - make NAME=diip impl
   artifacts:
     paths:
