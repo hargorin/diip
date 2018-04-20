@@ -18,8 +18,8 @@ set axi_bram_ctrl_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:
 # Create instance: axi_gpio_0, and set properties
 set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
 set_property -dict [ list \
- CONFIG.C_ALL_OUTPUTS {1} \
- CONFIG.C_DOUT_DEFAULT {0x00000400} \
+CONFIG.C_ALL_OUTPUTS {1} \
+CONFIG.C_DOUT_DEFAULT {0x00000400} \
 ] $axi_gpio_0
 
 # Create instance: axi_master_burst_0, and set properties
@@ -31,19 +31,19 @@ set axi_master_burst_1 [ create_bd_cell -type ip -vlnv ime:diip:axi_master_burst
 # Create instance: axi_mem_intercon, and set properties
 set axi_mem_intercon [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_mem_intercon ]
 set_property -dict [ list \
- CONFIG.NUM_MI {2} \
- CONFIG.NUM_SI {3} \
+CONFIG.NUM_MI {2} \
+CONFIG.NUM_SI {3} \
 ] $axi_mem_intercon
 
 # Create instance: blk_mem_gen_0, and set properties
 set blk_mem_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.4 blk_mem_gen_0 ]
 set_property -dict [ list \
- CONFIG.Enable_B {Use_ENB_Pin} \
- CONFIG.Memory_Type {True_Dual_Port_RAM} \
- CONFIG.Port_B_Clock {100} \
- CONFIG.Port_B_Enable_Rate {100} \
- CONFIG.Port_B_Write_Rate {50} \
- CONFIG.Use_RSTB_Pin {true} \
+CONFIG.Enable_B {Use_ENB_Pin} \
+CONFIG.Memory_Type {True_Dual_Port_RAM} \
+CONFIG.Port_B_Clock {100} \
+CONFIG.Port_B_Enable_Rate {100} \
+CONFIG.Port_B_Write_Rate {50} \
+CONFIG.Use_RSTB_Pin {true} \
 ] $blk_mem_gen_0
 
 # Create instance: debounce_0, and set properties
@@ -52,7 +52,7 @@ set debounce_0 [ create_bd_cell -type ip -vlnv ime:diip:debounce:1.0 debounce_0 
 # Create instance: impulse_generator_0, and set properties
 set impulse_generator_0 [ create_bd_cell -type ip -vlnv ime:diip:impulse_generator:1.0 impulse_generator_0 ]
 set_property -dict [ list \
- CONFIG.C_IMPULSE_DURATION {1} \
+CONFIG.C_IMPULSE_DURATION {1} \
 ] $impulse_generator_0
 
 # Create instance: jtag_axi_0, and set properties
@@ -61,30 +61,23 @@ set jtag_axi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:jtag_axi:1.2 jtag_a
 # Create instance: rst_temac_support_0_125M, and set properties
 set rst_temac_support_0_125M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_temac_support_0_125M ]
 set_property -dict [ list \
- CONFIG.RESET_BOARD_INTERFACE {reset} \
- CONFIG.USE_BOARD_FLOW {true} \
+CONFIG.RESET_BOARD_INTERFACE {reset} \
+CONFIG.USE_BOARD_FLOW {true} \
 ] $rst_temac_support_0_125M
 
 # Create instance: temac_support_0, and set properties
 set temac_support_0 [ create_bd_cell -type ip -vlnv ime:diip:temac_support:1.0 temac_support_0 ]
 
-set_property -dict [ list \
-CONFIG.SUPPORTS_NARROW_BURST {0} \
-CONFIG.NUM_READ_OUTSTANDING {1} \
-CONFIG.NUM_WRITE_OUTSTANDING {1} \
-CONFIG.MAX_BURST_LENGTH {1} \
-] [get_bd_intf_pins /temac_support_0/s_axi]
-
 # Create instance: tri_mode_ethernet_mac_0, and set properties
 set tri_mode_ethernet_mac_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:tri_mode_ethernet_mac:9.0 tri_mode_ethernet_mac_0 ]
 set_property -dict [ list \
- CONFIG.ETHERNET_BOARD_INTERFACE {rgmii} \
- CONFIG.Frame_Filter {false} \
- CONFIG.MDIO_BOARD_INTERFACE {mdio_io} \
- CONFIG.Number_of_Table_Entries {0} \
- CONFIG.Physical_Interface {RGMII} \
- CONFIG.Statistics_Counters {false} \
- CONFIG.USE_BOARD_FLOW {true} \
+CONFIG.ETHERNET_BOARD_INTERFACE {rgmii} \
+CONFIG.Frame_Filter {false} \
+CONFIG.MDIO_BOARD_INTERFACE {mdio_io} \
+CONFIG.Number_of_Table_Entries {0} \
+CONFIG.Physical_Interface {RGMII} \
+CONFIG.Statistics_Counters {false} \
+CONFIG.USE_BOARD_FLOW {true} \
 ] $tri_mode_ethernet_mac_0
 
 # Create instance: udp_ip_stack_0, and set properties
