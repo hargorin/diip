@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Fri Apr 13 14:49:48 2018
+-- Last update : Fri Apr 20 14:04:32 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -319,6 +319,7 @@ begin
             end if;
 
             report "-- TEST 2 -- UFT Data Packet reception";
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1.txt");
             
             waitfor(1500);
@@ -334,12 +335,15 @@ begin
             end if;
 
             report "-- TEST 3 -- NSEQ=2 UFT Data Packet reception";
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_09_nseq_2.txt");
             wait for 5 us;
             --waitfor(1);
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_09_nseq_2_0.txt");
             wait for 5 us;
             --waitfor(1);
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_09_nseq_2_1.txt");
             
             waitfor(1500);
@@ -405,6 +409,7 @@ begin
         ------------
         -- TEST 3 -- NSEQ=2 UFT Data Packet reception
         ------------
+        t10;
         t3;
 
         --t10;
@@ -443,7 +448,7 @@ begin
             end if;
             if mac_tx_tlast = '1' then
                 file_open(file_axi_s, "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
-                report "Start writing file";
+                report "Start writing file: " & "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log";
                 for i in 0 to (ctr-1) loop
                     hwrite(oline, axi_buf(i), left, 8);
                     writeline(file_axi_s, oline);

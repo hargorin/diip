@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 17:31:46 2017
--- Last update : Fri Apr 20 11:59:24 2018
+-- Last update : Fri Apr 20 13:53:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -317,7 +317,7 @@ begin
             end if;
             if udp_tx_tlast = '1' then
                 file_open(file_axi_s, "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
-                report "Start writing file: " & "axi_stream_res_00" & INTEGER'IMAGE(fi) & ".log";
+                report "Start writing file: " & "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log";
                 for i in 0 to ctr loop
                     hwrite(oline, axi_buf(i), left, 8);
                     writeline(file_axi_s, oline);

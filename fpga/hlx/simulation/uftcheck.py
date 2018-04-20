@@ -18,9 +18,11 @@ if len(sys.argv) == 1:
 
 t = PrettyTable(['File', 'D/C', 'Control', 'TCID', 'SEQ'])
 
+if '--ip' in sys.argv:
+
 for fname in sys.argv:
 	# print 'testing', fname
-	if not fname.endswith(".log"):
+	if (not fname.endswith(".log")) and (not fname.endswith(".txt")):
 		continue
 	fnameshort = os.path.splitext(os.path.basename(fname))[0]
 
