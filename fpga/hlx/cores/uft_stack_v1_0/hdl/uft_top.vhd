@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Fri Apr 13 15:19:31 2018
+-- Last update : Fri Apr 20 13:34:05 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -191,9 +191,11 @@ architecture structural of uft_top is
             data_meta_valid        : out std_logic;
             data_tvalid            : out std_logic;
             data_tlast             : out std_logic;
-            data_tdata             : out std_logic_vector( 7 downto 0)
+            data_tdata             : out std_logic_vector( 7 downto 0);
+            src_ip                 : out std_logic_vector (31 downto 0);
+            src_port               : out std_logic_vector (15 downto 0)
         );
-    end component uft_rx;    
+    end component uft_rx;      
 
     ----------------------------------------------------------------------------
     -- rx mem controller declaration
@@ -219,6 +221,8 @@ architecture structural of uft_top is
             data_tvalid            : in  std_logic;
             data_tlast             : in  std_logic;
             data_tdata             : in  std_logic_vector( 7 downto 0);
+            rx_src_ip              : in  std_logic_vector (31 downto 0);
+            rx_src_port            : in  std_logic_vector (15 downto 0);
             ack_cmd_nseq           : out std_logic;
             ack_cmd_ft             : out std_logic;
             ack_cmd_nseq_done      : in  std_logic;
@@ -257,7 +261,7 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component utf_rx_mem_ctl;    
+    end component utf_rx_mem_ctl;      
     component uft_tx is
         generic (
             C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32;
@@ -277,7 +281,6 @@ architecture structural of uft_top is
             tx_start               : in  std_logic;
             dst_ip_addr            : in  std_logic_vector (31 downto 0);
             dst_port               : in  std_logic_vector (15 downto 0);
-            src_port               : in  std_logic_vector (15 downto 0);
             ack_cmd_nseq           : in  std_logic;
             ack_cmd_ft             : in  std_logic;
             ack_cmd_nseq_done      : out std_logic;
@@ -344,9 +347,23 @@ architecture structural of uft_top is
 
     -- Tx
     signal data_src_addr   : std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
-    signal dst_ip_addr      : std_logic_vector (31 downto 0);
-    signal dst_port         : std_logic_vector (15 downto 0);
-    signal src_port         : std_logic_vector (15 downto 0);  
+    signal tx_dst_ip_addr      : std_logic_vector (31 downto 0);
+    signal tx_dst_port         : std_logic_vector (15 downto 0);
+
+    -- Rx
+    signal rx_src_port         : std_logic_vector (15 downto 0);  
+    signal rx_src_ip           : std_logic_vector (31 downto 0);
+
+    -- ack
+    signal ack_cmd_nseq    : std_logic; -- acknowledge a sequence
+    signal ack_cmd_ft      : std_logic; -- acknowledge a file transfer
+    signal ack_cmd_nseq_done    : std_logic;
+    signal ack_cmd_ft_done      : std_logic;
+    -- data for commands
+    signal ack_seqnbr              : std_logic_vector (23 downto 0);
+    signal ack_tcid                : std_logic_vector ( 6 downto 0);
+    signal ack_dst_port            : std_logic_vector (15 downto 0);
+    signal ack_dst_ip              : std_logic_vector (31 downto 0);
 begin
         
     ----------------------------------------------------------------------------
@@ -379,8 +396,10 @@ begin
             data_meta_valid        => data_meta_valid,
             data_tvalid            => data_tvalid,
             data_tlast             => data_tlast,
-            data_tdata             => data_tdata
-        ); 
+            data_tdata             => data_tdata,
+            src_ip                 => rx_src_ip,
+            src_port               => rx_src_port
+        );    
 
     ----------------------------------------------------------------------------
     -- Rx Mem Ctrl instance
@@ -406,6 +425,16 @@ begin
             data_tvalid            => data_tvalid,
             data_tlast             => data_tlast,
             data_tdata             => data_tdata,
+            rx_src_ip              => rx_src_ip,
+            rx_src_port            => rx_src_port,
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip,
             ip2bus_mstrd_req       => ip2bus_mstrd_req,
             ip2bus_mstwr_req       => ip2bus_mstwr_req,
             ip2bus_mst_addr        => ip2bus_mst_addr,
@@ -434,16 +463,8 @@ begin
             ip2bus_mstwr_src_rdy_n => ip2bus_mstwr_src_rdy_n,
             ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n,
-            ack_cmd_nseq           => ack_cmd_nseq,
-            ack_cmd_ft             => ack_cmd_ft,
-            ack_cmd_nseq_done      => ack_cmd_nseq_done,
-            ack_cmd_ft_done        => ack_cmd_ft_done,
-            ack_seqnbr             => ack_seqnbr,
-            ack_tcid               => ack_tcid,
-            ack_dst_port           => ack_dst_port,
-            ack_dst_ip             => ack_dst_ip
-        ); 
+            bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
+        );    
 
     tx : uft_tx
         generic map (
@@ -462,9 +483,8 @@ begin
             data_src_addr          => data_src_addr,
             tx_ready               => tx_ready,
             tx_start               => tx_start,
-            dst_ip_addr            => dst_ip_addr,
-            dst_port               => dst_port,
-            src_port               => src_port,
+            dst_ip_addr            => tx_dst_ip_addr,
+            dst_port               => tx_dst_port,
             udp_tx_start           => udp_tx_start,
             udp_tx_result          => udp_tx_result,
             udp_tx_hdr_dst_ip_addr => udp_tx_hdr_dst_ip_addr,
@@ -504,12 +524,21 @@ begin
             ip2bus_mstwr_src_rdy_n => tx_ip2bus_mstwr_src_rdy_n,
             ip2bus_mstwr_src_dsc_n => tx_ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => tx_bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => tx_bus2ip_mstwr_dst_dsc_n
-        ); 
+            bus2ip_mstwr_dst_dsc_n => tx_bus2ip_mstwr_dst_dsc_n,
+            -- ack stuff
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip
+        );        
+
     data_src_addr <= x"08000000";
-    dst_ip_addr <= x"c0a8050a";      -- 192.168.5.10
-    dst_port <= x"08AE"; -- 2222
-    src_port <= x"08Af"; -- 2223
+    tx_dst_ip_addr <= x"c0a8050a";      -- 192.168.5.10
+    tx_dst_port <= x"08AE"; -- 2222
 
     -- Settings
     -- -------------------------------------------------------------------------

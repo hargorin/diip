@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Wed Apr 18 10:56:07 2018
+-- Last update : Fri Apr 20 13:24:15 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -127,6 +127,7 @@ architecture structural of uft_tx_control is
     --  division can be done by shifting 
     constant c_nbytes_per_packet : integer := 1024;
     constant c_nbytes_per_packet_div4 : integer := c_nbytes_per_packet / 4;
+    constant c_src_port : std_logic_vector (15 downto 0) := x"a43b"; -- 42043
 
     -- Delay between packets
     signal delay_ctr : integer range 0 to 15000;
@@ -416,6 +417,52 @@ begin
         end if;
     end process ; -- p_ack_done_out
 
+    ----------------------------------------------------------------------------
+    -- UDP tx header outputs
+    -- IP and port from input if command or data, but ip and port from ack source
+    -- during ack
+    -- -------------------------------------------------------------------------
+    p_udp_hdr_out : process (current_state, dst_port, dst_ip_addr,
+        ack_dst_port, ack_dst_ip)
+    ----------------------------------------------------------------------------
+    begin
+        udp_tx_hdr_dst_port <= dst_port;
+        udp_tx_hdr_src_port <= c_src_port;
+        udp_tx_hdr_dst_ip_addr <= dst_ip_addr;
+
+        -- ignore checksum for now
+        udp_tx_hdr_checksum <= (others => '0');
+
+        case (current_state) is
+            when IDLE =>
+                udp_tx_hdr_dst_port <= (others => '0');
+                udp_tx_hdr_src_port <= (others => '0');
+                udp_tx_hdr_dst_ip_addr <= (others => '0');
+            when CMD => 
+            when CMD_WAIT => 
+            when DATA => 
+            when DATA_WAIT => 
+            when DATA_WAIT_DONE => 
+            when DELAY => 
+            when CPLT => 
+            when ACK_SEQ => 
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+            when ACK_SEQ_WAIT => 
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+            when ACK_FT =>  
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+            when ACK_FT_WAIT => 
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+        end case;
+    end process; -- p_udp_hdr_out
 
     -- Combinational logic
     -- -------------------------------------------------------------------------
@@ -437,8 +484,6 @@ begin
     -- output current sequence number
     data_seq <= std_logic_vector(nseq_ctr);
 
-    -- ignore checksum for now
-    udp_tx_hdr_checksum <= (others => '0');
 
     ----------------------------------------------------------------------------
     -- packet data size is either data size remainder or maximum

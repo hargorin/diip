@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Fri Apr 13 15:18:13 2018
+-- Last update : Fri Apr 20 13:48:24 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -53,6 +53,9 @@ entity utf_rx_mem_ctl is
         data_tvalid             : in std_logic;
         data_tlast              : in std_logic;
         data_tdata              : in std_logic_vector( 7 downto 0);
+
+        rx_src_ip      : in std_logic_vector (31 downto 0);
+        rx_src_port    : in std_logic_vector (15 downto 0);
 
         -- Commands for acknowledgment
         ack_cmd_nseq    : out std_logic; -- acknowledge a sequence
@@ -119,7 +122,7 @@ architecture rtl of utf_rx_mem_ctl is
 
     -- type defs
     type state_type is ( IDLE, STORE, STORE_DONE, INIT_TRANSFER, TRANSFER_FIRST, TRANSFER, 
-        TRANSFER_LAST, TRANSFER_DONE );
+        TRANSFER_LAST, TRANSFER_DONE, ACK_SEQ );
     type count_mode_type is (RST, INCR, HOLD);
 
     signal count_mode        : count_mode_type;
@@ -173,26 +176,22 @@ begin
         data_tlast )
     ----------------------------------------------------------------------------
     begin
+        next_state <= current_state;
+
         case (current_state) is
             when IDLE =>
                 if is_data = '1' then
                     next_state <= STORE;
-                else
-                    next_state <= current_state;
                 end if;
             when STORE =>
                 if data_tlast = '1' then
                     next_state <= STORE_DONE;
-                else
-                    next_state <= current_state;
                 end if;
             when STORE_DONE => 
                 next_state <= INIT_TRANSFER;
             when INIT_TRANSFER =>
                 if bus2ip_mst_cmdack = '1' then
                     next_state <= TRANSFER_FIRST;
-                else
-                    next_state <= current_state;
                 end if;
             when TRANSFER_FIRST =>
                 if bus2ip_mstwr_dst_rdy_n = '0' then
@@ -201,27 +200,21 @@ begin
                     else
                         next_state <= TRANSFER;
                     end if;
-                else
-                    next_state <= current_state;
                 end if;
             when TRANSFER =>
                 if ctr = (ip2bus_mem_length-2) then
                     next_state <= TRANSFER_LAST;
-                else
-                    next_state <= current_state;
                 end if;
             when TRANSFER_LAST =>
                 if bus2ip_mstwr_dst_rdy_n = '0' then
                     next_state <= TRANSFER_DONE;
-                else
-                    next_state <= current_state;
                 end if;
             when TRANSFER_DONE =>
                 if bus2ip_mst_cmplt = '1' then
-                    next_state <= IDLE;
-                else
-                    next_state <= current_state;
+                    next_state <= ACK_SEQ;
                 end if;
+            when ACK_SEQ => 
+                    next_state <= IDLE;
         end case;
     end process p_next_state;
 
@@ -292,6 +285,8 @@ begin
                     count_mode <= HOLD;
                 end if;
             when TRANSFER_DONE =>
+                count_mode <= HOLD;
+            when ACK_SEQ => 
                 count_mode <= HOLD;
         end case;
         
@@ -419,6 +414,44 @@ begin
 
         end if;
     end process p_bus_write;
+
+    
+
+    ----------------------------------------------------------------------------
+    -- Handles ack signals
+    -- some outputs are latched, dont panic!
+    ----------------------------------------------------------------------------
+    p_ack : process ( clk )
+    ----------------------------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            ack_cmd_nseq <= '0';
+            ack_cmd_ft <= '0';
+            
+            if rst_n = '0' then
+                ack_cmd_nseq <= '0';
+                ack_cmd_ft <= '0';
+                -- data for commands
+                ack_seqnbr <= (others => '0');
+                ack_tcid <= (others => '0');
+                ack_dst_port <= (others => '0');
+                ack_dst_ip <= (others => '0');
+            else
+                if current_state = ACK_SEQ then
+                    ack_cmd_nseq <= '1';
+                    -- latch data from input
+                    ack_seqnbr <= data_seq;
+                    ack_tcid <= data_tcid;
+                    -- send data to sender
+                    ack_dst_port <= rx_src_port;
+                    ack_dst_ip <= rx_src_ip;
+                end if;
+            end if;
+        end if;
+
+    end process; -- p_ack
+
+
     FIFO_ReadEn <= '1' when (bus2ip_mstwr_dst_rdy_n = '0') or 
         ((current_state = INIT_TRANSFER) AND (bus2ip_mst_cmdack = '1')) else '0';
     ip2bus_mstwr_d  <= FIFO_DataOut;

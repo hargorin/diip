@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Mon Nov 27 15:32:28 2017
--- Last update : Wed Apr 18 11:36:30 2018
+-- Last update : Fri Apr 20 13:26:45 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -56,7 +56,6 @@ entity uft_tx is
         -- IP
         dst_ip_addr      : in std_logic_vector (31 downto 0);
         dst_port         : in std_logic_vector (15 downto 0);
-        src_port         : in std_logic_vector (15 downto 0);
 
         -- Commands for acknowledgment
         ack_cmd_nseq    : in std_logic; -- acknowledge a sequence
