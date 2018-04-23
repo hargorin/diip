@@ -45,8 +45,10 @@ int main(int argc, const char * argv[]) {
 
 	// Puts data into FIFO
 	int ctr = 0;
-	for(uint16_t offset = 0; offset < g_length; offset++) {
-		for (uint16_t x = 0; x < img_width; x++) {
+	uint16_t offset = 0;
+	//for(uint16_t offset = 0; offset < g_length; offset++) {
+		//for (uint16_t x = 0; x < img_width; x++) {
+		for (uint16_t x = 0; x < WIN_SIZE; x++) {
 			for (uint16_t y = 0; y < WIN_SIZE; y++) {
 				inData.data = src_gray.at<apuint8_t>(Point(x, (y + offset)));
 				inDataFIFO.write(inData);
@@ -54,10 +56,10 @@ int main(int argc, const char * argv[]) {
 		}
 
 		while(!inDataFIFO.empty()) {
-			// printf("ctr=%d\n",ctr++);
+			printf("ctr=%d\n",ctr++);
 			wallis(inDataFIFO, outData, G_MEAN, G_VAR, CONTRAST, BRIGHTNESS, g_width);
 		}
-	}
+	//}
 
 
 	// ************************************************************************
@@ -75,7 +77,7 @@ int main(int argc, const char * argv[]) {
 	}
 
 	// Show image
-	Mat dst_img = Mat(g_length, g_width, CV_8UC1, w_data);
+/*	Mat dst_img = Mat(g_length, g_width, CV_8UC1, w_data);
 
 	imwrite("wallis_landscape.jpg", dst_img);
 	if (getenv("DISPLAY") != NULL)
@@ -83,7 +85,7 @@ int main(int argc, const char * argv[]) {
 		imshow( "Original", src_gray );
 		imshow( "Wallis", dst_img );
 		waitKey(0);
-	}
+	}*/
 
 
     return 0;
