@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Fri Apr 20 13:48:24 2018
+-- Last update : Mon Apr 23 13:09:48 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -202,7 +202,7 @@ begin
                     end if;
                 end if;
             when TRANSFER =>
-                if ctr = (ip2bus_mem_length-2) then
+                if ctr = (ip2bus_mem_length-1) then
                     next_state <= TRANSFER_LAST;
                 end if;
             when TRANSFER_LAST =>

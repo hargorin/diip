@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Thu Nov  9 08:13:36 2017
--- Last update : Fri Mar  9 10:14:45 2018
+-- Last update : Mon Apr 23 13:07:18 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -236,7 +236,7 @@ begin
                     next_state <= BURST_WR_INT;
                 end if;
             when BURST_WR_T2 =>
-                if data_ctr = (unsigned(data_len)-2) then
+                if data_ctr = (unsigned(data_len)-1) then
                     next_state <= BURST_WR_EOF;
                 else
                     next_state <= BURST_WR_T2;
