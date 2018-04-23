@@ -5,12 +5,13 @@
 //  Copyright © 2018 Noah Huetter. All rights reserved.
 //
 
-#ifndef SOBEL_H_
-#define SOBEL_H_
+#ifndef CONTROLLER_H_
+#define CONTROLLER_H_
 #endif
 
 #include <iostream>
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
 
 using namespace std;
@@ -25,3 +26,4 @@ using namespace std;
 // *** Functions ***
 // ***********************************************
 
+void controller_top(volatile int *a);
