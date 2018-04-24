@@ -6,3 +6,4 @@ build/
 *.jou
 *.str
 *.debug
+*.btree
