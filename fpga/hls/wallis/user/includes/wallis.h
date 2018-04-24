@@ -19,10 +19,14 @@
 // *** Global Variables ***
 // ****************************************************************************
 typedef ap_uint<8>	apuint8_t;
+typedef ap_uint<14>	apuint14_t;
 typedef ap_uint<16>	apuint16_t;
+typedef ap_uint<32>	apuint32_t;
+typedef ap_uint<35>	apuint35_t;
+typedef ap_uint<40>	apuint40_t;
 
-
-#define WIN_SIZE 	15
+// !!! If the WIN_SIZE changes - the data types must change too !!!
+#define WIN_SIZE 	21	// Between 11 and 41 (depends on camera resolution)
 #define LENGTH 		(WIN_SIZE * WIN_SIZE)
 
 
@@ -40,10 +44,10 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 			apuint16_t g_Width);
 
 // Mean
-apuint8_t Cal_Mean(uint32_t sum_Pixel);
+apuint8_t Cal_Mean(apuint14_t sum_Pixel);
 
 // Varinace
-apuint16_t Cal_Variance(apuint8_t mean, apuint8_t *pixel);
+apuint35_t Cal_Variance(apuint8_t mean, apuint8_t *pixel);
 
 // Wallis Filter
 apuint8_t Wallis_Filter(apuint8_t *pixel, apuint8_t n_Mean, apuint16_t n_Var, 

@@ -12,31 +12,22 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 			apuint8_t g_Mean, apuint16_t g_Var, float contrast, float brightness,
 			apuint16_t g_Width) {
 	
-	#pragma HLS INTERFACE axis port=inData
-	#pragma HLS INTERFACE axis port=outData
-
-
 	// ************************************************************************
 	// Variables
 	AXI_VALUE inPixel;
 	AXI_VALUE outPixel;
 
-	static uint32_t sum_Pixel;
+	static apuint14_t sum_Pixel;
 	static apuint8_t n_Mean, n_Var;
 	static apuint8_t pixel[LENGTH];
 	static apuint8_t tmp_Pixel[LENGTH];
 
-	#pragma HLS ARRAY_PARTITION variable=tmp_Pixel complete
-	//#pragma HLS DEPENDENCE variable=sum_Pixel inter WAR true
-
 	// ************************************************************************
-	// Initalization
+	// Initialization
 	// ************************************************************************
 	// Read data and calculate mean
 	sum_Pixel = 0;
-	for(uint16_t i = 0; i < LENGTH; i++) {
-		#pragma HLS PIPELINE
-
+	loop_rdata:for(uint16_t i = 0; i < LENGTH; i++) {
 		inPixel = inData.read();
 		pixel[i] = inPixel.data;
 
@@ -45,13 +36,11 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 
 	// ************************************************************************
 	// Mean
-	//n_Mean = Cal_Mean(sum_Pixel);
-	n_Mean = (apuint8_t)(sum_Pixel / LENGTH);
-
+	n_Mean = Cal_Mean(sum_Pixel);
 
 	// ************************************************************************
 	// Variance
-	//n_Var = Cal_Variance(n_Mean, pixel);
+	n_Var = Cal_Variance(n_Mean, pixel);
 
 	// ************************************************************************
 	// Wallis Filter
@@ -60,7 +49,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 
 	// ************************************************************************
 	// Output
-	outPixel.data = n_Mean;
+	outPixel.data = n_Var;
 	outData.write(outPixel);
 
 
@@ -125,9 +114,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 /*
  * Calculate the mean
  */
-apuint8_t Cal_Mean(uint32_t sum_Pixel) {
-	#pragma HLS INLINE
-	
+apuint8_t Cal_Mean(apuint14_t sum_Pixel) {
 	apuint8_t mean;
 
 	mean = (apuint8_t)(sum_Pixel / LENGTH);
@@ -139,21 +126,20 @@ apuint8_t Cal_Mean(uint32_t sum_Pixel) {
 /*
  * Calculate the variance
  */
-apuint16_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
-	#pragma HLS INLINE
-	
-	uint32_t sum_Pow = 0;
-	apuint16_t tmp_pow;
+apuint35_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
+	apuint40_t sum_Pow = 0;
+	apuint16_t tmp_Sub;
+	apuint32_t tmp_Pow;
 	apuint16_t var;
 	
-	for(uint16_t i = 0; i < LENGTH; i++) {
-		#pragma HLS UNROLL
-
-		tmp_pow = (pixel[i] - mean);
-		sum_Pow += (tmp_pow * tmp_pow);
+	loop_variance:for(uint16_t i = 0; i < LENGTH; i++) {
+		tmp_Sub = (pixel[i] - mean);
+		tmp_Pow = (tmp_Sub * tmp_Sub);
+		sum_Pow = sum_Pow + tmp_Pow;
+		//sum_Pow += (pixel[i] - mean) * (pixel[i] - mean);
 	}
 
-	var = apuint16_t(sum_Pow / (LENGTH - 1));
+	var = apuint35_t(sum_Pow / (LENGTH - 1));
 
 	return var;
 }
@@ -165,7 +151,6 @@ apuint16_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
 apuint8_t Wallis_Filter(apuint8_t *pixel, apuint8_t n_Mean, apuint16_t n_Var, 
 						apuint8_t g_Mean, apuint16_t g_Var, float contrast,
 						float brightness) {
-	#pragma HLS INLINE
 
 	float tmp_gMean = 0.0, tmp_nMean = 0.0;
 	float tmp_gVar = 0.0, tmp_nVar = 0.0;
