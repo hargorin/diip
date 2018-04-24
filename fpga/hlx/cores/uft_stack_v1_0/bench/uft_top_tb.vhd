@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Fri Apr 20 14:04:32 2018
+-- Last update : Tue Apr 24 13:29:47 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -410,7 +410,8 @@ begin
         -- TEST 3 -- NSEQ=2 UFT Data Packet reception
         ------------
         t10;
-        t3;
+        t3; -- NSEQ=2 UFT Data Packet reception
+        t3; -- NSEQ=2 UFT Data Packet reception
 
         --t10;
         --t10;
