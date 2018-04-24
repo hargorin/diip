@@ -11,39 +11,83 @@
 int main()
 {
 	int i;
-	int A[50];
-	int B[50];
+	int memory[IN_SIZE+OUT_SIZE];
+	int B[WINDOW_HEIGHT*LINE_SIZE];
+	int mem_set[LINE_SIZE-WINDOW_HEIGHT+1];
+
+
+    AXI_VALUE aval;
+	AXI_STREAM outData;
+	AXI_STREAM inData;
+
 
 	printf("***************\n");
 	printf("Start Testbench\n");
 	
-	//Put data into A
-	for(i=0; i < 50; i++)
+	//Put data into memory
+	uint8_t val = 0;
+	for(i=0; i < (WINDOW_HEIGHT*LINE_SIZE); i++)
 	{
-		A[i] = i;
+		memory[i] = val++;
+	}
+	// Put data into stream comming from the core
+	val = 255;
+	for(i=0; i < (LINE_SIZE-WINDOW_HEIGHT+1); i++)
+	{
+		aval.data = val--;
+		inData.write(aval);
 	}
 
 	//Call the hardware function
-	controller_top(A);
+	controller_top(memory, outData, inData);
 
 	//Run a software version of the hardware function to validate results
-	for(i=0; i < 50; i++)
+	int row = 0;
+	int col = 0;
+	for(i=0; i < WINDOW_HEIGHT*LINE_SIZE; i++)
 	{
-		B[i] = i + 100;
+		B[i] = memory[row*LINE_SIZE + col];
+		row++;
+		if(row == WINDOW_HEIGHT)
+		{
+			row = 0;
+			col++;
+		}
+	}
+	// write the stream data to memory
+	val = 255;
+	for(i=0; i < (LINE_SIZE-WINDOW_HEIGHT+1); i++)
+	{
+		mem_set[i] = val--;
 	}
 
-	//Compare results
-	for(i=0; i < 50; i++)
+	//Compare results from output stream
+	uint8_t test;
+	for(i=0; i < WINDOW_HEIGHT*LINE_SIZE; i++)
 	{
-		if(B[i] != A[i])
+		test = (uint8_t)outData.read().data;
+//		printf("i = %d outData = %d\n",i,(uint8_t)outData.read().data);
+		if(B[i] != test)
 		{
-			printf("i = %d A = %d B= %d\n",i,A[i],B[i]);
+			printf("i = %d B = %d out= %d\n",i,B[i],test);
 			printf("ERROR HW and SW results mismatch\n");
 			return 1;
 		}
 	}
-	printf("Success HW and SW results match\n");
-	printf("\n\nEnd Testbench\n");
+
+	//Compare results from memory
+	for(i=0; i < (LINE_SIZE-WINDOW_HEIGHT+1); i++)
+	{
+		if(memory[OUT_MEMORY_BASE+i] != mem_set[i])
+		{
+			printf("i = %d is = %d should= %d\n",i,memory[OUT_MEMORY_BASE+i],mem_set[i]);
+			printf("ERROR HW and SW results mismatch\n");
+			return 1;
+		}
+	}
+
+	printf("Success! HW and SW results match\n");
+	printf("End Testbench\n");
 	printf("***************\n");
 	return 0;
 }

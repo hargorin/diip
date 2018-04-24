@@ -4,7 +4,7 @@
 ## Copyright (C) 1986-2017 Xilinx, Inc. All Rights Reserved.
 ############################################################
 open_project -reset controller
-set_top controller_proj
+set_top controller_top
 add_files ../user/source/controller.cpp
 add_files -tb ../user/testbench/controller_tb.cpp
 
