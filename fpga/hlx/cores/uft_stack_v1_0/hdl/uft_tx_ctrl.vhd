@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Fri Mar  9 11:31:17 2018
+-- Last update : Fri Apr 20 13:24:15 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -46,6 +46,20 @@ entity uft_tx_control is
         tx_ready        : out std_logic;
         -- assert high to start a transmission
         tx_start        : in  std_logic;
+        -- destination information
+        dst_ip_addr      : in std_logic_vector (31 downto 0);
+        dst_port         : in std_logic_vector (15 downto 0);
+
+        -- Commands for acknowledgment
+        ack_cmd_nseq    : in std_logic; -- acknowledge a sequence
+        ack_cmd_ft      : in std_logic; -- acknowledge a file transfer
+        ack_cmd_nseq_done    : out std_logic;
+        ack_cmd_ft_done      : out std_logic;
+        -- data for commands
+        ack_seqnbr              : in std_logic_vector (23 downto 0);
+        ack_tcid                : in std_logic_vector ( 6 downto 0);
+        ack_dst_port            : in std_logic_vector (15 downto 0);
+        ack_dst_ip              : in std_logic_vector (31 downto 0);
 
         -- UDP Stack
         -- ---------------------------------------------------------------------
@@ -53,6 +67,10 @@ entity uft_tx_control is
         udp_tx_result               : in  std_logic_vector (1 downto 0);
         udp_tx_hdr_data_length      : out std_logic_vector (15 downto 0);
         udp_tx_hdr_checksum         : out std_logic_vector (15 downto 0);
+
+        udp_tx_hdr_dst_ip_addr      : out std_logic_vector (31 downto 0);
+        udp_tx_hdr_dst_port         : out std_logic_vector (15 downto 0);
+        udp_tx_hdr_src_port         : out std_logic_vector (15 downto 0);
 
         -- Arbiter
         -- ---------------------------------------------------------------------
@@ -62,8 +80,11 @@ entity uft_tx_control is
         -- ---------------------------------------------------------------------
         cmd_tcid            : out std_logic_vector (6 downto 0);
         cmd_en_start        : out std_logic; -- generate start packet
+        cmd_en_ackseq        : out std_logic; 
+        cmd_en_ackft        : out std_logic; 
         cmd_done            : in  std_logic; -- asserted if packet is sent
         cmd_nseq            : out std_logic_vector (31 downto 0);
+        cmd_seqnbr          : out std_logic_vector (23 downto 0);
 
         -- Connection to data assembler
         -- ---------------------------------------------------------------------
@@ -82,7 +103,8 @@ entity uft_tx_control is
 end entity uft_tx_control;
 
 architecture structural of uft_tx_control is
-    type state_type is (IDLE, CMD, CMD_WAIT, DATA, DATA_WAIT, DELAY, CPLT);
+    type state_type is (IDLE, CMD, CMD_WAIT, DATA, DATA_WAIT, DATA_WAIT_DONE, DELAY, CPLT,
+        ACK_SEQ, ACK_SEQ_WAIT, ACK_FT, ACK_FT_WAIT);
     signal current_state : state_type;
     signal next_state : state_type;
     -- number of data sequences to be sent
@@ -90,6 +112,9 @@ architecture structural of uft_tx_control is
     signal nseq_ctr : unsigned (23 downto 0);
     -- stores the current transaction id
     signal tcid : unsigned(6 downto 0) := (others => '0');
+
+    signal ack_cmd_nseq_latch : std_logic;
+    signal ack_cmd_ft_latch : std_logic;
 
     signal packet_data_size_int : std_logic_vector (10 downto 0);
     signal data_size_int : integer;
@@ -102,6 +127,7 @@ architecture structural of uft_tx_control is
     --  division can be done by shifting 
     constant c_nbytes_per_packet : integer := 1024;
     constant c_nbytes_per_packet_div4 : integer := c_nbytes_per_packet / 4;
+    constant c_src_port : std_logic_vector (15 downto 0) := x"a43b"; -- 42043
 
     -- Delay between packets
     signal delay_ctr : integer range 0 to 15000;
@@ -121,15 +147,55 @@ begin
             end if;
         end if;
     end process ; -- p_ns
+
+    ----------------------------------------------------------------------------
+    -- ack latch process. latches ack requests
+    -- -------------------------------------------------------------------------
+    p_ack_latch : process (clk)
+    ----------------------------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                ack_cmd_nseq_latch <= '0';
+                ack_cmd_ft_latch <= '0';
+            else
+                -- latch the ack requests if requested
+                if ack_cmd_nseq = '1' then
+                    ack_cmd_nseq_latch <= '1';
+                end if;
+                if ack_cmd_ft = '1' then
+                    ack_cmd_ft_latch <= '1';
+                end if;
+                -- clear them if in their wait state
+                if current_state = ACK_SEQ_WAIT then
+                    ack_cmd_nseq_latch <= '0';
+                end if;
+                if current_state = ACK_FT_WAIT then
+                    ack_cmd_ft_latch <= '0';
+                end if;
+
+            end if;
+        end if;
+    end process; -- p_ack_latch
+    
+
     ----------------------------------------------------------------------------
     p_next_state : process( current_state, tx_start, cmd_done, data_done, 
-        remaining_bytes, delay_ctr )
+        remaining_bytes, delay_ctr, ack_cmd_nseq_latch, ack_cmd_ft_latch)
+        variable old_state : state_type := IDLE;
+        variable data_was_done : std_logic := '0';
     ----------------------------------------------------------------------------
     begin
         next_state <= current_state;
         case (current_state) is
             when IDLE => 
-                if tx_start = '1' then
+                if ack_cmd_nseq_latch = '1' then
+                    old_state := IDLE;
+                    next_state <= ACK_SEQ;
+                elsif ack_cmd_ft_latch = '1' then
+                    old_state := IDLE;
+                    next_state <= ACK_FT;
+                elsif tx_start = '1' then
                     next_state <= CMD;
                 end if;
             when CMD => 
@@ -142,13 +208,24 @@ begin
                 next_state <= DATA_WAIT;
             when DATA_WAIT => 
                 if data_done = '1' then
-                    if remaining_bytes <= c_nbytes_per_packet then
-                        next_state <= CPLT;
-                    elsif c_packet_delay /= 0 then
-                        next_state <= DELAY;
-                    else
-                        next_state <= DATA;
-                    end if;
+                    next_state <= DATA_WAIT_DONE;
+                end if;
+            when DATA_WAIT_DONE => 
+                -- interrupt regular transfer with ack package
+                if ack_cmd_nseq_latch = '1' then
+                    data_was_done := '1';
+                    old_state := DATA_WAIT_DONE;
+                    next_state <= ACK_SEQ;
+                elsif ack_cmd_ft_latch = '1' then
+                    data_was_done := '1';
+                    old_state := DATA_WAIT_DONE;
+                    next_state <= ACK_FT;
+                elsif remaining_bytes = 0 then
+                    next_state <= CPLT;
+                elsif c_packet_delay /= 0 then
+                    next_state <= DELAY;
+                else
+                    next_state <= DATA;
                 end if;
             when DELAY => 
                 if delay_ctr >= (c_packet_delay-1) then
@@ -156,6 +233,20 @@ begin
                 end if;
             when CPLT => 
                 next_state <= IDLE;
+            when ACK_SEQ => 
+                next_state <= ACK_SEQ_WAIT;
+            when ACK_SEQ_WAIT => 
+                -- if done change to old state
+                if cmd_done = '1' then
+                    next_state <= old_state;
+                end if;
+            when ACK_FT => 
+                next_state <= ACK_FT_WAIT;
+            when ACK_FT_WAIT => 
+                -- if done change to old state
+                if cmd_done = '1' then
+                    next_state <= old_state;
+                end if;
         end case;
     end process ; -- p_next_state
     ----------------------------------------------------------------------------
@@ -164,9 +255,15 @@ begin
     begin
         tx_ready <= '0';
         cmd_en_start <= '0';
+        cmd_en_ackseq <= '0';
+        cmd_en_ackft <= '0';
         data_start <= '0';
         arb_sel <= '0';
         udp_tx_start <= '0';
+
+        -- output transaction id
+        cmd_tcid <= std_logic_vector(tcid);
+        data_tcid <= std_logic_vector(tcid);
 
         case (current_state) is
             when IDLE =>
@@ -181,8 +278,21 @@ begin
                 data_start <= '1';
             when DATA_WAIT => 
                 arb_sel <= '1';
+            when DATA_WAIT_DONE => 
             when DELAY => 
             when CPLT => 
+            when ACK_SEQ => 
+                cmd_tcid <= ack_tcid;
+                udp_tx_start <= '1';
+                cmd_en_ackseq <= '1';
+            when ACK_SEQ_WAIT => 
+                cmd_tcid <= ack_tcid;
+            when ACK_FT =>  
+                cmd_tcid <= ack_tcid;
+                udp_tx_start <= '1';
+                cmd_en_ackft <= '1';
+            when ACK_FT_WAIT => 
+                cmd_tcid <= ack_tcid;
         end case;
     end process ; -- p_out
     ----------------------------------------------------------------------------
@@ -204,13 +314,15 @@ begin
                     when CMD => 
                     when CMD_WAIT => 
                     when DATA => 
+                    when DATA_WAIT_DONE => 
                     when DATA_WAIT => 
                         if data_done = '1' then
-                            if remaining_bytes > c_nbytes_per_packet then
-                                remaining_bytes <= remaining_bytes - c_nbytes_per_packet;
-                                nseq_ctr <= nseq_ctr + 1;
-                                data_offset <= data_offset + c_nbytes_per_packet;
-                            end if;
+                        --if remaining_bytes > c_nbytes_per_packet then
+                            --remaining_bytes <= remaining_bytes - c_nbytes_per_packet;
+                            remaining_bytes <= remaining_bytes - unsigned(packet_data_size_int);
+                            nseq_ctr <= nseq_ctr + 1;
+                            data_offset <= data_offset + c_nbytes_per_packet;
+                        --end if;
                         end if;
                     when DELAY => 
                     when CPLT => 
@@ -219,6 +331,10 @@ begin
                         else
                             tcid <= tcid + 1;
                         end if;
+                    when ACK_SEQ => 
+                    when ACK_SEQ_WAIT => 
+                    when ACK_FT =>  
+                    when ACK_FT_WAIT => 
                 end case;
             end if;
         end if;
@@ -260,10 +376,93 @@ begin
                 udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(to_integer(unsigned(packet_data_size_int))+4 ,udp_tx_hdr_data_length'length));
             when DATA_WAIT => 
                 udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(to_integer(unsigned(packet_data_size_int))+4 ,udp_tx_hdr_data_length'length));
+            when DATA_WAIT_DONE => 
             when DELAY => 
             when CPLT => 
+            when ACK_SEQ => 
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
+            when ACK_SEQ_WAIT => 
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
+            when ACK_FT =>  
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
+            when ACK_FT_WAIT => 
+                udp_tx_hdr_data_length <= std_logic_vector(to_unsigned(34 ,udp_tx_hdr_data_length'length));
         end case;
     end process ; -- p_udp_header_len
+
+
+    ----------------------------------------------------------------------------
+    -- Output for ack done
+    -- -------------------------------------------------------------------------
+    p_dack_done_out: process( clk )
+    ----------------------------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                ack_cmd_nseq_done <= '1';
+                ack_cmd_ft_done <= '1';
+            else
+                if ack_cmd_nseq_latch = '1' then
+                    ack_cmd_nseq_done <= '0';
+                elsif current_state = ACK_SEQ_WAIT and cmd_done = '1' then
+                    ack_cmd_nseq_done <= '1';
+                end if;
+                if ack_cmd_ft_latch = '1' then
+                    ack_cmd_ft_done <= '0';
+                elsif current_state = ACK_FT_WAIT and cmd_done = '1' then
+                    ack_cmd_ft_done <= '1';
+                end if;
+
+            end if;
+        end if;
+    end process ; -- p_ack_done_out
+
+    ----------------------------------------------------------------------------
+    -- UDP tx header outputs
+    -- IP and port from input if command or data, but ip and port from ack source
+    -- during ack
+    -- -------------------------------------------------------------------------
+    p_udp_hdr_out : process (current_state, dst_port, dst_ip_addr,
+        ack_dst_port, ack_dst_ip)
+    ----------------------------------------------------------------------------
+    begin
+        udp_tx_hdr_dst_port <= dst_port;
+        udp_tx_hdr_src_port <= c_src_port;
+        udp_tx_hdr_dst_ip_addr <= dst_ip_addr;
+
+        -- ignore checksum for now
+        udp_tx_hdr_checksum <= (others => '0');
+
+        case (current_state) is
+            when IDLE =>
+                udp_tx_hdr_dst_port <= (others => '0');
+                udp_tx_hdr_src_port <= (others => '0');
+                udp_tx_hdr_dst_ip_addr <= (others => '0');
+            when CMD => 
+            when CMD_WAIT => 
+            when DATA => 
+            when DATA_WAIT => 
+            when DATA_WAIT_DONE => 
+            when DELAY => 
+            when CPLT => 
+            when ACK_SEQ => 
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+            when ACK_SEQ_WAIT => 
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+            when ACK_FT =>  
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+            when ACK_FT_WAIT => 
+                udp_tx_hdr_dst_port <= ack_dst_port;
+                udp_tx_hdr_src_port <= c_src_port;
+                udp_tx_hdr_dst_ip_addr <= ack_dst_ip;
+        end case;
+    end process; -- p_udp_hdr_out
 
     -- Combinational logic
     -- -------------------------------------------------------------------------
@@ -275,10 +474,9 @@ begin
         when data_size(1 downto 0) = "00" else
         std_logic_vector( to_unsigned(to_integer(unsigned(data_size)) / c_nbytes_per_packet, cmd_nseq'length) + 1);
     --cmd_nseq <= std_logic_vector(shift_right(unsigned(data_size), 10) + 1);
-    -- output transaction id
-    cmd_tcid <= std_logic_vector(tcid);
-    data_tcid <= std_logic_vector(tcid);
 
+    cmd_seqnbr  <= ack_seqnbr;
+    
     -- data pointer offset by data_src_addr and number of sequence number 
     -- times the maximum number of bytes per data packet
     data_data_src_addr <= std_logic_vector(data_offset + unsigned(data_src_addr));
@@ -286,8 +484,6 @@ begin
     -- output current sequence number
     data_seq <= std_logic_vector(nseq_ctr);
 
-    -- ignore checksum for now
-    udp_tx_hdr_checksum <= (others => '0');
 
     ----------------------------------------------------------------------------
     -- packet data size is either data size remainder or maximum

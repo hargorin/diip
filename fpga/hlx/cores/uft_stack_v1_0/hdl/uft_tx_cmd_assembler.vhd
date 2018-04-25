@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 13:20:19 2017
--- Last update : Wed Mar  7 16:38:47 2018
+-- Last update : Wed Apr 18 08:54:07 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -38,11 +38,15 @@ entity uft_tx_cmd_assembler is
         data_size   : in  std_logic_vector (31 downto 0);
         -- Transaction ID 
         tcid        : in  std_logic_vector (6 downto 0);
+        -- Sequence number
+        seqnbr      : in std_logic_vector (23 downto 0);
 
         -- Controll
         -- ---------------------------------------------------------------------
         -- Assert high for 1 clk to start generation
         en_start       : in  std_logic; -- generate start packet
+        en_ackseq      : in  std_logic; -- generate acknowledge sequence
+        en_ackft       : in  std_logic; -- generate acknowledge transfer
         done           : out std_logic; -- asserted if packet is sent
 
         -- Output AXI stream
@@ -70,6 +74,9 @@ begin
     p_comd : process( clk )
     ----------------------------------------------------------------------------
     begin
+        command <= command;
+        command_d1 <= command_d1;
+        command_d2 <= command_d2;
         if rising_edge(clk) then
             if rst_n = '0' then
                 command  <= (others => '0');
@@ -77,14 +84,21 @@ begin
                 command_d2  <= (others => '0');
             else
                 if en_start = '1' and running = '0' then
-                    command <= "0000000";
+                    command <= "0000000"; -- 0: START
                     command_d1(6 downto 0) <= tcid;
                     command_d1(23 downto 7) <= (others => '0');
                     command_d2 <= data_size;
-                else
-                    command <= command;
-                    command_d1 <= command_d1;
-                    command_d2 <= command_d2;
+                elsif en_ackseq = '1' and running = '0' then
+                    command <= "0000010"; -- 2: ACKFP
+                    command_d1(6 downto 0) <= tcid;
+                    command_d1(23 downto 7) <= (others => '0');
+                    command_d2(23 downto 0)<= seqnbr;
+                    command_d2(31 downto 24) <= (others => '0');
+                elsif  en_ackft = '1' and running = '0' then
+                    command <= "0000011"; -- 3: ACKFT
+                    command_d1(6 downto 0) <= tcid;
+                    command_d1(23 downto 7) <= (others => '0');
+                    command_d2 <= (others => '0');
                 end if;
             end if;
         end if;        
@@ -102,7 +116,7 @@ begin
             else
                 done <= '0';
 
-                if en_start = '1' and running = '0' then
+                if (en_start = '1' or en_ackft = '1' or en_ackseq = '1') and running = '0' then
                     running <= '1';
                 elsif ctr = to_unsigned(34, ctr'length) then
                     running <= '0';

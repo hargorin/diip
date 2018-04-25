@@ -1,25 +1,23 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Sat Dec  2 12:55:09 2017
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Fri Apr 20 12:01:32 2018
 [*]
-[dumpfile] "../build/ghdl/uft_top_tb.ghw"
-[dumpfile_mtime] "Sat Dec  2 12:52:09 2017"
-[dumpfile_size] 251549
-[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_top_tb.gtkw"
-[timestart] 11003000000
-[size] 1920 1391
+[dumpfile] "/home/noah/git/diip/fpga/hlx/build/ghdl/uft_top_tb.ghw"
+[dumpfile_mtime] "Fri Apr 20 11:53:25 2018"
+[dumpfile_size] 295334
+[savefile] "/home/noah/git/diip/fpga/hlx/simulation/uft_top_tb.gtkw"
+[timestart] 0
+[size] 1943 1334
 [pos] -1 -1
-*-25.206617 11107700000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-32.358799 16300000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.uft_top_tb.
-[treeopen] top.uft_top_tb.axi_master_burst_model_1.
 [treeopen] top.uft_top_tb.duv.
 [treeopen] top.uft_top_tb.duv.tx.
-[treeopen] top.uft_top_tb.duv.tx.controll.
 [sst_width] 330
 [signals_width] 412
 [sst_expanded] 1
-[sst_vpaned_height] 659
+[sst_vpaned_height] 828
 @28
 top.uft_top_tb.clk
 top.uft_top_tb.rst_n
@@ -60,23 +58,26 @@ top.uft_top_tb.duv.rx.is_data
 #{top.uft_top_tb.duv.rx.data_seq[23:0]} top.uft_top_tb.duv.rx.data_seq[23] top.uft_top_tb.duv.rx.data_seq[22] top.uft_top_tb.duv.rx.data_seq[21] top.uft_top_tb.duv.rx.data_seq[20] top.uft_top_tb.duv.rx.data_seq[19] top.uft_top_tb.duv.rx.data_seq[18] top.uft_top_tb.duv.rx.data_seq[17] top.uft_top_tb.duv.rx.data_seq[16] top.uft_top_tb.duv.rx.data_seq[15] top.uft_top_tb.duv.rx.data_seq[14] top.uft_top_tb.duv.rx.data_seq[13] top.uft_top_tb.duv.rx.data_seq[12] top.uft_top_tb.duv.rx.data_seq[11] top.uft_top_tb.duv.rx.data_seq[10] top.uft_top_tb.duv.rx.data_seq[9] top.uft_top_tb.duv.rx.data_seq[8] top.uft_top_tb.duv.rx.data_seq[7] top.uft_top_tb.duv.rx.data_seq[6] top.uft_top_tb.duv.rx.data_seq[5] top.uft_top_tb.duv.rx.data_seq[4] top.uft_top_tb.duv.rx.data_seq[3] top.uft_top_tb.duv.rx.data_seq[2] top.uft_top_tb.duv.rx.data_seq[1] top.uft_top_tb.duv.rx.data_seq[0]
 @28
 top.uft_top_tb.duv.rx.data_meta_valid
+top.uft_top_tb.duv.rx_mem_ctl.current_state
+@200
+-
+-Ack
+@28
+top.uft_top_tb.duv.tx.control.ack_cmd_nseq
+@29
+top.uft_top_tb.duv.tx.control.ack_cmd_nseq_latch
 @200
 -
 -Tx
 @28
+top.uft_top_tb.duv.tx.control.current_state
 top.uft_top_tb.udp_tx_start
 @24
 #{top.uft_top_tb.tx_data_size[31:0]} top.uft_top_tb.tx_data_size[31] top.uft_top_tb.tx_data_size[30] top.uft_top_tb.tx_data_size[29] top.uft_top_tb.tx_data_size[28] top.uft_top_tb.tx_data_size[27] top.uft_top_tb.tx_data_size[26] top.uft_top_tb.tx_data_size[25] top.uft_top_tb.tx_data_size[24] top.uft_top_tb.tx_data_size[23] top.uft_top_tb.tx_data_size[22] top.uft_top_tb.tx_data_size[21] top.uft_top_tb.tx_data_size[20] top.uft_top_tb.tx_data_size[19] top.uft_top_tb.tx_data_size[18] top.uft_top_tb.tx_data_size[17] top.uft_top_tb.tx_data_size[16] top.uft_top_tb.tx_data_size[15] top.uft_top_tb.tx_data_size[14] top.uft_top_tb.tx_data_size[13] top.uft_top_tb.tx_data_size[12] top.uft_top_tb.tx_data_size[11] top.uft_top_tb.tx_data_size[10] top.uft_top_tb.tx_data_size[9] top.uft_top_tb.tx_data_size[8] top.uft_top_tb.tx_data_size[7] top.uft_top_tb.tx_data_size[6] top.uft_top_tb.tx_data_size[5] top.uft_top_tb.tx_data_size[4] top.uft_top_tb.tx_data_size[3] top.uft_top_tb.tx_data_size[2] top.uft_top_tb.tx_data_size[1] top.uft_top_tb.tx_data_size[0]
-@420
-top.uft_top_tb.duv.tx.controll.current_state
 @22
 #{top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[15:0]} top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[15] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[14] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[13] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[12] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[11] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[10] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[9] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[8] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[7] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[6] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[5] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[4] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[3] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[2] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[1] top.uft_top_tb.duv.tx.udp_tx_hdr_data_length[0]
-@24
-#{top.uft_top_tb.duv.tx.controll.remaining_bytes[31:0]} top.uft_top_tb.duv.tx.controll.remaining_bytes[31] top.uft_top_tb.duv.tx.controll.remaining_bytes[30] top.uft_top_tb.duv.tx.controll.remaining_bytes[29] top.uft_top_tb.duv.tx.controll.remaining_bytes[28] top.uft_top_tb.duv.tx.controll.remaining_bytes[27] top.uft_top_tb.duv.tx.controll.remaining_bytes[26] top.uft_top_tb.duv.tx.controll.remaining_bytes[25] top.uft_top_tb.duv.tx.controll.remaining_bytes[24] top.uft_top_tb.duv.tx.controll.remaining_bytes[23] top.uft_top_tb.duv.tx.controll.remaining_bytes[22] top.uft_top_tb.duv.tx.controll.remaining_bytes[21] top.uft_top_tb.duv.tx.controll.remaining_bytes[20] top.uft_top_tb.duv.tx.controll.remaining_bytes[19] top.uft_top_tb.duv.tx.controll.remaining_bytes[18] top.uft_top_tb.duv.tx.controll.remaining_bytes[17] top.uft_top_tb.duv.tx.controll.remaining_bytes[16] top.uft_top_tb.duv.tx.controll.remaining_bytes[15] top.uft_top_tb.duv.tx.controll.remaining_bytes[14] top.uft_top_tb.duv.tx.controll.remaining_bytes[13] top.uft_top_tb.duv.tx.controll.remaining_bytes[12] top.uft_top_tb.duv.tx.controll.remaining_bytes[11] top.uft_top_tb.duv.tx.controll.remaining_bytes[10] top.uft_top_tb.duv.tx.controll.remaining_bytes[9] top.uft_top_tb.duv.tx.controll.remaining_bytes[8] top.uft_top_tb.duv.tx.controll.remaining_bytes[7] top.uft_top_tb.duv.tx.controll.remaining_bytes[6] top.uft_top_tb.duv.tx.controll.remaining_bytes[5] top.uft_top_tb.duv.tx.controll.remaining_bytes[4] top.uft_top_tb.duv.tx.controll.remaining_bytes[3] top.uft_top_tb.duv.tx.controll.remaining_bytes[2] top.uft_top_tb.duv.tx.controll.remaining_bytes[1] top.uft_top_tb.duv.tx.controll.remaining_bytes[0]
 @200
 -cmd
-@28
-top.uft_top_tb.duv.tx.controll.cmd_done
 @22
 #{top.uft_top_tb.duv.tx.cmd_asm.ctr[5:0]} top.uft_top_tb.duv.tx.cmd_asm.ctr[5] top.uft_top_tb.duv.tx.cmd_asm.ctr[4] top.uft_top_tb.duv.tx.cmd_asm.ctr[3] top.uft_top_tb.duv.tx.cmd_asm.ctr[2] top.uft_top_tb.duv.tx.cmd_asm.ctr[1] top.uft_top_tb.duv.tx.cmd_asm.ctr[0]
 #{top.uft_top_tb.duv.tx.cmd_asm.command_d1[23:0]} top.uft_top_tb.duv.tx.cmd_asm.command_d1[23] top.uft_top_tb.duv.tx.cmd_asm.command_d1[22] top.uft_top_tb.duv.tx.cmd_asm.command_d1[21] top.uft_top_tb.duv.tx.cmd_asm.command_d1[20] top.uft_top_tb.duv.tx.cmd_asm.command_d1[19] top.uft_top_tb.duv.tx.cmd_asm.command_d1[18] top.uft_top_tb.duv.tx.cmd_asm.command_d1[17] top.uft_top_tb.duv.tx.cmd_asm.command_d1[16] top.uft_top_tb.duv.tx.cmd_asm.command_d1[15] top.uft_top_tb.duv.tx.cmd_asm.command_d1[14] top.uft_top_tb.duv.tx.cmd_asm.command_d1[13] top.uft_top_tb.duv.tx.cmd_asm.command_d1[12] top.uft_top_tb.duv.tx.cmd_asm.command_d1[11] top.uft_top_tb.duv.tx.cmd_asm.command_d1[10] top.uft_top_tb.duv.tx.cmd_asm.command_d1[9] top.uft_top_tb.duv.tx.cmd_asm.command_d1[8] top.uft_top_tb.duv.tx.cmd_asm.command_d1[7] top.uft_top_tb.duv.tx.cmd_asm.command_d1[6] top.uft_top_tb.duv.tx.cmd_asm.command_d1[5] top.uft_top_tb.duv.tx.cmd_asm.command_d1[4] top.uft_top_tb.duv.tx.cmd_asm.command_d1[3] top.uft_top_tb.duv.tx.cmd_asm.command_d1[2] top.uft_top_tb.duv.tx.cmd_asm.command_d1[1] top.uft_top_tb.duv.tx.cmd_asm.command_d1[0]
@@ -103,10 +104,6 @@ top.uft_top_tb.udp_complete_nomac_1.ip_block.ip_layer.rx.rx_state
 top.uft_top_tb.udp_complete_nomac_1.ip_block.ip_layer.tx.tx_state
 @200
 -ARP
-@420
-top.uft_top_tb.udp_complete_nomac_1.ip_block.multi_entry_arp.arp_layer.rx.rx_state
-top.uft_top_tb.udp_complete_nomac_1.ip_block.multi_entry_arp.arp_layer.tx.tx_state
-@200
 -
 -AXI Master Burst
 @420
@@ -121,8 +118,6 @@ top.uft_top_tb.duv.tx.data_asm.bus2ip_mstrd_src_rdy_n
 top.uft_top_tb.duv.tx.data_asm.ip2bus_mstrd_dst_rdy_n
 top.uft_top_tb.duv.tx.data_asm.bus2ip_mstrd_sof_n
 top.uft_top_tb.duv.tx.data_asm.bus2ip_mstrd_eof_n
-@22
-#{top.uft_top_tb.duv.tx.controll.cmd_nseq[31:0]} top.uft_top_tb.duv.tx.controll.cmd_nseq[31] top.uft_top_tb.duv.tx.controll.cmd_nseq[30] top.uft_top_tb.duv.tx.controll.cmd_nseq[29] top.uft_top_tb.duv.tx.controll.cmd_nseq[28] top.uft_top_tb.duv.tx.controll.cmd_nseq[27] top.uft_top_tb.duv.tx.controll.cmd_nseq[26] top.uft_top_tb.duv.tx.controll.cmd_nseq[25] top.uft_top_tb.duv.tx.controll.cmd_nseq[24] top.uft_top_tb.duv.tx.controll.cmd_nseq[23] top.uft_top_tb.duv.tx.controll.cmd_nseq[22] top.uft_top_tb.duv.tx.controll.cmd_nseq[21] top.uft_top_tb.duv.tx.controll.cmd_nseq[20] top.uft_top_tb.duv.tx.controll.cmd_nseq[19] top.uft_top_tb.duv.tx.controll.cmd_nseq[18] top.uft_top_tb.duv.tx.controll.cmd_nseq[17] top.uft_top_tb.duv.tx.controll.cmd_nseq[16] top.uft_top_tb.duv.tx.controll.cmd_nseq[15] top.uft_top_tb.duv.tx.controll.cmd_nseq[14] top.uft_top_tb.duv.tx.controll.cmd_nseq[13] top.uft_top_tb.duv.tx.controll.cmd_nseq[12] top.uft_top_tb.duv.tx.controll.cmd_nseq[11] top.uft_top_tb.duv.tx.controll.cmd_nseq[10] top.uft_top_tb.duv.tx.controll.cmd_nseq[9] top.uft_top_tb.duv.tx.controll.cmd_nseq[8] top.uft_top_tb.duv.tx.controll.cmd_nseq[7] top.uft_top_tb.duv.tx.controll.cmd_nseq[6] top.uft_top_tb.duv.tx.controll.cmd_nseq[5] top.uft_top_tb.duv.tx.controll.cmd_nseq[4] top.uft_top_tb.duv.tx.controll.cmd_nseq[3] top.uft_top_tb.duv.tx.controll.cmd_nseq[2] top.uft_top_tb.duv.tx.controll.cmd_nseq[1] top.uft_top_tb.duv.tx.controll.cmd_nseq[0]
 @200
 -
 -AXI Rx
@@ -137,9 +132,10 @@ top.uft_top_tb.axi_master_burst_model_1.bus2ip_mstwr_dst_rdy_n
 @22
 #{top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[31:0]} top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[31] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[30] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[29] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[28] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[27] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[26] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[25] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[24] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[23] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[22] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[21] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[20] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[19] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[18] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[17] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[16] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[15] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[14] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[13] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[12] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[11] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[10] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[9] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[8] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[7] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[6] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[5] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[4] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[3] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[2] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[1] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_addr[0]
 #{top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[11:0]} top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[11] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[10] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[9] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[8] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[7] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[6] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[5] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[4] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[3] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[2] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[1] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mst_length[0]
-@23
 #{top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[31:0]} top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[31] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[30] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[29] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[28] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[27] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[26] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[25] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[24] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[23] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[22] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[21] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[20] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[19] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[18] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[17] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[16] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[15] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[14] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[13] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[12] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[11] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[10] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[9] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[8] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[7] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[6] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[5] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[4] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[3] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[2] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[1] top.uft_top_tb.axi_master_burst_model_1.ip2bus_mstwr_d[0]
 @420
 top.uft_top_tb.axi_master_burst_model_1.current_state
+@200
+-
 [pattern_trace] 1
 [pattern_trace] 0

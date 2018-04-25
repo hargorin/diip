@@ -58,6 +58,12 @@ ipx::add_bus_parameter FREQ_HZ [ipx::get_bus_interfaces gtx_clk_bufg -of_objects
 set_property value 125000000 [ipx::get_bus_parameters FREQ_HZ -of_objects [ipx::get_bus_interfaces gtx_clk_bufg -of_objects [ipx::current_core]]]
 
 
+set_property driver_value 0 [ipx::get_ports rx_statistics_vector -of_objects [ipx::current_core]]
+set_property driver_value 0 [ipx::get_ports rx_statistics_valid -of_objects [ipx::current_core]]
+set_property driver_value 0 [ipx::get_ports tx_statistics_vector -of_objects [ipx::current_core]]
+set_property driver_value 0 [ipx::get_ports tx_statistics_valid -of_objects [ipx::current_core]]
+set_property driver_value 0 [ipx::get_ports mac_irq -of_objects [ipx::current_core]]
+
 # clk - bus association
 ipx::add_bus_parameter ASSOCIATED_BUSIF [ipx::get_bus_interfaces rx_mac_aclk -of_objects [ipx::current_core]]
 set_property value rx_axis_mac [ipx::get_bus_parameters ASSOCIATED_BUSIF -of_objects [ipx::get_bus_interfaces rx_mac_aclk -of_objects [ipx::current_core]]]

@@ -1,19 +1,21 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Wed Nov 29 17:31:14 2017
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Fri Apr 20 12:01:39 2018
 [*]
-[dumpfile] "../build/ghdl/uft_tx_tb.ghw"
-[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_tx_tb.gtkw"
-[timestart] 1446500000
-[size] 1629 1334
+[dumpfile] "(null)"
+[savefile] "/home/noah/git/diip/fpga/hlx/simulation/uft_tx_tb.gtkw"
+[timestart] 0
+[size] 1943 1334
 [pos] -1 -1
-*-26.016615 1558100000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-32.531445 25230000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.uft_tx_tb.
+[treeopen] top.uft_tx_tb.dut.
+[treeopen] top.uft_tx_tb.dut.control.
 [sst_width] 310
-[signals_width] 283
+[signals_width] 352
 [sst_expanded] 1
-[sst_vpaned_height] 426
+[sst_vpaned_height] 524
 @28
 top.uft_tx_tb.clk
 top.uft_tx_tb.rst_n
@@ -26,6 +28,10 @@ top.uft_tx_tb.rst_n
 @28
 top.uft_tx_tb.tx_ready
 top.uft_tx_tb.tx_start
+top.uft_tx_tb.dut.ack_cmd_nseq
+top.uft_tx_tb.dut.ack_cmd_nseq_done
+top.uft_tx_tb.dut.ack_cmd_ft
+top.uft_tx_tb.dut.ack_cmd_ft_done
 @200
 -
 -AXI Master Burst
@@ -69,10 +75,9 @@ top.uft_tx_tb.dut.cmd_asm.tx_tlast
 @200
 -
 -Ctrl
-@22
-#{top.uft_tx_tb.dut.controll.tcid[6:0]} top.uft_tx_tb.dut.controll.tcid[6] top.uft_tx_tb.dut.controll.tcid[5] top.uft_tx_tb.dut.controll.tcid[4] top.uft_tx_tb.dut.controll.tcid[3] top.uft_tx_tb.dut.controll.tcid[2] top.uft_tx_tb.dut.controll.tcid[1] top.uft_tx_tb.dut.controll.tcid[0]
-@420
-top.uft_tx_tb.dut.controll.current_state
-top.uft_tx_tb.dut.controll.next_state
+@28
+top.uft_tx_tb.test_nbr
+top.uft_tx_tb.dut.control.arb_sel
+top.uft_tx_tb.dut.control.current_state
 [pattern_trace] 1
 [pattern_trace] 0

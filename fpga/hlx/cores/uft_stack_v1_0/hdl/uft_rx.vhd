@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.ocom>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 11:19:21 2017
--- Last update : Fri Mar  9 10:22:17 2018
+-- Last update : Fri Apr 20 13:01:49 2018
 -- Platform    : Default Part Number
 -- Standard    : VHDL-2008
 -------------------------------------------------------------------------------
@@ -60,7 +60,10 @@ entity uft_rx is
         data_meta_valid         : out std_logic;
         data_tvalid             : out std_logic;
         data_tlast              : out std_logic;
-        data_tdata              : out std_logic_vector( 7 downto 0)
+        data_tdata              : out std_logic_vector( 7 downto 0);
+
+        src_ip      : out std_logic_vector (31 downto 0);
+        src_port    : out std_logic_vector (15 downto 0)
     );
 end entity uft_rx;
 
@@ -250,6 +253,8 @@ begin
                     when RX_CMD_COMPLETE =>
                         
                     when DATA_SEQ2 =>
+                        src_ip <= udp_rx_hdr_src_ip_addr;
+                        src_port <= udp_rx_hdr_src_port;
                         data_seq(23 downto 16)  <= data_in;
                     when DATA_SEQ1 =>
                         data_seq(15 downto 8)  <= data_in;

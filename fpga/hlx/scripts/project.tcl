@@ -32,6 +32,10 @@ set obj [current_project]
 set_property -name "board_part" -value "xilinx.com:ac701:part0:1.3" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
 
+# This is a fix for a bug in 2017.3 when using evaluation license
+# See https://forums.xilinx.com/t5/Synthesis/cannot-open-xdc-file/td-p/811689 for more informatin
+set_param ips.generation.cacheXitResults false
+
 # Block design target location
 set bd_path $build_location/$project_name.srcs/sources_1/bd/system
 create_bd_design system

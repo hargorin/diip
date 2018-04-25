@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Sat Dec  2 16:29:45 2017
+-- Last update : Wed Apr 25 10:54:12 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -182,9 +182,9 @@ architecture testbench of uft_top_tb is
 
     -- UFT Tx
     -- -------------------------------------------------------------------------
-    signal tx_data_size    : std_logic_vector(31 downto 0);
+    signal tx_data_size    : std_logic_vector(31 downto 0) := (others => '0');
     signal tx_ready        : std_logic;
-    signal tx_start        : std_logic;
+    signal tx_start        : std_logic := '0';
 
     -- UDP IP Stack
     -- -------------------------------------------------------------------------
@@ -202,7 +202,7 @@ architecture testbench of uft_top_tb is
     
     signal mac_tx_tdata               : std_logic_vector(7 downto 0);
     signal mac_tx_tvalid              : std_logic;
-    signal mac_tx_tready              : std_logic;
+    signal mac_tx_tready              : std_logic := '0';
     signal mac_tx_tfirst              : std_logic;
     signal mac_tx_tlast               : std_logic;
     signal mac_rx_tdata               : std_logic_vector(7 downto 0);
@@ -235,6 +235,13 @@ begin
                  '1' after 20.0*clk_period;
         wait;
     end process RESET_GEN;
+
+    RESET_GEN_UDP : process
+    begin
+        reset <= '1',
+                 '0' after 20.0*clk_period;
+        wait;
+    end process RESET_GEN_UDP;
 
     -- Settings
     -- -------------------------------------------------------------------------
@@ -312,6 +319,7 @@ begin
             end if;
 
             report "-- TEST 2 -- UFT Data Packet reception";
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1.txt");
             
             waitfor(1500);
@@ -327,16 +335,99 @@ begin
             end if;
 
             report "-- TEST 3 -- NSEQ=2 UFT Data Packet reception";
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_09_nseq_2.txt");
             wait for 5 us;
             --waitfor(1);
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_09_nseq_2_0.txt");
             wait for 5 us;
             --waitfor(1);
+            mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_09_nseq_2_1.txt");
             
             waitfor(1500);
         end procedure t3;
+        -------------------------------------------------------------------
+        -- 32 byte packet
+        procedure t4 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 4 -- NSEQ=1 32byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_v2.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_v2.txt");
+
+            waitfor(1500);
+        end procedure t4;
+        -------------------------------------------------------------------
+        -- 31 byte packet
+        procedure t5 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 5 -- NSEQ=1 31byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_31bytes.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_31bytes.txt");
+
+            waitfor(1500);
+        end procedure t5;
+        -------------------------------------------------------------------
+        -- 30 byte packet
+        procedure t6 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 6 -- NSEQ=1 30byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_30bytes.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_30bytes.txt");
+
+            waitfor(1500);
+        end procedure t6;
+        -------------------------------------------------------------------
+        -- 29 byte packet
+        procedure t7 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 7 -- NSEQ=1 29byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_29bytes.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_29bytes.txt");
+
+            waitfor(1500);
+        end procedure t7;
         -------------------------------------------------------------------
         procedure t10 is
         -------------------------------------------------------------------
@@ -398,7 +489,13 @@ begin
         ------------
         -- TEST 3 -- NSEQ=2 UFT Data Packet reception
         ------------
-        t3;
+        t10;
+        t4; -- TEST 4 -- NSEQ=1 32byte UFT Data Packet reception
+        t5; -- TEST 5 -- NSEQ=1 31byte UFT Data Packet reception
+        t6; -- TEST 6 -- NSEQ=1 30byte UFT Data Packet reception
+        t7; -- TEST 7 -- NSEQ=1 29byte UFT Data Packet reception
+        --t3; -- NSEQ=2 UFT Data Packet reception
+        --t3; -- NSEQ=2 UFT Data Packet reception
 
         --t10;
         --t10;
@@ -436,7 +533,7 @@ begin
             end if;
             if mac_tx_tlast = '1' then
                 file_open(file_axi_s, "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
-                report "Start writing file";
+                report "Start writing file: " & "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log";
                 for i in 0 to (ctr-1) loop
                     hwrite(oline, axi_buf(i), left, 8);
                     writeline(file_axi_s, oline);
