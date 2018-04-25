@@ -272,17 +272,17 @@ proc create_root_design { parentCell } {
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {129} \
-   CONFIG.C_DATA_DEPTH {32768} \
+   CONFIG.C_BRAM_CNT {43} \
+   CONFIG.C_DATA_DEPTH {4096} \
    CONFIG.C_MON_TYPE {MIX} \
-   CONFIG.C_NUM_MONITOR_SLOTS {1} \
+   CONFIG.C_NUM_MONITOR_SLOTS {2} \
    CONFIG.C_NUM_OF_PROBES {3} \
    CONFIG.C_PROBE0_TYPE {0} \
    CONFIG.C_PROBE1_TYPE {0} \
    CONFIG.C_PROBE2_TYPE {0} \
-   CONFIG.C_SLOT {0} \
+   CONFIG.C_SLOT {1} \
    CONFIG.C_SLOT_0_INTF_TYPE {Xilinx:user:axi_master_burst_rtl:1.0} \
-   CONFIG.C_SLOT_0_TYPE {0} \
+   CONFIG.C_SLOT_0_TYPE {1} \
    CONFIG.C_SLOT_1_INTF_TYPE {Xilinx:user:udp_tx_ctrl_rtl:1.0} \
    CONFIG.C_SLOT_1_TYPE {1} \
  ] $system_ila_0

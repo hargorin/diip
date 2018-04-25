@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Tue Apr 24 16:03:13 2018
+-- Last update : Wed Apr 25 10:45:45 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -144,9 +144,15 @@ architecture rtl of utf_rx_mem_ctl is
     -- stores the number of BYTE transactions to be executed
     signal mem_length : unsigned (C_LENGTH_WIDTH-1 downto 0);
     -- stores the number of WORD transactions to be executed
-    signal ip2bus_mem_length : unsigned (C_LENGTH_WIDTH-1 downto 0);
+    signal amb_word_cnt : unsigned (C_LENGTH_WIDTH-1 downto 0);
     -- packet destination address in the memory
     signal axi_addr : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
+
+    -- ACK latches
+    signal ack_seqnbr_int              : std_logic_vector (23 downto 0);
+    signal ack_tcid_int                : std_logic_vector ( 6 downto 0);
+    signal ack_dst_port_int            : std_logic_vector (15 downto 0);
+    signal ack_dst_ip_int              : std_logic_vector (31 downto 0);
 begin
 
     ----------------------------------------------------------------------------
@@ -173,7 +179,7 @@ begin
     ----------------------------------------------------------------------------
     p_next_state : process ( is_data, clk, current_state, FIFO_Empty, ctr, 
         bus2ip_mst_cmdack, bus2ip_mstwr_dst_rdy_n, bus2ip_mst_cmplt, mem_length,
-        data_tlast )
+        data_tlast, amb_word_cnt )
     ----------------------------------------------------------------------------
     begin
         next_state <= current_state;
@@ -195,14 +201,14 @@ begin
                 end if;
             when TRANSFER_FIRST =>
                 if bus2ip_mstwr_dst_rdy_n = '0' then
-                    if ip2bus_mem_length = 2 then
+                    if amb_word_cnt = 2 then
                         next_state <= TRANSFER_LAST;
                     else
                         next_state <= TRANSFER;
                     end if;
                 end if;
             when TRANSFER =>
-                if ctr = (ip2bus_mem_length-1) then
+                if (ctr = (amb_word_cnt-2)) and (bus2ip_mstwr_dst_rdy_n = '0') then
                     next_state <= TRANSFER_LAST;
                 end if;
             when TRANSFER_LAST =>
@@ -222,19 +228,21 @@ begin
     -- Tracks the input data counter and holds if all data is received
     -- -------------------------------------------------------------------------
     p_mem_len : process( ctr, current_state )
+        variable ctrp1 : unsigned (15 downto 0);
     ----------------------------------------------------------------------------
     begin
+        ctrp1 := ctr + 1;
         if current_state = STORE_DONE then
-            -- ip2bus_mem_length in WORDS is ceil(ctr / 4 )
-            if ctr(1 downto 0) /= "00" then
-                ip2bus_mem_length <= shift_right(ctr, 2)(C_LENGTH_WIDTH-1 downto 0) + 1;
+            -- amb_word_cnt in WORDS is ceil((ctr+1) / 4 )
+            if ctrp1(1 downto 0) /= "00" then
+                amb_word_cnt <= shift_right(ctrp1, 2)(C_LENGTH_WIDTH-1 downto 0) + 1;
             else
-                ip2bus_mem_length <= shift_right(ctr, 2)(C_LENGTH_WIDTH-1 downto 0);
+                amb_word_cnt <= shift_right(ctrp1, 2)(C_LENGTH_WIDTH-1 downto 0);
             end if;        
             mem_length <= ctr(C_LENGTH_WIDTH-1 downto 0) + 1;
             axi_addr <= unsigned(c_pkg_uft_rx_base_addr) + to_unsigned((to_integer(c_pkg_uft_rx_pack_size) * to_integer(unsigned(data_seq))),axi_addr'length);
         else
-            ip2bus_mem_length <= ip2bus_mem_length;
+            amb_word_cnt <= amb_word_cnt;
             mem_length <= mem_length;
         end if;
     end process ; -- p_mem_len
@@ -427,26 +435,38 @@ begin
         if rising_edge(clk) then
             ack_cmd_nseq <= '0';
             ack_cmd_ft <= '0';
+
+            -- latch
+            ack_seqnbr_int <= ack_seqnbr_int;
+            ack_tcid_int <= ack_tcid_int;
+            ack_dst_port_int <= ack_dst_port_int;
+            ack_dst_ip_int <= ack_dst_ip_int;
             
             if rst_n = '0' then
                 ack_cmd_nseq <= '0';
                 ack_cmd_ft <= '0';
                 -- data for commands
-                ack_seqnbr <= (others => '0');
-                ack_tcid <= (others => '0');
-                ack_dst_port <= (others => '0');
-                ack_dst_ip <= (others => '0');
+                ack_seqnbr_int <= (others => '0');
+                ack_tcid_int <= (others => '0');
+                ack_dst_port_int <= (others => '0');
+                ack_dst_ip_int <= (others => '0');
             else
                 if current_state = ACK_SEQ then
                     ack_cmd_nseq <= '1';
                     -- latch data from input
-                    ack_seqnbr <= data_seq;
-                    ack_tcid <= data_tcid;
+                    ack_seqnbr_int <= data_seq;
+                    ack_tcid_int <= data_tcid;
                     -- send data to sender
-                    ack_dst_port <= rx_src_port;
-                    ack_dst_ip <= rx_src_ip;
+                    ack_dst_port_int <= rx_src_port;
+                    ack_dst_ip_int <= rx_src_ip;
                 end if;
             end if;
+
+            -- output
+            ack_seqnbr <= ack_seqnbr_int;
+            ack_tcid <= ack_tcid_int;
+            ack_dst_port <= ack_dst_port_int;
+            ack_dst_ip <= ack_dst_ip_int;
         end if;
 
     end process; -- p_ack

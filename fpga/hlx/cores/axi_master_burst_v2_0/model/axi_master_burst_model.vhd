@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Thu Nov  9 08:13:36 2017
--- Last update : Tue Apr 24 16:09:39 2018
+-- Last update : Wed Apr 25 08:37:09 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -108,6 +108,9 @@ begin
             if m_axi_aresetn = '0' then
                 current_state <= IDLE;
             else
+                if not (current_state = next_state) and (next_state = BURST_WR_ERROR) then
+                    report "AMB Error: ip2bus_mstwr_eof_n not asserted" severity error;
+                end if;
                 current_state <= next_state;
             end if;
         end if;
@@ -236,7 +239,7 @@ begin
                     next_state <= BURST_WR_INT;
                 end if;
             when BURST_WR_T2 =>
-                if data_ctr = (unsigned(data_len)-1) then
+                if data_ctr = (unsigned(data_len)-2) then
                     next_state <= BURST_WR_EOF;
                 else
                     next_state <= BURST_WR_T2;

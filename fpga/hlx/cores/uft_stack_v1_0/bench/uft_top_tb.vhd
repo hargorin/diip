@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Tue Apr 24 13:29:47 2018
+-- Last update : Wed Apr 25 10:54:12 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -349,6 +349,86 @@ begin
             waitfor(1500);
         end procedure t3;
         -------------------------------------------------------------------
+        -- 32 byte packet
+        procedure t4 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 4 -- NSEQ=1 32byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_v2.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_v2.txt");
+
+            waitfor(1500);
+        end procedure t4;
+        -------------------------------------------------------------------
+        -- 31 byte packet
+        procedure t5 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 5 -- NSEQ=1 31byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_31bytes.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_31bytes.txt");
+
+            waitfor(1500);
+        end procedure t5;
+        -------------------------------------------------------------------
+        -- 30 byte packet
+        procedure t6 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 6 -- NSEQ=1 30byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_30bytes.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_30bytes.txt");
+
+            waitfor(1500);
+        end procedure t6;
+        -------------------------------------------------------------------
+        -- 29 byte packet
+        procedure t7 is
+        -------------------------------------------------------------------
+        begin
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 7 -- NSEQ=1 29byte UFT Data Packet reception";
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_29bytes.txt");
+            wait for 2 us;
+            --waitfor(1);
+            mac_tx_tready <= '1';
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_29bytes.txt");
+
+            waitfor(1500);
+        end procedure t7;
+        -------------------------------------------------------------------
         procedure t10 is
         -------------------------------------------------------------------
         begin
@@ -410,8 +490,12 @@ begin
         -- TEST 3 -- NSEQ=2 UFT Data Packet reception
         ------------
         t10;
-        t3; -- NSEQ=2 UFT Data Packet reception
-        t3; -- NSEQ=2 UFT Data Packet reception
+        t4; -- TEST 4 -- NSEQ=1 32byte UFT Data Packet reception
+        t5; -- TEST 5 -- NSEQ=1 31byte UFT Data Packet reception
+        t6; -- TEST 6 -- NSEQ=1 30byte UFT Data Packet reception
+        t7; -- TEST 7 -- NSEQ=1 29byte UFT Data Packet reception
+        --t3; -- NSEQ=2 UFT Data Packet reception
+        --t3; -- NSEQ=2 UFT Data Packet reception
 
         --t10;
         --t10;

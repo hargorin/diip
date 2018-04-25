@@ -43,7 +43,7 @@ fpga:
     - cd fpga/hls/sobel && make
     - cd ../../hlx/
     # - make NAME=sobel impl
-    - make NAME=diip impl
+    - time make NAME=diip impl
   artifacts:
     paths:
     - fpga/hlx/build/

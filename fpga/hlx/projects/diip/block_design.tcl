@@ -10,7 +10,7 @@
 # @Author: Noah Huetter
 # @Date:   2017-11-24 15:21:33
 # @Last Modified by:   Noah
-# @Last Modified time: 2018-04-24 14:50:15
+# @Last Modified time: 2018-04-25 09:30:59
 
   # Create instance: axi_bram_ctrl_0, and set properties
   set axi_bram_ctrl_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.0 axi_bram_ctrl_0 ]
@@ -68,7 +68,7 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {43} \
+   CONFIG.C_BRAM_CNT {41} \
    CONFIG.C_DATA_DEPTH {4096} \
    CONFIG.C_MON_TYPE {MIX} \
    CONFIG.C_NUM_MONITOR_SLOTS {2} \
@@ -78,9 +78,9 @@
    CONFIG.C_PROBE2_TYPE {0} \
    CONFIG.C_SLOT {1} \
    CONFIG.C_SLOT_0_INTF_TYPE {Xilinx:user:axi_master_burst_rtl:1.0} \
-   CONFIG.C_SLOT_0_TYPE {1} \
-   CONFIG.C_SLOT_1_INTF_TYPE {Xilinx:user:udp_tx_ctrl_rtl:1.0} \
-   CONFIG.C_SLOT_1_TYPE {1} \
+   CONFIG.C_SLOT_0_TYPE {0} \
+   CONFIG.C_SLOT_1_INTF_TYPE {Xilinx:user:udp_rx_ctrl_rtl:1.0} \
+   CONFIG.C_SLOT_1_TYPE {0} \
  ] $system_ila_0
 
   # Create instance: temac_support_0, and set properties
@@ -121,18 +121,18 @@
   connect_bd_intf_net -intf_net udp_ip_stack_0_mac_tx [get_bd_intf_pins temac_support_0/tx_axis] [get_bd_intf_pins udp_ip_stack_0/mac_tx]
   connect_bd_intf_net -intf_net udp_ip_stack_0_udp_rx [get_bd_intf_pins udp_ip_stack_0/udp_rx] [get_bd_intf_pins uft_stack_0/udp_rx]
   connect_bd_intf_net -intf_net uft_stack_0_axi_master_burst_rx [get_bd_intf_pins axi_master_burst_1/axi_master_burst] [get_bd_intf_pins uft_stack_0/axi_master_burst_rx]
-  connect_bd_intf_net -intf_net uft_stack_0_axi_master_burst_tx [get_bd_intf_pins axi_master_burst_0/axi_master_burst] [get_bd_intf_pins uft_stack_0/axi_master_burst_tx]
 connect_bd_intf_net -intf_net [get_bd_intf_nets uft_stack_0_axi_master_burst_rx] [get_bd_intf_pins axi_master_burst_1/axi_master_burst] [get_bd_intf_pins system_ila_0/SLOT_0_AXI_MASTER_BURST]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
- ] [get_bd_intf_nets uft_stack_0_axi_master_burst_tx]
+ ] [get_bd_intf_nets uft_stack_0_axi_master_burst_rx]
+  connect_bd_intf_net -intf_net uft_stack_0_axi_master_burst_tx [get_bd_intf_pins axi_master_burst_0/axi_master_burst] [get_bd_intf_pins uft_stack_0/axi_master_burst_tx]
   connect_bd_intf_net -intf_net uft_stack_0_udp_rx_ctrl [get_bd_intf_pins udp_ip_stack_0/udp_rx_ctrl] [get_bd_intf_pins uft_stack_0/udp_rx_ctrl]
-  connect_bd_intf_net -intf_net uft_stack_0_udp_tx [get_bd_intf_pins udp_ip_stack_0/udp_tx] [get_bd_intf_pins uft_stack_0/udp_tx]
-  connect_bd_intf_net -intf_net uft_stack_0_udp_tx_ctrl [get_bd_intf_pins udp_ip_stack_0/udp_tx_ctrl] [get_bd_intf_pins uft_stack_0/udp_tx_ctrl]
-connect_bd_intf_net -intf_net [get_bd_intf_nets uft_stack_0_udp_tx_ctrl] [get_bd_intf_pins system_ila_0/SLOT_1_UDP_TX_CTRL] [get_bd_intf_pins udp_ip_stack_0/udp_tx_ctrl]
+connect_bd_intf_net -intf_net [get_bd_intf_nets uft_stack_0_udp_rx_ctrl] [get_bd_intf_pins system_ila_0/SLOT_1_UDP_RX_CTRL] [get_bd_intf_pins udp_ip_stack_0/udp_rx_ctrl]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
- ] [get_bd_intf_nets uft_stack_0_udp_tx_ctrl]
+ ] [get_bd_intf_nets uft_stack_0_udp_rx_ctrl]
+  connect_bd_intf_net -intf_net uft_stack_0_udp_tx [get_bd_intf_pins udp_ip_stack_0/udp_tx] [get_bd_intf_pins uft_stack_0/udp_tx]
+  connect_bd_intf_net -intf_net uft_stack_0_udp_tx_ctrl [get_bd_intf_pins udp_ip_stack_0/udp_tx_ctrl] [get_bd_intf_pins uft_stack_0/udp_tx_ctrl]
 
   # Create port connections
   connect_bd_net -net Net [get_bd_pins udp_ip_stack_0/our_ip_address] [get_bd_pins uft_stack_0/our_ip_address]
@@ -186,5 +186,6 @@ HDL_ATTRIBUTE.DEBUG {true} \
   create_bd_addr_seg -range 0x00080000 -offset 0x08000000 [get_bd_addr_spaces jtag_axi_0/Data] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
   create_bd_addr_seg -range 0x00001000 -offset 0x40000000 [get_bd_addr_spaces jtag_axi_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] SEG_axi_gpio_0_Reg
   create_bd_addr_seg -range 0x00001000 -offset 0x00000000 [get_bd_addr_spaces temac_support_0/s_axi] [get_bd_addr_segs tri_mode_ethernet_mac_0/s_axi/Reg] SEG_tri_mode_ethernet_mac_0_Reg
+
 
 regenerate_bd_layout
