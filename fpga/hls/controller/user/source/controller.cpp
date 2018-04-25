@@ -12,9 +12,10 @@
  */
 void controller_top(volatile int *memp, AXI_STREAM &outData, AXI_STREAM &inData)
 {
+#pragma HLS INTERFACE ap_ctrl_hs port=return
 #pragma HLS INTERFACE axis register reverse port=inData
 #pragma HLS INTERFACE axis register forward port=outData
-#pragma HLS INTERFACE m_axi depth=1000000 port=memp
+#pragma HLS INTERFACE m_axi depth=1168 port=memp offset=off
 
 	int i, col_ctr, row_ctr, off, pixel_ctr, in_ctr;
     int buff[AXI_M_BURST_SIZE];

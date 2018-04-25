@@ -23,6 +23,7 @@ int main()
 
 	printf("***************\n");
 	printf("Start Testbench\n");
+	printf("Required memory size is %d bytes\n", IN_SIZE+OUT_SIZE);
 	
 	//Put data into memory
 	uint8_t val = 0;

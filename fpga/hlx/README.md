@@ -14,7 +14,8 @@
 │   ├── udp_ip_stack_v1_0
 │   └── uft_stack_v1_0
 ├── projects                        # Projects
-│   ├── diip                        # diip communication project
+│   ├── diip                        # diip full project
+│   ├── comm                        # diip communication project
 │   └── sobel                       # diip sobel filter project
 ├── scripts                         # Used for build process
 ├── simulation                      # Simulation ressources

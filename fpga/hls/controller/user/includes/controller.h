@@ -28,8 +28,8 @@ using namespace std;
 // ***********************************************
 // *** Settings ***
 // ***********************************************
-#define LINE_SIZE			1024
-#define N_LINES 			1024
+#define LINE_SIZE			32
+#define N_LINES 			32
 
 #define WINDOW_HEIGHT 		21
 #define AXI_M_BURST_SIZE	WINDOW_HEIGHT // chosen to neighbourhood size
