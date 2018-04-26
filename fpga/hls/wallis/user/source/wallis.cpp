@@ -9,24 +9,23 @@
 
 
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
-			apuint8_t g_Mean, apuint16_t g_Var, ap_fixed<7,1> contrast,
-			ap_fixed<7,1> brightness, apuint16_t g_Width) {
+			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
+			ap_ufixed<5,1> brightness, apuint16_t g_Width) {
 	
 	// ************************************************************************
 	// Variables
 	AXI_VALUE inPixel;
 	AXI_VALUE outPixel;
 
-	static apuint14_t sum_Pixel;
-	static apuint8_t n_Mean, n_Var;
+	static apuint19_t sum_Pixel;
+	static apuint8_t n_Mean;
+	static apuint14_t n_Var;
 	static apuint8_t pixel[LENGTH];
 	static apuint8_t tmp_Pixel[LENGTH];
 
-	static float fBrightness = (float)brightness;
-	static float fContrast = (float)contrast;
-	//static float w_gMean = fBrightness * g_Mean;
-	//static float w_gVar = (1-fContrast) * g_Var;
-	static apuint11_t pos_Pixel = (LENGTH - 1) / 2;
+	static ap_ufixed<12,8> w_gMean = brightness * g_Mean;
+	static ap_ufixed<18,14> w_gVar = (1-contrast) * g_Var;
+	static apuint10_t pos_Pixel = (LENGTH - 1) / 2;
 
 	// ************************************************************************
 	// Initialization
@@ -51,7 +50,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	// ************************************************************************
 	// Wallis Filter
 	outPixel.data = Wallis_Filter(pixel[pos_Pixel], n_Mean, n_Var, g_Mean, g_Var,
-									fContrast, fBrightness);
+									contrast, brightness, w_gMean, w_gVar);
 
 	// ************************************************************************
 	// Output
@@ -61,26 +60,35 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	// ************************************************************************
 	// Loop
 	// ************************************************************************
-/*	for(uint16_t k = 0; k < (g_Width - 1); k++) {
-		//#pragma HLS DATAFLOW
-		//#pragma HLS LOOP_FLATTEN off
-		//#pragma HLS DEPENDENCE variable=pixel array inter RAW true
-		//#pragma HLS DEPENDENCE variable=tmp_Pixel array inter WAR true
-
+	//loop_for:for(uint16_t k = 0; k < (g_Width - 1); k++) {
+	uint32_t ctr = 0;
+	loop_while:do{
+		printf("ctr = %d\n", ctr++);
 		// ********************************************************************
 		// Organize new Data
 
-		// Old data delete
-		for(uint16_t i = 0; i < (LENGTH - WIN_SIZE); i++) {
-			#pragma HLS UNROLL
+/*		loop_data:for(uint16_t i = 0; i < LENGTH; i++) {
+			if(i < (LENGTH - WIN_SIZE)) {
+				tmp_Pixel[i] = pixel[i+WIN_SIZE];
+			}
 
+			if(i < WIN_SIZE) {
+				inPixel = inData.read();
+				tmp_Pixel[i + (LENGTH - WIN_SIZE)] = inPixel.data;
+				sum_Pixel -= pixel[i];
+				sum_Pixel += tmp_Pixel[i + (LENGTH - WIN_SIZE)];
+			}
+
+			pixel[i] = tmp_Pixel[i];
+		}*/
+
+		// Old data delete
+		loop_strData:for(uint16_t i = 0; i < (LENGTH - WIN_SIZE); i++) {
 			tmp_Pixel[i] = pixel[i+WIN_SIZE];
 		}
 
 		// Add new data and calculate new mean
-		for(uint16_t i = 0; i < WIN_SIZE; i++) {
-			#pragma HLS PIPELINE
-
+		loop_addData:for(uint16_t i = 0; (!inPixel.last) && (i < WIN_SIZE); i++) {
 			inPixel = inData.read();
 			tmp_Pixel[i + (LENGTH - WIN_SIZE)] = inPixel.data;
 
@@ -89,9 +97,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		}
 
 		// Set new data
-		for(uint16_t i = 0; i < LENGTH; i++) {
-			#pragma HLS UNROLL
-
+		loop_setData:for(uint16_t i = 0; i < LENGTH; i++) {
 			pixel[i] = tmp_Pixel[i];
 		}
 
@@ -105,13 +111,14 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 
 		// ********************************************************************
 		// Wallis Filter
-		outPixel.data = Wallis_Filter(pixel, n_Mean, n_Var, g_Mean, g_Var, 
-										contrast, brightness);
+		outPixel.data = Wallis_Filter(pixel[pos_Pixel], n_Mean, n_Var, g_Mean, g_Var,
+										contrast, brightness, w_gMean, w_gVar);
 
 		// ********************************************************************
 		// Output
+		outPixel.last = inPixel.last;
 		outData.write(outPixel);
-	}*/
+	}while(!inPixel.last);
 
 }
 
@@ -119,10 +126,10 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 /*
  * Calculate the mean
  */
-apuint8_t Cal_Mean(apuint14_t sum_Pixel) {
+apuint8_t Cal_Mean(apuint19_t sum_Pixel) {
 	apuint8_t mean;
 
-	mean = (apuint8_t)(sum_Pixel / LENGTH);
+	mean = (sum_Pixel / LENGTH);
 
 	return mean;
 }
@@ -131,11 +138,11 @@ apuint8_t Cal_Mean(apuint14_t sum_Pixel) {
 /*
  * Calculate the variance
  */
-apuint35_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
-	apuint40_t sum_Pow = 0;
-	apuint16_t tmp_Sub;
-	apuint32_t tmp_Pow;
-	apuint16_t var;
+apuint14_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
+	apuint29_t sum_Pow = 0;
+	apint9_t tmp_Sub;
+	apuint18_t tmp_Pow;
+	apuint14_t var;
 	
 	loop_variance:for(uint16_t i = 0; i < LENGTH; i++) {
 		tmp_Sub = (pixel[i] - mean);
@@ -144,7 +151,7 @@ apuint35_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
 		//sum_Pow += (pixel[i] - mean) * (pixel[i] - mean);
 	}
 
-	var = apuint35_t(sum_Pow / (LENGTH - 1));
+	var = (sum_Pow / (LENGTH - 1));
 
 	return var;
 }
@@ -153,7 +160,40 @@ apuint35_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
 /*
  * Calculate the Wallis Filter
  */
-apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint35_t n_Var,
+apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
+						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
+						ap_ufixed<5,1> brightness, ap_ufixed<12,8> w_gMean, ap_ufixed<18,14> w_gVar) {
+
+	apint23_t tmp_Num;
+	ap_fixed<27,23> fp_Num;
+	ap_ufixed<18,14> fp_nVar;
+	ap_ufixed<12,8> fp_nMean;
+	ap_ufixed<19,15> fp_Var;
+	ap_ufixed<20,5> fp_Den;
+	ap_fixed<35,29> fp_Div;
+	ap_ufixed<36,30, AP_RND, AP_SAT> w_Pixel;
+
+	// int23 = (uint8 - uint8) * uint14
+	tmp_Num = (v_pixel - n_Mean) * g_Var;
+	// <27,23> = int23 * <5,1>
+	fp_Num = tmp_Num * contrast;
+	// <18,14> = <5,1> * uint14
+	fp_nVar = contrast * n_Var;
+	// <12,8> = (1 - <5,1>) * uint8
+	fp_nMean = (1-brightness) * n_Mean;
+	// <19,15> = <18,14> + <18,14>
+	fp_Var = fp_nVar + w_gVar;
+	// <20,5> = 1/ <19,15>
+	fp_Den = 1/fp_Var;
+	// <35,29> = <27,23> * <20,5>
+	fp_Div = fp_Num * fp_Den;
+	// <36,30> = <35,29> + <12,8> +  <12,8>
+	w_Pixel = fp_Div + w_gMean + fp_nMean;
+
+	return (apuint8_t)w_Pixel;
+}
+
+/*apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint35_t n_Var,
 						apuint8_t g_Mean, apuint16_t g_Var, float fContrast,
 						float fBrightness) {
 	float tmp_Num = 0.0;
@@ -174,40 +214,7 @@ apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint35_t n_Var,
 
 	return (apuint8_t)w_Pixel;
 
-}
-
-apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint35_t n_Var,
-						apuint8_t g_Mean, apuint16_t g_Var, ap_fixed<5,1> contrast,
-						ap_fixed<5,1> brightness, apuint8_t w_gMean, apuint16_t w_gVar) {
-
-	apint48_t tmp_Num;
-	ap_fixed<53,49> fp_Num;
-	ap_ufixed<40,36> fp_nVar;
-	ap_ufixed<12,8> fp_nMean;
-	ap_ufixed<40,36> fp_Var;
-	ap_fixed<40,4> fp_Den;
-	ap_fixed<52,48> fp_Div;
-	ap_ufixed<52,48> w_Pixel;
-
-	// int48 = (uint8 - uint8) * uint16
-	tmp_Num = (v_pixel - n_Mean) * g_Var;
-	// <53,49> = int48 * <5,1>
-	fp_Num = tmp_Num * contrast;
-	// <40,36 = <5,1> * uint35
-	fp_nVar = contrast * n_Var;
-	// <12,8> = (1 - <5,1>) * uint8
-	fp_nMean = (1-brightness) * n_Mean;
-	// <40,36> = <39,35> + uint16
-	fp_Var = fp_nVar + w_gVar;
-	// <40,4> = 1/ <40,36
-	fp_Den = 1/fp_Var;
-	// <52,48> = <52,48> * <40,4>
-	fp_Div = fp_Num * fp_Den;
-	// <52,48> = <52,48> + uint8 +  <12,8>
-	w_Pixel = fp_Div + w_gMean + fp_nMean;
-
-	return (apuint8_t)w_Pixel;
-}
+}*/
 
 
 
