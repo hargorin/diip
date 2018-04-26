@@ -65,6 +65,8 @@ set_property PACKAGE_PIN R26 [get_ports led0]
 set_property IOSTANDARD LVCMOS25 [get_ports led0]
 set_property PACKAGE_PIN U5 [get_ports SW4]
 set_property IOSTANDARD LVCMOS15 [get_ports SW4]
+set_property PACKAGE_PIN T5 [get_ports SW5]
+set_property IOSTANDARD LVCMOS15 [get_ports SW5]
 
 ############################################################
 # IODELAY

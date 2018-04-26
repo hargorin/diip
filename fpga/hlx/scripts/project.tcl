@@ -25,7 +25,18 @@ file delete -force $build_location/$project_name.cache $build_location/$project_
 create_project -part $part_name $project_name $build_location -force
 
 # Link to IPs
-set_property IP_REPO_PATHS "$ip_location/ ../hls/sobel/project/sobel/sobel/impl/ip" [current_project]
+set_property IP_REPO_PATHS "$ip_location/" [current_project]
+
+# ../hls/controller/project/controller/controller/impl/ip
+# ../hls/stream_dummy/project/stream_dummy/stream_dummy/impl/ip 
+# ../hls/sobel/project/sobel/sobel/impl/ip
+set curr_path [get_property  ip_repo_paths [current_project]]
+set curr_path "$curr_path/ ../hls/controller/project/controller/controller/impl/ip"
+set curr_path "$curr_path/ ../hls/stream_dummy/project/stream_dummy/stream_dummy/impl/ip"
+set curr_path "$curr_path/ ../hls/sobel/project/sobel/sobel/impl/ip"
+
+set_property ip_repo_paths "$curr_path/" [current_project]
+update_ip_catalog
 
 # Project settings
 set obj [current_project]

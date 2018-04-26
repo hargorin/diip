@@ -1,7 +1,7 @@
 # @Author: Noah Huetter
 # @Date:   2017-11-23 08:37:14
-# @Last Modified by:   Noah Huetter
-# @Last Modified time: 2017-11-29 18:42:52
+# @Last Modified by:   Noah
+# @Last Modified time: 2018-04-26 08:19:04
 # ================================================================================
 # bd_ports.tcl
 # 
@@ -27,6 +27,7 @@ create_bd_port -dir I update_speed
 
 # other switch
 create_bd_port -dir I SW4
+create_bd_port -dir I SW5
 
 # LED
 create_bd_port -dir O led0

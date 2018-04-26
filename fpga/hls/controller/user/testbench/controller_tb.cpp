@@ -36,6 +36,8 @@ int main()
 	for(i=0; i < (LINE_SIZE-WINDOW_HEIGHT+1); i++)
 	{
 		aval.data = val--;
+		if(i == (LINE_SIZE-WINDOW_HEIGHT))
+			aval.last = 1;
 		inData.write(aval);
 	}
 

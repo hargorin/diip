@@ -49,7 +49,12 @@ void controller_top(volatile int *memp, AXI_STREAM &outData, AXI_STREAM &inData)
     // loop through input data and store in memory
     loop_in:for(in_ctr = 0; in_ctr < (LINE_SIZE-WINDOW_HEIGHT+1); in_ctr++)
     {
-    	memp[OUT_MEMORY_BASE+in_ctr] = (unsigned int)inData.read().data;
+    	inPixel = inData.read();
+    	if(inPixel.last)
+    		printf("last=%d\n", 1);
+    	else
+    		printf("last=%d\n", 0);
+    	memp[OUT_MEMORY_BASE+in_ctr] = (unsigned int)inPixel.data;
     }
 }
 
