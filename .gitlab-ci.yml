@@ -37,7 +37,7 @@ fpga:
     # - sudo ln -sf /usr/lib/x86_64-linux-gnu/libtiff.so.5 /usr/lib/x86_64-linux-gnu/libtiff.so.3
 
     # The following is because of a bug in vivado HLS (http://svn.clifford.at/handicraft/2017/vivadobugs/vivadobug04.txt)
-    - sudo apt-get remove libgmp-dev
+    - sudo apt-get --yes --force-yes remove libgmp-dev
   script: 
     - source /opt/Xilinx/Vivado/2017.3/settings64.sh
     - pwd
