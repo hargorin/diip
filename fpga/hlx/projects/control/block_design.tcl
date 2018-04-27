@@ -53,7 +53,7 @@
   set rst_clk_wiz_100M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_clk_wiz_100M ]
 
   # Create instance: stream_dummy_top_0, and set properties
-  set stream_dummy_top_0 [ create_bd_cell -type ip -vlnv xilinx.com:hls:stream_dummy_top:1.0 stream_dummy_top_0 ]
+  set stream_dummy_top_0 [ create_bd_cell -type ip -vlnv ime:diip:stream_dummy_top:0.1 stream_dummy_top_0 ]
 
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]

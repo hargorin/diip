@@ -18,5 +18,5 @@ create_clock -period 8 -name default
 csim_design -compiler gcc
 csynth_design
 cosim_design -rtl vhdl -tool xsim
-export_design -flow impl -rtl vhdl -format ip_catalog -description "diip Controller" -vendor "ime" -library "control" -version "1.0.0" -display_name "diip_controller"
+export_design -flow impl -rtl vhdl -format ip_catalog -description "diip Controller" -vendor "ime" -library "diip" -version "0.1" -display_name "diip_controller"
 exit
