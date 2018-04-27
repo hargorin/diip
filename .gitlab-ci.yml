@@ -43,8 +43,9 @@ fpga:
     - pwd
     - echo $PATH
     - id
-    - cd fpga/hls/controller && make
-    - cd ../stream_dummy && make
+    - cd fpga/hls/
+    - make NAME=controller export
+    - make NAME=stream_dummy export
     - cd ../../hlx/
     # - make NAME=sobel impl
     - time make NAME=control impl
