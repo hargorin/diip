@@ -46,9 +46,10 @@ fpga:
     - cd fpga/hls/
     - make NAME=controller export
     - make NAME=stream_dummy export
-    - cd ../../hlx/
+    - cd ../hlx/
     # - make NAME=sobel impl
     - time make NAME=control impl
   artifacts:
     paths:
     - fpga/hlx/build/
+    - fpga/hls/build/
