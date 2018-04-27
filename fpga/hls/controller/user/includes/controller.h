@@ -63,4 +63,4 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 // *** Functions ***
 // ***********************************************
 
-void controller_top(volatile int *memp, AXI_STREAM &outData, AXI_STREAM &inData);
+void controller_top(volatile uint8_t *memp, AXI_STREAM &outData, AXI_STREAM &inData);

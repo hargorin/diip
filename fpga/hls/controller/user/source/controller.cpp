@@ -10,7 +10,7 @@
 /**
  *
  */
-void controller_top(volatile int *memp, AXI_STREAM &outData, AXI_STREAM &inData)
+void controller_top(volatile uint8_t *memp, AXI_STREAM &outData, AXI_STREAM &inData)
 {
 #pragma HLS INTERFACE ap_ctrl_hs port=return
 #pragma HLS INTERFACE axis register reverse port=inData
@@ -31,10 +31,15 @@ void controller_top(volatile int *memp, AXI_STREAM &outData, AXI_STREAM &inData)
     {
 #pragma HLS PIPELINE
     	// calculate pixel address
-    	off = IN_MEMORY_BASE + LINE_SIZE*row_ctr + col_ctr;
+    	off = (IN_MEMORY_BASE + LINE_SIZE*row_ctr + col_ctr);
 
     	// read one pixel to Stream
-    	outPixel.data = (uint8_t)memp[off];
+    	outPixel.data = memp[off];
+        // set TLAST on last byte
+    	if(pixel_ctr == (WINDOW_HEIGHT*LINE_SIZE-1))
+    	{
+    		outPixel.last = 1;
+    	}
     	outData.write(outPixel);
 
     	// increment
@@ -47,15 +52,20 @@ void controller_top(volatile int *memp, AXI_STREAM &outData, AXI_STREAM &inData)
     }
 
     // loop through input data and store in memory
-    loop_in:for(in_ctr = 0; in_ctr < (LINE_SIZE-WINDOW_HEIGHT+1); in_ctr++)
+    in_ctr = 0;
+    loop_in:do
     {
     	inPixel = inData.read();
-    	if(inPixel.last)
-    		printf("last=%d\n", 1);
-    	else
-    		printf("last=%d\n", 0);
-    	memp[OUT_MEMORY_BASE+in_ctr] = (unsigned int)inPixel.data;
-    }
+    	// TODO: The following will not work due to read-modify-write
+    	// on a 32bit bus with 8bit data
+		memp[OUT_MEMORY_BASE+in_ctr] = (uint8_t)inPixel.data;
+    	in_ctr++;
+    } while (!inPixel.last && (in_ctr < (LINE_SIZE-WINDOW_HEIGHT+1)));
+
+//    loop_in:for(in_ctr = 0; in_ctr < (LINE_SIZE-WINDOW_HEIGHT+1); in_ctr++)
+//    {
+//
+//    }
 }
 
 
