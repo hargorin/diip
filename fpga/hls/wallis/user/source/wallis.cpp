@@ -10,7 +10,7 @@
 
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-			ap_ufixed<5,1> brightness, apuint16_t g_Width) {
+			ap_ufixed<5,1> brightness) {
 	
 	// ************************************************************************
 	// Variables
@@ -60,10 +60,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	// ************************************************************************
 	// Loop
 	// ************************************************************************
-	//loop_for:for(uint16_t k = 0; k < (g_Width - 1); k++) {
-	uint32_t ctr = 0;
-	loop_while:do{
-		printf("ctr = %d\n", ctr++);
+	loop_while:do {
 		// ********************************************************************
 		// Organize new Data
 

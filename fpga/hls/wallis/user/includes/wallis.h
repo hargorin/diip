@@ -50,7 +50,7 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 // Top-Function
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-			ap_ufixed<5,1> brightness, apuint16_t g_Width);
+			ap_ufixed<5,1> brightness);
 
 // Mean
 apuint8_t Cal_Mean(apuint19_t sum_Pixel);

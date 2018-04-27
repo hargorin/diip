@@ -69,7 +69,7 @@ int main(int argc, const char * argv[]) {
 			}
 		}
 
-		wallis(inDataFIFO, outData, G_MEAN, G_VAR, CONTRAST, BRIGHTNESS, g_width);
+		wallis(inDataFIFO, outData, G_MEAN, G_VAR, CONTRAST, BRIGHTNESS);
 	}
 
 
