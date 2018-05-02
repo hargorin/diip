@@ -46,6 +46,12 @@
   # Create instance: controller_top_0, and set properties
   set controller_top_0 [ create_bd_cell -type ip -vlnv ime:diip:controller_top:0.2 controller_top_0 ]
 
+  # Create instance: debounce_0, and set properties
+  set debounce_0 [ create_bd_cell -type ip -vlnv ime:diip:debounce:1.0 debounce_0 ]
+
+  # Create instance: impulse_generator_0, and set properties
+  set impulse_generator_0 [ create_bd_cell -type ip -vlnv ime:diip:impulse_generator:1.0 impulse_generator_0 ]
+
   # Create instance: jtag_axi_0, and set properties
   set jtag_axi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:jtag_axi:1.2 jtag_axi_0 ]
 
@@ -113,10 +119,7 @@ HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_intf_nets stream_dummy_top_0_outData]
 
   # Create port connections
-  connect_bd_net -net SW4_1 [get_bd_ports SW4] [get_bd_pins controller_top_0/ap_start] [get_bd_pins system_ila_0/probe0]
-  set_property -dict [ list \
-HDL_ATTRIBUTE.DEBUG {true} \
- ] [get_bd_nets SW4_1]
+  connect_bd_net -net SW4_1 [get_bd_ports SW4] [get_bd_pins debounce_0/button]
   connect_bd_net -net SW5_1 [get_bd_ports SW5] [get_bd_pins system_ila_0/probe1]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
@@ -135,10 +138,12 @@ HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_nets ap_ready]
   connect_bd_net -net clk_in_n_1 [get_bd_ports clk_in_n] [get_bd_pins clk_wiz/clk_in1_n]
   connect_bd_net -net clk_in_p_1 [get_bd_ports clk_in_p] [get_bd_pins clk_wiz/clk_in1_p]
-  connect_bd_net -net clk_wiz_clk_out1 [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] [get_bd_pins axi_smc/aclk] [get_bd_pins clk_wiz/clk_out1] [get_bd_pins controller_top_0/ap_clk] [get_bd_pins jtag_axi_0/aclk] [get_bd_pins rst_clk_wiz_100M/slowest_sync_clk] [get_bd_pins stream_dummy_top_0/ap_clk] [get_bd_pins system_ila_0/clk]
+  connect_bd_net -net clk_wiz_clk_out1 [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] [get_bd_pins axi_smc/aclk] [get_bd_pins clk_wiz/clk_out1] [get_bd_pins controller_top_0/ap_clk] [get_bd_pins debounce_0/clk] [get_bd_pins impulse_generator_0/clk] [get_bd_pins jtag_axi_0/aclk] [get_bd_pins rst_clk_wiz_100M/slowest_sync_clk] [get_bd_pins stream_dummy_top_0/ap_clk] [get_bd_pins system_ila_0/clk]
   connect_bd_net -net clk_wiz_locked [get_bd_pins clk_wiz/locked] [get_bd_pins rst_clk_wiz_100M/dcm_locked]
+  connect_bd_net -net debounce_0_result [get_bd_pins debounce_0/result] [get_bd_pins impulse_generator_0/enable]
+  connect_bd_net -net impulse_generator_0_impulse [get_bd_pins controller_top_0/ap_start] [get_bd_pins impulse_generator_0/impulse] [get_bd_pins system_ila_0/probe0]
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins clk_wiz/reset] [get_bd_pins rst_clk_wiz_100M/ext_reset_in]
-  connect_bd_net -net rst_clk_wiz_100M_peripheral_aresetn [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins controller_top_0/ap_rst_n] [get_bd_pins jtag_axi_0/aresetn] [get_bd_pins rst_clk_wiz_100M/peripheral_aresetn] [get_bd_pins stream_dummy_top_0/ap_rst_n] [get_bd_pins system_ila_0/resetn]
+  connect_bd_net -net rst_clk_wiz_100M_peripheral_aresetn [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins controller_top_0/ap_rst_n] [get_bd_pins debounce_0/rst] [get_bd_pins impulse_generator_0/rst] [get_bd_pins jtag_axi_0/aresetn] [get_bd_pins rst_clk_wiz_100M/peripheral_aresetn] [get_bd_pins stream_dummy_top_0/ap_rst_n] [get_bd_pins system_ila_0/resetn]
 
   # Create address segments
   create_bd_addr_seg -range 0x00080000 -offset 0x00000000 [get_bd_addr_spaces controller_top_0/Data_m_axi_memp] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
