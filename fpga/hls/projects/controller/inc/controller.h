@@ -26,6 +26,18 @@ using namespace std;
 
 
 // ***********************************************
+// UFT Settings
+// ***********************************************
+#define UFT_REG_SIZE 		 4 // 4 bytes per register
+#define UFT_N_REGS 			16 // total of 16 registers
+
+// Register MAP
+#define UFT_REG_STATUS  0
+#define UFT_REG_RX_BASE 1
+#define UFT_REG_TX_BASE 2
+#define UFT_REG_RX_CTR  3
+
+// ***********************************************
 // *** Settings ***
 // ***********************************************
 #define LINE_SIZE			32
@@ -47,6 +59,8 @@ using namespace std;
 
 #define TOTAL_MEM_SIZE 		(IN_SIZE+OUT_SIZE)
 
+
+
 // ***********************************************
 // *** Types ***
 // ***********************************************
@@ -65,7 +79,7 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 // *** Functions ***
 // ***********************************************
 void controller_top(volatile uint8_t *memp,
-	volatile apuint32_t *uft_ctrl,
+	volatile uint32_t *uft_ctrl,
     AXI_STREAM &outData,
     AXI_STREAM &inData,
     apuint32_t *uft_tx_memory_address,
