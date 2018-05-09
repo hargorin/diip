@@ -111,11 +111,13 @@ LASTTOP:=$(shell cat $(BUILD)/ghdl/stamp 2>/dev/null)
 sim:
 ifeq ($(LASTTOP),$(TOP))
 	cd $(BUILD)/ghdl/ && $(MAKE) run
+	./simulation/uftcheck.py -e build/ghdl/*.log
 else
 	$(RM) $(BUILD)/ghdl/*
 	scripts/configure_ghdl.sh ${TOP}
 	@echo "$(TOP)" > $(BUILD)/ghdl/stamp
 	cd $(BUILD)/ghdl/ && $(MAKE) run
+	./simulation/uftcheck.py -e build/ghdl/*.log
 endif
 
 clean-sim:

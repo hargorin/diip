@@ -80,6 +80,17 @@ def parseArray(p, name):
 # Usage warning
 if len(sys.argv) == 1:
 	print 'Usage: uftcheck.py axi_stream_res.log'
+	print '    -e   Ethernet header also included'
+	print '    -j   Input in wireshark JSON format'
+	exit(0)
+
+# check if file exists
+isfile = 0
+for fname in sys.argv[1:]:
+	if os.path.isfile(fname):
+		isfile = 1
+if isfile is 0:
+	print 'uftcheck.py: No files in input arguments'
 	exit(0)
 
 # prepare tables
