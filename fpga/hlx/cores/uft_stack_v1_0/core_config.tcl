@@ -11,7 +11,7 @@ set core [ipx::current_core]
 # set core properties
 set_property DISPLAY_NAME $display_name $core
 set_property DESCRIPTION $display_name $core
-set_property VERSION 1.1 $core
+set_property VERSION 1.2 $core
 
 # Set Core Parameters
 # proc core_parameter {name display_name description} defined in core.tcl
