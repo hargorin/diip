@@ -48,7 +48,7 @@ $(BUILD)/$(NAME)/sol_0/sim: $(BUILD)/$(NAME)/sol_0/syn/vhdl
 
 #-------------------------------------------------------------------------------
 export: $(BUILD)/$(NAME)/sol_0/impl/ip
-$(BUILD)/$(NAME)/sol_0/impl/ip: $(BUILD)/$(NAME)/sol_0/sim
+$(BUILD)/$(NAME)/sol_0/impl/ip: $(BUILD)/$(NAME)/sol_0/syn/vhdl
 	cd $(BUILD)/ && $(VIVADO_HLS) ../scripts/exportip.tcl -tclargs $(NAME)
 
 #-------------------------------------------------------------------------------
