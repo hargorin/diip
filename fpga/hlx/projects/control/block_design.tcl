@@ -13,7 +13,7 @@
   # Create instance: axi_smc, and set properties
   set axi_smc [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_smc ]
   set_property -dict [ list \
-   CONFIG.NUM_SI {2} \
+   CONFIG.NUM_SI {3} \
  ] $axi_smc
 
   # Create instance: blk_mem_gen_0, and set properties
@@ -101,6 +101,7 @@
   connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTB [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTB] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTB]
   connect_bd_intf_net -intf_net axi_smc_M00_AXI [get_bd_intf_pins axi_bram_ctrl_0/S_AXI] [get_bd_intf_pins axi_smc/M00_AXI]
+  connect_bd_intf_net -intf_net controller_top_0_m_axi_cbus [get_bd_intf_pins axi_smc/S02_AXI] [get_bd_intf_pins controller_top_0/m_axi_cbus]
   connect_bd_intf_net -intf_net controller_top_0_m_axi_memp [get_bd_intf_pins axi_smc/S00_AXI] [get_bd_intf_pins controller_top_0/m_axi_memp]
 connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_0_m_axi_memp] [get_bd_intf_pins axi_smc/S00_AXI] [get_bd_intf_pins system_ila_0/SLOT_0_AXI]
   set_property -dict [ list \
@@ -124,15 +125,15 @@ HDL_ATTRIBUTE.DEBUG {true} \
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_nets SW5_1]
-  connect_bd_net -net ap_done [get_bd_pins controller_top_0/ap_done] [get_bd_pins system_ila_0/probe2]
+  connect_bd_net -net ap_done [get_bd_pins system_ila_0/probe2]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_nets ap_done]
-  connect_bd_net -net ap_idle [get_bd_pins controller_top_0/ap_idle] [get_bd_pins system_ila_0/probe4]
+  connect_bd_net -net ap_idle [get_bd_pins system_ila_0/probe4]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_nets ap_idle]
-  connect_bd_net -net ap_ready [get_bd_pins controller_top_0/ap_ready] [get_bd_pins system_ila_0/probe3]
+  connect_bd_net -net ap_ready [get_bd_pins system_ila_0/probe3]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_nets ap_ready]
@@ -141,12 +142,11 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net clk_wiz_clk_out1 [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] [get_bd_pins axi_smc/aclk] [get_bd_pins clk_wiz/clk_out1] [get_bd_pins controller_top_0/ap_clk] [get_bd_pins debounce_0/clk] [get_bd_pins impulse_generator_0/clk] [get_bd_pins jtag_axi_0/aclk] [get_bd_pins rst_clk_wiz_100M/slowest_sync_clk] [get_bd_pins stream_dummy_top_0/ap_clk] [get_bd_pins system_ila_0/clk]
   connect_bd_net -net clk_wiz_locked [get_bd_pins clk_wiz/locked] [get_bd_pins rst_clk_wiz_100M/dcm_locked]
   connect_bd_net -net debounce_0_result [get_bd_pins debounce_0/result] [get_bd_pins impulse_generator_0/enable]
-  connect_bd_net -net impulse_generator_0_impulse [get_bd_pins controller_top_0/ap_start] [get_bd_pins impulse_generator_0/impulse] [get_bd_pins system_ila_0/probe0]
+  connect_bd_net -net impulse_generator_0_impulse [get_bd_pins controller_top_0/rx_done_V] [get_bd_pins impulse_generator_0/impulse] [get_bd_pins system_ila_0/probe0]
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins clk_wiz/reset] [get_bd_pins rst_clk_wiz_100M/ext_reset_in]
   connect_bd_net -net rst_clk_wiz_100M_peripheral_aresetn [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins controller_top_0/ap_rst_n] [get_bd_pins debounce_0/rst] [get_bd_pins impulse_generator_0/rst] [get_bd_pins jtag_axi_0/aresetn] [get_bd_pins rst_clk_wiz_100M/peripheral_aresetn] [get_bd_pins stream_dummy_top_0/ap_rst_n] [get_bd_pins system_ila_0/resetn]
 
   # Create address segments
   create_bd_addr_seg -range 0x00080000 -offset 0x00000000 [get_bd_addr_spaces controller_top_0/Data_m_axi_memp] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
-  create_bd_addr_seg -range 0x00080000 -offset 0x00000000 [get_bd_addr_spaces jtag_axi_0/Data] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
-
-
+  create_bd_addr_seg -range 0x00001000 -offset 0x00080000 [get_bd_addr_spaces controller_top_0/Data_m_axi_cbus] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
+  create_bd_addr_seg -range 0x00100000 -offset 0x00000000 [get_bd_addr_spaces jtag_axi_0/Data] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] SEG_axi_bram_ctrl_0_Mem0
