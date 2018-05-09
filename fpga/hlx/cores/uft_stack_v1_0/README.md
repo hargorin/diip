@@ -16,6 +16,18 @@ Usage of the axi_ctrl.vhd component
 | ------------- | ------------- | ----------- |
 | `0`   		| tx_start      | Start a UFT transmission. Only possible if tx_ready in UFT_REG_STATUS is `1` |
 
+#### UFT_REG_RX_BASE
+Receiver base address. The receiver puts the received transaction to this start address. Every new filetransfer is written on the same address.
+
+#### UFT_REG_TX_BASE
+Transmitter base address. The data sent is read from this base address.
+
+#### UFT_REG_RX_CTR
+Counts the number of received transfers. (Not implemented)
+
+#### UFT_REG_TX_SIZE
+Number of bytes to send.
+
 ### Signals
 
 | signal        | R/W | Usage           |
@@ -36,8 +48,3 @@ Usage of the axi_ctrl.vhd component
 | slv_reg13 	|     |  |
 | slv_reg14 	|     |  |
 | slv_reg15 	|     |  |
-| slv_reg_rden 	|     | '1' when valid read address with acceptance of read address by slave |
-| slv_reg_wren 	|     | '1' when valid write address |
-| reg_data_out 	|     | Register data passed to AXI bus |
-| byte_index 	|     |  |
-| aw_en 		|     |  |

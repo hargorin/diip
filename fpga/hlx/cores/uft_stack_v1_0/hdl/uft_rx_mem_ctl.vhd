@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Wed May  9 14:46:40 2018
+-- Last update : Wed May  9 15:38:36 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -45,6 +45,9 @@ entity utf_rx_mem_ctl is
         clk     : in    std_logic;
         rst_n   : in    std_logic;
 
+        -- status
+        rx_done     : out std_logic := '0';
+
         -- connection to uft rx block
         is_data                 : in std_logic;
         data_tcid               : in std_logic_vector( 6 downto 0);
@@ -53,6 +56,12 @@ entity utf_rx_mem_ctl is
         data_tvalid             : in std_logic;
         data_tlast              : in std_logic;
         data_tdata              : in std_logic_vector( 7 downto 0);
+
+        is_command             : in std_logic;
+        command_code           : in std_logic_vector(6 downto 0);
+        command_data1          : in std_logic_vector(23 downto 0);
+        command_data2          : in std_logic_vector(31 downto 0);
+        command_data_valid     : in std_logic;
 
         rx_base_adr      : in std_logic_vector (31 downto 0);
         rx_src_ip      : in std_logic_vector (31 downto 0);
@@ -154,6 +163,11 @@ architecture rtl of utf_rx_mem_ctl is
     signal ack_tcid_int                : std_logic_vector ( 6 downto 0);
     signal ack_dst_port_int            : std_logic_vector (15 downto 0);
     signal ack_dst_ip_int              : std_logic_vector (31 downto 0);
+
+    -- File transfer stats
+    signal ft_cur_tcid : std_logic_vector(6 downto 0);
+    signal ft_nseq : std_logic_vector(23 downto 0);
+    signal ft_nseq_received : unsigned(23 downto 0);
 begin
 
     ----------------------------------------------------------------------------
@@ -472,10 +486,9 @@ begin
 
     end process; -- p_ack
 
-
     FIFO_ReadEn <= '1' when (bus2ip_mstwr_dst_rdy_n = '0') or 
         ((current_state = INIT_TRANSFER) AND (bus2ip_mst_cmdack = '1')) else '0';
-    ip2bus_mstwr_d  <= FIFO_DataOut;
+    ip2bus_mstwr_d  <= FIFO_DataOut; 
     ----------------------------------------------------------------------------
     -- FIFO control
     ----------------------------------------------------------------------------
@@ -498,5 +511,43 @@ begin
     FIFO_DataIn <= data_tdata;
 
     --FIFO_ReadEn <= '1' when current_state = TRANSFER else '0';
+
+
+
+    ----------------------------------------------------------------------------
+    -- File transfer control
+    -- Asserts rx_done after a file transfer is complete
+    ----------------------------------------------------------------------------
+    p_ft : process(clk)
+    ----------------------------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                ft_cur_tcid <= (others => '0');
+                ft_nseq <= (others => '1');
+                ft_nseq_received <= (others => '0');
+                rx_done <= '0';
+            else
+                rx_done <= '0';
+                -- latch tcid and nseq if command received is FTS
+                if is_command = '1' and command_data_valid = '1' and command_code = "0000000" then
+                    ft_nseq <= command_data2(23 downto 0);
+                    ft_cur_tcid <= command_data1(6 downto 0);
+                    ft_nseq_received <= (others => '0');
+                    rx_done <= '0';
+                end if;
+                -- increment nseq counter if state is done
+                if current_state = ACK_SEQ then
+                    ft_nseq_received <= ft_nseq_received + 1;
+                end if;
+                -- if all packets received
+                if to_integer(unsigned(ft_nseq)) = to_integer(ft_nseq_received) then
+                    rx_done <= '1';
+                end if;
+            end if;                
+        end if;
+    end process p_ft;
+    ----------------------------------------------------------------------------
+
 
 end architecture rtl;

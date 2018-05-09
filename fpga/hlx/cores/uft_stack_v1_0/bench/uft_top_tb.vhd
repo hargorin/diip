@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Wed May  9 14:54:24 2018
+-- Last update : Wed May  9 15:18:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -56,9 +56,9 @@ entity uft_top_tb is
         C_LENGTH_WIDTH      : INTEGER range 12 to 20  := 12;
         C_FAMILY            : string                  := "artix7";
 
-        C_S_AXI_CTRL_DATA_WIDTH  : integer   := 32;
+        C_S_AXI_DATA_WIDTH  : integer   := 32;
         -- Width of S_AXI address bus
-        C_S_AXI_CTRL_ADDR_WIDTH  : integer   := 6
+        C_S_AXI_ADDR_WIDTH  : integer   := 6
     );
 end entity uft_top_tb;
 
@@ -87,6 +87,7 @@ architecture testbench of uft_top_tb is
     -- ---------------------------------------------------------------------
     signal our_ip_address      : STD_LOGIC_VECTOR (31 downto 0);
     signal our_mac_address         : std_logic_vector (47 downto 0);
+    signal rx_done : std_logic;
 
     -- Receiver
     -- ---------------------------------------------------------------------
@@ -216,22 +217,22 @@ architecture testbench of uft_top_tb is
 
     -- AXI lite
     -- -------------------------------------------------------------------------    
-    signal S_AXI_AWADDR    : std_logic_vector(C_S_AXI_CTRL_ADDR_WIDTH-1 downto 0);
+    signal S_AXI_AWADDR    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
     signal S_AXI_AWPROT    : std_logic_vector(2 downto 0);
     signal S_AXI_AWVALID   : std_logic;
     signal S_AXI_AWREADY   : std_logic;
-    signal S_AXI_WDATA : std_logic_vector(C_S_AXI_CTRL_DATA_WIDTH-1 downto 0);
-    signal S_AXI_WSTRB : std_logic_vector((C_S_AXI_CTRL_DATA_WIDTH/8)-1 downto 0);
+    signal S_AXI_WDATA : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+    signal S_AXI_WSTRB : std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
     signal S_AXI_WVALID    : std_logic;
     signal S_AXI_WREADY    : std_logic;
     signal S_AXI_BRESP : std_logic_vector(1 downto 0);
     signal S_AXI_BVALID    : std_logic;
     signal S_AXI_BREADY    : std_logic;
-    signal S_AXI_ARADDR    : std_logic_vector(C_S_AXI_CTRL_ADDR_WIDTH-1 downto 0);
+    signal S_AXI_ARADDR    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
     signal S_AXI_ARPROT    : std_logic_vector(2 downto 0);
     signal S_AXI_ARVALID   : std_logic;
     signal S_AXI_ARREADY   : std_logic;
-    signal S_AXI_RDATA : std_logic_vector(C_S_AXI_CTRL_DATA_WIDTH-1 downto 0);
+    signal S_AXI_RDATA : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
     signal S_AXI_RRESP : std_logic_vector(1 downto 0);
     signal S_AXI_RVALID    : std_logic;
     signal S_AXI_RREADY    : std_logic;
@@ -329,7 +330,7 @@ begin
         -- Initiate process which simulates a master wanting to write.
         -------------------------------------------------------------------
         procedure write (
-            adr : std_logic_vector(C_S_AXI_CTRL_ADDR_WIDTH-1 downto 0);
+            adr : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
             dat : std_logic_vector(31 downto 0)
         ) is
         -------------------------------------------------------------------
@@ -368,7 +369,7 @@ begin
         -- Initiate process which simulates a master wanting to read.
         -------------------------------------------------------------------
         procedure read (
-            adr : std_logic_vector(C_S_AXI_CTRL_ADDR_WIDTH-1 downto 0)
+            adr : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0)
         ) is
         -------------------------------------------------------------------
         begin
@@ -715,14 +716,15 @@ begin
             C_NATIVE_DATA_WIDTH     => C_NATIVE_DATA_WIDTH,
             C_LENGTH_WIDTH          => C_LENGTH_WIDTH,
             C_FAMILY                => C_FAMILY,
-            C_S_AXI_CTRL_DATA_WIDTH => C_S_AXI_CTRL_DATA_WIDTH,
-            C_S_AXI_CTRL_ADDR_WIDTH => C_S_AXI_CTRL_ADDR_WIDTH
+            C_S_AXI_DATA_WIDTH      => C_S_AXI_DATA_WIDTH,
+            C_S_AXI_ADDR_WIDTH      => C_S_AXI_ADDR_WIDTH
         )
         port map (
             clk                       => clk,
             rst_n                     => rst_n,
             our_ip_address            => our_ip_address,
             our_mac_address           => our_mac_address,
+            rx_done                   => rx_done,
             udp_rx_start              => udp_rx_start,
             udp_rx_hdr_is_valid       => udp_rx_hdr_is_valid,
             udp_rx_hdr_src_ip_addr    => udp_rx_hdr_src_ip_addr,
@@ -822,7 +824,7 @@ begin
             s_axi_ctrl_rresp          => s_axi_rresp,
             s_axi_ctrl_rvalid         => s_axi_rvalid,
             s_axi_ctrl_rready         => s_axi_rready
-        );
+        );    
 
     UDP_Complete_nomac_1 : entity work.UDP_Complete_nomac
         generic map (

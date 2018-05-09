@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed May  9 14:51:03 2018
+-- Last update : Wed May  9 15:23:24 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -43,9 +43,6 @@ entity uft_top is
         C_FAMILY            : string                  := "artix7";
 
         -- Parameters of Axi Slave Bus Interface S_AXI_CTRL
-        C_S_AXI_CTRL_DATA_WIDTH : integer   := 32;
-        C_S_AXI_CTRL_ADDR_WIDTH : integer   := 6;
-
         C_S_AXI_DATA_WIDTH  : integer   := 32;
         C_S_AXI_ADDR_WIDTH  : integer   := 6
     );
@@ -59,6 +56,8 @@ entity uft_top is
         -- ---------------------------------------------------------------------
         our_ip_address      : out STD_LOGIC_VECTOR (31 downto 0);
         our_mac_address         : out std_logic_vector (47 downto 0);
+
+        rx_done        : out  std_logic;
 
         -- number of bytes to send ( Max 4GB = 4'294'967'296 Bytes)
         --tx_data_size       : in  std_logic_vector(31 downto 0);
@@ -169,22 +168,22 @@ entity uft_top is
         -- ---------------------------------------------------------------------
         s_axi_ctrl_aclk     : in std_logic;
         s_axi_ctrl_aresetn  : in std_logic;
-        s_axi_ctrl_awaddr   : in std_logic_vector(C_S_AXI_CTRL_ADDR_WIDTH-1 downto 0);
+        s_axi_ctrl_awaddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
         s_axi_ctrl_awprot   : in std_logic_vector(2 downto 0);
         s_axi_ctrl_awvalid  : in std_logic;
         s_axi_ctrl_awready  : out std_logic;
-        s_axi_ctrl_wdata    : in std_logic_vector(C_S_AXI_CTRL_DATA_WIDTH-1 downto 0);
-        s_axi_ctrl_wstrb    : in std_logic_vector((C_S_AXI_CTRL_DATA_WIDTH/8)-1 downto 0);
+        s_axi_ctrl_wdata    : in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+        s_axi_ctrl_wstrb    : in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
         s_axi_ctrl_wvalid   : in std_logic;
         s_axi_ctrl_wready   : out std_logic;
         s_axi_ctrl_bresp    : out std_logic_vector(1 downto 0);
         s_axi_ctrl_bvalid   : out std_logic;
         s_axi_ctrl_bready   : in std_logic;
-        s_axi_ctrl_araddr   : in std_logic_vector(C_S_AXI_CTRL_ADDR_WIDTH-1 downto 0);
+        s_axi_ctrl_araddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
         s_axi_ctrl_arprot   : in std_logic_vector(2 downto 0);
         s_axi_ctrl_arvalid  : in std_logic;
         s_axi_ctrl_arready  : out std_logic;
-        s_axi_ctrl_rdata    : out std_logic_vector(C_S_AXI_CTRL_DATA_WIDTH-1 downto 0);
+        s_axi_ctrl_rdata    : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
         s_axi_ctrl_rresp    : out std_logic_vector(1 downto 0);
         s_axi_ctrl_rvalid   : out std_logic;
         s_axi_ctrl_rready   : in std_logic
@@ -246,6 +245,7 @@ architecture structural of uft_top is
         port (
             clk                    : in  std_logic;
             rst_n                  : in  std_logic;
+            rx_done                : out std_logic := '0';
             is_data                : in  std_logic;
             data_tcid              : in  std_logic_vector( 6 downto 0);
             data_seq               : in  std_logic_vector(23 downto 0);
@@ -253,6 +253,11 @@ architecture structural of uft_top is
             data_tvalid            : in  std_logic;
             data_tlast             : in  std_logic;
             data_tdata             : in  std_logic_vector( 7 downto 0);
+            is_command             : in std_logic;
+            command_code           : in std_logic_vector(6 downto 0);
+            command_data1          : in std_logic_vector(23 downto 0);
+            command_data2          : in std_logic_vector(31 downto 0);
+            command_data_valid     : in std_logic;
             rx_base_adr            : in  std_logic_vector (31 downto 0);
             rx_src_ip              : in  std_logic_vector (31 downto 0);
             rx_src_port            : in  std_logic_vector (15 downto 0);
@@ -294,7 +299,7 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component utf_rx_mem_ctl;     
+    end component utf_rx_mem_ctl;      
     
     ----------------------------------------------------------------------------
     -- UFT tx
@@ -502,6 +507,7 @@ begin
         port map (
             clk                    => clk,
             rst_n                  => rst_n,
+            rx_done                => rx_done,
             is_data                => is_data,
             data_tcid              => data_tcid,
             data_seq               => data_seq,
@@ -509,6 +515,11 @@ begin
             data_tvalid            => data_tvalid,
             data_tlast             => data_tlast,
             data_tdata             => data_tdata,
+            is_command             => is_command,
+            command_code           => command_code,
+            command_data1          => command_data1,
+            command_data2          => command_data2,
+            command_data_valid     => command_data_valid,
             rx_base_adr            => rx_data_dst_addr,
             rx_src_ip              => rx_src_ip,
             rx_src_port            => rx_src_port,
@@ -549,7 +560,7 @@ begin
             ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
             bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
-        );    
+        );     
 
     ----------------------------------------------------------------------------
     -- UFT Tx instance
