@@ -17,10 +17,12 @@ void stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData);
  */
 void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &inData,
-     AXI_STREAM &outData)
+     AXI_STREAM &outData,
+	 ap_uint<1> rx_done)
 {
+#pragma HLS INTERFACE ap_ctrl_none port=return
 
-#pragma HLS INTERFACE m_axi depth=16 port=cbus
+#pragma HLS INTERFACE m_axi depth=16 port=cbus offset=off
 #pragma HLS INTERFACE m_axi depth=1168 port=memp offset=off bundle=memp
 #pragma HLS INTERFACE axis register reverse port=inData
 #pragma HLS INTERFACE axis register forward port=outData
@@ -54,7 +56,11 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             state = S_IDLE;
             break;
         case S_IDLE:
-            if((cbus[UFT_REG_RX_CTR]+procdRows) >= WINDOW_HEIGHT)
+//            if((cbus[UFT_REG_RX_CTR]+procdRows) >= WINDOW_HEIGHT)
+//            {
+//                state = S_READ;
+//            }
+            if(rx_done == 1)
             {
                 state = S_READ;
             }

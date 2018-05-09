@@ -33,9 +33,10 @@ using namespace std;
 
 // Register MAP
 #define UFT_REG_STATUS  0
-#define UFT_REG_RX_BASE 1
-#define UFT_REG_TX_BASE 2
-#define UFT_REG_RX_CTR  3
+#define UFT_REG_CONTROL 1
+#define UFT_REG_RX_BASE 2
+#define UFT_REG_TX_BASE 3
+#define UFT_REG_RX_CTR  4
 
 // ***********************************************
 // *** Settings ***
@@ -88,4 +89,5 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 
 void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &inData,
-     AXI_STREAM &outData);
+     AXI_STREAM &outData,
+	 ap_uint<1> rx_done);

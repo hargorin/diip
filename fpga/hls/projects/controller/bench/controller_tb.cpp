@@ -13,7 +13,7 @@
 // }
 
 #define RUN_DUV_N_TIMES(n) for(int duvrunctr=0; duvrunctr<(n); duvrunctr++) { \
-	controller_top(memory, uft_reg, inData, outData); \
+	controller_top(memory, uft_reg, inData, outData, rx_done); \
 }
 
 int main()
@@ -25,8 +25,8 @@ int main()
     uint32_t uft_reg[16];
 	AXI_STREAM outData;
 	AXI_STREAM inData;
-    apuint32_t uft_tx_memory_address;
-    ap_uint<1> uft_tx_start;
+
+    ap_uint<1> rx_done = 0;
 
 
 
@@ -70,6 +70,7 @@ int main()
 
 	// Indicate enough Rx rows
 	uft_reg[UFT_REG_RX_CTR] = WINDOW_HEIGHT;
+	rx_done = 1;
 	RUN_DUV_N_TIMES(1)
 
 	// Run for all Pixels
