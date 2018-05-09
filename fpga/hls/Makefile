@@ -53,8 +53,10 @@ $(BUILD)/$(NAME)/sol_0/impl/ip: $(BUILD)/$(NAME)/sol_0/sim
 
 #-------------------------------------------------------------------------------
 clean:
-	$(RM) $(BUILD)
+	$(RM) $(BUILD)/$(NAME)
 clean-synth:
 	$(RM) $(BUILD)/$(NAME)/sol_0/syn
 clean-sim:
 	$(RM) $(BUILD)/$(NAME)/sol_0/sim
+clean-all:
+	$(RM) $(BUILD)

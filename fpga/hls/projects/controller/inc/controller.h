@@ -73,14 +73,19 @@ typedef ap_uint<35>	apuint35_t;
 typedef ap_uint<40>	apuint40_t;
 
 typedef ap_axiu<8,1,1,1> AXI_VALUE;		// <TDATA, TUSER, TID, TDEST>
+
 typedef hls::stream<AXI_VALUE> AXI_STREAM;
 
 // ***********************************************
 // *** Functions ***
 // ***********************************************
-void controller_top(volatile uint8_t *memp,
-	volatile uint32_t *uft_ctrl,
-    AXI_STREAM &outData,
-    AXI_STREAM &inData,
-    apuint32_t *uft_tx_memory_address,
-    ap_uint<1> *uft_tx_start);
+// void controller_top(volatile uint8_t *memp,
+// 	volatile uint32_t *uft_ctrl,
+//     AXI_STREAM &outData,
+//     AXI_STREAM &inData,
+//     apuint32_t *uft_tx_memory_address,
+//     ap_uint<1> *uft_tx_start);
+
+void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
+     AXI_STREAM &inData,
+     AXI_STREAM &outData);
