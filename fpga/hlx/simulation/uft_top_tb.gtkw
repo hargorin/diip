@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Fri Apr 20 12:01:32 2018
+[*] Wed May  9 12:12:22 2018
 [*]
 [dumpfile] "/home/noah/git/diip/fpga/hlx/build/ghdl/uft_top_tb.ghw"
-[dumpfile_mtime] "Fri Apr 20 11:53:25 2018"
-[dumpfile_size] 295334
+[dumpfile_mtime] "Wed May  9 12:12:07 2018"
+[dumpfile_size] 176531
 [savefile] "/home/noah/git/diip/fpga/hlx/simulation/uft_top_tb.gtkw"
 [timestart] 0
-[size] 1943 1334
+[size] 2033 1135
 [pos] -1 -1
-*-32.358799 16300000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-34.231434 60400000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.uft_top_tb.
 [treeopen] top.uft_top_tb.duv.
@@ -17,7 +17,9 @@
 [sst_width] 330
 [signals_width] 412
 [sst_expanded] 1
-[sst_vpaned_height] 828
+[sst_vpaned_height] 439
+@29
+top.uft_top_tb.cur_test
 @28
 top.uft_top_tb.clk
 top.uft_top_tb.rst_n
@@ -40,9 +42,6 @@ top.uft_top_tb.mac_tx_tfirst
 #{top.uft_top_tb.mac_tx_tdata[7:0]} top.uft_top_tb.mac_tx_tdata[7] top.uft_top_tb.mac_tx_tdata[6] top.uft_top_tb.mac_tx_tdata[5] top.uft_top_tb.mac_tx_tdata[4] top.uft_top_tb.mac_tx_tdata[3] top.uft_top_tb.mac_tx_tdata[2] top.uft_top_tb.mac_tx_tdata[1] top.uft_top_tb.mac_tx_tdata[0]
 @200
 -
-@28
-top.uft_top_tb.tx_start
-@200
 -Rx
 @28
 top.uft_top_tb.duv.rx.is_command
@@ -64,12 +63,13 @@ top.uft_top_tb.duv.rx_mem_ctl.current_state
 -Ack
 @28
 top.uft_top_tb.duv.tx.control.ack_cmd_nseq
-@29
 top.uft_top_tb.duv.tx.control.ack_cmd_nseq_latch
 @200
 -
 -Tx
 @28
+top.uft_top_tb.duv.tx.tx_start
+top.uft_top_tb.duv.tx.tx_ready
 top.uft_top_tb.duv.tx.control.current_state
 top.uft_top_tb.udp_tx_start
 @24

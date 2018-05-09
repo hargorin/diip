@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed May  9 11:26:31 2018
+-- Last update : Wed May  9 13:53:20 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -44,7 +44,10 @@ entity uft_top is
 
         -- Parameters of Axi Slave Bus Interface S_AXI_CTRL
         C_S_AXI_CTRL_DATA_WIDTH : integer   := 32;
-        C_S_AXI_CTRL_ADDR_WIDTH : integer   := 6
+        C_S_AXI_CTRL_ADDR_WIDTH : integer   := 6;
+
+        C_S_AXI_DATA_WIDTH  : integer   := 32;
+        C_S_AXI_ADDR_WIDTH  : integer   := 6
     );
     port (
         -- clk and reset
@@ -622,35 +625,6 @@ begin
     ----------------------------------------------------------------------------
     -- Instantiation of Axi Bus Interface S_AXI_CTRL
     -- -------------------------------------------------------------------------
-    axi_ctrl_inst : axi_ctrl
-        generic map (
-            C_S_AXI_DATA_WIDTH  => C_S_AXI_CTRL_DATA_WIDTH,
-            C_S_AXI_ADDR_WIDTH  => C_S_AXI_CTRL_ADDR_WIDTH
-        )
-        port map (
-            S_AXI_ACLK  => s_axi_ctrl_aclk,
-            S_AXI_ARESETN   => s_axi_ctrl_aresetn,
-            S_AXI_AWADDR    => s_axi_ctrl_awaddr,
-            S_AXI_AWPROT    => s_axi_ctrl_awprot,
-            S_AXI_AWVALID   => s_axi_ctrl_awvalid,
-            S_AXI_AWREADY   => s_axi_ctrl_awready,
-            S_AXI_WDATA => s_axi_ctrl_wdata,
-            S_AXI_WSTRB => s_axi_ctrl_wstrb,
-            S_AXI_WVALID    => s_axi_ctrl_wvalid,
-            S_AXI_WREADY    => s_axi_ctrl_wready,
-            S_AXI_BRESP => s_axi_ctrl_bresp,
-            S_AXI_BVALID    => s_axi_ctrl_bvalid,
-            S_AXI_BREADY    => s_axi_ctrl_bready,
-            S_AXI_ARADDR    => s_axi_ctrl_araddr,
-            S_AXI_ARPROT    => s_axi_ctrl_arprot,
-            S_AXI_ARVALID   => s_axi_ctrl_arvalid,
-            S_AXI_ARREADY   => s_axi_ctrl_arready,
-            S_AXI_RDATA => s_axi_ctrl_rdata,
-            S_AXI_RRESP => s_axi_ctrl_rresp,
-            S_AXI_RVALID    => s_axi_ctrl_rvalid,
-            S_AXI_RREADY    => s_axi_ctrl_rready
-        ); 
-
     axi_ctrl_inst : axi_ctrl
         generic map (
             C_S_AXI_DATA_WIDTH => C_S_AXI_DATA_WIDTH,
