@@ -34,8 +34,6 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	static apuint8_t pixel[LENGTH];
 	static apuint8_t tmp_Pixel[LENGTH];
 
-	static ap_ufixed<12,12> w_gMean = brightness * g_Mean;
-	static ap_ufixed<18,18> w_gVar = (1-contrast) * g_Var;
 	static apuint10_t pos_Pixel = (LENGTH - 1) / 2;
 
 	// ************************************************************************
@@ -61,7 +59,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	// ************************************************************************
 	// Wallis Filter
 	outPixel.data = Wallis_Filter(pixel[pos_Pixel], n_Mean, n_Var, g_Mean, g_Var,
-									contrast, brightness, w_gMean, w_gVar);
+									contrast, brightness);
 
 	// ************************************************************************
 	// Output
@@ -120,7 +118,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		// ********************************************************************
 		// Wallis Filter
 		outPixel.data = Wallis_Filter(pixel[pos_Pixel], n_Mean, n_Var, g_Mean, g_Var,
-										contrast, brightness, w_gMean, w_gVar);
+										contrast, brightness);
 
 		// ********************************************************************
 		// Output
@@ -170,17 +168,29 @@ apuint14_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
  */
 apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
 						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-						ap_ufixed<5,1> brightness, ap_ufixed<12,8> w_gMean, ap_ufixed<18,14> w_gVar) {
+						ap_ufixed<5,1> brightness) {
 
 	apint23_t tmp_Num;
-	ap_fixed<27,27> fp_Num;
-	ap_ufixed<18,18> fp_nVar;
-	ap_ufixed<12,12> fp_nMean;
-	ap_ufixed<19,19> fp_Var;
+	ap_int<23> fp_Num;
+	ap_uint<14> fp_nVar;
+	ap_uint<8> fp_nMean;
+	ap_uint<15> fp_Var;
+	//ap_ufixed<18,1> fp_Den;
+	//ap_int<333> fp_Div;
+
+	// mehr clk und mehr ressourcen dafür bessere genauigkeit
+	//ap_fixed<27,25> fp_Num;
+	//ap_ufixed<18,16> fp_nVar;
+	//ap_ufixed<12,10> fp_nMean;
+	//ap_ufixed<19,17> fp_Var;
 	ap_ufixed<18,1> fp_Den;
-	ap_fixed<35,35> fp_Div;
+	ap_fixed<31,31> fp_Div;
+
 	//ap_ufixed<36,30> w_Pixel;
 	apuint8_t w_Pixel;
+
+	apuint12_t w_gMean = brightness * g_Mean;
+	apuint18_t w_gVar = (1-contrast) * g_Var;
 
 	// int23 = (uint8 - uint8) * uint14
 	tmp_Num = (v_pixel - n_Mean) * g_Var;

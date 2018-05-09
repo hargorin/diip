@@ -7,15 +7,16 @@
 
 #include "../includes/wallis.h"
 
+#include <math.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 using namespace cv;
 
-#define INPUT_IMAGE "landscape.jpg"
+#define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.75	//0.75
-#define BRIGHTNESS	0.61	//0.8
+#define CONTRAST 	0.5	//0.75
+#define BRIGHTNESS	0.4	//0.8
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -35,11 +36,11 @@ int main(int argc, const char * argv[]) {
 	// Edit Image
 	Mat src_gray;
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
-	uint16_t img_length = src_gray.cols;
-	uint16_t img_width = src_gray.rows;
+	uint16_t img_width = src_gray.cols;
+	uint16_t img_height = src_gray.rows;
 	//uint16_t img_length = 7;
 	//uint16_t img_width = 5;
-	uint16_t g_length = (img_length - WIN_SIZE + 1);
+	uint16_t g_height = (img_height - WIN_SIZE + 1);
 	uint16_t g_width = (img_width - WIN_SIZE + 1);
 
 	// ************************************************************************
@@ -50,24 +51,19 @@ int main(int argc, const char * argv[]) {
 
 	// C-Variables
 	uint8_t c_pixel[LENGTH];
-	uint8_t c_mean;
-	uint16_t c_var;
-	uint8_t c_wallis[g_width * g_length];
-	uint32_t ctr = 0;
+	uint8_t c_mean = 0;
+	uint16_t c_var = 0;
+	uint8_t c_wallis[g_width * g_height];
 
 
 	// ************************************************************************
 	// HW Testbench
 	// ************************************************************************
-	//uint16_t offset = 0;
-	uint16_t index = 0;
-	for(uint16_t offset = 0; offset < g_width; offset++) {
-		for (uint16_t x = 0; x < img_length; x++) {
-		//for (uint16_t x = 0; x < WIN_SIZE; x++) {
+	for(uint16_t offset = 0; offset < g_height; offset++) {
+		for (uint16_t x = 0; x < img_width; x++) {
 			for (uint16_t y = 0; y < WIN_SIZE; y++) {
-				//inData.data = index++;
 				inData.data = src_gray.at<apuint8_t>(Point(x, (y + offset)));
-				if((x == img_length - 1) && (y == WIN_SIZE - 1)){
+				if((x == img_width- 1) && (y == WIN_SIZE - 1)){
 					inData.last = 1;
 				}
 				inDataFIFO.write(inData);
@@ -82,8 +78,8 @@ int main(int argc, const char * argv[]) {
 	// C Testbench
 	// ************************************************************************
 	uint32_t i_wallis = 0;
-	for(uint16_t y_offset = 0; y_offset < g_width; y_offset++) {
-		for(uint16_t x_offset = 0; x_offset < g_length; x_offset++) {
+	for(uint16_t y_offset = 0; y_offset < g_height; y_offset++) {
+		for(uint16_t x_offset = 0; x_offset < g_width; x_offset++) {
 			uint16_t i_pixel = 0;
 			for (uint8_t x = 0; x < WIN_SIZE; x++) {
 				for (uint8_t y = 0; y < WIN_SIZE; y++) {
@@ -102,8 +98,8 @@ int main(int argc, const char * argv[]) {
 	// ************************************************************************
 	// Output
 	// ************************************************************************
-	uint8_t w_data[g_width * g_length];
-	uint32_t i = 0;
+	uint8_t w_data[g_width * g_height];
+	uint32_t index_pix = 0;
 	uint32_t err = 0;
 	uint32_t equal = 0;
 	uint32_t plus_1 = 0;
@@ -112,20 +108,23 @@ int main(int argc, const char * argv[]) {
 	while(!outData.empty()) {
 	//for(uint32_t i = 0; i < (g_length * g_width); i++) {
 		AXI_VALUE tmp = outData.read();
-		w_data[i] = (uint8_t)tmp.data;
+		w_data[index_pix] = (uint8_t)tmp.data;
 
 		// ************************************************************************
 		// Comparison
-		if( tmp.data >=  c_wallis[i]) {
-			if(tmp.data ==  c_wallis[i]) {
+		if( w_data[index_pix] >= c_wallis[index_pix]) {
+			if(w_data[index_pix] == c_wallis[index_pix]) {
 				equal++;
 			}
-			else if(tmp.data =  (c_wallis[i] + 1)) {
+			else if(w_data[index_pix] == (c_wallis[index_pix] + 1)) {
 				plus_1++;
 			}
+			else {
+				err++;
+			}
 		}
-		else if(tmp.data < c_wallis[i]) {
-			if(tmp.data =  (c_wallis[i] - 1)) {
+		else if(w_data[index_pix] < c_wallis[index_pix]) {
+			if(w_data[index_pix] == (c_wallis[index_pix] - 1)) {
 				minus_1++;
 			}
 			else {
@@ -133,8 +132,18 @@ int main(int argc, const char * argv[]) {
 			}
 		}
 
-		i++;
+		index_pix++;
 	}
+
+	// mean square error
+	float sum = 0;
+	float mse = 0;
+	float difference = 0;
+	for(uint32_t k = 0; k < index_pix; k++) {
+		difference = (w_data[k] - c_wallis[k]);
+		sum = sum + (difference * difference);
+	}
+	mse = sum / index_pix;
 
 
 	printf("***********************************************************\n");
@@ -146,18 +155,24 @@ int main(int argc, const char * argv[]) {
 	printf("Plus 1 : %d\n", plus_1);
 	printf("Minus 1: %d\n", minus_1);
 	printf("Error  : %d\n", err);
-	printf("Total Pixels  : %d - %d\n", (equal + plus_1 + minus_1 + err), i);
+	printf("Total Pixels  : %d - %d\n", (equal + plus_1 + minus_1 + err), index_pix);
+
+	printf("-----------------------------------------------------------\n");
+	printf("MSE	   : %.6f\n", mse);
+	printf("RMSE   : %.6f\n", sqrt(mse));
+	printf("-----------------------------------------------------------\n");
 
 	printf("***********************************************************\n");
 	printf("				END - TESTBENCH\n");
 	printf("***********************************************************\n");
 
 	// Show image
-/*	Mat hw_dst_img = Mat(g_width, g_length, CV_8UC1, w_data);
-	Mat c_dst_img = Mat(g_width, g_length, CV_8UC1, c_wallis);
+	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
-	imwrite("wallis_landscape.jpg", hw_dst_img);
-	if (getenv("DISPLAY") != NULL)
+	imwrite("wallis_hw_room.jpg", hw_dst_img);
+	imwrite("wallis_sw_room.jpg", c_dst_img);
+/*	if (getenv("DISPLAY") != NULL)
 	{
 		imshow( "Original", src_gray );
 		imshow( "HW - Wallis", hw_dst_img );
