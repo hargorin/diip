@@ -235,7 +235,7 @@ begin
 	    if S_AXI_ARESETN = '0' then
 	      --slv_reg0 <= (others => '0'); -- Read only
 	      slv_reg1 <= (others => '0');
-	      slv_reg2 <= (others => '0');
+	      slv_reg2 <= x"08000000"; -- rx base
 	      slv_reg3 <= (others => '0');
 	      --slv_reg4 <= (others => '0'); -- Read only
 	      slv_reg5 <= (others => '0');

@@ -110,8 +110,9 @@ flash: $(BUILD)/$(NAME).bit
 LASTTOP:=$(shell cat $(BUILD)/ghdl/stamp 2>/dev/null)
 sim:
 ifeq ($(LASTTOP),$(TOP))
+	$(RM) $(BUILD)/ghdl/*.log
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-	./simulation/uftcheck.py -e build/ghdl/*.log
+	./simulation/uftcheck.py -e $(BUILD)/ghdl/*.log
 else
 	$(RM) $(BUILD)/ghdl/*
 	scripts/configure_ghdl.sh ${TOP}

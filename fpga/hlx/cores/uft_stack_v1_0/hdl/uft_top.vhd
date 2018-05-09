@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed May  9 13:53:20 2018
+-- Last update : Wed May  9 14:51:03 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -253,6 +253,7 @@ architecture structural of uft_top is
             data_tvalid            : in  std_logic;
             data_tlast             : in  std_logic;
             data_tdata             : in  std_logic_vector( 7 downto 0);
+            rx_base_adr            : in  std_logic_vector (31 downto 0);
             rx_src_ip              : in  std_logic_vector (31 downto 0);
             rx_src_port            : in  std_logic_vector (15 downto 0);
             ack_cmd_nseq           : out std_logic;
@@ -293,7 +294,7 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component utf_rx_mem_ctl;      
+    end component utf_rx_mem_ctl;     
     
     ----------------------------------------------------------------------------
     -- UFT tx
@@ -508,6 +509,7 @@ begin
             data_tvalid            => data_tvalid,
             data_tlast             => data_tlast,
             data_tdata             => data_tdata,
+            rx_base_adr            => rx_data_dst_addr,
             rx_src_ip              => rx_src_ip,
             rx_src_port            => rx_src_port,
             ack_cmd_nseq           => ack_cmd_nseq,

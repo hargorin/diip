@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Wed Apr 25 10:45:45 2018
+-- Last update : Wed May  9 14:46:40 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -54,6 +54,7 @@ entity utf_rx_mem_ctl is
         data_tlast              : in std_logic;
         data_tdata              : in std_logic_vector( 7 downto 0);
 
+        rx_base_adr      : in std_logic_vector (31 downto 0);
         rx_src_ip      : in std_logic_vector (31 downto 0);
         rx_src_port    : in std_logic_vector (15 downto 0);
 
@@ -240,7 +241,7 @@ begin
                 amb_word_cnt <= shift_right(ctrp1, 2)(C_LENGTH_WIDTH-1 downto 0);
             end if;        
             mem_length <= ctr(C_LENGTH_WIDTH-1 downto 0) + 1;
-            axi_addr <= unsigned(c_pkg_uft_rx_base_addr) + to_unsigned((to_integer(c_pkg_uft_rx_pack_size) * to_integer(unsigned(data_seq))),axi_addr'length);
+            axi_addr <= unsigned(rx_base_adr) + to_unsigned((to_integer(c_pkg_uft_rx_pack_size) * to_integer(unsigned(data_seq))),axi_addr'length);
         else
             amb_word_cnt <= amb_word_cnt;
             mem_length <= mem_length;
@@ -304,7 +305,7 @@ begin
     --p_axi_adr : process( current_state )
     --begin
     --    if current_state = INIT_TRANSFER then
-    --        axi_addr <= unsigned(c_pkg_uft_rx_base_addr) + to_unsigned((to_integer(c_pkg_uft_rx_pack_size) * to_integer(unsigned(data_seq))),axi_addr'length);
+    --        axi_addr <= unsigned(rx_base_adr) + to_unsigned((to_integer(c_pkg_uft_rx_pack_size) * to_integer(unsigned(data_seq))),axi_addr'length);
     --    end if;
     --end process ; -- p_axi_adr
 
