@@ -15,6 +15,10 @@ proc connect {} {
   current_hw_device [get_hw_devices xc7a200t_0]
   refresh_hw_device [lindex [get_hw_devices xc7a200t_0] 0]
 }
+# connect_xc7a200t
+proc disconnect {} {
+  disconnect_hw_server
+}
 
 #############################################
 # configure device
@@ -26,8 +30,9 @@ proc flash {} {
 # --------
 #   main
 # --------
-# open_hw
-# connect_xc7a200t
+# source memdump.tcl
+open_hw
+connect
 
 
 # close_hw

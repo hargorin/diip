@@ -9,8 +9,8 @@
 #include "ap_utils.h"
 
 void resetUFT(volatile uint32_t *uft_ctrl);
-void mem_to_stream(volatile uint8_t *memp, AXI_STREAM &outData);
-void stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData);
+bool mem_to_stream(volatile uint8_t *memp, AXI_STREAM &outData);
+bool stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData);
 
 /**
  *
@@ -20,6 +20,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &outData,
 	 ap_uint<1> rx_done)
 {
+#pragma HLS DATAFLOW
 #pragma HLS INTERFACE ap_ctrl_none port=return
 
 #pragma HLS INTERFACE m_axi depth=16 port=cbus offset=off
@@ -77,45 +78,20 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             break;
         case S_STREAM:
             /********* OUT *********/
-            if(runOut)
-            {
-                // calc memory offset and read data
-                ms_off = LINE_SIZE*ms_rctr + ms_cctr;
-                oPxl.data = in_mem[ms_off];
-                oPxl.last = 0;
-                // set TLAST on last byte
-                if(ms_pctr == (IN_LINE_SIZE-1))
-                {
-                    oPxl.last = 1;
-                    runOut = false;
-                }
-                outData.write(oPxl);
-                // increment
-                ms_rctr++;
-                ms_pctr++;
-                if(ms_rctr == WINDOW_HEIGHT)
-                {
-                    ms_rctr = 0;
-                    ms_cctr++;
-                }
-            }
+        	if(runOut)
+        	{
+        		runOut = mem_to_stream(in_mem, outData);
+        	}
             /********* IN *********/
-            if(runIn)
-            {
-                iPxl = inData.read();
-                out_mem[sm_ctr] = (uint8_t)iPxl.data;
-                // Exit condition
-                if (iPxl.last)
-                {
-                    runIn = false;
-                }
-                sm_ctr++;
-            }
-            /********* EXIT *********/
-            if(!runOut && !runIn)
-            {
-                state = S_WRITE;
-            }
+        	if(runIn)
+        	{
+        		runIn = stream_to_mem(out_mem, inData);
+        	}
+			/********* EXIT *********/
+			if(!runOut && !runIn)
+			{
+				state = S_WRITE;
+			}
             break;
         case S_WRITE:
             // store processed data in memory
@@ -235,73 +211,114 @@ void resetUFT(volatile uint32_t *uft_ctrl)
  * Copies the data from memp to the output stream in the order that
  * the Wallis filter requires it
  */
-void mem_to_stream(volatile uint8_t *memp, AXI_STREAM &outData)
+bool mem_to_stream(volatile uint8_t *memp, AXI_STREAM &outData)
 {
-#pragma HLS INLINE
-
-    int col_ctr, row_ctr, off, pixel_ctr;
-    int buff[AXI_M_BURST_SIZE];
-
-    AXI_VALUE outPixel;
-
-    // Loop through every pixel
-    col_ctr = 0;
-    row_ctr = 0;
-    loop_out:for(pixel_ctr = 0; pixel_ctr < IN_LINE_SIZE; pixel_ctr++)
-    {
 #pragma HLS PIPELINE
-        // calculate pixel address
-        off = LINE_SIZE*row_ctr + col_ctr;
 
-        // read one pixel to Stream
-        outPixel.data = memp[off];
-        // set TLAST on last byte
-        if(pixel_ctr == (IN_LINE_SIZE-1))
-        {
-            outPixel.last = 1;
-        }
-        else
-        {
-            outPixel.last = 0;
-        }
-        outData.write(outPixel);
+    static int ms_off, ms_pctr, ms_rctr, ms_cctr;
+    AXI_VALUE oPxl;
 
-        // increment
-        row_ctr++;
-        if(row_ctr == WINDOW_HEIGHT)
-        {
-            row_ctr = 0;
-            col_ctr++;
-        }
-    }
+	// calc memory offset and read data
+	ms_off = LINE_SIZE*ms_rctr + ms_cctr;
+	oPxl.data = memp[ms_off];
+	oPxl.last = 0;
+	// set TLAST on last byte
+	if(ms_pctr == (IN_LINE_SIZE-1))
+	{
+		oPxl.last = 1;
+		return false;
+	}
+	outData.write(oPxl);
+	// increment
+	ms_rctr++;
+	ms_pctr++;
+	if(ms_rctr == WINDOW_HEIGHT)
+	{
+		ms_rctr = 0;
+		ms_cctr++;
+	}
+
+	return true;
+
+//    int col_ctr, row_ctr, off, pixel_ctr;
+//    int buff[AXI_M_BURST_SIZE];
+//
+//    AXI_VALUE outPixel;
+//
+//    // Loop through every pixel
+//    col_ctr = 0;
+//    row_ctr = 0;
+//    loop_out:for(pixel_ctr = 0; pixel_ctr < IN_LINE_SIZE; pixel_ctr++)
+//    {
+//#pragma HLS PIPELINE
+//        // calculate pixel address
+//        off = LINE_SIZE*row_ctr + col_ctr;
+//
+//        // read one pixel to Stream
+//        outPixel.data = memp[off];
+//        // set TLAST on last byte
+//        if(pixel_ctr == (IN_LINE_SIZE-1))
+//        {
+//            outPixel.last = 1;
+//        }
+//        else
+//        {
+//            outPixel.last = 0;
+//        }
+//        outData.write(outPixel);
+//
+//        // increment
+//        row_ctr++;
+//        if(row_ctr == WINDOW_HEIGHT)
+//        {
+//            row_ctr = 0;
+//            col_ctr++;
+//        }
+//    }
 
 }
 
 /**
  * Stores the data coming from the stream in memp
  */
-void stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData)
+bool stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData)
 {
-#pragma HLS INLINE
-    int in_ctr;
-
-    AXI_VALUE inPixel;
-
-    // loop through input data and store in memory
-    in_ctr = 0;
-    loop_in:for(in_ctr = 0; (in_ctr < (OUT_LINE_SIZE)); in_ctr++)
-//    loop_in:do
-    {
 #pragma HLS PIPELINE
-        inPixel = inData.read();
-        // TODO: The following will not work due to read-modify-write
-        // on a 32bit bus with 8bit data
-        memp[in_ctr] = (uint8_t)inPixel.data;
-        if (inPixel.last)
-        {
-            break;
-        }
-    }
+    static int sm_ctr;
+    AXI_VALUE iPxl;
+
+	iPxl = inData.read();
+	memp[sm_ctr] = (uint8_t)iPxl.data;
+	// Exit condition
+	if (iPxl.last)
+	{
+		return false;
+	}
+	sm_ctr++;
+
+	return true;
+
+//
+//#pragma HLS INLINE
+//    int in_ctr;
+//
+//    AXI_VALUE inPixel;
+//
+//    // loop through input data and store in memory
+//    in_ctr = 0;
+//    loop_in:for(in_ctr = 0; (in_ctr < (OUT_LINE_SIZE)); in_ctr++)
+////    loop_in:do
+//    {
+//#pragma HLS PIPELINE
+//        inPixel = inData.read();
+//        // TODO: The following will not work due to read-modify-write
+//        // on a 32bit bus with 8bit data
+//        memp[in_ctr] = (uint8_t)inPixel.data;
+//        if (inPixel.last)
+//        {
+//            break;
+//        }
+//    }
 }
 
 
