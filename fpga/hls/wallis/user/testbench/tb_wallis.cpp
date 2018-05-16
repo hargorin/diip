@@ -15,8 +15,8 @@ using namespace cv;
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.5	//0.75
-#define BRIGHTNESS	0.4	//0.8
+#define CONTRAST 	0.82	//0.75
+#define BRIGHTNESS	0.49	//0.8
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -151,10 +151,10 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	//printf("SW = %d | HW = %d\n", c_wallis[i++], (uint8_t)tmp.data);
-	printf("Equal  : %d\n", equal);
-	printf("Plus 1 : %d\n", plus_1);
-	printf("Minus 1: %d\n", minus_1);
-	printf("Error  : %d\n", err);
+	printf("Equal  : %.1f%%\n", 100.0*equal/index_pix);
+	printf("Plus 1 : %.1f%%\n", 100.0*plus_1/index_pix);
+	printf("Minus 1: %.1f%%\n", 100.0*minus_1/index_pix);
+	printf("Error  : %.1f%%\n", 100.0*err/index_pix);
 	printf("Total Pixels  : %d - %d\n", (equal + plus_1 + minus_1 + err), index_pix);
 
 	printf("-----------------------------------------------------------\n");
@@ -167,12 +167,12 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	// Show image
-	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+/*	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
 	imwrite("wallis_hw_room.jpg", hw_dst_img);
 	imwrite("wallis_sw_room.jpg", c_dst_img);
-/*	if (getenv("DISPLAY") != NULL)
+	if (getenv("DISPLAY") != NULL)
 	{
 		imshow( "Original", src_gray );
 		imshow( "HW - Wallis", hw_dst_img );
