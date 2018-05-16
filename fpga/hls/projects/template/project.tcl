@@ -5,6 +5,8 @@
 
 # Set the function that will be implemented
 set proj_top_function fun_top
+# Set the solution to be used
+set proj_top_solution "default_solution"
 
 # Set the clock period in [ns]
 set proj_clk_period 8

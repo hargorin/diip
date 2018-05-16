@@ -45,4 +45,7 @@ add_files -tb [glob -directory ../projects/$project_name/bench/ *]
 if {[file exists "../projects/$project_name/directives/directives.tcl" ]} {
 	create_solution "default_solution" $project_name "directives.tcl"
 }
+if {[file exists "../projects/$project_name/solutions.tcl" ]} {
+	source ../projects/$project_name/solutions.tcl
+}
 exit

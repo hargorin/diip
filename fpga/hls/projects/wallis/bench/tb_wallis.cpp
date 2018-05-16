@@ -5,12 +5,16 @@
 //  Copyright © 2018 Jan Stocker. All rights reserved.
 //
 
-#include "../includes/wallis.h"
+#include "../inc/wallis.h"
 
 #include <math.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 using namespace cv;
+
+#include <unistd.h>
+#include <stdio.h>
+#include <errno.h>
 
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
@@ -27,6 +31,12 @@ int main(int argc, const char * argv[]) {
 	// Read Image
 	Mat src_img = imread(INPUT_IMAGE);
 	if (!src_img.data) {
+
+   char cwd[1024];
+   if (getcwd(cwd, sizeof(cwd)) != NULL)
+       fprintf(stdout, "Current working dir: %s\n", cwd);
+   else
+       perror("getcwd() error");
 		printf("***********************************************************\n");
 		printf("	ERROR: could not open or find the input image!\n");
 		printf("***********************************************************\n");

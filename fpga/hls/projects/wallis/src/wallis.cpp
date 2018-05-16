@@ -5,7 +5,7 @@
 //  Copyright © 2018 Jan Stocker. All rights reserved.
 //
 
-#include "../includes/wallis.h"
+#include "../inc/wallis.h"
 
 
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
