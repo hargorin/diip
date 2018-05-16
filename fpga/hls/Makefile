@@ -8,7 +8,9 @@
 # ================================================================================
 
 # Project name
-NAME = sobel
+NAME = wallis
+# SOLUTION = sol_0
+SOLUTION = $(grep proj_top_solution projects/$(NAME)/project.tcl | awk '{print $3}')
 # FPGA Part number
 PART = xc7a200tfbg676-2
 
@@ -32,23 +34,23 @@ $(BUILD)/$(NAME)/vivado_hls.app: projects/$(NAME)/project.tcl
 	cd $(BUILD) && $(VIVADO_HLS) ../scripts/project.tcl -tclargs $(NAME) $(PART) .
 
 #-------------------------------------------------------------------------------
-csim: $(BUILD)/$(NAME)/sol_0/csim
-$(BUILD)/$(NAME)/sol_0/csim: projects/$(NAME)/src/* projects/$(NAME)/bench/* $(BUILD)/$(NAME)/vivado_hls.app
+csim: $(BUILD)/$(NAME)/$(SOLUTION)/csim
+$(BUILD)/$(NAME)/$(SOLUTION)/csim: projects/$(NAME)/src/* projects/$(NAME)/bench/* $(BUILD)/$(NAME)/vivado_hls.app
 	cd $(BUILD)/ && $(VIVADO_HLS) ../scripts/csim.tcl -tclargs $(NAME)
 
 #-------------------------------------------------------------------------------
-synth: $(BUILD)/$(NAME)/sol_0/syn/vhdl
-$(BUILD)/$(NAME)/sol_0/syn/vhdl: $(BUILD)/$(NAME)/vivado_hls.app projects/$(NAME)/src/*
+synth: $(BUILD)/$(NAME)/$(SOLUTION)/syn/vhdl
+$(BUILD)/$(NAME)/$(SOLUTION)/syn/vhdl: $(BUILD)/$(NAME)/vivado_hls.app projects/$(NAME)/src/*
 	cd $(BUILD)/ && $(VIVADO_HLS) ../scripts/synth.tcl -tclargs $(NAME)
 
 #-------------------------------------------------------------------------------
-cosim: $(BUILD)/$(NAME)/sol_0/sim
-$(BUILD)/$(NAME)/sol_0/sim: $(BUILD)/$(NAME)/sol_0/syn/vhdl
+cosim: $(BUILD)/$(NAME)/$(SOLUTION)/sim
+$(BUILD)/$(NAME)/$(SOLUTION)/sim: $(BUILD)/$(NAME)/$(SOLUTION)/syn/vhdl
 	cd $(BUILD)/ && $(VIVADO_HLS) ../scripts/cosim.tcl -tclargs $(NAME)
 
 #-------------------------------------------------------------------------------
-export: $(BUILD)/$(NAME)/sol_0/impl/ip
-$(BUILD)/$(NAME)/sol_0/impl/ip: $(BUILD)/$(NAME)/sol_0/syn/vhdl
+export: $(BUILD)/$(NAME)/$(SOLUTION)/impl/ip
+$(BUILD)/$(NAME)/$(SOLUTION)/impl/ip: $(BUILD)/$(NAME)/$(SOLUTION)/syn/vhdl
 	cd $(BUILD)/ && $(VIVADO_HLS) ../scripts/exportip.tcl -tclargs $(NAME)
 
 #-------------------------------------------------------------------------------
