@@ -13,17 +13,17 @@
 #     - make TOP=uft_top_tb sim
 
 
-doc:
-  stage: build
-  tags:
-    - doc
-  image: noah95/latex
-  script:
-    - pdflatex -v
-    - cd doc/report/ && make
-  artifacts:
-    paths:
-    - doc/report/p5_diip_huetter_stocker.pdf
+# doc:
+#   stage: build
+#   tags:
+#     - doc
+#   image: noah95/latex
+#   script:
+#     - pdflatex -v
+#     - cd doc/report/ && make
+#   artifacts:
+#     paths:
+#     - doc/report/p5_diip_huetter_stocker.pdf
 
 fpga:
   stage: build
@@ -46,9 +46,10 @@ fpga:
     - cd fpga/hls/
     - make NAME=controller export
     - make NAME=stream_dummy export
+    - make NAME=wallis export
     - cd ../hlx/
     # - make NAME=sobel impl
-    - time make NAME=control impl
+    - time make NAME=wallis impl
   artifacts:
     paths:
     - fpga/hlx/build/
