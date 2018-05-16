@@ -72,9 +72,11 @@ int main()
 	uft_reg[UFT_REG_RX_CTR] = WINDOW_HEIGHT;
 	rx_done = 1;
 	RUN_DUV_N_TIMES(1)
+	rx_done = 0;
 
 	// Run for all Pixels
 	RUN_DUV_N_TIMES(IN_LINE_SIZE+2)
+//	RUN_DUV_N_TIMES(4)
 
 	//************************************************************************
 	//Run a software version of the hardware function to validate results
@@ -127,8 +129,8 @@ int main()
 		test = (uint8_t)aval.data;
 		if(stream_set[i] != test)
 		{
-			printf("i = %d B = %d out= %d\n",i,stream_set[i],test);
 			printf("ERROR[outData] HW and SW results mismatch\n");
+			printf("ERROR[outData] i = %d B = %d out= %d\n",i,stream_set[i],test);
 			err = -1; oDatErr = true;
 		}
 		// Assert TLAST signal
@@ -138,18 +140,18 @@ int main()
 //			printf("i=%d last=0\n",i);
 		if (!aval.last && (i == (WINDOW_HEIGHT*LINE_SIZE-1)))
 		{
-			printf("ERROR[outData]: TLAST was not asserted. i=%d of=%d\n",i,WINDOW_HEIGHT*LINE_SIZE);
+			printf("ERROR[outData] TLAST was not asserted. i=%d of=%d\n",i,WINDOW_HEIGHT*LINE_SIZE);
 			err = -1; oDatErr = true;
 		}
 		if (aval.last && (i != (WINDOW_HEIGHT*LINE_SIZE-1)))
 		{
-			printf("ERROR[outData]: TLAST was asserted too early. i=%d of=%d\n",i,WINDOW_HEIGHT*LINE_SIZE);
+			printf("ERROR[outData] TLAST was asserted too early. i=%d of=%d\n",i,WINDOW_HEIGHT*LINE_SIZE);
 			err = -1; oDatErr = true;
 		}
 	}
 	if(!oDatErr)
 	{
-		printf("INFO[outData]: HW and SW results match\n");
+		printf("INFO[outData] HW and SW results match\n");
 	}
 
 	// Compare results from memory
@@ -158,14 +160,14 @@ int main()
 	{
 		if(memory[OUT_MEMORY_BASE+i] != mem_set[i])
 		{
-			printf("i = %d is = %d should= %d\n",i,memory[OUT_MEMORY_BASE+i],mem_set[i]);
 			printf("ERROR[memory] HW and SW results mismatch\n");
+			printf("ERROR[memory] i = %d is = %d should= %d\n",i,memory[OUT_MEMORY_BASE+i],mem_set[i]);
 			err = -1; oMemErr = true;
 		}
 	}
 	if(!oMemErr)
 	{
-		printf("INFO[memory]: HW and SW results match\n");
+		printf("INFO[memory] HW and SW results match\n");
 	}
 
 	// Check UFT register

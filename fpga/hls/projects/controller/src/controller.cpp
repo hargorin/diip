@@ -29,7 +29,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
 #pragma HLS INTERFACE axis register forward port=outData
 
 #pragma HLS INLINE region
-#pragma HLS pipeline II=1 enable_flush
+//#pragma HLS pipeline II=1 enable_flush
 
     static enum myState {S_INIT, S_IDLE, S_READ, S_STREAM, S_WRITE} state;
 
@@ -78,15 +78,44 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             break;
         case S_STREAM:
             /********* OUT *********/
+//        	if(runOut)
+//        	{
+//        		runOut = mem_to_stream(in_mem, outData);
+//        	}
         	if(runOut)
         	{
-        		runOut = mem_to_stream(in_mem, outData);
+				// calc memory offset and read data
+				oPxl.data = in_mem[LINE_SIZE*(ms_rctr++) + ms_cctr];
+				oPxl.last = 0;
+				// set TLAST on last byte
+				if( (ms_pctr++) == (IN_LINE_SIZE-1)) oPxl.last = 1;
+				outData.write(oPxl);
+				// increment
+				if (ms_rctr == WINDOW_HEIGHT)
+				{
+					ms_rctr = 0;
+					ms_cctr++;
+				}
+				// exit condition
+				if( ms_pctr == IN_LINE_SIZE ) runOut = false;
         	}
             /********* IN *********/
+//        	if(runIn)
+//        	{
+//        		runIn = stream_to_mem(out_mem, inData);
+//        	}
         	if(runIn)
         	{
-        		runIn = stream_to_mem(out_mem, inData);
-        	}
+				if(!inData.empty())
+				{
+					// store
+					iPxl = inData.read();
+					out_mem[sm_ctr++] = (uint8_t)iPxl.data;
+					// Exit condition
+					if (iPxl.last) runIn = false;
+				}
+    		}
+
 			/********* EXIT *********/
 			if(!runOut && !runIn)
 			{
