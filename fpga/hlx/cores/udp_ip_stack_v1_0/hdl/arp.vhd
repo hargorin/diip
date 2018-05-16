@@ -303,7 +303,7 @@ begin
 		end case;		
 	end process;
 
-	req_sequential : process (data_in_clk,reset)
+	req_sequential : process (data_in_clk)
 	begin
 		if rising_edge(data_in_clk) then
 			if reset = '1' then
@@ -766,7 +766,7 @@ begin
 		end case;
 	end process;
 
-	tx_sequential : process (data_out_clk,reset)
+	tx_sequential : process (data_out_clk)
 	begin
 		if rising_edge(data_out_clk) then
 			if reset = '1' then

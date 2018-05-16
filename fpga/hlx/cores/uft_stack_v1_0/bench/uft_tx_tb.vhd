@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 17:31:46 2017
--- Last update : Thu Nov 30 17:49:51 2017
+-- Last update : Fri Apr 20 13:53:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -144,9 +144,18 @@ architecture testbench of uft_tx_tb is
     signal bus2ip_mstwr_dst_rdy_n : std_logic;
     signal bus2ip_mstwr_dst_dsc_n : std_logic;
 
+    signal ack_cmd_nseq         : std_logic := '0';
+    signal ack_cmd_ft           : std_logic := '0';
+    signal ack_cmd_nseq_done    : std_logic;
+    signal ack_cmd_ft_done      : std_logic;
+    signal ack_seqnbr           : std_logic_vector(23 downto 0) := (others => '0');
+    signal ack_tcid             : std_logic_vector( 6 downto 0) := (others => '0');
+    signal ack_dst_port         : std_logic_vector(15 downto 0) := (others => '0');
+    signal ack_dst_ip           : std_logic_vector(31 downto 0) := (others => '0');
 
     constant C_CLK_PERIOD : time := 8 ns; -- NS
     signal stop_sim : std_logic := '0';
+    signal test_nbr : integer := 1;
 
 begin
     -----------------------------------------------------------
@@ -198,6 +207,7 @@ begin
         -- TEST 1: 100 byte data transfer
         -- ---------------------------------------------------------------------
         report "-- TEST 1: 100 byte data transfer";
+        test_nbr <= 1;
         data_src_addr <= std_logic_vector(to_unsigned(0, data_src_addr'length));
         data_size <= std_logic_vector(to_unsigned(100, data_size'length));
         
@@ -212,6 +222,7 @@ begin
         -- TEST 2: 3000 byte data transfer
         -- ---------------------------------------------------------------------
         report "-- TEST 2: 3000 byte data transfer";
+        test_nbr <= 2;
         data_src_addr <= std_logic_vector(to_unsigned(0, data_src_addr'length));
         data_size <= std_logic_vector(to_unsigned(3000, data_size'length));
         
@@ -221,7 +232,63 @@ begin
         wait until tx_ready = '1';
         waitfor(3);
 
+        ------------------------------------------------------------------------
+        -- TEST 3: Acknowledge packet
+        -- ---------------------------------------------------------------------
+        report "-- TEST 3: Acknowledge packet";
+        test_nbr <= 3;
+        ack_seqnbr <= std_logic_vector(to_unsigned(12, ack_seqnbr'length));
+        ack_tcid <= std_logic_vector(to_unsigned(3, ack_tcid'length));
+        ack_dst_port <= std_logic_vector(to_unsigned(2042, ack_dst_port'length));
+        ack_dst_ip <= std_logic_vector(to_unsigned(69, ack_dst_ip'length));
+
+        ack_cmd_nseq <= '1';
+        waitfor(1);
+        ack_cmd_nseq <= '0';
+        wait until ack_cmd_nseq_done = '1';
+        waitfor(3);
+
+        ------------------------------------------------------------------------
+        -- TEST 4: Interrupting acknowledge
+        -- ---------------------------------------------------------------------
+        report "-- TEST 4: Interrupting acknowledge";
+        test_nbr <= 4;
+        data_src_addr <= std_logic_vector(to_unsigned(0, data_src_addr'length));
+        data_size <= std_logic_vector(to_unsigned(3000, data_size'length));
         
+        tx_start <= '1';
+        waitfor(1);
+        tx_start <= '0';
+
+        -- initiate an acknowledge after 25 clks while transmission is
+        -- sending the first control packet
+        waitfor(25);
+        ack_seqnbr <= std_logic_vector(to_unsigned(12, ack_seqnbr'length));
+        ack_tcid <= std_logic_vector(to_unsigned(3, ack_tcid'length));
+        ack_dst_port <= std_logic_vector(to_unsigned(2042, ack_dst_port'length));
+        ack_dst_ip <= std_logic_vector(to_unsigned(69, ack_dst_ip'length));
+        ack_cmd_nseq <= '1';
+        waitfor(1);
+        ack_cmd_nseq <= '0';
+        -- check that the acknowledge occurs
+        wait until ack_cmd_nseq_done = '1';
+        waitfor(3);
+        -- another ack
+        waitfor(200);
+        ack_cmd_nseq <= '1';
+        waitfor(1);
+        ack_cmd_nseq <= '0';
+        wait until ack_cmd_nseq_done = '1';
+        -- wait until done
+        wait until tx_ready = '1';
+
+        -- initiate an acknowledge after 25 clks while transmission is
+        -- sending the first control packet
+
+
+        ------------------------------------------------------------------------
+        -- DONE
+        -- ---------------------------------------------------------------------
         stop_sim <= '1';
         wait;
     end process p_sim;
@@ -250,7 +317,7 @@ begin
             end if;
             if udp_tx_tlast = '1' then
                 file_open(file_axi_s, "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
-                report "Start writing file";
+                report "Start writing file: " & "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log";
                 for i in 0 to ctr loop
                     hwrite(oline, axi_buf(i), left, 8);
                     writeline(file_axi_s, oline);
@@ -285,6 +352,14 @@ begin
             dst_ip_addr            => dst_ip_addr,
             dst_port               => dst_port,
             src_port               => src_port,
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip,
             udp_tx_start           => udp_tx_start,
             udp_tx_result          => udp_tx_result,
             udp_tx_hdr_dst_ip_addr => udp_tx_hdr_dst_ip_addr,
@@ -325,7 +400,7 @@ begin
             ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
             bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
-        );
+        );        
 
     axi_master_burst_model_1 : axi_master_burst_model
         generic map (

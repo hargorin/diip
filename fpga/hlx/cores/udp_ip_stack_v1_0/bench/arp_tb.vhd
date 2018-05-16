@@ -94,6 +94,7 @@ ARCHITECTURE behavior OF arp_tb IS
 	
    -- Clock period definitions
    constant clk_period : time := 8 ns;
+   signal stop_sim : std_logic := '0';
  
 BEGIN
  
@@ -135,6 +136,10 @@ BEGIN
 		wait for clk_period/2;
 		clk <= '1';
 		wait for clk_period/2;
+
+        if stop_sim = '1' then
+            wait;
+        end if;
    end process;
  
 
@@ -595,6 +600,7 @@ BEGIN
 		wait for clk_period*10;
 
 		report "--- end of tests ---";
+        stop_sim <= '1';
       wait;
    end process;
 

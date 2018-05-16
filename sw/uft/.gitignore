@@ -4,3 +4,7 @@ receiver
 /Debug/
 *.bin
 
+infile.dat
+checksum
+*~
+benchmark

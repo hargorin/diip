@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 15 08:45:14 2017
--- Last update : Fri Nov 17 11:14:53 2017
+-- Last update : Wed Mar  7 14:53:54 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -39,7 +39,10 @@ entity fifo_8i_32o is
         data_out    : out std_logic_vector(31 downto 0);
 
         empty   : out std_logic;
-        full    : out std_logic
+        full    : out std_logic;
+        -- data_out_valid is set if all output bits are valid. This is not the
+        -- case if < 4 input bytes are in the FiFo
+        data_out_valid : out std_logic
     );
 end fifo_8i_32o;
 
@@ -82,7 +85,7 @@ begin
                 write_en_vec_rot <= "0001";
             else
                 -- Control input signals
-                if write_en = '1' then
+                if (write_en = '1' and full_vec /= "1111") then
                     write_en_vec_rot <= rotate_left( write_en_vec_rot, 1);
                 end if;
             end if;
@@ -100,6 +103,8 @@ begin
     --data_out  <= data_out_int when read_en = '1' else
     --                (others => '0');
     data_out  <= data_out_int;
+
+    data_out_valid <= '1' when empty_vec = "0000" else '0';
 
     empty  <= '1' when empty_vec = "1111" else '0';
     full   <= '1' when full_vec  = "1111" else '0';

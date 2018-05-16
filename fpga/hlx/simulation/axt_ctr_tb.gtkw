@@ -1,0 +1,93 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Wed May  9 11:53:47 2018
+[*]
+[dumpfile] "(null)"
+[savefile] "/home/noah/git/diip/fpga/hlx/simulation/axt_ctr_tb.gtkw"
+[timestart] 0
+[size] 2033 1135
+[pos] -1 -1
+*-25.591303 253500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.axi_ctr_tb.
+[treeopen] top.axi_ctr_tb.duv.
+[sst_width] 217
+[signals_width] 375
+[sst_expanded] 1
+[sst_vpaned_height] 332
+@28
+top.axi_ctr_tb.rst_n
+top.axi_ctr_tb.clk
+@200
+-
+-AW
+@28
+top.axi_ctr_tb.s_axi_awvalid
+top.axi_ctr_tb.s_axi_awready
+@22
+#{top.axi_ctr_tb.s_axi_awaddr[5:0]} top.axi_ctr_tb.s_axi_awaddr[5] top.axi_ctr_tb.s_axi_awaddr[4] top.axi_ctr_tb.s_axi_awaddr[3] top.axi_ctr_tb.s_axi_awaddr[2] top.axi_ctr_tb.s_axi_awaddr[1] top.axi_ctr_tb.s_axi_awaddr[0]
+@28
+#{top.axi_ctr_tb.s_axi_awprot[2:0]} top.axi_ctr_tb.s_axi_awprot[2] top.axi_ctr_tb.s_axi_awprot[1] top.axi_ctr_tb.s_axi_awprot[0]
+@200
+-W
+@28
+top.axi_ctr_tb.s_axi_wvalid
+top.axi_ctr_tb.s_axi_wready
+@22
+#{top.axi_ctr_tb.s_axi_wdata[31:0]} top.axi_ctr_tb.s_axi_wdata[31] top.axi_ctr_tb.s_axi_wdata[30] top.axi_ctr_tb.s_axi_wdata[29] top.axi_ctr_tb.s_axi_wdata[28] top.axi_ctr_tb.s_axi_wdata[27] top.axi_ctr_tb.s_axi_wdata[26] top.axi_ctr_tb.s_axi_wdata[25] top.axi_ctr_tb.s_axi_wdata[24] top.axi_ctr_tb.s_axi_wdata[23] top.axi_ctr_tb.s_axi_wdata[22] top.axi_ctr_tb.s_axi_wdata[21] top.axi_ctr_tb.s_axi_wdata[20] top.axi_ctr_tb.s_axi_wdata[19] top.axi_ctr_tb.s_axi_wdata[18] top.axi_ctr_tb.s_axi_wdata[17] top.axi_ctr_tb.s_axi_wdata[16] top.axi_ctr_tb.s_axi_wdata[15] top.axi_ctr_tb.s_axi_wdata[14] top.axi_ctr_tb.s_axi_wdata[13] top.axi_ctr_tb.s_axi_wdata[12] top.axi_ctr_tb.s_axi_wdata[11] top.axi_ctr_tb.s_axi_wdata[10] top.axi_ctr_tb.s_axi_wdata[9] top.axi_ctr_tb.s_axi_wdata[8] top.axi_ctr_tb.s_axi_wdata[7] top.axi_ctr_tb.s_axi_wdata[6] top.axi_ctr_tb.s_axi_wdata[5] top.axi_ctr_tb.s_axi_wdata[4] top.axi_ctr_tb.s_axi_wdata[3] top.axi_ctr_tb.s_axi_wdata[2] top.axi_ctr_tb.s_axi_wdata[1] top.axi_ctr_tb.s_axi_wdata[0]
+#{top.axi_ctr_tb.s_axi_wstrb[3:0]} top.axi_ctr_tb.s_axi_wstrb[3] top.axi_ctr_tb.s_axi_wstrb[2] top.axi_ctr_tb.s_axi_wstrb[1] top.axi_ctr_tb.s_axi_wstrb[0]
+@200
+-B
+@28
+top.axi_ctr_tb.s_axi_bvalid
+top.axi_ctr_tb.s_axi_bready
+#{top.axi_ctr_tb.s_axi_bresp[1:0]} top.axi_ctr_tb.s_axi_bresp[1] top.axi_ctr_tb.s_axi_bresp[0]
+@200
+-AR
+@28
+top.axi_ctr_tb.s_axi_arvalid
+top.axi_ctr_tb.s_axi_arready
+@22
+#{top.axi_ctr_tb.s_axi_araddr[5:0]} top.axi_ctr_tb.s_axi_araddr[5] top.axi_ctr_tb.s_axi_araddr[4] top.axi_ctr_tb.s_axi_araddr[3] top.axi_ctr_tb.s_axi_araddr[2] top.axi_ctr_tb.s_axi_araddr[1] top.axi_ctr_tb.s_axi_araddr[0]
+@28
+#{top.axi_ctr_tb.s_axi_arprot[2:0]} top.axi_ctr_tb.s_axi_arprot[2] top.axi_ctr_tb.s_axi_arprot[1] top.axi_ctr_tb.s_axi_arprot[0]
+@200
+-R
+@28
+top.axi_ctr_tb.s_axi_rvalid
+top.axi_ctr_tb.s_axi_rready
+@22
+#{top.axi_ctr_tb.s_axi_rdata[31:0]} top.axi_ctr_tb.s_axi_rdata[31] top.axi_ctr_tb.s_axi_rdata[30] top.axi_ctr_tb.s_axi_rdata[29] top.axi_ctr_tb.s_axi_rdata[28] top.axi_ctr_tb.s_axi_rdata[27] top.axi_ctr_tb.s_axi_rdata[26] top.axi_ctr_tb.s_axi_rdata[25] top.axi_ctr_tb.s_axi_rdata[24] top.axi_ctr_tb.s_axi_rdata[23] top.axi_ctr_tb.s_axi_rdata[22] top.axi_ctr_tb.s_axi_rdata[21] top.axi_ctr_tb.s_axi_rdata[20] top.axi_ctr_tb.s_axi_rdata[19] top.axi_ctr_tb.s_axi_rdata[18] top.axi_ctr_tb.s_axi_rdata[17] top.axi_ctr_tb.s_axi_rdata[16] top.axi_ctr_tb.s_axi_rdata[15] top.axi_ctr_tb.s_axi_rdata[14] top.axi_ctr_tb.s_axi_rdata[13] top.axi_ctr_tb.s_axi_rdata[12] top.axi_ctr_tb.s_axi_rdata[11] top.axi_ctr_tb.s_axi_rdata[10] top.axi_ctr_tb.s_axi_rdata[9] top.axi_ctr_tb.s_axi_rdata[8] top.axi_ctr_tb.s_axi_rdata[7] top.axi_ctr_tb.s_axi_rdata[6] top.axi_ctr_tb.s_axi_rdata[5] top.axi_ctr_tb.s_axi_rdata[4] top.axi_ctr_tb.s_axi_rdata[3] top.axi_ctr_tb.s_axi_rdata[2] top.axi_ctr_tb.s_axi_rdata[1] top.axi_ctr_tb.s_axi_rdata[0]
+@28
+#{top.axi_ctr_tb.s_axi_rresp[1:0]} top.axi_ctr_tb.s_axi_rresp[1] top.axi_ctr_tb.s_axi_rresp[0]
+@200
+-
+-UFT
+@28
+top.axi_ctr_tb.duv.tx_start
+top.axi_ctr_tb.duv.tx_ready
+@22
+#{top.axi_ctr_tb.tx_data_size[31:0]} top.axi_ctr_tb.tx_data_size[31] top.axi_ctr_tb.tx_data_size[30] top.axi_ctr_tb.tx_data_size[29] top.axi_ctr_tb.tx_data_size[28] top.axi_ctr_tb.tx_data_size[27] top.axi_ctr_tb.tx_data_size[26] top.axi_ctr_tb.tx_data_size[25] top.axi_ctr_tb.tx_data_size[24] top.axi_ctr_tb.tx_data_size[23] top.axi_ctr_tb.tx_data_size[22] top.axi_ctr_tb.tx_data_size[21] top.axi_ctr_tb.tx_data_size[20] top.axi_ctr_tb.tx_data_size[19] top.axi_ctr_tb.tx_data_size[18] top.axi_ctr_tb.tx_data_size[17] top.axi_ctr_tb.tx_data_size[16] top.axi_ctr_tb.tx_data_size[15] top.axi_ctr_tb.tx_data_size[14] top.axi_ctr_tb.tx_data_size[13] top.axi_ctr_tb.tx_data_size[12] top.axi_ctr_tb.tx_data_size[11] top.axi_ctr_tb.tx_data_size[10] top.axi_ctr_tb.tx_data_size[9] top.axi_ctr_tb.tx_data_size[8] top.axi_ctr_tb.tx_data_size[7] top.axi_ctr_tb.tx_data_size[6] top.axi_ctr_tb.tx_data_size[5] top.axi_ctr_tb.tx_data_size[4] top.axi_ctr_tb.tx_data_size[3] top.axi_ctr_tb.tx_data_size[2] top.axi_ctr_tb.tx_data_size[1] top.axi_ctr_tb.tx_data_size[0]
+#{top.axi_ctr_tb.tx_data_src_addr[31:0]} top.axi_ctr_tb.tx_data_src_addr[31] top.axi_ctr_tb.tx_data_src_addr[30] top.axi_ctr_tb.tx_data_src_addr[29] top.axi_ctr_tb.tx_data_src_addr[28] top.axi_ctr_tb.tx_data_src_addr[27] top.axi_ctr_tb.tx_data_src_addr[26] top.axi_ctr_tb.tx_data_src_addr[25] top.axi_ctr_tb.tx_data_src_addr[24] top.axi_ctr_tb.tx_data_src_addr[23] top.axi_ctr_tb.tx_data_src_addr[22] top.axi_ctr_tb.tx_data_src_addr[21] top.axi_ctr_tb.tx_data_src_addr[20] top.axi_ctr_tb.tx_data_src_addr[19] top.axi_ctr_tb.tx_data_src_addr[18] top.axi_ctr_tb.tx_data_src_addr[17] top.axi_ctr_tb.tx_data_src_addr[16] top.axi_ctr_tb.tx_data_src_addr[15] top.axi_ctr_tb.tx_data_src_addr[14] top.axi_ctr_tb.tx_data_src_addr[13] top.axi_ctr_tb.tx_data_src_addr[12] top.axi_ctr_tb.tx_data_src_addr[11] top.axi_ctr_tb.tx_data_src_addr[10] top.axi_ctr_tb.tx_data_src_addr[9] top.axi_ctr_tb.tx_data_src_addr[8] top.axi_ctr_tb.tx_data_src_addr[7] top.axi_ctr_tb.tx_data_src_addr[6] top.axi_ctr_tb.tx_data_src_addr[5] top.axi_ctr_tb.tx_data_src_addr[4] top.axi_ctr_tb.tx_data_src_addr[3] top.axi_ctr_tb.tx_data_src_addr[2] top.axi_ctr_tb.tx_data_src_addr[1] top.axi_ctr_tb.tx_data_src_addr[0]
+#{top.axi_ctr_tb.rx_data_transaction_ctr[31:0]} top.axi_ctr_tb.rx_data_transaction_ctr[31] top.axi_ctr_tb.rx_data_transaction_ctr[30] top.axi_ctr_tb.rx_data_transaction_ctr[29] top.axi_ctr_tb.rx_data_transaction_ctr[28] top.axi_ctr_tb.rx_data_transaction_ctr[27] top.axi_ctr_tb.rx_data_transaction_ctr[26] top.axi_ctr_tb.rx_data_transaction_ctr[25] top.axi_ctr_tb.rx_data_transaction_ctr[24] top.axi_ctr_tb.rx_data_transaction_ctr[23] top.axi_ctr_tb.rx_data_transaction_ctr[22] top.axi_ctr_tb.rx_data_transaction_ctr[21] top.axi_ctr_tb.rx_data_transaction_ctr[20] top.axi_ctr_tb.rx_data_transaction_ctr[19] top.axi_ctr_tb.rx_data_transaction_ctr[18] top.axi_ctr_tb.rx_data_transaction_ctr[17] top.axi_ctr_tb.rx_data_transaction_ctr[16] top.axi_ctr_tb.rx_data_transaction_ctr[15] top.axi_ctr_tb.rx_data_transaction_ctr[14] top.axi_ctr_tb.rx_data_transaction_ctr[13] top.axi_ctr_tb.rx_data_transaction_ctr[12] top.axi_ctr_tb.rx_data_transaction_ctr[11] top.axi_ctr_tb.rx_data_transaction_ctr[10] top.axi_ctr_tb.rx_data_transaction_ctr[9] top.axi_ctr_tb.rx_data_transaction_ctr[8] top.axi_ctr_tb.rx_data_transaction_ctr[7] top.axi_ctr_tb.rx_data_transaction_ctr[6] top.axi_ctr_tb.rx_data_transaction_ctr[5] top.axi_ctr_tb.rx_data_transaction_ctr[4] top.axi_ctr_tb.rx_data_transaction_ctr[3] top.axi_ctr_tb.rx_data_transaction_ctr[2] top.axi_ctr_tb.rx_data_transaction_ctr[1] top.axi_ctr_tb.rx_data_transaction_ctr[0]
+#{top.axi_ctr_tb.rx_data_dst_addr[31:0]} top.axi_ctr_tb.rx_data_dst_addr[31] top.axi_ctr_tb.rx_data_dst_addr[30] top.axi_ctr_tb.rx_data_dst_addr[29] top.axi_ctr_tb.rx_data_dst_addr[28] top.axi_ctr_tb.rx_data_dst_addr[27] top.axi_ctr_tb.rx_data_dst_addr[26] top.axi_ctr_tb.rx_data_dst_addr[25] top.axi_ctr_tb.rx_data_dst_addr[24] top.axi_ctr_tb.rx_data_dst_addr[23] top.axi_ctr_tb.rx_data_dst_addr[22] top.axi_ctr_tb.rx_data_dst_addr[21] top.axi_ctr_tb.rx_data_dst_addr[20] top.axi_ctr_tb.rx_data_dst_addr[19] top.axi_ctr_tb.rx_data_dst_addr[18] top.axi_ctr_tb.rx_data_dst_addr[17] top.axi_ctr_tb.rx_data_dst_addr[16] top.axi_ctr_tb.rx_data_dst_addr[15] top.axi_ctr_tb.rx_data_dst_addr[14] top.axi_ctr_tb.rx_data_dst_addr[13] top.axi_ctr_tb.rx_data_dst_addr[12] top.axi_ctr_tb.rx_data_dst_addr[11] top.axi_ctr_tb.rx_data_dst_addr[10] top.axi_ctr_tb.rx_data_dst_addr[9] top.axi_ctr_tb.rx_data_dst_addr[8] top.axi_ctr_tb.rx_data_dst_addr[7] top.axi_ctr_tb.rx_data_dst_addr[6] top.axi_ctr_tb.rx_data_dst_addr[5] top.axi_ctr_tb.rx_data_dst_addr[4] top.axi_ctr_tb.rx_data_dst_addr[3] top.axi_ctr_tb.rx_data_dst_addr[2] top.axi_ctr_tb.rx_data_dst_addr[1] top.axi_ctr_tb.rx_data_dst_addr[0]
+@200
+-
+-regs
+@22
+#{top.axi_ctr_tb.duv.slv_reg0[31:0]} top.axi_ctr_tb.duv.slv_reg0[31] top.axi_ctr_tb.duv.slv_reg0[30] top.axi_ctr_tb.duv.slv_reg0[29] top.axi_ctr_tb.duv.slv_reg0[28] top.axi_ctr_tb.duv.slv_reg0[27] top.axi_ctr_tb.duv.slv_reg0[26] top.axi_ctr_tb.duv.slv_reg0[25] top.axi_ctr_tb.duv.slv_reg0[24] top.axi_ctr_tb.duv.slv_reg0[23] top.axi_ctr_tb.duv.slv_reg0[22] top.axi_ctr_tb.duv.slv_reg0[21] top.axi_ctr_tb.duv.slv_reg0[20] top.axi_ctr_tb.duv.slv_reg0[19] top.axi_ctr_tb.duv.slv_reg0[18] top.axi_ctr_tb.duv.slv_reg0[17] top.axi_ctr_tb.duv.slv_reg0[16] top.axi_ctr_tb.duv.slv_reg0[15] top.axi_ctr_tb.duv.slv_reg0[14] top.axi_ctr_tb.duv.slv_reg0[13] top.axi_ctr_tb.duv.slv_reg0[12] top.axi_ctr_tb.duv.slv_reg0[11] top.axi_ctr_tb.duv.slv_reg0[10] top.axi_ctr_tb.duv.slv_reg0[9] top.axi_ctr_tb.duv.slv_reg0[8] top.axi_ctr_tb.duv.slv_reg0[7] top.axi_ctr_tb.duv.slv_reg0[6] top.axi_ctr_tb.duv.slv_reg0[5] top.axi_ctr_tb.duv.slv_reg0[4] top.axi_ctr_tb.duv.slv_reg0[3] top.axi_ctr_tb.duv.slv_reg0[2] top.axi_ctr_tb.duv.slv_reg0[1] top.axi_ctr_tb.duv.slv_reg0[0]
+#{top.axi_ctr_tb.duv.slv_reg1[31:0]} top.axi_ctr_tb.duv.slv_reg1[31] top.axi_ctr_tb.duv.slv_reg1[30] top.axi_ctr_tb.duv.slv_reg1[29] top.axi_ctr_tb.duv.slv_reg1[28] top.axi_ctr_tb.duv.slv_reg1[27] top.axi_ctr_tb.duv.slv_reg1[26] top.axi_ctr_tb.duv.slv_reg1[25] top.axi_ctr_tb.duv.slv_reg1[24] top.axi_ctr_tb.duv.slv_reg1[23] top.axi_ctr_tb.duv.slv_reg1[22] top.axi_ctr_tb.duv.slv_reg1[21] top.axi_ctr_tb.duv.slv_reg1[20] top.axi_ctr_tb.duv.slv_reg1[19] top.axi_ctr_tb.duv.slv_reg1[18] top.axi_ctr_tb.duv.slv_reg1[17] top.axi_ctr_tb.duv.slv_reg1[16] top.axi_ctr_tb.duv.slv_reg1[15] top.axi_ctr_tb.duv.slv_reg1[14] top.axi_ctr_tb.duv.slv_reg1[13] top.axi_ctr_tb.duv.slv_reg1[12] top.axi_ctr_tb.duv.slv_reg1[11] top.axi_ctr_tb.duv.slv_reg1[10] top.axi_ctr_tb.duv.slv_reg1[9] top.axi_ctr_tb.duv.slv_reg1[8] top.axi_ctr_tb.duv.slv_reg1[7] top.axi_ctr_tb.duv.slv_reg1[6] top.axi_ctr_tb.duv.slv_reg1[5] top.axi_ctr_tb.duv.slv_reg1[4] top.axi_ctr_tb.duv.slv_reg1[3] top.axi_ctr_tb.duv.slv_reg1[2] top.axi_ctr_tb.duv.slv_reg1[1] top.axi_ctr_tb.duv.slv_reg1[0]
+#{top.axi_ctr_tb.duv.slv_reg2[31:0]} top.axi_ctr_tb.duv.slv_reg2[31] top.axi_ctr_tb.duv.slv_reg2[30] top.axi_ctr_tb.duv.slv_reg2[29] top.axi_ctr_tb.duv.slv_reg2[28] top.axi_ctr_tb.duv.slv_reg2[27] top.axi_ctr_tb.duv.slv_reg2[26] top.axi_ctr_tb.duv.slv_reg2[25] top.axi_ctr_tb.duv.slv_reg2[24] top.axi_ctr_tb.duv.slv_reg2[23] top.axi_ctr_tb.duv.slv_reg2[22] top.axi_ctr_tb.duv.slv_reg2[21] top.axi_ctr_tb.duv.slv_reg2[20] top.axi_ctr_tb.duv.slv_reg2[19] top.axi_ctr_tb.duv.slv_reg2[18] top.axi_ctr_tb.duv.slv_reg2[17] top.axi_ctr_tb.duv.slv_reg2[16] top.axi_ctr_tb.duv.slv_reg2[15] top.axi_ctr_tb.duv.slv_reg2[14] top.axi_ctr_tb.duv.slv_reg2[13] top.axi_ctr_tb.duv.slv_reg2[12] top.axi_ctr_tb.duv.slv_reg2[11] top.axi_ctr_tb.duv.slv_reg2[10] top.axi_ctr_tb.duv.slv_reg2[9] top.axi_ctr_tb.duv.slv_reg2[8] top.axi_ctr_tb.duv.slv_reg2[7] top.axi_ctr_tb.duv.slv_reg2[6] top.axi_ctr_tb.duv.slv_reg2[5] top.axi_ctr_tb.duv.slv_reg2[4] top.axi_ctr_tb.duv.slv_reg2[3] top.axi_ctr_tb.duv.slv_reg2[2] top.axi_ctr_tb.duv.slv_reg2[1] top.axi_ctr_tb.duv.slv_reg2[0]
+#{top.axi_ctr_tb.duv.slv_reg3[31:0]} top.axi_ctr_tb.duv.slv_reg3[31] top.axi_ctr_tb.duv.slv_reg3[30] top.axi_ctr_tb.duv.slv_reg3[29] top.axi_ctr_tb.duv.slv_reg3[28] top.axi_ctr_tb.duv.slv_reg3[27] top.axi_ctr_tb.duv.slv_reg3[26] top.axi_ctr_tb.duv.slv_reg3[25] top.axi_ctr_tb.duv.slv_reg3[24] top.axi_ctr_tb.duv.slv_reg3[23] top.axi_ctr_tb.duv.slv_reg3[22] top.axi_ctr_tb.duv.slv_reg3[21] top.axi_ctr_tb.duv.slv_reg3[20] top.axi_ctr_tb.duv.slv_reg3[19] top.axi_ctr_tb.duv.slv_reg3[18] top.axi_ctr_tb.duv.slv_reg3[17] top.axi_ctr_tb.duv.slv_reg3[16] top.axi_ctr_tb.duv.slv_reg3[15] top.axi_ctr_tb.duv.slv_reg3[14] top.axi_ctr_tb.duv.slv_reg3[13] top.axi_ctr_tb.duv.slv_reg3[12] top.axi_ctr_tb.duv.slv_reg3[11] top.axi_ctr_tb.duv.slv_reg3[10] top.axi_ctr_tb.duv.slv_reg3[9] top.axi_ctr_tb.duv.slv_reg3[8] top.axi_ctr_tb.duv.slv_reg3[7] top.axi_ctr_tb.duv.slv_reg3[6] top.axi_ctr_tb.duv.slv_reg3[5] top.axi_ctr_tb.duv.slv_reg3[4] top.axi_ctr_tb.duv.slv_reg3[3] top.axi_ctr_tb.duv.slv_reg3[2] top.axi_ctr_tb.duv.slv_reg3[1] top.axi_ctr_tb.duv.slv_reg3[0]
+#{top.axi_ctr_tb.duv.slv_reg4[31:0]} top.axi_ctr_tb.duv.slv_reg4[31] top.axi_ctr_tb.duv.slv_reg4[30] top.axi_ctr_tb.duv.slv_reg4[29] top.axi_ctr_tb.duv.slv_reg4[28] top.axi_ctr_tb.duv.slv_reg4[27] top.axi_ctr_tb.duv.slv_reg4[26] top.axi_ctr_tb.duv.slv_reg4[25] top.axi_ctr_tb.duv.slv_reg4[24] top.axi_ctr_tb.duv.slv_reg4[23] top.axi_ctr_tb.duv.slv_reg4[22] top.axi_ctr_tb.duv.slv_reg4[21] top.axi_ctr_tb.duv.slv_reg4[20] top.axi_ctr_tb.duv.slv_reg4[19] top.axi_ctr_tb.duv.slv_reg4[18] top.axi_ctr_tb.duv.slv_reg4[17] top.axi_ctr_tb.duv.slv_reg4[16] top.axi_ctr_tb.duv.slv_reg4[15] top.axi_ctr_tb.duv.slv_reg4[14] top.axi_ctr_tb.duv.slv_reg4[13] top.axi_ctr_tb.duv.slv_reg4[12] top.axi_ctr_tb.duv.slv_reg4[11] top.axi_ctr_tb.duv.slv_reg4[10] top.axi_ctr_tb.duv.slv_reg4[9] top.axi_ctr_tb.duv.slv_reg4[8] top.axi_ctr_tb.duv.slv_reg4[7] top.axi_ctr_tb.duv.slv_reg4[6] top.axi_ctr_tb.duv.slv_reg4[5] top.axi_ctr_tb.duv.slv_reg4[4] top.axi_ctr_tb.duv.slv_reg4[3] top.axi_ctr_tb.duv.slv_reg4[2] top.axi_ctr_tb.duv.slv_reg4[1] top.axi_ctr_tb.duv.slv_reg4[0]
+#{top.axi_ctr_tb.duv.slv_reg5[31:0]} top.axi_ctr_tb.duv.slv_reg5[31] top.axi_ctr_tb.duv.slv_reg5[30] top.axi_ctr_tb.duv.slv_reg5[29] top.axi_ctr_tb.duv.slv_reg5[28] top.axi_ctr_tb.duv.slv_reg5[27] top.axi_ctr_tb.duv.slv_reg5[26] top.axi_ctr_tb.duv.slv_reg5[25] top.axi_ctr_tb.duv.slv_reg5[24] top.axi_ctr_tb.duv.slv_reg5[23] top.axi_ctr_tb.duv.slv_reg5[22] top.axi_ctr_tb.duv.slv_reg5[21] top.axi_ctr_tb.duv.slv_reg5[20] top.axi_ctr_tb.duv.slv_reg5[19] top.axi_ctr_tb.duv.slv_reg5[18] top.axi_ctr_tb.duv.slv_reg5[17] top.axi_ctr_tb.duv.slv_reg5[16] top.axi_ctr_tb.duv.slv_reg5[15] top.axi_ctr_tb.duv.slv_reg5[14] top.axi_ctr_tb.duv.slv_reg5[13] top.axi_ctr_tb.duv.slv_reg5[12] top.axi_ctr_tb.duv.slv_reg5[11] top.axi_ctr_tb.duv.slv_reg5[10] top.axi_ctr_tb.duv.slv_reg5[9] top.axi_ctr_tb.duv.slv_reg5[8] top.axi_ctr_tb.duv.slv_reg5[7] top.axi_ctr_tb.duv.slv_reg5[6] top.axi_ctr_tb.duv.slv_reg5[5] top.axi_ctr_tb.duv.slv_reg5[4] top.axi_ctr_tb.duv.slv_reg5[3] top.axi_ctr_tb.duv.slv_reg5[2] top.axi_ctr_tb.duv.slv_reg5[1] top.axi_ctr_tb.duv.slv_reg5[0]
+@200
+-
+-dbg
+@28
+top.axi_ctr_tb.duv.slv_reg_wren
+@22
+#{top.axi_ctr_tb.duv.axi_awaddr[5:0]} top.axi_ctr_tb.duv.axi_awaddr[5] top.axi_ctr_tb.duv.axi_awaddr[4] top.axi_ctr_tb.duv.axi_awaddr[3] top.axi_ctr_tb.duv.axi_awaddr[2] top.axi_ctr_tb.duv.axi_awaddr[1] top.axi_ctr_tb.duv.axi_awaddr[0]
+#{top.axi_ctr_tb.rx[31:0]} top.axi_ctr_tb.rx[31] top.axi_ctr_tb.rx[30] top.axi_ctr_tb.rx[29] top.axi_ctr_tb.rx[28] top.axi_ctr_tb.rx[27] top.axi_ctr_tb.rx[26] top.axi_ctr_tb.rx[25] top.axi_ctr_tb.rx[24] top.axi_ctr_tb.rx[23] top.axi_ctr_tb.rx[22] top.axi_ctr_tb.rx[21] top.axi_ctr_tb.rx[20] top.axi_ctr_tb.rx[19] top.axi_ctr_tb.rx[18] top.axi_ctr_tb.rx[17] top.axi_ctr_tb.rx[16] top.axi_ctr_tb.rx[15] top.axi_ctr_tb.rx[14] top.axi_ctr_tb.rx[13] top.axi_ctr_tb.rx[12] top.axi_ctr_tb.rx[11] top.axi_ctr_tb.rx[10] top.axi_ctr_tb.rx[9] top.axi_ctr_tb.rx[8] top.axi_ctr_tb.rx[7] top.axi_ctr_tb.rx[6] top.axi_ctr_tb.rx[5] top.axi_ctr_tb.rx[4] top.axi_ctr_tb.rx[3] top.axi_ctr_tb.rx[2] top.axi_ctr_tb.rx[1] top.axi_ctr_tb.rx[0]
+[pattern_trace] 1
+[pattern_trace] 0

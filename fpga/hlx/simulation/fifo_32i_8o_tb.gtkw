@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
 [*] Wed Nov 29 07:39:24 2017
 [*]
-[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/fifo_32i_8o_tb.ghw"
+[dumpfile] "../build/ghdl/fifo_32i_8o_tb.ghw"
 [dumpfile_mtime] "Wed Nov 29 07:39:07 2017"
 [dumpfile_size] 2676
 [savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/fifo_32i_8o_tb.gtkw"

@@ -248,14 +248,8 @@ begin
 	-- sequential process to action control signals and change states and outputs
 	-----------------------------------------------------------------------------
 
-	tx_sequential : process (clk,reset,data_out_ready_reg)
+	tx_sequential : process (clk)
 	begin
-		if rising_edge(clk) then
-			data_out_ready_reg <= ip_tx_data_out_ready;
-		else
-			data_out_ready_reg <= data_out_ready_reg;
-		end if;
-
 		if rising_edge(clk) then
 			if reset = '1' then
 				-- reset state variables

@@ -25,13 +25,27 @@ file delete -force $build_location/$project_name.cache $build_location/$project_
 create_project -part $part_name $project_name $build_location -force
 
 # Link to IPs
-set_property IP_REPO_PATHS "$ip_location/ ../hls/sobel/project/sobel/sobel/impl/ip" [current_project]
-set_property IP_REPO_PATHS "$ip_location/ ../hls/clahe/project/clahe_proj/clahe_sol/impl/ip" [current_project]
+set_property IP_REPO_PATHS "$ip_location/" [current_project]
+
+# ../hls/controller/project/controller/controller/impl/ip
+# ../hls/stream_dummy/project/stream_dummy/stream_dummy/impl/ip 
+# ../hls/sobel/project/sobel/sobel/impl/ip
+set curr_path [get_property  ip_repo_paths [current_project]]
+set curr_path "$curr_path/ ../hls/build/controller/sol_0/impl/ip"
+set curr_path "$curr_path/ ../hls/build/stream_dummy/sol_0/impl/ip"
+set curr_path "$curr_path/ ../hls/build/sobel/sol_0/impl/ip"
+
+set_property ip_repo_paths "$curr_path/" [current_project]
+update_ip_catalog
 
 # Project settings
 set obj [current_project]
 set_property -name "board_part" -value "xilinx.com:ac701:part0:1.3" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
+
+# This is a fix for a bug in 2017.3 when using evaluation license
+# See https://forums.xilinx.com/t5/Synthesis/cannot-open-xdc-file/td-p/811689 for more informatin
+set_param ips.generation.cacheXitResults false
 
 # Block design target location
 set bd_path $build_location/$project_name.srcs/sources_1/bd/system

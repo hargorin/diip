@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 16:27:20 2017
--- Last update : Wed Nov 29 08:39:03 2017
+-- Last update : Wed Mar  7 13:43:57 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -90,73 +90,160 @@ begin
         waitfor(7);
 
         ------------------------------------------------------------------------
-        -- TEST 1: Fill 1
+        -- TEST 1: Fill 4
         -- ---------------------------------------------------------------------
+        assert empty = '1' report "empty output error" severity error;
+        assert full = '0' report "full output error" severity error;
+
         write_en <= '1';
-        data_in <= std_logic_vector(to_unsigned(66051, data_in'length));
+        data_in <= X"11223344";
         waitfor(1);
         write_en <= '0';
-        waitfor(3);
+        waitfor(1);
+
+        assert empty = '0' report "empty output error" severity error;
+        assert full = '0' report "full output error" severity error;
+        
+        waitfor(2);
 
         ------------------------------------------------------------------------
-        -- TEST 1: Empty 4
+        -- TEST 2: Read 4
         -- ---------------------------------------------------------------------
-        --wait until rising_edge(clk);
         waitfor(1);
         read_en <= '1';
-        waitfor(4);
+        waitfor(2);
+        assert data_out = X"44" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"33" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"22" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"11" report "wrong output data" severity error;
+        assert empty = '1' report "empty output error" severity error;
         read_en <= '0';
         waitfor(3);
 
 
         ------------------------------------------------------------------------
-        -- TEST 1: Empty 4
+        -- TEST 3: Fill 8
         -- ---------------------------------------------------------------------
-        --wait until rising_edge(clk);
         waitfor(1);
         write_en <= '1';
-        data_in <= std_logic_vector(to_unsigned(66051, data_in'length));
+        data_in <= X"11223344";
         waitfor(1);
-        data_in <= std_logic_vector(to_unsigned(67438087, data_in'length));
+        data_in <= X"55667788";
         waitfor(1);
+        assert empty = '0' report "empty output error" severity error;
+        assert full = '0' report "full output error" severity error;
         write_en <= '0';
         waitfor(3);
 
         ------------------------------------------------------------------------
-        -- TEST 1: Empty 4
+        -- TEST 4: Read 8
         -- ---------------------------------------------------------------------
-        --wait until rising_edge(clk);
         waitfor(1);
         read_en <= '1';
-        waitfor(8);
+        waitfor(2);
+        assert data_out = X"44" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"33" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"22" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"11" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"88" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"77" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"66" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"55" report "wrong output data" severity error;
+        assert empty = '1' report "empty output error" severity error;
         read_en <= '0';
         waitfor(3);
 
         ------------------------------------------------------------------------
-        -- TEST 3: Fill 1, read 3, fill 1, read 5
+        -- TEST 5: Fill 4, read 3, fill 4, read 5
         -- ---------------------------------------------------------------------
         write_en <= '1';
-        data_in <= std_logic_vector(to_unsigned(66051, data_in'length));
+        data_in <= X"11223344";
+        waitfor(1);
+        write_en <= '0';
+        waitfor(2);
+        
+        waitfor(1);
+        read_en <= '1';
+        waitfor(2);
+        assert data_out = X"44" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"33" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"22" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        read_en <= '0';
+
+        write_en <= '1';
+        data_in <= X"55667788";
         waitfor(1);
         write_en <= '0';
         waitfor(2);
         
         read_en <= '1';
+        waitfor(1);
+        assert data_out = X"11" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"88" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"77" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"66" report "wrong output data" severity error;
+        assert empty = '0' report "empty output error" severity error;
+        waitfor(1);
+        assert data_out = X"55" report "wrong output data" severity error;
+        assert empty = '1' report "empty output error" severity error;
+        read_en <= '0';
         waitfor(3);
         read_en <= '0';
 
+        ------------------------------------------------------------------------
+        -- TEST 6: Fill full, empty full
+        -- ---------------------------------------------------------------------
         write_en <= '1';
-        data_in <= std_logic_vector(to_unsigned(67438087, data_in'length));
-        waitfor(1);
+        data_in <= X"55555555";
+        waitfor(FIFO_DEPTH);
         write_en <= '0';
         waitfor(2);
         
-        read_en <= '1';
-        waitfor(5);
-        read_en <= '0';
+        assert empty = '0' report "empty output error" severity error;
+        assert full = '1' report "full output error" severity error;
 
+        waitfor(1);
+        read_en <= '1';
+        waitfor(4*FIFO_DEPTH);
+        read_en <= '0';
+        waitfor(3);
         
+        assert empty = '1' report "empty output error" severity error;
+        assert full = '0' report "full output error" severity error;
+
         waitfor(2);
+        assert false report "All test successful" severity note;
         stop_sim <= '1';
         wait;
     end process p_sim;

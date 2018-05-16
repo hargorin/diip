@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
 [*] Thu Nov 30 09:13:14 2017
 [*]
-[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/debounce_tb.ghw"
+[dumpfile] "../build/ghdl/debounce_tb.ghw"
 [dumpfile_mtime] "Thu Nov 30 08:45:53 2017"
 [dumpfile_size] 43389778
 [savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/debounce_tb.gtkw"

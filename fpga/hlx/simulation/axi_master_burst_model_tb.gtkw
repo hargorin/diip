@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
 [*] Sat Dec  2 08:46:16 2017
 [*]
-[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/axi_master_burst_model_tb.ghw"
+[dumpfile] "../build/ghdl/axi_master_burst_model_tb.ghw"
 [dumpfile_mtime] "Sat Dec  2 08:43:02 2017"
 [dumpfile_size] 4879
 [savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/axi_master_burst_model_tb.gtkw"

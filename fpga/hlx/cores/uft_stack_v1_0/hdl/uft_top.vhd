@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Sat Dec  2 16:19:55 2017
+-- Last update : Wed May  9 15:23:24 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -40,7 +40,11 @@ entity uft_top is
         C_ADDR_PIPE_DEPTH   : Integer range 1 to 14   := 1;
         C_NATIVE_DATA_WIDTH : INTEGER range 32 to 128 := 32;
         C_LENGTH_WIDTH      : INTEGER range 12 to 20  := 12;
-        C_FAMILY            : string                  := "artix7"
+        C_FAMILY            : string                  := "artix7";
+
+        -- Parameters of Axi Slave Bus Interface S_AXI_CTRL
+        C_S_AXI_DATA_WIDTH  : integer   := 32;
+        C_S_AXI_ADDR_WIDTH  : integer   := 6
     );
     port (
         -- clk and reset
@@ -53,14 +57,16 @@ entity uft_top is
         our_ip_address      : out STD_LOGIC_VECTOR (31 downto 0);
         our_mac_address         : out std_logic_vector (47 downto 0);
 
+        rx_done        : out  std_logic;
+
         -- number of bytes to send ( Max 4GB = 4'294'967'296 Bytes)
-        tx_data_size       : in  std_logic_vector(31 downto 0);
+        --tx_data_size       : in  std_logic_vector(31 downto 0);
         -- Data source address
         
         -- Indicates if the system is ready for a new file transfer
-        tx_ready        : out std_logic;
+        --tx_ready        : out std_logic;
         -- assert high to start a transmission
-        tx_start        : in  std_logic;
+        --tx_start        : in  std_logic;
 
         -- Receiver
         -- ---------------------------------------------------------------------
@@ -156,7 +162,32 @@ entity uft_top is
         tx_ip2bus_mstwr_src_rdy_n : out std_logic;
         tx_ip2bus_mstwr_src_dsc_n : out std_logic;
         tx_bus2ip_mstwr_dst_rdy_n : in  std_logic;
-        tx_bus2ip_mstwr_dst_dsc_n : in  std_logic   
+        tx_bus2ip_mstwr_dst_dsc_n : in  std_logic;
+
+        -- AXI lite interface for control
+        -- ---------------------------------------------------------------------
+        s_axi_ctrl_aclk     : in std_logic;
+        s_axi_ctrl_aresetn  : in std_logic;
+        s_axi_ctrl_awaddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+        s_axi_ctrl_awprot   : in std_logic_vector(2 downto 0);
+        s_axi_ctrl_awvalid  : in std_logic;
+        s_axi_ctrl_awready  : out std_logic;
+        s_axi_ctrl_wdata    : in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+        s_axi_ctrl_wstrb    : in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
+        s_axi_ctrl_wvalid   : in std_logic;
+        s_axi_ctrl_wready   : out std_logic;
+        s_axi_ctrl_bresp    : out std_logic_vector(1 downto 0);
+        s_axi_ctrl_bvalid   : out std_logic;
+        s_axi_ctrl_bready   : in std_logic;
+        s_axi_ctrl_araddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+        s_axi_ctrl_arprot   : in std_logic_vector(2 downto 0);
+        s_axi_ctrl_arvalid  : in std_logic;
+        s_axi_ctrl_arready  : out std_logic;
+        s_axi_ctrl_rdata    : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+        s_axi_ctrl_rresp    : out std_logic_vector(1 downto 0);
+        s_axi_ctrl_rvalid   : out std_logic;
+        s_axi_ctrl_rready   : in std_logic
+
     );
 end entity uft_top;
 
@@ -191,9 +222,11 @@ architecture structural of uft_top is
             data_meta_valid        : out std_logic;
             data_tvalid            : out std_logic;
             data_tlast             : out std_logic;
-            data_tdata             : out std_logic_vector( 7 downto 0)
+            data_tdata             : out std_logic_vector( 7 downto 0);
+            src_ip                 : out std_logic_vector (31 downto 0);
+            src_port               : out std_logic_vector (15 downto 0)
         );
-    end component uft_rx;    
+    end component uft_rx;      
 
     ----------------------------------------------------------------------------
     -- rx mem controller declaration
@@ -212,6 +245,7 @@ architecture structural of uft_top is
         port (
             clk                    : in  std_logic;
             rst_n                  : in  std_logic;
+            rx_done                : out std_logic := '0';
             is_data                : in  std_logic;
             data_tcid              : in  std_logic_vector( 6 downto 0);
             data_seq               : in  std_logic_vector(23 downto 0);
@@ -219,6 +253,22 @@ architecture structural of uft_top is
             data_tvalid            : in  std_logic;
             data_tlast             : in  std_logic;
             data_tdata             : in  std_logic_vector( 7 downto 0);
+            is_command             : in std_logic;
+            command_code           : in std_logic_vector(6 downto 0);
+            command_data1          : in std_logic_vector(23 downto 0);
+            command_data2          : in std_logic_vector(31 downto 0);
+            command_data_valid     : in std_logic;
+            rx_base_adr            : in  std_logic_vector (31 downto 0);
+            rx_src_ip              : in  std_logic_vector (31 downto 0);
+            rx_src_port            : in  std_logic_vector (15 downto 0);
+            ack_cmd_nseq           : out std_logic;
+            ack_cmd_ft             : out std_logic;
+            ack_cmd_nseq_done      : in  std_logic;
+            ack_cmd_ft_done        : in  std_logic;
+            ack_seqnbr             : out std_logic_vector (23 downto 0);
+            ack_tcid               : out std_logic_vector ( 6 downto 0);
+            ack_dst_port           : out std_logic_vector (15 downto 0);
+            ack_dst_ip             : out std_logic_vector (31 downto 0);
             ip2bus_mstrd_req       : out std_logic;
             ip2bus_mstwr_req       : out std_logic;
             ip2bus_mst_addr        : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
@@ -249,8 +299,11 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component utf_rx_mem_ctl;  
-
+    end component utf_rx_mem_ctl;      
+    
+    ----------------------------------------------------------------------------
+    -- UFT tx
+    -- -------------------------------------------------------------------------
     component uft_tx is
         generic (
             C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32;
@@ -270,7 +323,14 @@ architecture structural of uft_top is
             tx_start               : in  std_logic;
             dst_ip_addr            : in  std_logic_vector (31 downto 0);
             dst_port               : in  std_logic_vector (15 downto 0);
-            src_port               : in  std_logic_vector (15 downto 0);
+            ack_cmd_nseq           : in  std_logic;
+            ack_cmd_ft             : in  std_logic;
+            ack_cmd_nseq_done      : out std_logic;
+            ack_cmd_ft_done        : out std_logic;
+            ack_seqnbr             : in  std_logic_vector (23 downto 0);
+            ack_tcid               : in  std_logic_vector ( 6 downto 0);
+            ack_dst_port           : in  std_logic_vector (15 downto 0);
+            ack_dst_ip             : in  std_logic_vector (31 downto 0);
             udp_tx_start           : out std_logic;
             udp_tx_result          : in  std_logic_vector (1 downto 0);
             udp_tx_hdr_dst_ip_addr : out std_logic_vector (31 downto 0);
@@ -312,7 +372,46 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component uft_tx;     
+    end component uft_tx;   
+
+    ----------------------------------------------------------------------------
+    -- AXI Lite controller
+    -- -------------------------------------------------------------------------
+    component axi_ctrl is
+        generic (
+            C_S_AXI_DATA_WIDTH : integer := 32;
+            C_S_AXI_ADDR_WIDTH : integer := 6
+        );
+        port (
+            tx_data_size            : out std_logic_vector(31 downto 0);
+            tx_data_src_addr        : out std_logic_vector(31 downto 0);
+            tx_ready                : in  std_logic;
+            tx_start                : out std_logic;
+            rx_data_dst_addr        : out std_logic_vector(31 downto 0);
+            rx_data_transaction_ctr : in  std_logic_vector(31 downto 0);
+            S_AXI_ACLK              : in  std_logic;
+            S_AXI_ARESETN           : in  std_logic;
+            S_AXI_AWADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+            S_AXI_AWPROT            : in  std_logic_vector(2 downto 0);
+            S_AXI_AWVALID           : in  std_logic;
+            S_AXI_AWREADY           : out std_logic;
+            S_AXI_WDATA             : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+            S_AXI_WSTRB             : in  std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
+            S_AXI_WVALID            : in  std_logic;
+            S_AXI_WREADY            : out std_logic;
+            S_AXI_BRESP             : out std_logic_vector(1 downto 0);
+            S_AXI_BVALID            : out std_logic;
+            S_AXI_BREADY            : in  std_logic;
+            S_AXI_ARADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+            S_AXI_ARPROT            : in  std_logic_vector(2 downto 0);
+            S_AXI_ARVALID           : in  std_logic;
+            S_AXI_ARREADY           : out std_logic;
+            S_AXI_RDATA             : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
+            S_AXI_RRESP             : out std_logic_vector(1 downto 0);
+            S_AXI_RVALID            : out std_logic;
+            S_AXI_RREADY            : in  std_logic
+        );
+    end component axi_ctrl;
 
     signal is_command             : std_logic;
     signal command_code           : std_logic_vector(6 downto 0);
@@ -329,9 +428,31 @@ architecture structural of uft_top is
 
     -- Tx
     signal data_src_addr   : std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
-    signal dst_ip_addr      : std_logic_vector (31 downto 0);
-    signal dst_port         : std_logic_vector (15 downto 0);
-    signal src_port         : std_logic_vector (15 downto 0);  
+    signal tx_dst_ip_addr      : std_logic_vector (31 downto 0);
+    signal tx_dst_port         : std_logic_vector (15 downto 0);
+
+    -- Rx
+    signal rx_src_port         : std_logic_vector (15 downto 0);  
+    signal rx_src_ip           : std_logic_vector (31 downto 0);
+
+    -- ack
+    signal ack_cmd_nseq    : std_logic; -- acknowledge a sequence
+    signal ack_cmd_ft      : std_logic; -- acknowledge a file transfer
+    signal ack_cmd_nseq_done    : std_logic;
+    signal ack_cmd_ft_done      : std_logic;
+    -- data for commands
+    signal ack_seqnbr              : std_logic_vector (23 downto 0);
+    signal ack_tcid                : std_logic_vector ( 6 downto 0);
+    signal ack_dst_port            : std_logic_vector (15 downto 0);
+    signal ack_dst_ip              : std_logic_vector (31 downto 0);
+
+    -- Connecting AXI ctrl
+    signal tx_data_size       : std_logic_vector(31 downto 0);
+    signal tx_ready : std_logic;
+    signal tx_start : std_logic;
+    signal rx_data_dst_addr : std_logic_vector(31 downto 0);
+    signal rx_data_transaction_ctr : std_logic_vector(31 downto 0);
+
 begin
         
     ----------------------------------------------------------------------------
@@ -364,8 +485,10 @@ begin
             data_meta_valid        => data_meta_valid,
             data_tvalid            => data_tvalid,
             data_tlast             => data_tlast,
-            data_tdata             => data_tdata
-        ); 
+            data_tdata             => data_tdata,
+            src_ip                 => rx_src_ip,
+            src_port               => rx_src_port
+        );    
 
     ----------------------------------------------------------------------------
     -- Rx Mem Ctrl instance
@@ -384,6 +507,7 @@ begin
         port map (
             clk                    => clk,
             rst_n                  => rst_n,
+            rx_done                => rx_done,
             is_data                => is_data,
             data_tcid              => data_tcid,
             data_seq               => data_seq,
@@ -391,6 +515,22 @@ begin
             data_tvalid            => data_tvalid,
             data_tlast             => data_tlast,
             data_tdata             => data_tdata,
+            is_command             => is_command,
+            command_code           => command_code,
+            command_data1          => command_data1,
+            command_data2          => command_data2,
+            command_data_valid     => command_data_valid,
+            rx_base_adr            => rx_data_dst_addr,
+            rx_src_ip              => rx_src_ip,
+            rx_src_port            => rx_src_port,
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip,
             ip2bus_mstrd_req       => ip2bus_mstrd_req,
             ip2bus_mstwr_req       => ip2bus_mstwr_req,
             ip2bus_mst_addr        => ip2bus_mst_addr,
@@ -420,8 +560,11 @@ begin
             ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
             bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
-        ); 
+        );     
 
+    ----------------------------------------------------------------------------
+    -- UFT Tx instance
+    -- -------------------------------------------------------------------------
     tx : uft_tx
         generic map (
             C_M_AXI_ADDR_WIDTH  => C_M_AXI_ADDR_WIDTH,
@@ -439,9 +582,8 @@ begin
             data_src_addr          => data_src_addr,
             tx_ready               => tx_ready,
             tx_start               => tx_start,
-            dst_ip_addr            => dst_ip_addr,
-            dst_port               => dst_port,
-            src_port               => src_port,
+            dst_ip_addr            => tx_dst_ip_addr,
+            dst_port               => tx_dst_port,
             udp_tx_start           => udp_tx_start,
             udp_tx_result          => udp_tx_result,
             udp_tx_hdr_dst_ip_addr => udp_tx_hdr_dst_ip_addr,
@@ -481,12 +623,59 @@ begin
             ip2bus_mstwr_src_rdy_n => tx_ip2bus_mstwr_src_rdy_n,
             ip2bus_mstwr_src_dsc_n => tx_ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => tx_bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => tx_bus2ip_mstwr_dst_dsc_n
-        ); 
-    data_src_addr <= x"08000000";
-    dst_ip_addr <= x"c0a8050a";      -- 192.168.5.10
-    dst_port <= x"08AE"; -- 2222
-    src_port <= x"08Af"; -- 2223
+            bus2ip_mstwr_dst_dsc_n => tx_bus2ip_mstwr_dst_dsc_n,
+            -- ack stuff
+            ack_cmd_nseq           => ack_cmd_nseq,
+            ack_cmd_ft             => ack_cmd_ft,
+            ack_cmd_nseq_done      => ack_cmd_nseq_done,
+            ack_cmd_ft_done        => ack_cmd_ft_done,
+            ack_seqnbr             => ack_seqnbr,
+            ack_tcid               => ack_tcid,
+            ack_dst_port           => ack_dst_port,
+            ack_dst_ip             => ack_dst_ip
+        );       
+
+    ----------------------------------------------------------------------------
+    -- Instantiation of Axi Bus Interface S_AXI_CTRL
+    -- -------------------------------------------------------------------------
+    axi_ctrl_inst : axi_ctrl
+        generic map (
+            C_S_AXI_DATA_WIDTH => C_S_AXI_DATA_WIDTH,
+            C_S_AXI_ADDR_WIDTH => C_S_AXI_ADDR_WIDTH
+        )
+        port map (
+            tx_data_size            => tx_data_size,
+            tx_data_src_addr        => data_src_addr,
+            tx_ready                => tx_ready,
+            tx_start                => tx_start,
+            rx_data_dst_addr        => rx_data_dst_addr,
+            rx_data_transaction_ctr => rx_data_transaction_ctr,
+            S_AXI_ACLK  => s_axi_ctrl_aclk,
+            S_AXI_ARESETN   => s_axi_ctrl_aresetn,
+            S_AXI_AWADDR    => s_axi_ctrl_awaddr,
+            S_AXI_AWPROT    => s_axi_ctrl_awprot,
+            S_AXI_AWVALID   => s_axi_ctrl_awvalid,
+            S_AXI_AWREADY   => s_axi_ctrl_awready,
+            S_AXI_WDATA => s_axi_ctrl_wdata,
+            S_AXI_WSTRB => s_axi_ctrl_wstrb,
+            S_AXI_WVALID    => s_axi_ctrl_wvalid,
+            S_AXI_WREADY    => s_axi_ctrl_wready,
+            S_AXI_BRESP => s_axi_ctrl_bresp,
+            S_AXI_BVALID    => s_axi_ctrl_bvalid,
+            S_AXI_BREADY    => s_axi_ctrl_bready,
+            S_AXI_ARADDR    => s_axi_ctrl_araddr,
+            S_AXI_ARPROT    => s_axi_ctrl_arprot,
+            S_AXI_ARVALID   => s_axi_ctrl_arvalid,
+            S_AXI_ARREADY   => s_axi_ctrl_arready,
+            S_AXI_RDATA => s_axi_ctrl_rdata,
+            S_AXI_RRESP => s_axi_ctrl_rresp,
+            S_AXI_RVALID    => s_axi_ctrl_rvalid,
+            S_AXI_RREADY    => s_axi_ctrl_rready
+        );    
+
+    --data_src_addr <= x"08000000";
+    tx_dst_ip_addr <= x"c0a8050a";      -- 192.168.5.10
+    tx_dst_port <= x"08AE"; -- 2222
 
     -- Settings
     -- -------------------------------------------------------------------------

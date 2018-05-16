@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Wed Nov 29 17:39:26 2017
+-- Last update : Wed Mar  7 16:37:01 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ begin
     ----------------------------------------------------------------------------
     -- Controll process
     -- -------------------------------------------------------------------------
-    p_ctl : process( clk, rst_n )
+    p_ctl : process( clk )
     ----------------------------------------------------------------------------
     begin
         if rising_edge(clk) then

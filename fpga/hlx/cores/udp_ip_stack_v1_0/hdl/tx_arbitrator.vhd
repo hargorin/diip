@@ -87,7 +87,7 @@ begin
 		end if;
 	end process;
 	
-	sequential : process (clk, reset, req_1, req_2, grant)
+	sequential : process (clk)
 	begin
 		if rising_edge(clk) then
 			if reset = '1' then

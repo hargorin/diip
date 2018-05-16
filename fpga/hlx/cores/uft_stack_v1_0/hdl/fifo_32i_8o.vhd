@@ -6,13 +6,14 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 15 08:45:14 2017
--- Last update : Wed Nov 29 08:39:02 2017
+-- Last update : Wed Mar  7 13:41:58 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
 -- Copyright (c) 2017 User Company Name
 -------------------------------------------------------------------------------
--- Description: 32 bit parallel FiFo in, 8 bit serial FiFo Output
+-- Description: 32 bit parallel FiFo in, 8 bit serial FiFo Output. Output is 
+-- LSB first (little-endian)
 -------------------------------------------------------------------------------
 -- Revisions:  Revisions and documentation are controlled by
 -- the revision control system (RCS).  The RCS should be consulted
@@ -25,7 +26,7 @@ USE IEEE.NUMERIC_STD.ALL;
 
 entity fifo_32i_8o is
     generic (
-        -- depth in bytes
+        -- depth in 32-bit words
         constant FIFO_DEPTH : positive := 256
     );
     Port ( 
@@ -62,9 +63,9 @@ architecture Behavioral of fifo_32i_8o is
         end component simple_fifo;    
 
     -- toggles the write enable of the correct input
-    signal read_en_vec : std_logic_vector (3 downto 0);
-    signal read_en_vec_rot : unsigned (3 downto 0);
-    signal read_en_vec_rot_out : unsigned (3 downto 0);
+    signal read_en_vec : std_logic_vector (3 downto 0) := "0000";
+    signal read_en_vec_rot : unsigned (3 downto 0) := "0001";
+    signal read_en_vec_rot_out : unsigned (3 downto 0) := "1000";
 
     signal empty_vec : std_logic_vector (3 downto 0);
     signal full_vec : std_logic_vector (3 downto 0);
@@ -115,7 +116,8 @@ begin
     data_out  <=    data_out_int(7 downto 0)   when read_en_vec_rot_out = "0001" else
                     data_out_int(15 downto 8)  when read_en_vec_rot_out = "0010" else
                     data_out_int(23 downto 16) when read_en_vec_rot_out = "0100" else
-                    data_out_int(31 downto 24) when read_en_vec_rot_out = "1000";
+                    data_out_int(31 downto 24) when read_en_vec_rot_out = "1000" else
+                    (others => '0');
 
     empty  <= '1' when empty_vec = "1111" else '0';
     full   <= '1' when full_vec  = "1111" else '0';

@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Thu Nov  9 08:13:36 2017
--- Last update : Sat Dec  2 14:09:27 2017
+-- Last update : Wed Apr 25 08:37:09 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -101,13 +101,18 @@ architecture behav of axi_master_burst_model is
     signal data_len : std_logic_vector(C_LENGTH_WIDTH-1 downto 0);
 begin
     ----------------------------------------------------------------------------
-    p_tx_proc_clocked : process( m_axi_aclk, m_axi_aresetn )
+    p_tx_proc_clocked : process( m_axi_aclk )
     ----------------------------------------------------------------------------
     begin
-        if m_axi_aresetn = '0' then
-            current_state <= IDLE;
-        elsif rising_edge(m_axi_aclk) then
-            current_state <= next_state;
+        if rising_edge(m_axi_aclk) then
+            if m_axi_aresetn = '0' then
+                current_state <= IDLE;
+            else
+                if not (current_state = next_state) and (next_state = BURST_WR_ERROR) then
+                    report "AMB Error: ip2bus_mstwr_eof_n not asserted" severity error;
+                end if;
+                current_state <= next_state;
+            end if;
         end if;
     end process ; -- p_tx_proc
 

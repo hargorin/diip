@@ -1,20 +1,22 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Nov 28 14:41:52 2017
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Wed Apr 18 06:56:40 2018
 [*]
-[dumpfile] "(null)"
-[savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/uft_tx_cmd_assembler_tb.gtkw"
-[timestart] 480400000
-[size] 1802 1383
+[dumpfile] "/home/noah/git/diip/fpga/hlx/build/ghdl/uft_tx_cmd_assembler_tb.ghw"
+[dumpfile_mtime] "Wed Apr 18 06:54:09 2018"
+[dumpfile_size] 4895
+[savefile] "/home/noah/git/diip/fpga/hlx/simulation/uft_tx_cmd_assembler_tb.gtkw"
+[timestart] 0
+[size] 1770 1123
 [pos] -1 -1
-*-26.046221 751300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-27.922485 365000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.uft_tx_cmd_assembler_tb.
 [treeopen] top.uft_tx_cmd_assembler_tb.dut.
-[sst_width] 193
+[sst_width] 217
 [signals_width] 311
 [sst_expanded] 1
-[sst_vpaned_height] 443
+[sst_vpaned_height] 691
 @28
 top.uft_tx_cmd_assembler_tb.clk
 top.uft_tx_cmd_assembler_tb.rst_n
@@ -22,12 +24,14 @@ top.uft_tx_cmd_assembler_tb.rst_n
 -
 @28
 top.uft_tx_cmd_assembler_tb.en_start
+top.uft_tx_cmd_assembler_tb.en_ackseq
+top.uft_tx_cmd_assembler_tb.en_ackft
 top.uft_tx_cmd_assembler_tb.done
 @200
 -
-@c00025
+@c00024
 #{top.uft_tx_cmd_assembler_tb.data_size[31:0]} top.uft_tx_cmd_assembler_tb.data_size[31] top.uft_tx_cmd_assembler_tb.data_size[30] top.uft_tx_cmd_assembler_tb.data_size[29] top.uft_tx_cmd_assembler_tb.data_size[28] top.uft_tx_cmd_assembler_tb.data_size[27] top.uft_tx_cmd_assembler_tb.data_size[26] top.uft_tx_cmd_assembler_tb.data_size[25] top.uft_tx_cmd_assembler_tb.data_size[24] top.uft_tx_cmd_assembler_tb.data_size[23] top.uft_tx_cmd_assembler_tb.data_size[22] top.uft_tx_cmd_assembler_tb.data_size[21] top.uft_tx_cmd_assembler_tb.data_size[20] top.uft_tx_cmd_assembler_tb.data_size[19] top.uft_tx_cmd_assembler_tb.data_size[18] top.uft_tx_cmd_assembler_tb.data_size[17] top.uft_tx_cmd_assembler_tb.data_size[16] top.uft_tx_cmd_assembler_tb.data_size[15] top.uft_tx_cmd_assembler_tb.data_size[14] top.uft_tx_cmd_assembler_tb.data_size[13] top.uft_tx_cmd_assembler_tb.data_size[12] top.uft_tx_cmd_assembler_tb.data_size[11] top.uft_tx_cmd_assembler_tb.data_size[10] top.uft_tx_cmd_assembler_tb.data_size[9] top.uft_tx_cmd_assembler_tb.data_size[8] top.uft_tx_cmd_assembler_tb.data_size[7] top.uft_tx_cmd_assembler_tb.data_size[6] top.uft_tx_cmd_assembler_tb.data_size[5] top.uft_tx_cmd_assembler_tb.data_size[4] top.uft_tx_cmd_assembler_tb.data_size[3] top.uft_tx_cmd_assembler_tb.data_size[2] top.uft_tx_cmd_assembler_tb.data_size[1] top.uft_tx_cmd_assembler_tb.data_size[0]
-@29
+@28
 top.uft_tx_cmd_assembler_tb.data_size[31]
 top.uft_tx_cmd_assembler_tb.data_size[30]
 top.uft_tx_cmd_assembler_tb.data_size[29]
@@ -60,10 +64,12 @@ top.uft_tx_cmd_assembler_tb.data_size[3]
 top.uft_tx_cmd_assembler_tb.data_size[2]
 top.uft_tx_cmd_assembler_tb.data_size[1]
 top.uft_tx_cmd_assembler_tb.data_size[0]
-@1401201
+@1401200
 -group_end
 @24
 #{top.uft_tx_cmd_assembler_tb.tcid[6:0]} top.uft_tx_cmd_assembler_tb.tcid[6] top.uft_tx_cmd_assembler_tb.tcid[5] top.uft_tx_cmd_assembler_tb.tcid[4] top.uft_tx_cmd_assembler_tb.tcid[3] top.uft_tx_cmd_assembler_tb.tcid[2] top.uft_tx_cmd_assembler_tb.tcid[1] top.uft_tx_cmd_assembler_tb.tcid[0]
+@23
+#{top.uft_tx_cmd_assembler_tb.seqnbr[23:0]} top.uft_tx_cmd_assembler_tb.seqnbr[23] top.uft_tx_cmd_assembler_tb.seqnbr[22] top.uft_tx_cmd_assembler_tb.seqnbr[21] top.uft_tx_cmd_assembler_tb.seqnbr[20] top.uft_tx_cmd_assembler_tb.seqnbr[19] top.uft_tx_cmd_assembler_tb.seqnbr[18] top.uft_tx_cmd_assembler_tb.seqnbr[17] top.uft_tx_cmd_assembler_tb.seqnbr[16] top.uft_tx_cmd_assembler_tb.seqnbr[15] top.uft_tx_cmd_assembler_tb.seqnbr[14] top.uft_tx_cmd_assembler_tb.seqnbr[13] top.uft_tx_cmd_assembler_tb.seqnbr[12] top.uft_tx_cmd_assembler_tb.seqnbr[11] top.uft_tx_cmd_assembler_tb.seqnbr[10] top.uft_tx_cmd_assembler_tb.seqnbr[9] top.uft_tx_cmd_assembler_tb.seqnbr[8] top.uft_tx_cmd_assembler_tb.seqnbr[7] top.uft_tx_cmd_assembler_tb.seqnbr[6] top.uft_tx_cmd_assembler_tb.seqnbr[5] top.uft_tx_cmd_assembler_tb.seqnbr[4] top.uft_tx_cmd_assembler_tb.seqnbr[3] top.uft_tx_cmd_assembler_tb.seqnbr[2] top.uft_tx_cmd_assembler_tb.seqnbr[1] top.uft_tx_cmd_assembler_tb.seqnbr[0]
 @200
 -
 @22

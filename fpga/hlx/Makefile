@@ -10,7 +10,7 @@
 
 
 # Project name
-NAME = clahe
+NAME = diip
 # FPGA Part number
 PART = xc7a200tfbg676-2
 
@@ -47,6 +47,9 @@ bit: $(BUILD)/$(NAME).bit
 # Synth and Impl only
 impl: $(BUILD)/projects/$(NAME).runs/impl_1
 
+# Synth only
+synth: $(BUILD)/projects/$(NAME).runs/synth_1
+
 #
 # Project
 # Depends on project sources and cores
@@ -71,13 +74,20 @@ clean-cores:
 
 $(BUILD)/cores/%: cores/%/core_config.tcl cores/%/hdl/*.vhd
 	mkdir -p $(@D)
+	cp cores/$*/*.xml $(BUILD)/cores/  || :
 	$(VIVADO) -source scripts/core.tcl -tclargs $* $(PART) $(BUILD)/cores/
+
 
 #
 # Synth and impl
 # 
 $(BUILD)/projects/$(NAME).runs/impl_1: $(addprefix $(BUILD)/cores/, $(CORES)) $(BUILD)/projects/$(NAME).xpr
 	$(VIVADO) -source scripts/synthimpl.tcl -tclargs $(NAME) $(BUILD)/projects/
+#
+# impl
+# 
+$(BUILD)/projects/$(NAME).runs/synth_1: $(addprefix $(BUILD)/cores/, $(CORES)) $(BUILD)/projects/$(NAME).xpr
+	$(VIVADO) -source scripts/synth.tcl -tclargs $(NAME) $(BUILD)/projects/
 
 #
 # Bitstream
@@ -97,10 +107,20 @@ flash: $(BUILD)/$(NAME).bit
 #
 # Simulation
 # 
-sim: $(BUILD)/ghdl/Makefile
+LASTTOP:=$(shell cat $(BUILD)/ghdl/stamp 2>/dev/null)
+sim:
+ifeq ($(LASTTOP),$(TOP))
+	$(RM) $(BUILD)/ghdl/*.log
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-$(BUILD)/ghdl/Makefile:
+	./simulation/uftcheck.py -e $(BUILD)/ghdl/*.log
+else
+	$(RM) $(BUILD)/ghdl/*
 	scripts/configure_ghdl.sh ${TOP}
+	@echo "$(TOP)" > $(BUILD)/ghdl/stamp
+	cd $(BUILD)/ghdl/ && $(MAKE) run
+	./simulation/uftcheck.py -e build/ghdl/*.log
+endif
+
 clean-sim:
 	$(RM) $(BUILD)/ghdl/*
 

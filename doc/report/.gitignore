@@ -30,5 +30,5 @@
 *.sublime-project
 *.sublime-workspace
 
-*.pdf
+*_diip_huetter_stocker.pdf
 build

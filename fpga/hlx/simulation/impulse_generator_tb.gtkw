@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
 [*] Thu Nov 30 08:40:41 2017
 [*]
-[dumpfile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/build/ghdl/impulse_generator_tb.ghw"
+[dumpfile] "../build/ghdl/impulse_generator_tb.ghw"
 [dumpfile_mtime] "Thu Nov 30 08:40:18 2017"
 [dumpfile_size] 829
 [savefile] "/Users/noah/git/diip/design_digital/2_vivado_hlx/diip/simulation/impulse_generator_tb.gtkw"
