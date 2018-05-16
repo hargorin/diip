@@ -54,7 +54,7 @@
  ] $blk_mem_gen_0
 
   # Create instance: controller_top_0, and set properties
-  set controller_top_0 [ create_bd_cell -type ip -vlnv ime:diip:controller_top:0.1 controller_top_0 ]
+  set controller_top_0 [ create_bd_cell -type ip -vlnv ime:diip:controller_top:0.2 controller_top_0 ]
 
   # Create instance: debounce_0, and set properties
   set debounce_0 [ create_bd_cell -type ip -vlnv ime:diip:debounce:1.0 debounce_0 ]
@@ -76,7 +76,7 @@
  ] $rst_temac_support_0_125M
 
   # Create instance: stream_dummy_top_0, and set properties
-  set stream_dummy_top_0 [ create_bd_cell -type ip -vlnv xilinx.com:hls:stream_dummy_top:1.0 stream_dummy_top_0 ]
+  set stream_dummy_top_0 [ create_bd_cell -type ip -vlnv ime:diip:stream_dummy_top:0.1 stream_dummy_top_0 ]
 
   # Create instance: temac_support_0, and set properties
   set temac_support_0 [ create_bd_cell -type ip -vlnv ime:diip:temac_support:1.0 temac_support_0 ]
@@ -97,7 +97,7 @@
   set udp_ip_stack_0 [ create_bd_cell -type ip -vlnv ime:diip:udp_ip_stack:1.0 udp_ip_stack_0 ]
 
   # Create instance: uft_stack_0, and set properties
-  set uft_stack_0 [ create_bd_cell -type ip -vlnv ime:diip:uft_stack:1.1 uft_stack_0 ]
+  set uft_stack_0 [ create_bd_cell -type ip -vlnv ime:diip:uft_stack:1.2 uft_stack_0 ]
 
   # Create interface connections
   connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA]
