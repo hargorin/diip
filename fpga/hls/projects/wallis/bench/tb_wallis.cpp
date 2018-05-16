@@ -10,14 +10,8 @@
 #include <math.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <cfenv>
 #include <iostream>
 using namespace cv;
-using namespace std;
-
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
 
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
@@ -34,12 +28,6 @@ int main(int argc, const char * argv[]) {
 	// Read Image
 	Mat src_img = imread(INPUT_IMAGE);
 	if (!src_img.data) {
-
-   char cwd[1024];
-   if (getcwd(cwd, sizeof(cwd)) != NULL)
-       fprintf(stdout, "Current working dir: %s\n", cwd);
-   else
-       perror("getcwd() error");
 		printf("***********************************************************\n");
 		printf("	ERROR: could not open or find the input image!\n");
 		printf("***********************************************************\n");
@@ -180,7 +168,7 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	// Show image
-/*	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
 	imwrite("wallis_hw_room.jpg", hw_dst_img);
@@ -191,7 +179,7 @@ int main(int argc, const char * argv[]) {
 		imshow( "HW - Wallis", hw_dst_img );
 		imshow( "SW - Wallis", c_dst_img );
 		waitKey(0);
-	}*/
+	}
 
 
     return 0;
@@ -275,19 +263,11 @@ uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean
 
 	float w_Pixel;
 
-
-
 	float dgb = ((v_pixel - n_mean)*contrast*g_var) / (contrast*n_var+(1-contrast)*g_var);
-
-
 	w_Pixel = dgb + brightness*g_mean + (1-brightness)*n_mean;
 
-	feclearexcept(FE_OVERFLOW);
-	feclearexcept(FE_UNDERFLOW);
-
-	if((bool)fetestexcept(FE_OVERFLOW)) {
-		printf("Check\n");
-	}
+	if(w_Pixel > 255) w_Pixel = 255;
+	if(w_Pixel < 0) w_Pixel = 0;
 
 	return (uint8_t)w_Pixel;
 }
