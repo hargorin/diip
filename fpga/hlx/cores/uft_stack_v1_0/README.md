@@ -25,6 +25,9 @@ Transmitter base address. The data sent is read from this base address.
 #### UFT_REG_RX_CTR
 Counts the number of received transfers. (Not implemented)
 
+#### UFT_REG_USER_n
+These registers are set by the UFT USER command (command code 0x04, data 1 = offset, data 2 = data).
+
 #### UFT_REG_TX_SIZE
 Number of bytes to send.
 
@@ -40,11 +43,11 @@ Number of bytes to send.
 | slv_reg5 		| WO  | UFT_REG_TX_SIZE |
 | slv_reg6 		|     |  |
 | slv_reg7 		|     |  |
-| slv_reg8 		|     |  |
-| slv_reg9 		|     |  |
-| slv_reg10 	|     |  |
-| slv_reg11 	|     |  |
-| slv_reg12 	|     |  |
-| slv_reg13 	|     |  |
-| slv_reg14 	|     |  |
-| slv_reg15 	|     |  |
+| slv_reg8 		| RO  | UFT_REG_USER_0 |
+| slv_reg9 		| RO  | UFT_REG_USER_1 |
+| slv_reg10 	| RO  | UFT_REG_USER_2 |
+| slv_reg11 	| RO  | UFT_REG_USER_3 |
+| slv_reg12 	| RO  | UFT_REG_USER_4 |
+| slv_reg13 	| RO  | UFT_REG_USER_5 |
+| slv_reg14 	| RO  | UFT_REG_USER_6 |
+| slv_reg15 	| RO  | UFT_REG_USER_7 |

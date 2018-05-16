@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Wed May  9 15:38:36 2018
+-- Last update : Wed May 16 14:12:50 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -78,6 +78,16 @@ entity utf_rx_mem_ctl is
         ack_dst_port            : out std_logic_vector (15 downto 0);
         ack_dst_ip              : out std_logic_vector (31 downto 0);
 
+        -- User registers
+        user_reg0           : out  std_logic_vector(31 downto 0);
+        user_reg1           : out  std_logic_vector(31 downto 0);
+        user_reg2           : out  std_logic_vector(31 downto 0);
+        user_reg3           : out  std_logic_vector(31 downto 0);
+        user_reg4           : out  std_logic_vector(31 downto 0);
+        user_reg5           : out  std_logic_vector(31 downto 0);
+        user_reg6           : out  std_logic_vector(31 downto 0);
+        user_reg7           : out  std_logic_vector(31 downto 0);
+
         -- RX Memory IP Interface
         -- ---------------------------------------------------------------------
         ip2bus_mstrd_req       : out std_logic;
@@ -132,7 +142,7 @@ architecture rtl of utf_rx_mem_ctl is
 
     -- type defs
     type state_type is ( IDLE, STORE, STORE_DONE, INIT_TRANSFER, TRANSFER_FIRST, TRANSFER, 
-        TRANSFER_LAST, TRANSFER_DONE, ACK_SEQ );
+        TRANSFER_LAST, TRANSFER_DONE, ACK_SEQ, PARSE_CMD );
     type count_mode_type is (RST, INCR, HOLD);
 
     signal count_mode        : count_mode_type;
@@ -192,7 +202,7 @@ begin
     end process ; -- p_state_proc_clocked
 
     ----------------------------------------------------------------------------
-    p_next_state : process ( is_data, clk, current_state, FIFO_Empty, ctr, 
+    p_next_state : process ( is_data, is_command, clk, current_state, FIFO_Empty, ctr, 
         bus2ip_mst_cmdack, bus2ip_mstwr_dst_rdy_n, bus2ip_mst_cmplt, mem_length,
         data_tlast, amb_word_cnt )
     ----------------------------------------------------------------------------
@@ -203,6 +213,8 @@ begin
             when IDLE =>
                 if is_data = '1' then
                     next_state <= STORE;
+                elsif is_command = '1' then
+                    next_state <= PARSE_CMD;
                 end if;
             when STORE =>
                 if data_tlast = '1' then
@@ -235,6 +247,8 @@ begin
                     next_state <= ACK_SEQ;
                 end if;
             when ACK_SEQ => 
+                    next_state <= IDLE;
+            when PARSE_CMD => 
                     next_state <= IDLE;
         end case;
     end process p_next_state;
@@ -311,10 +325,55 @@ begin
                 count_mode <= HOLD;
             when ACK_SEQ => 
                 count_mode <= HOLD;
+            when PARSE_CMD => 
+                count_mode <= HOLD;
         end case;
         
 
     end process p_ctr;
+
+
+    ----------------------------------------------------------------------------
+    -- Parses the input commands
+    -- - Set user registers
+    ----------------------------------------------------------------------------
+    p_ccmd_parser : process ( clk, current_state )
+    ----------------------------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                user_reg0 <= (others => '0');
+                user_reg1 <= (others => '0');
+                user_reg2 <= (others => '0');
+                user_reg3 <= (others => '0');
+                user_reg4 <= (others => '0');
+                user_reg5 <= (others => '0');
+                user_reg6 <= (others => '0');
+                user_reg7 <= (others => '0');
+            else
+                if current_state = PARSE_CMD and command_data_valid = '1' then
+                    -- switch by command code
+                    case (command_code) is
+                        when "0000000" => -- file transfer start
+                        when "0000001" => -- file transfer stop
+                        when "0000010" => -- acknowledge data packet
+                        when "0000011" => -- acknowledge file transfer
+                        when "0000100" => -- set user registers
+                            if    command_data1 = x"000000" then user_reg0 <= command_data2;
+                            elsif command_data1 = x"000001" then user_reg1 <= command_data2;
+                            elsif command_data1 = x"000002" then user_reg2 <= command_data2;
+                            elsif command_data1 = x"000003" then user_reg3 <= command_data2;
+                            elsif command_data1 = x"000004" then user_reg4 <= command_data2;
+                            elsif command_data1 = x"000005" then user_reg5 <= command_data2;
+                            elsif command_data1 = x"000006" then user_reg6 <= command_data2;
+                            elsif command_data1 = x"000007" then user_reg7 <= command_data2;
+                            end if;
+                        when others => 
+                    end case;
+                end if;
+            end if;
+        end if;
+    end process;
 
     --p_axi_adr : process( current_state )
     --begin
