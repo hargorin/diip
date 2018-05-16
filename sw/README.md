@@ -9,6 +9,12 @@ Contains software for testing.
 | uft | UDP file transfer stack |
 
 
+## Build instructions
+```
+sudo apt install libopencv-dev
+make
+```
+
 ## image2file
 ### Usage
 ```bash
