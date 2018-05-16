@@ -101,14 +101,16 @@ function wallis_filter()
     function cal_wallis(n_mean, n_std)
         g_mean = str2num(get(tb_mean,'String'));
         g_std = str2num(get(tb_std,'String'));
-        b = str2num(get(txt_b,'String'));
-        c = str2num(get(txt_c,'String'));
+        %b = str2num(get(txt_b,'String'));
+        %c = str2num(get(txt_c,'String'));
+        b = 0.49;
+        c = 0.82;
         
         [rows cols]=size(O);
         
         for x = 1:rows
             for y = 1:cols
-                dbg = (((double(O(x,y)) - n_mean(x,y)) * c*g_std^2) / (c*n_std(x,y)^2+(1-c)*g_std^2));
+                dbg = (((double(O(x,y)) - n_mean(x,y)) * c*g_std^2) / (c*n_std(x,y)^2+(1-c)*g_std^2))
                 W(x,y) = dbg + (b*g_mean + ((1-b)*n_mean(x,y)));
             end
         end

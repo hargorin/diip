@@ -10,7 +10,10 @@
 #include <math.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <cfenv>
+#include <iostream>
 using namespace cv;
+using namespace std;
 
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
@@ -213,6 +216,7 @@ uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
 }
 
 uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean, uint16_t g_var, float brightness, float contrast) {
+/*
 	float tmp_Num;
 	float fp_Num;
 	float fp_nVar;
@@ -224,6 +228,7 @@ uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean
 
 	float w_gMean = brightness * g_mean;
 	float w_gVar = (1-contrast) * g_var;
+
 
 	// int23 = (uint8 - uint8) * uint14
 	tmp_Num = (v_pixel - n_mean) * g_var;
@@ -256,6 +261,23 @@ uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean
 	// <36,30> = <35,29> + <12,8> +  <12,8>
 	w_Pixel = fp_Div + w_gMean + fp_nMean;
 	//printf("%d\n", (uint8_t)w_Pixel);
+*/
+
+	float w_Pixel;
+
+
+
+	float dgb = ((v_pixel - n_mean)*contrast*g_var) / (contrast*n_var+(1-contrast)*g_var);
+
+
+	w_Pixel = dgb + brightness*g_mean + (1-brightness)*n_mean;
+
+	feclearexcept(FE_OVERFLOW);
+	feclearexcept(FE_UNDERFLOW);
+
+	if((bool)fetestexcept(FE_OVERFLOW)) {
+		printf("Check\n");
+	}
 
 	return (uint8_t)w_Pixel;
 }
