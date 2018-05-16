@@ -31,9 +31,10 @@ set_property IP_REPO_PATHS "$ip_location/" [current_project]
 # ../hls/stream_dummy/project/stream_dummy/stream_dummy/impl/ip 
 # ../hls/sobel/project/sobel/sobel/impl/ip
 set curr_path [get_property  ip_repo_paths [current_project]]
-set curr_path "$curr_path/ ../hls/build/controller/sol_0/impl/ip"
-set curr_path "$curr_path/ ../hls/build/stream_dummy/sol_0/impl/ip"
-set curr_path "$curr_path/ ../hls/build/sobel/sol_0/impl/ip"
+set curr_path "$curr_path/ ../hls/build/controller/default_solution/impl/ip"
+set curr_path "$curr_path/ ../hls/build/stream_dummy/default_solution/impl/ip"
+set curr_path "$curr_path/ ../hls/build/sobel/default_solution/impl/ip"
+set curr_path "$curr_path/ ../hls/build/wallis/sol10_LUT_opt/impl/ip"
 
 set_property ip_repo_paths "$curr_path/" [current_project]
 update_ip_catalog
