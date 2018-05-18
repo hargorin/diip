@@ -125,7 +125,8 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
         case S_WRITE:
             // store processed data in memory
             to_mem: memcpy((void*)(&memp[OUT_MEMORY_BASE+(procdRows*OUT_LINE_SIZE)]),(const void*)out_mem,OUT_LINE_SIZE*sizeof(uint8_t));
-            state = S_IDLE;
+        	procdRows++;
+        	state = S_IDLE;
             break;
     }
     // printf("New state: %d\n", state);

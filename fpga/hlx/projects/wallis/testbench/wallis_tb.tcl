@@ -53,7 +53,8 @@ puts "Press enter when done"
 anykey
 
 # Dump output data
-dump room_out.bin 379440 355080
+# dump room_out.bin 379440 355080
+dump room_out.bin 16384 11664
 
 # Check data
 puts "Check output data in out.bin"
