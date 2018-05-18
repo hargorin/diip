@@ -8,6 +8,10 @@
 ############################################################
 
 create_solution "sol0_ecc" "ecc" "directives_sol0.tcl"
+create_solution "sol1_ressource" "ecc" "directives_sol1.tcl"
+#create_solution "sol2_array" "ecc" "directives_sol2.tcl"
+#create_solution "sol3_pipeline" "ecc" "directives_sol3.tcl"
+#create_solution "sol4_unroll" "ecc" "directives_sol4.tcl"
 
 
 
