@@ -6,7 +6,7 @@
 # Set the function that will be implemented
 set proj_top_function ecc
 # Set the solution to be used
-set proj_top_solution "sol0_ecc"
+set proj_top_solution "sol4_unroll"
 
 # Set the clock period in [ns]
 set proj_clk_period 8
