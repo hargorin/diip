@@ -7,6 +7,7 @@
 set proj_top_function ecc
 # Set the solution to be used
 set proj_top_solution "sol4_unroll"
+set proj_top_solution_directive "directives_sol4.tcl"
 
 # Set the clock period in [ns]
 set proj_clk_period 8
