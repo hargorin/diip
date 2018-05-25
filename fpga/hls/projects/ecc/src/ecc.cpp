@@ -27,8 +27,6 @@ void ecc(AXI_STREAM_8 &inData, AXI_STREAM_8 &outMean, AXI_STREAM_14 &outVar) {
 	static apuint8_t n_Mean;
 	static apuint14_t n_Var;
 	static apuint8_t pixel[WIN_SIZE];
-	static apuint8_t tmp_Pixel[WIN_SIZE];
-
 
 	// ************************************************************************
 	// Initialization
@@ -65,23 +63,22 @@ void ecc(AXI_STREAM_8 &inData, AXI_STREAM_8 &outMean, AXI_STREAM_14 &outVar) {
 	loop_while:while(!inData.empty()) {
 		// ********************************************************************
 		// Organize new Data
-		// Old data delete
-		loop_strData:for(uint16_t i = 0; i < (WIN_SIZE - WIN_LENGTH); i++) {
-			tmp_Pixel[i] = pixel[i+WIN_LENGTH];
+		// Subtract old pixel data from sum_Pixel
+		loop_subData:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
+			sum_Pixel -= pixel[i];
 		}
 
-		// Add new data and calculate new mean
+		// Copy data
+		loop_strData:for(uint16_t i = 0; i < (WIN_SIZE - WIN_LENGTH); i++) {
+			pixel[i] = pixel[i+WIN_LENGTH];
+		}
+
+		// Add new data and calculate new sub_Pixel
 		loop_addData:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
 			inPixel = inData.read();
-			tmp_Pixel[i + (WIN_SIZE - WIN_LENGTH)] = inPixel.data;
+			pixel[i + (WIN_SIZE - WIN_LENGTH)] = inPixel.data;
 
-			sum_Pixel -= pixel[i];
-			sum_Pixel += tmp_Pixel[i + (WIN_SIZE - WIN_LENGTH)];
-		}
-
-		// Set new data
-		loop_setData:for(uint16_t i = 0; i < WIN_SIZE; i++) {
-			pixel[i] = tmp_Pixel[i];
+			sum_Pixel += pixel[i + (WIN_SIZE - WIN_LENGTH)];
 		}
 
 		// ************************************************************************
