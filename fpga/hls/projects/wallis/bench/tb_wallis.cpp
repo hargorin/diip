@@ -16,8 +16,8 @@ using namespace cv;
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.82	//0.75
-#define BRIGHTNESS	0.49	//0.8
+#define CONTRAST 	0.9	//0.75 0.82
+#define BRIGHTNESS	0.9	//0.8 0.49
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -41,8 +41,8 @@ int main(int argc, const char * argv[]) {
 	uint16_t img_height = src_gray.rows;
 	//uint16_t img_length = 7;
 	//uint16_t img_width = 5;
-	uint16_t g_height = (img_height - WIN_SIZE + 1);
-	uint16_t g_width = (img_width - WIN_SIZE + 1);
+	uint16_t g_height = (img_height - WIN_LENGTH + 1);
+	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
 	// ************************************************************************
 	// Variables
@@ -51,7 +51,7 @@ int main(int argc, const char * argv[]) {
 	AXI_VALUE inData;
 
 	// C-Variables
-	uint8_t c_pixel[LENGTH];
+	uint8_t c_pixel[WIN_SIZE];
 	uint8_t c_mean = 0;
 	uint16_t c_var = 0;
 	uint8_t c_wallis[g_width * g_height];
@@ -62,9 +62,9 @@ int main(int argc, const char * argv[]) {
 	// ************************************************************************
 	for(uint16_t offset = 0; offset < g_height; offset++) {
 		for (uint16_t x = 0; x < img_width; x++) {
-			for (uint16_t y = 0; y < WIN_SIZE; y++) {
+			for (uint16_t y = 0; y < WIN_LENGTH; y++) {
 				inData.data = src_gray.at<apuint8_t>(Point(x, (y + offset)));
-				if((x == img_width- 1) && (y == WIN_SIZE - 1)){
+				if((x == img_width- 1) && (y == WIN_LENGTH - 1)){
 					inData.last = 1;
 				}
 				inDataFIFO.write(inData);
@@ -82,8 +82,8 @@ int main(int argc, const char * argv[]) {
 	for(uint16_t y_offset = 0; y_offset < g_height; y_offset++) {
 		for(uint16_t x_offset = 0; x_offset < g_width; x_offset++) {
 			uint16_t i_pixel = 0;
-			for (uint8_t x = 0; x < WIN_SIZE; x++) {
-				for (uint8_t y = 0; y < WIN_SIZE; y++) {
+			for (uint8_t x = 0; x < WIN_LENGTH; x++) {
+				for (uint8_t y = 0; y < WIN_LENGTH; y++) {
 					c_pixel[i_pixel++] = src_gray.at<uint8_t>(Point(x + x_offset, (y + y_offset)));
 				}
 
@@ -91,7 +91,7 @@ int main(int argc, const char * argv[]) {
 
 			c_mean = C_Mean(c_pixel);
 			c_var = C_Var(c_pixel, c_mean);
-			c_wallis[i_wallis++] = C_Wallis(c_pixel[(LENGTH - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
+			c_wallis[i_wallis++] = C_Wallis(c_pixel[(WIN_SIZE - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
 		}
 	}
 
@@ -168,7 +168,7 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	// Show image
-	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+/*	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
 	imwrite("wallis_hw_room.jpg", hw_dst_img);
@@ -179,7 +179,7 @@ int main(int argc, const char * argv[]) {
 		imshow( "HW - Wallis", hw_dst_img );
 		imshow( "SW - Wallis", c_dst_img );
 		waitKey(0);
-	}
+	}*/
 
 
     return 0;
@@ -193,11 +193,11 @@ uint8_t C_Mean(uint8_t *pixel) {
 	uint32_t c_sumPixel = 0;
 	uint8_t mean = 0;
 
-	for(uint16_t k = 0; k < LENGTH; k++) {
+	for(uint16_t k = 0; k < WIN_SIZE; k++) {
 		c_sumPixel += pixel[k];
 	}
 
-	mean = c_sumPixel / LENGTH;
+	mean = c_sumPixel / WIN_SIZE;
 	return mean;
 }
 
@@ -205,11 +205,11 @@ uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
 	uint32_t c_sumPow = 0;
 	uint16_t var = 0;
 
-	for(uint16_t k = 0; k < LENGTH; k++) {
+	for(uint16_t k = 0; k < WIN_SIZE; k++) {
 		c_sumPow += (pixel[k] - mean) * (pixel[k] - mean);
 	}
 
-	var = c_sumPow / (LENGTH - 1);
+	var = c_sumPow / (WIN_SIZE - 1);
 	return var;
 }
 

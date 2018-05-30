@@ -39,8 +39,10 @@ typedef ap_int<23>	apint23_t;
 typedef ap_int<25>	apint25_t;
 typedef ap_int<33>	apint33_t;
 
-#define WIN_SIZE 	21	// Between 11 and 41 (depends on camera resolution)
-#define LENGTH 		(WIN_SIZE * WIN_SIZE)
+
+#define WIN_LENGTH 	21	// Between 11 and 41 (depends on camera resolution)
+#define WIN_SIZE	(WIN_LENGTH * WIN_LENGTH)
+
 
 
 typedef ap_axiu<8,1,1,1> AXI_VALUE;		// <TDATA, TUSER, TID, TDEST>

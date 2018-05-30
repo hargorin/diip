@@ -8,7 +8,7 @@
 # ================================================================================
 
 # Project name
-NAME = sobel
+NAME = wallis
 # FPGA Part number
 PART = xc7a200tfbg676-2
 
