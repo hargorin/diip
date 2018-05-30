@@ -46,10 +46,10 @@ int main(int argc, const char * argv[]) {
 	// Edit Image
 	Mat src_gray;
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
-	uint16_t img_width = src_gray.cols;
-	uint16_t img_height = src_gray.rows;
-	//uint16_t img_length = 7;
-	//uint16_t img_width = 5;
+	//uint16_t img_width = src_gray.cols;
+	//uint16_t img_height = src_gray.rows;
+	uint16_t img_height = 21;
+	uint16_t img_width = 30;
 	uint16_t g_height = (img_height - WIN_SIZE + 1);
 	uint16_t g_width = (img_width - WIN_SIZE + 1);
 

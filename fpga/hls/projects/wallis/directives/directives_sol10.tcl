@@ -5,10 +5,10 @@
 ############################################################
 set_directive_interface -mode axis -register -register_mode reverse "wallis" inData
 set_directive_interface -mode axis -register -register_mode forward "wallis" outData
-set_directive_interface -mode s_axilite -bundle SCALAR_BUS "wallis" g_Mean
-set_directive_interface -mode s_axilite -bundle SCALAR_BUS "wallis" g_Var
-set_directive_interface -mode s_axilite -bundle SCALAR_BUS "wallis" contrast
-set_directive_interface -mode s_axilite -bundle SCALAR_BUS "wallis" brightness
+set_directive_interface -mode s_axilite -bundle params "wallis" g_Mean
+set_directive_interface -mode s_axilite -bundle params "wallis" g_Var
+set_directive_interface -mode s_axilite -bundle params "wallis" contrast
+set_directive_interface -mode s_axilite -bundle params "wallis" brightness
 set_directive_inline "Cal_Mean"
 set_directive_inline "Cal_Variance"
 set_directive_inline "Wallis_Filter"
@@ -29,4 +29,4 @@ set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
 set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" tmp_Pixel
 set_directive_resource -core RAM_2P_BRAM "wallis" pixel
 set_directive_resource -core RAM_2P_BRAM "wallis" tmp_Pixel
-set_directive_interface -mode s_axilite "wallis"
+set_directive_interface -mode ap_ctrl_none "wallis"

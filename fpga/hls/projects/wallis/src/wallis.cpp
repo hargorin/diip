@@ -21,8 +21,12 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		outPixel.last = inPixel.last;
 		outData.write(inPixel);
 
-
+	
 	}while(!inPixel.last);*/
+	g_Mean = 127;
+	g_Var = 3600;
+	contrast = 0.82;
+	brightness = 0.49;
 	// ************************************************************************
 	// Variables
 	AXI_VALUE inPixel;
@@ -69,7 +73,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	// ************************************************************************
 	// Loop
 	// ************************************************************************
-	loop_while:while(!inData.empty()) {
+	loop_while:while(!inPixel.last) {
 		// ********************************************************************
 		// Organize new Data
 

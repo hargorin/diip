@@ -21,7 +21,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
 	 ap_uint<1> rx_done)
 {
 #pragma HLS DATAFLOW
-#pragma HLS INTERFACE ap_ctrl_none port=return
+//#pragma HLS INTERFACE ap_ctrl_none port=return
 
 #pragma HLS INTERFACE m_axi depth=16 port=cbus offset=off
 #pragma HLS INTERFACE m_axi depth=1168 port=memp offset=off bundle=memp
@@ -31,13 +31,15 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
 #pragma HLS INLINE region
 //#pragma HLS pipeline II=1 enable_flush
 
-    static enum myState {S_INIT, S_IDLE, S_READ, S_STREAM, S_WRITE} state;
+    static enum myState {S_INIT, S_IDLE, S_READ, S_STREAM, S_WRITE} state = S_IDLE;
 
     static uint32_t procdRows = 0;
 
     // Local memory for image data
     static uint8_t in_mem[IN_LINE_SIZE];
+#pragma HLS RESOURCE variable=in_mem core=RAM_2P_BRAM
     static uint8_t out_mem[OUT_SIZE];
+#pragma HLS RESOURCE variable=out_mem core=RAM_2P_BRAM
 
     // Data for mem to stream
     static bool runOut = false;
