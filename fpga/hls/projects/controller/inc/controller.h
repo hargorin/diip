@@ -46,7 +46,7 @@ using namespace std;
 //#define LINE_SIZE			128
 //#define N_LINES 			128
 
-#define WINDOW_HEIGHT 		21
+#define WINDOW_HEIGHT 		3
 #define AXI_M_BURST_SIZE	WINDOW_HEIGHT // chosen to neighbourhood size
 
 

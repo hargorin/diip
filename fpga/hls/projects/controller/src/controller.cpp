@@ -18,10 +18,10 @@ bool stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData);
 void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &inData,
      AXI_STREAM &outData,
-	 ap_uint<1> rx_done)
+     ap_uint<1> rx_done)
 {
 #pragma HLS DATAFLOW
-//#pragma HLS INTERFACE ap_ctrl_none port=return
+#pragma HLS INTERFACE ap_ctrl_none port=return
 
 #pragma HLS INTERFACE m_axi depth=16 port=cbus offset=off
 #pragma HLS INTERFACE m_axi depth=1168 port=memp offset=off bundle=memp
@@ -37,9 +37,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
 
     // Local memory for image data
     static uint8_t in_mem[IN_LINE_SIZE];
-#pragma HLS RESOURCE variable=in_mem core=RAM_2P_BRAM
     static uint8_t out_mem[OUT_SIZE];
-#pragma HLS RESOURCE variable=out_mem core=RAM_2P_BRAM
 
     // Data for mem to stream
     static bool runOut = false;
@@ -80,55 +78,55 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             break;
         case S_STREAM:
             /********* OUT *********/
-//        	if(runOut)
-//        	{
-//        		runOut = mem_to_stream(in_mem, outData);
-//        	}
-        	if(runOut)
-        	{
-				// calc memory offset and read data
-				oPxl.data = in_mem[LINE_SIZE*(ms_rctr++) + ms_cctr];
-				oPxl.last = 0;
-				// set TLAST on last byte
-				if( (ms_pctr++) == (IN_LINE_SIZE-1)) oPxl.last = 1;
-				outData.write(oPxl);
-				// increment
-				if (ms_rctr == WINDOW_HEIGHT)
-				{
-					ms_rctr = 0;
-					ms_cctr++;
-				}
-				// exit condition
-				if( ms_pctr == IN_LINE_SIZE ) runOut = false;
-        	}
+//          if(runOut)
+//          {
+//              runOut = mem_to_stream(in_mem, outData);
+//          }
+            if(runOut)
+            {
+                // calc memory offset and read data
+                oPxl.data = in_mem[LINE_SIZE*(ms_rctr++) + ms_cctr];
+                oPxl.last = 0;
+                // set TLAST on last byte
+                if( (ms_pctr++) == (IN_LINE_SIZE-1)) oPxl.last = 1;
+                outData.write(oPxl);
+                // increment
+                if (ms_rctr == WINDOW_HEIGHT)
+                {
+                    ms_rctr = 0;
+                    ms_cctr++;
+                }
+                // exit condition
+                if( ms_pctr == IN_LINE_SIZE ) runOut = false;
+            }
             /********* IN *********/
-//        	if(runIn)
-//        	{
-//        		runIn = stream_to_mem(out_mem, inData);
-//        	}
-        	if(runIn)
-        	{
-				if(!inData.empty())
-				{
-					// store
-					iPxl = inData.read();
-					out_mem[sm_ctr++] = (uint8_t)iPxl.data;
-					// Exit condition
-					if (iPxl.last) runIn = false;
-				}
-    		}
+//          if(runIn)
+//          {
+//              runIn = stream_to_mem(out_mem, inData);
+//          }
+            if(runIn)
+            {
+                if(!inData.empty())
+                {
+                    // store
+                    iPxl = inData.read();
+                    out_mem[sm_ctr++] = (uint8_t)iPxl.data;
+                    // Exit condition
+                    if (iPxl.last) runIn = false;
+                }
+            }
 
-			/********* EXIT *********/
-			if(!runOut && !runIn)
-			{
-				state = S_WRITE;
-			}
+            /********* EXIT *********/
+            if(!runOut && !runIn)
+            {
+                state = S_WRITE;
+            }
             break;
         case S_WRITE:
             // store processed data in memory
             to_mem: memcpy((void*)(&memp[OUT_MEMORY_BASE+(procdRows*OUT_LINE_SIZE)]),(const void*)out_mem,OUT_LINE_SIZE*sizeof(uint8_t));
-        	procdRows++;
-        	state = S_IDLE;
+            procdRows++;
+            state = S_IDLE;
             break;
     }
     // printf("New state: %d\n", state);
@@ -250,27 +248,27 @@ bool mem_to_stream(volatile uint8_t *memp, AXI_STREAM &outData)
     static int ms_off, ms_pctr, ms_rctr, ms_cctr;
     AXI_VALUE oPxl;
 
-	// calc memory offset and read data
-	ms_off = LINE_SIZE*ms_rctr + ms_cctr;
-	oPxl.data = memp[ms_off];
-	oPxl.last = 0;
-	// set TLAST on last byte
-	if(ms_pctr == (IN_LINE_SIZE-1))
-	{
-		oPxl.last = 1;
-		return false;
-	}
-	outData.write(oPxl);
-	// increment
-	ms_rctr++;
-	ms_pctr++;
-	if(ms_rctr == WINDOW_HEIGHT)
-	{
-		ms_rctr = 0;
-		ms_cctr++;
-	}
+    // calc memory offset and read data
+    ms_off = LINE_SIZE*ms_rctr + ms_cctr;
+    oPxl.data = memp[ms_off];
+    oPxl.last = 0;
+    // set TLAST on last byte
+    if(ms_pctr == (IN_LINE_SIZE-1))
+    {
+        oPxl.last = 1;
+        return false;
+    }
+    outData.write(oPxl);
+    // increment
+    ms_rctr++;
+    ms_pctr++;
+    if(ms_rctr == WINDOW_HEIGHT)
+    {
+        ms_rctr = 0;
+        ms_cctr++;
+    }
 
-	return true;
+    return true;
 
 //    int col_ctr, row_ctr, off, pixel_ctr;
 //    int buff[AXI_M_BURST_SIZE];
@@ -319,16 +317,16 @@ bool stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData)
     static int sm_ctr;
     AXI_VALUE iPxl;
 
-	iPxl = inData.read();
-	memp[sm_ctr] = (uint8_t)iPxl.data;
-	// Exit condition
-	if (iPxl.last)
-	{
-		return false;
-	}
-	sm_ctr++;
+    iPxl = inData.read();
+    memp[sm_ctr] = (uint8_t)iPxl.data;
+    // Exit condition
+    if (iPxl.last)
+    {
+        return false;
+    }
+    sm_ctr++;
 
-	return true;
+    return true;
 
 //
 //#pragma HLS INLINE
@@ -352,5 +350,4 @@ bool stream_to_mem(volatile uint8_t *memp, AXI_STREAM &inData)
 //        }
 //    }
 }
-
 

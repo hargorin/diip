@@ -14,19 +14,19 @@ set_directive_inline "Cal_Variance"
 set_directive_inline "Wallis_Filter"
 set_directive_unroll "Cal_Mean"
 set_directive_pipeline "wallis/loop_rdata"
-set_directive_unroll -factor 21 "Cal_Variance/loop_variance"
+set_directive_unroll -factor 3 "Cal_Variance/loop_variance"
 set_directive_dependence -variable n_Mean -type inter -direction RAW -dependent true "wallis"
 set_directive_dependence -variable n_Var -type inter -direction RAW -dependent true "wallis"
-set_directive_unroll -factor 21 "wallis/loop_strData"
+set_directive_unroll -factor 3 "wallis/loop_strData"
 set_directive_pipeline "wallis/loop_addData"
-set_directive_unroll -factor 21 "wallis/loop_setData"
+set_directive_unroll -factor 3 "wallis/loop_setData"
 set_directive_pipeline "Cal_Variance/loop_variance"
 set_directive_pipeline "wallis/loop_setData"
 set_directive_pipeline "wallis/loop_strData"
 set_directive_loop_flatten -off "wallis/loop_while"
 set_directive_loop_tripcount -min 110 -max 1640 -avg 420 "wallis/loop_while"
-set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
-set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" tmp_Pixel
+set_directive_array_partition -type cyclic -factor 3 -dim 1 "wallis" pixel
+set_directive_array_partition -type cyclic -factor 3 -dim 1 "wallis" tmp_Pixel
 set_directive_resource -core RAM_2P_BRAM "wallis" pixel
 set_directive_resource -core RAM_2P_BRAM "wallis" tmp_Pixel
 set_directive_interface -mode ap_ctrl_none "wallis"
