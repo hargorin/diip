@@ -16,8 +16,8 @@ using namespace cv;
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.9	//0.75 0.82
-#define BRIGHTNESS	0.9	//0.8 0.49
+#define CONTRAST 	0.82	//0.75 0.82
+#define BRIGHTNESS	0.49	//0.8 0.49
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -209,7 +209,7 @@ uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
 		c_sumPow += (pixel[k] - mean) * (pixel[k] - mean);
 	}
 
-	var = c_sumPow / (WIN_SIZE - 1);
+	var = c_sumPow / (WIN_SIZE);
 	return var;
 }
 

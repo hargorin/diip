@@ -18,6 +18,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	AXI_VALUE outPixel;
 
 	static apuint19_t sum_Pixel;
+	static apuint27_t sum_Pixel2;
 	static apuint8_t n_Mean;
 	static apuint14_t n_Var;
 	static apuint8_t pixel[WIN_SIZE];
@@ -33,7 +34,9 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		inPixel = inData.read();
 		pixel[i] = inPixel.data;
 
-		sum_Pixel += pixel[i];
+		sum_Pixel += pixel[i];				// sum of the Pixels
+		//sum_Pixel2 += (pixel[i] * pixel[i]);  // sum of the Pixels^2
+		sum_Pixel2 += (pixel[i] * pixel[i]);
 	}
 
 	// ************************************************************************
@@ -42,7 +45,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 
 	// ************************************************************************
 	// Variance
-	n_Var = Cal_Variance(n_Mean, pixel);
+	n_Var = Cal_Variance(n_Mean * n_Mean, sum_Pixel2);
 
 	// ************************************************************************
 	// Wallis Filter
@@ -63,6 +66,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		// Subtract old pixel data from sum_Pixel
 		loop_subData:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
 			sum_Pixel -= pixel[i];
+			sum_Pixel2 -= pixel[i] * pixel[i];
 		}
 
 		// Copy data
@@ -76,6 +80,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 			pixel[i + (WIN_SIZE - WIN_LENGTH)] = inPixel.data;
 
 			sum_Pixel += pixel[i + (WIN_SIZE - WIN_LENGTH)];
+			sum_Pixel2 += pixel[i + (WIN_SIZE - WIN_LENGTH)] * pixel[i + (WIN_SIZE - WIN_LENGTH)];
 		}
 
 
@@ -85,7 +90,7 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 
 		// ********************************************************************
 		// Variance
-		n_Var = Cal_Variance(n_Mean, pixel);
+		n_Var = Cal_Variance(n_Mean * n_Mean, sum_Pixel2);
 
 		// ********************************************************************
 		// Wallis Filter
@@ -99,7 +104,6 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	}
 
 }
-
 
 /*
  * Calculate the mean
@@ -116,20 +120,10 @@ apuint8_t Cal_Mean(apuint19_t sum_Pixel) {
 /*
  * Calculate the variance
  */
-apuint14_t Cal_Variance(apuint8_t mean, apuint8_t *pixel) {
-	apuint29_t sum_Pow = 0;
-	apint9_t tmp_Sub;
-	apuint18_t tmp_Pow;
-	apuint14_t var;
+apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2) {
+	apuint16_t var;
 	
-	loop_variance:for(uint16_t i = 0; i < WIN_SIZE; i++) {
-		tmp_Sub = (pixel[i] - mean);
-		tmp_Pow = (tmp_Sub * tmp_Sub);
-		sum_Pow = sum_Pow + tmp_Pow;
-		//sum_Pow += (pixel[i] - mean) * (pixel[i] - mean);
-	}
-
-	var = (sum_Pow / (WIN_SIZE - 1));
+	var = sum_pixel2 / WIN_SIZE - mean2;
 
 	return var;
 }

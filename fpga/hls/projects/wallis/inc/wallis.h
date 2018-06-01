@@ -28,7 +28,7 @@ typedef ap_uint<16>	apuint16_t;
 typedef ap_uint<17>	apuint17_t;
 typedef ap_uint<18> apuint18_t;
 typedef ap_uint<19>	apuint19_t;
-//typedef ap_uint<24>	apuint24_t;
+typedef ap_uint<27>	apuint27_t;
 typedef ap_uint<29>	apuint29_t;
 //typedef ap_uint<32>	apuint32_t;
 //typedef ap_uint<35>	apuint35_t;
@@ -61,8 +61,8 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 // Mean
 apuint8_t Cal_Mean(apuint19_t sum_Pixel);
 
-// Varinace
-apuint14_t Cal_Variance(apuint8_t mean, apuint8_t *pixel);
+// Variance
+apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2);
 
 // Wallis Filter
 apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
