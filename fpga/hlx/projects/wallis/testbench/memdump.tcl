@@ -56,6 +56,17 @@ proc dump {fname addr size} {
     set temp_data [join $temp_list ""]
     set temp_data [string range $temp_data 0 [expr 2*$size-1]]
 
+    # endian fix
+    set endian_tmp {}
+    for {set i 0} {$i < [string length $temp_data]} {incr i 8} {
+        append endian_tmp [string range $temp_data [expr {$i + 6}] [expr {$i+7}]]
+        append endian_tmp [string range $temp_data [expr {$i + 4}] [expr {$i+5}]]
+        append endian_tmp [string range $temp_data [expr {$i + 2}] [expr {$i+3}]]
+        append endian_tmp [string range $temp_data [expr {$i + 0}] [expr {$i+1}]]
+    }
+    set temp_data $endian_tmp
+
+
     # save data in file
     set fp [open $fname w]
     fconfigure $fp -translation binary
@@ -101,7 +112,7 @@ proc writeto {fname addr} {
         set data_r2 {}
         for {set j [expr $transaction_size-4]} {$j >= 0} {incr j -4} {
             # for {set k 0} {$k < 4} {incr k} {
-                append data_r2 [string range $data_r $j [expr {$j+3}]]
+                append data_r2 [string reverse [string range $data_r $j [expr {$j+3}]]]
             # }
         }   
         binary scan $data_r2 H* hexData
