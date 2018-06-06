@@ -84,20 +84,23 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
 //          }
             if(runOut)
             {
-                // calc memory offset and read data
-                oPxl.data = in_mem[LINE_SIZE*(ms_rctr++) + ms_cctr];
-                oPxl.last = 0;
-                // set TLAST on last byte
-                if( (ms_pctr++) == (IN_LINE_SIZE-1)) oPxl.last = 1;
-                outData.write(oPxl);
-                // increment
-                if (ms_rctr == WINDOW_HEIGHT)
-                {
-                    ms_rctr = 0;
-                    ms_cctr++;
-                }
-                // exit condition
-                if( ms_pctr == IN_LINE_SIZE ) runOut = false;
+		if(!outData.full())
+		{
+			// calc memory offset and read data
+			oPxl.data = in_mem[LINE_SIZE*(ms_rctr++) + ms_cctr];
+			oPxl.last = 0;
+			// set TLAST on last byte
+			if( (ms_pctr++) == (IN_LINE_SIZE-1)) oPxl.last = 1;
+			outData.write(oPxl);
+			// increment
+			if (ms_rctr == WINDOW_HEIGHT)
+			{
+			    ms_rctr = 0;
+			    ms_cctr++;
+			}
+			// exit condition
+			if( ms_pctr == IN_LINE_SIZE ) runOut = false;
+		}
             }
             /********* IN *********/
 //          if(runIn)

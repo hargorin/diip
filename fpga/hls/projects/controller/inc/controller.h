@@ -41,12 +41,12 @@ using namespace std;
 // ***********************************************
 // *** Settings ***
 // ***********************************************
-#define LINE_SIZE			32
-#define N_LINES 			32
-//#define LINE_SIZE			128
-//#define N_LINES 			128
+// #define LINE_SIZE			32
+// #define N_LINES 			32
+#define LINE_SIZE			128
+#define N_LINES 			128
 
-#define WINDOW_HEIGHT 		3
+#define WINDOW_HEIGHT 		21
 #define AXI_M_BURST_SIZE	WINDOW_HEIGHT // chosen to neighbourhood size
 
 
