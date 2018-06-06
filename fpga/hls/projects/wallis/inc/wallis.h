@@ -21,23 +21,15 @@
 // ****************************************************************************
 typedef ap_uint<8>	apuint8_t;
 typedef ap_uint<10>	apuint10_t;
-typedef ap_uint<11>	apuint11_t;
 typedef ap_uint<12>	apuint12_t;
 typedef ap_uint<14>	apuint14_t;
 typedef ap_uint<16>	apuint16_t;
-typedef ap_uint<17>	apuint17_t;
 typedef ap_uint<18> apuint18_t;
 typedef ap_uint<19>	apuint19_t;
 typedef ap_uint<27>	apuint27_t;
-typedef ap_uint<29>	apuint29_t;
-//typedef ap_uint<32>	apuint32_t;
-//typedef ap_uint<35>	apuint35_t;
-//typedef ap_uint<40>	apuint40_t;
 
-typedef ap_int<9>	apint9_t;
 typedef ap_int<23>	apint23_t;
-typedef ap_int<25>	apint25_t;
-typedef ap_int<33>	apint33_t;
+
 
 
 #define WIN_LENGTH 	21	// Between 11 and 41 (depends on camera resolution)
@@ -57,14 +49,3 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
 			ap_ufixed<5,1> brightness);
-
-// Mean
-apuint8_t Cal_Mean(apuint19_t sum_Pixel);
-
-// Variance
-apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2);
-
-// Wallis Filter
-apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
-						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-						ap_ufixed<5,1> brightness);

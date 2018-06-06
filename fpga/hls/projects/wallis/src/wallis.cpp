@@ -7,6 +7,17 @@
 
 #include "../inc/wallis.h"
 
+// Mean
+apuint8_t Cal_Mean(apuint19_t sum_Pixel);
+
+// Variance
+apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2);
+
+// Wallis Filter
+apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
+						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
+						ap_ufixed<5,1> brightness);
+
 
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
@@ -30,13 +41,15 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	// ************************************************************************
 	// Read data and calculate mean
 	sum_Pixel = 0;
+	sum_Pixel2 = 0;
 	loop_rdata:for(uint16_t i = 0; i < WIN_SIZE; i++) {
+		static apuint16_t tmp_pow;
 		inPixel = inData.read();
 		pixel[i] = inPixel.data;
 
 		sum_Pixel += pixel[i];				// sum of the Pixels
-		//sum_Pixel2 += (pixel[i] * pixel[i]);  // sum of the Pixels^2
-		sum_Pixel2 += (pixel[i] * pixel[i]);
+		tmp_pow = pixel[i] * pixel[i];
+		sum_Pixel2 += tmp_pow;
 	}
 
 	// ************************************************************************
@@ -65,8 +78,10 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		// Organize new Data
 		// Subtract old pixel data from sum_Pixel
 		loop_subData:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
+			static apuint16_t tmp_pow;
 			sum_Pixel -= pixel[i];
-			sum_Pixel2 -= pixel[i] * pixel[i];
+			tmp_pow = pixel[i] * pixel[i];
+			sum_Pixel2 -= tmp_pow;
 		}
 
 		// Copy data
@@ -76,11 +91,13 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 
 		// Add new data and calculate new sub_Pixel
 		loop_addData:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
+			static apuint16_t tmp_pow;
 			inPixel = inData.read();
 			pixel[i + (WIN_SIZE - WIN_LENGTH)] = inPixel.data;
 
 			sum_Pixel += pixel[i + (WIN_SIZE - WIN_LENGTH)];
-			sum_Pixel2 += pixel[i + (WIN_SIZE - WIN_LENGTH)] * pixel[i + (WIN_SIZE - WIN_LENGTH)];
+			tmp_pow = pixel[i + (WIN_SIZE - WIN_LENGTH)] * pixel[i + (WIN_SIZE - WIN_LENGTH)];
+			sum_Pixel2 += tmp_pow;
 		}
 
 

@@ -16,7 +16,7 @@ using namespace cv;
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.82	//0.75 0.82
+#define CONTRAST 	0.82 //0.75 0.82
 #define BRIGHTNESS	0.49	//0.8 0.49
 
 uint8_t C_Mean(uint8_t *pixel);
@@ -37,10 +37,10 @@ int main(int argc, const char * argv[]) {
 	// Edit Image
 	Mat src_gray;
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
-	uint16_t img_width = src_gray.cols;
-	uint16_t img_height = src_gray.rows;
-	//uint16_t img_length = 7;
-	//uint16_t img_width = 5;
+	//uint16_t img_width = src_gray.cols;
+	//uint16_t img_height = src_gray.rows;
+	uint16_t img_height = 40;
+	uint16_t img_width = 40;
 	uint16_t g_height = (img_height - WIN_LENGTH + 1);
 	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
@@ -91,6 +91,7 @@ int main(int argc, const char * argv[]) {
 
 			c_mean = C_Mean(c_pixel);
 			c_var = C_Var(c_pixel, c_mean);
+			//printf("Var %2d: %5d\n", i_wallis, c_var);
 			c_wallis[i_wallis++] = C_Wallis(c_pixel[(WIN_SIZE - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
 		}
 	}
@@ -159,7 +160,7 @@ int main(int argc, const char * argv[]) {
 	printf("Total Pixels  : %d - %d\n", (equal + plus_1 + minus_1 + err), index_pix);
 
 	printf("-----------------------------------------------------------\n");
-	printf("MSE	   : %.6f\n", mse);
+	//printf("MSE	   : %.6f\n", mse);
 	printf("RMSE   : %.6f\n", sqrt(mse));
 	printf("-----------------------------------------------------------\n");
 
@@ -206,12 +207,24 @@ uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
 	uint16_t var = 0;
 
 	for(uint16_t k = 0; k < WIN_SIZE; k++) {
+		c_sumPow += (pixel[k] * pixel[k]);
+	}
+
+	var = (c_sumPow / WIN_SIZE) - (mean*mean);
+	return var;
+}
+
+/*uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
+	uint32_t c_sumPow = 0;
+	uint16_t var = 0;
+
+	for(uint16_t k = 0; k < WIN_SIZE; k++) {
 		c_sumPow += (pixel[k] - mean) * (pixel[k] - mean);
 	}
 
 	var = c_sumPow / (WIN_SIZE);
 	return var;
-}
+}*/
 
 uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean, uint16_t g_var, float brightness, float contrast) {
 /*
