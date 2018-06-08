@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # convert image to binary data
-../../../../../sw/image2file/image2file room256x256.jpg room_in.bin
+image2file room256x256.jpg room_in.bin
 
 # copy to FPGA, run wallis and copy back
 vivado -nolog -nojournal -mode batch -source wallis_tb.tcl
 
 # convert back to imag
-../../../../../sw/file2image/file2image room_out.bin room_out.jpg 236 236 -s
+file2image room_out.bin room_out.jpg 236 236 -s

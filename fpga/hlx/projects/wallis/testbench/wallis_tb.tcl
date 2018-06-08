@@ -47,6 +47,10 @@ connect
 # # Write data to image input base
 writeto room_in.bin 0
 
+# Write image width
+create_hw_axi_txn wrimgwidth [get_hw_axis] -force -address 0xc0000020 -type write -data 00000100
+run_hw_axi wrimgwidth
+
 # Push SW5 to run calculation
 puts "Push SW5 to start processing"
 puts "Press enter when done"

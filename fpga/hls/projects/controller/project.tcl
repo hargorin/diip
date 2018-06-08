@@ -18,6 +18,6 @@ set proj_part_name "xc7a200tfbg676-2"
 # Settings of IP generation
 set proj_vendor "ime"
 set proj_library "diip"
-set proj_version "0.2" 
+set proj_version "0.3" 
 set proj_desc "diip Controller" 
 set proj_display_name "diip_controller"

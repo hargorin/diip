@@ -8,9 +8,9 @@
 
 #include "../inc/controller.h"
 
-// #define RUN_DUV_N_TIMES(n) for(int duvrunctr=0; duvrunctr<(n); duvrunctr++) { \
-// 	controller_top(memory, uft_reg, outData, inData, &uft_tx_memory_address, &uft_tx_start); \
-// }
+
+#define IN_SIZE 	(IMG_WIDTH*WINDOW_LEN)
+#define OUT_SIZE 	(IMG_WIDTH-WINDOW_LEN+1)
 
 #define RUN_DUV_N_TIMES(n) for(int duvrunctr=0; duvrunctr<(n); duvrunctr++) { \
 	controller_top(memory, uft_reg, inData, outData, rx_done); \
@@ -30,8 +30,8 @@ int main()
 
 
 
-	uint8_t stream_set[WINDOW_HEIGHT*LINE_SIZE];
-	uint8_t mem_set[LINE_SIZE-WINDOW_HEIGHT+1];
+	uint8_t stream_set[IN_SIZE];
+	uint8_t mem_set[IMG_WIDTH-WINDOW_LEN+1];
 
 
     uint32_t uft_reg_set[16];
@@ -47,16 +47,16 @@ int main()
 	//Put data into memory
 	//************************************************************************
 	uint8_t val = 0;
-	for(i=0; i < (WINDOW_HEIGHT*LINE_SIZE); i++)
+	for(i=0; i < (IN_SIZE); i++)
 	{
 		memory[i] = val++;
 	}
 	// Put data into stream comming from the core
 	val = 255;
-	for(i=0; i < (LINE_SIZE-WINDOW_HEIGHT+1); i++)
+	for(i=0; i < (IMG_WIDTH-WINDOW_LEN+1); i++)
 	{
 		aval.data = val--;
-		if(i == (LINE_SIZE-WINDOW_HEIGHT))
+		if(i == (IMG_WIDTH-WINDOW_LEN))
 			aval.last = 1;
 		inData.write(aval);
 	}
@@ -69,13 +69,14 @@ int main()
 	RUN_DUV_N_TIMES(5)
 
 	// Indicate enough Rx rows
-	uft_reg[UFT_REG_RX_CTR] = WINDOW_HEIGHT;
+	uft_reg[UFT_REG_RX_CTR] = WINDOW_LEN;
+	uft_reg[UFT_REG_IMG_WIDTH] = IMG_WIDTH;
 	rx_done = 1;
 	RUN_DUV_N_TIMES(1)
 	rx_done = 0;
 
 	// Run for all Pixels
-	RUN_DUV_N_TIMES(IN_LINE_SIZE+2)
+	RUN_DUV_N_TIMES(IN_SIZE+2)
 //	RUN_DUV_N_TIMES(4)
 
 	//************************************************************************
@@ -83,11 +84,11 @@ int main()
 	//************************************************************************
 	int row = 0;
 	int col = 0;
-	for(i=0; i < WINDOW_HEIGHT*LINE_SIZE; i++)
+	for(i=0; i < IN_SIZE; i++)
 	{
-		stream_set[i] = memory[row*LINE_SIZE + col];
+		stream_set[i] = memory[row*IMG_WIDTH + col];
 		row++;
-		if(row == WINDOW_HEIGHT)
+		if(row == WINDOW_LEN)
 		{
 			row = 0;
 			col++;
@@ -95,7 +96,7 @@ int main()
 	}
 	// write the stream data to memory
 	val = 255;
-	for(i=0; i < (LINE_SIZE-WINDOW_HEIGHT+1); i++)
+	for(i=0; i < (IMG_WIDTH-WINDOW_LEN+1); i++)
 	{
 		mem_set[i] = val--;
 	}
@@ -123,7 +124,7 @@ int main()
 	err = 0;
 	uint8_t test;
 	bool oDatErr = false;
-	for(i=0; i < WINDOW_HEIGHT*LINE_SIZE; i++)
+	for(i=0; i < IN_SIZE; i++)
 	{
 		aval = outData.read();
 		test = (uint8_t)aval.data;
@@ -138,14 +139,14 @@ int main()
 //			printf("i=%d last=1\n",i);
 //		if(!aval.last)
 //			printf("i=%d last=0\n",i);
-		if (!aval.last && (i == (WINDOW_HEIGHT*LINE_SIZE-1)))
+		if (!aval.last && (i == (IN_SIZE-1)))
 		{
-			printf("ERROR[outData] TLAST was not asserted. i=%d of=%d\n",i,WINDOW_HEIGHT*LINE_SIZE);
+			printf("ERROR[outData] TLAST was not asserted. i=%d of=%d\n",i,IN_SIZE);
 			err = -1; oDatErr = true;
 		}
-		if (aval.last && (i != (WINDOW_HEIGHT*LINE_SIZE-1)))
+		if (aval.last && (i != (IN_SIZE-1)))
 		{
-			printf("ERROR[outData] TLAST was asserted too early. i=%d of=%d\n",i,WINDOW_HEIGHT*LINE_SIZE);
+			printf("ERROR[outData] TLAST was asserted too early. i=%d of=%d\n",i,IN_SIZE);
 			err = -1; oDatErr = true;
 		}
 	}
@@ -156,7 +157,7 @@ int main()
 
 	// Compare results from memory
 	bool oMemErr = false;
-	for(i=0; i < OUT_LINE_SIZE; i++)
+	for(i=0; i < OUT_SIZE; i++)
 	{
 		if(memory[OUT_MEMORY_BASE+i] != mem_set[i])
 		{
