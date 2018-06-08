@@ -44,7 +44,7 @@ source memdump.tcl
 open_hw
 connect
 
-# Write data to image input base
+# # Write data to image input base
 writeto room_in.bin 0
 
 # Push SW5 to run calculation
@@ -54,9 +54,9 @@ anykey
 
 # Dump output data
 # dump room_out.bin 379440 355080
-dump room_out.bin 16384 11664
+dump room_out.bin 10000 55696
 
 # Check data
 puts "Check output data in out.bin"
 
-# close_hw
+close_hw
