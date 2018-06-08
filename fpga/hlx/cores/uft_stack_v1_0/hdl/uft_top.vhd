@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed May  9 15:23:24 2018
+-- Last update : Wed May 16 13:53:01 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -253,11 +253,11 @@ architecture structural of uft_top is
             data_tvalid            : in  std_logic;
             data_tlast             : in  std_logic;
             data_tdata             : in  std_logic_vector( 7 downto 0);
-            is_command             : in std_logic;
-            command_code           : in std_logic_vector(6 downto 0);
-            command_data1          : in std_logic_vector(23 downto 0);
-            command_data2          : in std_logic_vector(31 downto 0);
-            command_data_valid     : in std_logic;
+            is_command             : in  std_logic;
+            command_code           : in  std_logic_vector(6 downto 0);
+            command_data1          : in  std_logic_vector(23 downto 0);
+            command_data2          : in  std_logic_vector(31 downto 0);
+            command_data_valid     : in  std_logic;
             rx_base_adr            : in  std_logic_vector (31 downto 0);
             rx_src_ip              : in  std_logic_vector (31 downto 0);
             rx_src_port            : in  std_logic_vector (15 downto 0);
@@ -269,6 +269,14 @@ architecture structural of uft_top is
             ack_tcid               : out std_logic_vector ( 6 downto 0);
             ack_dst_port           : out std_logic_vector (15 downto 0);
             ack_dst_ip             : out std_logic_vector (31 downto 0);
+            user_reg0              : out std_logic_vector(31 downto 0);
+            user_reg1              : out std_logic_vector(31 downto 0);
+            user_reg2              : out std_logic_vector(31 downto 0);
+            user_reg3              : out std_logic_vector(31 downto 0);
+            user_reg4              : out std_logic_vector(31 downto 0);
+            user_reg5              : out std_logic_vector(31 downto 0);
+            user_reg6              : out std_logic_vector(31 downto 0);
+            user_reg7              : out std_logic_vector(31 downto 0);
             ip2bus_mstrd_req       : out std_logic;
             ip2bus_mstwr_req       : out std_logic;
             ip2bus_mst_addr        : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
@@ -299,8 +307,8 @@ architecture structural of uft_top is
             bus2ip_mstwr_dst_rdy_n : in  std_logic;
             bus2ip_mstwr_dst_dsc_n : in  std_logic
         );
-    end component utf_rx_mem_ctl;      
-    
+    end component utf_rx_mem_ctl;
+
     ----------------------------------------------------------------------------
     -- UFT tx
     -- -------------------------------------------------------------------------
@@ -389,6 +397,14 @@ architecture structural of uft_top is
             tx_start                : out std_logic;
             rx_data_dst_addr        : out std_logic_vector(31 downto 0);
             rx_data_transaction_ctr : in  std_logic_vector(31 downto 0);
+            user_reg0               : in std_logic_vector(31 downto 0);
+            user_reg1               : in std_logic_vector(31 downto 0);
+            user_reg2               : in std_logic_vector(31 downto 0);
+            user_reg3               : in std_logic_vector(31 downto 0);
+            user_reg4               : in std_logic_vector(31 downto 0);
+            user_reg5               : in std_logic_vector(31 downto 0);
+            user_reg6               : in std_logic_vector(31 downto 0);
+            user_reg7               : in std_logic_vector(31 downto 0);
             S_AXI_ACLK              : in  std_logic;
             S_AXI_ARESETN           : in  std_logic;
             S_AXI_AWADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
@@ -453,6 +469,16 @@ architecture structural of uft_top is
     signal rx_data_dst_addr : std_logic_vector(31 downto 0);
     signal rx_data_transaction_ctr : std_logic_vector(31 downto 0);
 
+    -- User registers connecting rx_mem_ctrl and axi_ctrl
+    signal user_reg0 : std_logic_vector(31 downto 0);
+    signal user_reg1 : std_logic_vector(31 downto 0);
+    signal user_reg2 : std_logic_vector(31 downto 0);
+    signal user_reg3 : std_logic_vector(31 downto 0);
+    signal user_reg4 : std_logic_vector(31 downto 0);
+    signal user_reg5 : std_logic_vector(31 downto 0);
+    signal user_reg6 : std_logic_vector(31 downto 0);
+    signal user_reg7 : std_logic_vector(31 downto 0);
+
 begin
         
     ----------------------------------------------------------------------------
@@ -505,6 +531,14 @@ begin
             C_FAMILY            => C_FAMILY
         )
         port map (
+            user_reg0              => user_reg0,
+            user_reg1              => user_reg1,
+            user_reg2              => user_reg2,
+            user_reg3              => user_reg3,
+            user_reg4              => user_reg4,
+            user_reg5              => user_reg5,
+            user_reg6              => user_reg6,
+            user_reg7              => user_reg7,
             clk                    => clk,
             rst_n                  => rst_n,
             rx_done                => rx_done,
@@ -560,7 +594,7 @@ begin
             ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
             bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
             bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
-        );     
+        );  
 
     ----------------------------------------------------------------------------
     -- UFT Tx instance
@@ -644,6 +678,14 @@ begin
             C_S_AXI_ADDR_WIDTH => C_S_AXI_ADDR_WIDTH
         )
         port map (
+            user_reg0               => user_reg0,
+            user_reg1               => user_reg1,
+            user_reg2               => user_reg2,
+            user_reg3               => user_reg3,
+            user_reg4               => user_reg4,
+            user_reg5               => user_reg5,
+            user_reg6               => user_reg6,
+            user_reg7               => user_reg7,
             tx_data_size            => tx_data_size,
             tx_data_src_addr        => data_src_addr,
             tx_ready                => tx_ready,

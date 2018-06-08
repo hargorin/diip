@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Wed May  9 15:18:51 2018
+-- Last update : Wed May 16 14:11:06 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -633,6 +633,26 @@ begin
 
         end procedure t11;
 
+
+        -------------------------------------------------------------------
+        procedure t20 is
+        -------------------------------------------------------------------
+        begin
+            cur_test <= 1;
+            waitfor(10);
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            report "-- TEST 20 -- UFT Command Packet reception with user data";
+            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_user_0_0xeeeeeeee.txt");
+
+            read("100000");
+            wait until rising_edge(clk);
+            assert (rx = x"eeeeeeee") report "ERROR: user reg 0 not written" severity error;
+            waitfor(10);
+        end procedure t20;
+
     begin
         waitfor(30);
 
@@ -645,19 +665,25 @@ begin
         ------------
         -- UFT packet send: TEST 10 and 11
         ------------
-        t10;
+        --t10;
         --t11;
 
         ------------
         -- UFT packet receive:
         ------------
-        t1; -- UFT Command Packet reception
-        t2; -- UFT Data Packet reception
-        t3; -- NSEQ=2 UFT Data Packet reception
+        --t1; -- UFT Command Packet reception
+        --t2; -- UFT Data Packet reception
+        --t3; -- NSEQ=2 UFT Data Packet reception
         --t4; -- NSEQ=1 32byte UFT Data Packet reception
         --t5; -- NSEQ=1 31byte UFT Data Packet reception
         --t6; -- NSEQ=1 30byte UFT Data Packet reception
         --t7; -- NSEQ=1 29byte UFT Data Packet reception
+        
+        ------------
+        -- UFT user command packet send
+        ------------
+        t20;
+        --t11;
 
 
         waitfor(5);

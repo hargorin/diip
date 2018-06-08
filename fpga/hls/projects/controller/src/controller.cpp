@@ -62,7 +62,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
     switch(state)
     {
         case S_INIT:
-            cbus[0] = 0x00000000;
+            cbus[UFT_REG_CONTROL] = 0x00000000;
             state = S_IDLE;
             break;
         case S_IDLE:
@@ -179,6 +179,12 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             to_mem: memcpy((void*)(&memp[OUT_MEMORY_BASE]),(const void*)out_mem,(imgWidth-WINDOW_LEN+1)*sizeof(uint8_t));
             state = S_IDLE;
             break;
+        case S_SEND:
+        	// send processed data
+            cbus[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
+            cbus[UFT_REG_CONTROL] = UFT_REG_CONTROL_TX_START;
+            state = S_IDLE;
+        	break;
     }
 }
 
