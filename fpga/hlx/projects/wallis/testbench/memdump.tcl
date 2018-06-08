@@ -26,7 +26,7 @@ proc dump {fname addr size} {
         # Status
         puts -nonewline [format "\rProgress: %3.0f%% " [expr {$i * 100 / $n_transactions}]]
         # calculate current offset
-        set addr_off [format %x [expr {[scan $addr %x] + $i*$transaction_size}]]
+        set addr_off [format %x [expr {[scan $addr %x] + $i*$transaction_size*4}]]
         # create read transaction
         create_hw_axi_txn rd_t $hw_axi -force -address $addr_off -type read -len $transaction_size
         # Run transaction
