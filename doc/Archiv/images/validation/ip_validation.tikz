@@ -1,0 +1,22 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+    \coordinate (csim)      at (0,0);
+    \coordinate (cosim)     at (2,-1.5);
+    \coordinate (fpga)     at (-2,-1.5);
+
+
+    %nodes
+    \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=south, text width=2.8cm, align=center] (A) at (csim) {C Simulation};
+    \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=south, text width=2.8cm, align=center] (B) at (cosim) {Co Simulation};
+    \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=south, text width=2.8cm, align=center] (C) at (fpga) {FPGA Test};
+
+    %path
+    \path[draw,-{Latex[length=2.5mm]}] (A) -- (B);
+    \path[draw,-{Latex[length=2.5mm]}] (B) -- (C);
+    \path[draw,-{Latex[length=2.5mm]}] (C) -- (A);
+
+\end{tikzpicture}

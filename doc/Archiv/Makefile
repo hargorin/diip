@@ -1,7 +1,7 @@
 # LaTeX Makefile
 
 PROJECT=main
-OUTPUT=p6_diip_huetter_stocker
+OUTPUT=p5_diip_huetter_stocker
 PDFLATEX=pdflatex -file-line-error -interaction=nonstopmode -output-directory . -jobname $(OUTPUT) $(PROJECT)
 BIBTEX=bibtex
 PDFVIEWER = evince

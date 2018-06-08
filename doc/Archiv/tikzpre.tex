@@ -1,0 +1,18 @@
+\documentclass{article}
+\usepackage[pdftex,active,tightpage]{preview}
+\setlength\PreviewBorder{0mm}
+
+\usepackage{tikz}
+\usepackage{xcolor}
+\usetikzlibrary{arrows,shapes,snakes,
+               automata,backgrounds, 
+               petri,topaths,
+               positioning, spy,
+               fit, external ,calc}             %To use diverse features from tikz
+
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,foreground,main}
+
+\begin{document}
+\begin{preview}
