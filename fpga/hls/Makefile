@@ -9,7 +9,6 @@
 
 # Project name
 NAME = wallis
-# SOLUTION = sol_0
 SOLUTION = $(grep proj_top_solution projects/$(NAME)/project.tcl | awk '{print $3}')
 # FPGA Part number
 PART = xc7a200tfbg676-2

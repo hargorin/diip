@@ -10,17 +10,14 @@
 #include <math.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <iostream>
 using namespace cv;
-
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
 
 #define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.82	//0.75
-#define BRIGHTNESS	0.49	//0.8
+#define CONTRAST 	0.82 //0.75 0.82
+#define BRIGHTNESS	0.49	//0.8 0.49
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -31,12 +28,6 @@ int main(int argc, const char * argv[]) {
 	// Read Image
 	Mat src_img = imread(INPUT_IMAGE);
 	if (!src_img.data) {
-
-   char cwd[1024];
-   if (getcwd(cwd, sizeof(cwd)) != NULL)
-       fprintf(stdout, "Current working dir: %s\n", cwd);
-   else
-       perror("getcwd() error");
 		printf("***********************************************************\n");
 		printf("	ERROR: could not open or find the input image!\n");
 		printf("***********************************************************\n");
@@ -48,10 +39,10 @@ int main(int argc, const char * argv[]) {
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
 	//uint16_t img_width = src_gray.cols;
 	//uint16_t img_height = src_gray.rows;
-	uint16_t img_height = 21;
-	uint16_t img_width = 30;
-	uint16_t g_height = (img_height - WIN_SIZE + 1);
-	uint16_t g_width = (img_width - WIN_SIZE + 1);
+	uint16_t img_height = 40;
+	uint16_t img_width = 40;
+	uint16_t g_height = (img_height - WIN_LENGTH + 1);
+	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
 	// ************************************************************************
 	// Variables
@@ -60,7 +51,7 @@ int main(int argc, const char * argv[]) {
 	AXI_VALUE inData;
 
 	// C-Variables
-	uint8_t c_pixel[LENGTH];
+	uint8_t c_pixel[WIN_SIZE];
 	uint8_t c_mean = 0;
 	uint16_t c_var = 0;
 	uint8_t c_wallis[g_width * g_height];
@@ -71,9 +62,9 @@ int main(int argc, const char * argv[]) {
 	// ************************************************************************
 	for(uint16_t offset = 0; offset < g_height; offset++) {
 		for (uint16_t x = 0; x < img_width; x++) {
-			for (uint16_t y = 0; y < WIN_SIZE; y++) {
+			for (uint16_t y = 0; y < WIN_LENGTH; y++) {
 				inData.data = src_gray.at<apuint8_t>(Point(x, (y + offset)));
-				if((x == img_width- 1) && (y == WIN_SIZE - 1)){
+				if((x == img_width- 1) && (y == WIN_LENGTH - 1)){
 					inData.last = 1;
 				}
 				inDataFIFO.write(inData);
@@ -91,8 +82,8 @@ int main(int argc, const char * argv[]) {
 	for(uint16_t y_offset = 0; y_offset < g_height; y_offset++) {
 		for(uint16_t x_offset = 0; x_offset < g_width; x_offset++) {
 			uint16_t i_pixel = 0;
-			for (uint8_t x = 0; x < WIN_SIZE; x++) {
-				for (uint8_t y = 0; y < WIN_SIZE; y++) {
+			for (uint8_t x = 0; x < WIN_LENGTH; x++) {
+				for (uint8_t y = 0; y < WIN_LENGTH; y++) {
 					c_pixel[i_pixel++] = src_gray.at<uint8_t>(Point(x + x_offset, (y + y_offset)));
 				}
 
@@ -100,7 +91,8 @@ int main(int argc, const char * argv[]) {
 
 			c_mean = C_Mean(c_pixel);
 			c_var = C_Var(c_pixel, c_mean);
-			c_wallis[i_wallis++] = C_Wallis(c_pixel[(LENGTH - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
+			//printf("Var %2d: %5d\n", i_wallis, c_var);
+			c_wallis[i_wallis++] = C_Wallis(c_pixel[(WIN_SIZE - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
 		}
 	}
 
@@ -168,7 +160,7 @@ int main(int argc, const char * argv[]) {
 	printf("Total Pixels  : %d - %d\n", (equal + plus_1 + minus_1 + err), index_pix);
 
 	printf("-----------------------------------------------------------\n");
-	printf("MSE	   : %.6f\n", mse);
+	//printf("MSE	   : %.6f\n", mse);
 	printf("RMSE   : %.6f\n", sqrt(mse));
 	printf("-----------------------------------------------------------\n");
 
@@ -202,11 +194,11 @@ uint8_t C_Mean(uint8_t *pixel) {
 	uint32_t c_sumPixel = 0;
 	uint8_t mean = 0;
 
-	for(uint16_t k = 0; k < LENGTH; k++) {
+	for(uint16_t k = 0; k < WIN_SIZE; k++) {
 		c_sumPixel += pixel[k];
 	}
 
-	mean = c_sumPixel / LENGTH;
+	mean = c_sumPixel / WIN_SIZE;
 	return mean;
 }
 
@@ -214,15 +206,28 @@ uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
 	uint32_t c_sumPow = 0;
 	uint16_t var = 0;
 
-	for(uint16_t k = 0; k < LENGTH; k++) {
-		c_sumPow += (pixel[k] - mean) * (pixel[k] - mean);
+	for(uint16_t k = 0; k < WIN_SIZE; k++) {
+		c_sumPow += (pixel[k] * pixel[k]);
 	}
 
-	var = c_sumPow / (LENGTH - 1);
+	var = (c_sumPow / WIN_SIZE) - (mean*mean);
 	return var;
 }
 
+/*uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
+	uint32_t c_sumPow = 0;
+	uint16_t var = 0;
+
+	for(uint16_t k = 0; k < WIN_SIZE; k++) {
+		c_sumPow += (pixel[k] - mean) * (pixel[k] - mean);
+	}
+
+	var = c_sumPow / (WIN_SIZE);
+	return var;
+}*/
+
 uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean, uint16_t g_var, float brightness, float contrast) {
+/*
 	float tmp_Num;
 	float fp_Num;
 	float fp_nVar;
@@ -234,6 +239,7 @@ uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean
 
 	float w_gMean = brightness * g_mean;
 	float w_gVar = (1-contrast) * g_var;
+
 
 	// int23 = (uint8 - uint8) * uint14
 	tmp_Num = (v_pixel - n_mean) * g_var;
@@ -266,6 +272,15 @@ uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean
 	// <36,30> = <35,29> + <12,8> +  <12,8>
 	w_Pixel = fp_Div + w_gMean + fp_nMean;
 	//printf("%d\n", (uint8_t)w_Pixel);
+*/
+
+	float w_Pixel;
+
+	float dgb = ((v_pixel - n_mean)*contrast*g_var) / (contrast*n_var+(1-contrast)*g_var);
+	w_Pixel = dgb + brightness*g_mean + (1-brightness)*n_mean;
+
+	if(w_Pixel > 255) w_Pixel = 255;
+	if(w_Pixel < 0) w_Pixel = 0;
 
 	return (uint8_t)w_Pixel;
 }

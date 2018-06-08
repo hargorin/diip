@@ -1,41 +1,40 @@
 //
-//  wallis.h
+//  clahe.h
 //
 //  Created by Jan Stocker on 11.04.2018
 //  Copyright © 2018 Jan Stocker. All rights reserved.
 //
 
-#ifndef _WALLIS_H_
-#define _WALLIS_H_
+#ifndef _CLAHE_H_
+#define _CLAHE_H_
 #endif
 
 #include <stdint.h>
 #include <hls_stream.h>
 #include <ap_int.h>
-#include <ap_fixed.h>
 #include <ap_axi_sdata.h>
 
 
 // ****************************************************************************
 // *** Global Variables ***
 // ****************************************************************************
-typedef ap_uint<8>	apuint8_t;
-typedef ap_uint<10>	apuint10_t;
-typedef ap_uint<12>	apuint12_t;
-typedef ap_uint<14>	apuint14_t;
-typedef ap_uint<16>	apuint16_t;
-typedef ap_uint<18> apuint18_t;
-typedef ap_uint<19>	apuint19_t;
-typedef ap_uint<27>	apuint27_t;
-
-typedef ap_int<23>	apint23_t;
+typedef ap_uint<8>	uint8;
+typedef ap_uint<16>	uint16;
 
 
+#define WIN_SIZE 	4
+#define BLOCK_SIZE 	64
+#define NUM_BINS 	256
 
-#define WIN_LENGTH 	21	// Between 11 and 41 (depends on camera resolution)
-#define WIN_SIZE	(WIN_LENGTH * WIN_LENGTH)
+typedef uint8 Pixel_t[BLOCK_SIZE * BLOCK_SIZE];
+typedef uint16 Hist_t[NUM_BINS];
+typedef uint8 Cdf_t[NUM_BINS];
 
-
+typedef struct Block {
+	Pixel_t pixel;
+	Hist_t hist;
+	Cdf_t cdf;
+} Block_t;
 
 typedef ap_axiu<8,1,1,1> AXI_VALUE;		// <TDATA, TUSER, TID, TDEST>
 typedef hls::stream<AXI_VALUE> AXI_STREAM;
@@ -46,6 +45,5 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 // ****************************************************************************
 
 // Top-Function
-void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
-			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-			ap_ufixed<5,1> brightness);
+void clahe(AXI_STREAM &inData0, AXI_STREAM &inData1, AXI_STREAM &inData2, AXI_STREAM &inData3,
+			AXI_STREAM &outData0, AXI_STREAM &outData1, AXI_STREAM &outData2, AXI_STREAM &outData3);
