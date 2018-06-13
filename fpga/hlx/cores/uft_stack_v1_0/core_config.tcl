@@ -3,7 +3,7 @@
 set display_name {UFT Stack}
 
 # Set top module
-set_property top uft_top [current_fileset]
+set_property top uft_top_wrap [current_fileset]
 
 # set core
 set core [ipx::current_core]
@@ -11,7 +11,7 @@ set core [ipx::current_core]
 # set core properties
 set_property DISPLAY_NAME $display_name $core
 set_property DESCRIPTION $display_name $core
-set_property VERSION 1.2 $core
+set_property VERSION 1.3 $core
 
 # Set Core Parameters
 # proc core_parameter {name display_name description} defined in core.tcl
@@ -39,141 +39,6 @@ set_property value {0x08000000} [ipx::get_user_parameters c_pkg_uft_rx_base_addr
 
 core_parameter c_pkg_simulation {c_pkg_simulation} {Set to false for implementation}
 core_parameter c_pkg_uft_rx_base_addr {c_pkg_uft_rx_base_addr} {Base address of rx memory}
-
-ipx::add_bus_interface axi_master_burst_tx [ipx::current_core]
-set bus [ipx::get_bus_interfaces axi_master_burst_tx -of_objects [ipx::current_core]]
-set_property abstraction_type_vlnv Xilinx:user:axi_master_burst_rtl:1.0 $bus
-set_property bus_type_vlnv Xilinx:user:axi_master_burst:1.0 $bus
-set_property interface_mode master $bus
-set_property display_name axi_master_burst_tx $bus
-set_property description axi_master_burst_tx $bus
-ipx::add_port_map ip2bus_mstwr_d $bus
-set_property physical_name tx_ip2bus_mstwr_d [ipx::get_port_maps ip2bus_mstwr_d -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_d $bus
-set_property physical_name tx_bus2ip_mstrd_d [ipx::get_port_maps bus2ip_mstrd_d -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_src_dsc_n $bus
-set_property physical_name tx_ip2bus_mstwr_src_dsc_n [ipx::get_port_maps ip2bus_mstwr_src_dsc_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_cmdack $bus
-set_property physical_name tx_bus2ip_mst_cmdack [ipx::get_port_maps bus2ip_mst_cmdack -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_eof_n $bus
-set_property physical_name tx_bus2ip_mstrd_eof_n [ipx::get_port_maps bus2ip_mstrd_eof_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_rearbitrate $bus
-set_property physical_name tx_bus2ip_mst_rearbitrate [ipx::get_port_maps bus2ip_mst_rearbitrate -of_objects $bus]
-ipx::add_port_map bus2ip_mstwr_dst_dsc_n $bus
-set_property physical_name tx_bus2ip_mstwr_dst_dsc_n [ipx::get_port_maps bus2ip_mstwr_dst_dsc_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_cmplt $bus
-set_property physical_name tx_bus2ip_mst_cmplt [ipx::get_port_maps bus2ip_mst_cmplt -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_src_rdy_n $bus
-set_property physical_name tx_ip2bus_mstwr_src_rdy_n [ipx::get_port_maps ip2bus_mstwr_src_rdy_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_length $bus
-set_property physical_name tx_ip2bus_mst_length [ipx::get_port_maps ip2bus_mst_length -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_sof_n $bus
-set_property physical_name tx_bus2ip_mstrd_sof_n [ipx::get_port_maps bus2ip_mstrd_sof_n -of_objects $bus]
-ipx::add_port_map ip2bus_mstrd_req $bus
-set_property physical_name tx_ip2bus_mstrd_req [ipx::get_port_maps ip2bus_mstrd_req -of_objects $bus]
-ipx::add_port_map bus2ip_mst_cmd_timeout $bus
-set_property physical_name tx_bus2ip_mst_cmd_timeout [ipx::get_port_maps bus2ip_mst_cmd_timeout -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_rem $bus
-set_property physical_name tx_ip2bus_mstwr_rem [ipx::get_port_maps ip2bus_mstwr_rem -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_rem $bus
-set_property physical_name tx_bus2ip_mstrd_rem [ipx::get_port_maps bus2ip_mstrd_rem -of_objects $bus]
-ipx::add_port_map ip2bus_mst_addr $bus
-set_property physical_name tx_ip2bus_mst_addr [ipx::get_port_maps ip2bus_mst_addr -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_req $bus
-set_property physical_name tx_ip2bus_mstwr_req [ipx::get_port_maps ip2bus_mstwr_req -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_sof_n $bus
-set_property physical_name tx_ip2bus_mstwr_sof_n [ipx::get_port_maps ip2bus_mstwr_sof_n -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_src_rdy_n $bus
-set_property physical_name tx_bus2ip_mstrd_src_rdy_n [ipx::get_port_maps bus2ip_mstrd_src_rdy_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_type $bus
-set_property physical_name tx_ip2bus_mst_type [ipx::get_port_maps ip2bus_mst_type -of_objects $bus]
-ipx::add_port_map ip2bus_mstrd_dst_rdy_n $bus
-set_property physical_name tx_ip2bus_mstrd_dst_rdy_n [ipx::get_port_maps ip2bus_mstrd_dst_rdy_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_error $bus
-set_property physical_name tx_bus2ip_mst_error [ipx::get_port_maps bus2ip_mst_error -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_eof_n $bus
-set_property physical_name tx_ip2bus_mstwr_eof_n [ipx::get_port_maps ip2bus_mstwr_eof_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_lock $bus
-set_property physical_name tx_ip2bus_mst_lock [ipx::get_port_maps ip2bus_mst_lock -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_src_dsc_n $bus
-set_property physical_name tx_bus2ip_mstrd_src_dsc_n [ipx::get_port_maps bus2ip_mstrd_src_dsc_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_be $bus
-set_property physical_name tx_ip2bus_mst_be [ipx::get_port_maps ip2bus_mst_be -of_objects $bus]
-ipx::add_port_map bus2ip_mstwr_dst_rdy_n $bus
-set_property physical_name tx_bus2ip_mstwr_dst_rdy_n [ipx::get_port_maps bus2ip_mstwr_dst_rdy_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_reset $bus
-set_property physical_name tx_ip2bus_mst_reset [ipx::get_port_maps ip2bus_mst_reset -of_objects $bus]
-ipx::add_port_map ip2bus_mstrd_dst_dsc_n $bus
-set_property physical_name tx_ip2bus_mstrd_dst_dsc_n [ipx::get_port_maps ip2bus_mstrd_dst_dsc_n -of_objects $bus]
-ipx::associate_bus_interfaces -busif axi_master_burst_tx -clock clk [ipx::current_core]
-
-
-ipx::add_bus_interface axi_master_burst_rx [ipx::current_core]
-set bus [ipx::get_bus_interfaces axi_master_burst_rx -of_objects [ipx::current_core]]
-set_property abstraction_type_vlnv Xilinx:user:axi_master_burst_rtl:1.0 $bus
-set_property bus_type_vlnv Xilinx:user:axi_master_burst:1.0 $bus
-set_property interface_mode master $bus
-set_property display_name axi_master_burst_rx $bus
-set_property description axi_master_burst_rx $bus
-ipx::add_port_map ip2bus_mstwr_d $bus
-set_property physical_name ip2bus_mstwr_d [ipx::get_port_maps ip2bus_mstwr_d -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_d $bus
-set_property physical_name bus2ip_mstrd_d [ipx::get_port_maps bus2ip_mstrd_d -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_src_dsc_n $bus
-set_property physical_name ip2bus_mstwr_src_dsc_n [ipx::get_port_maps ip2bus_mstwr_src_dsc_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_cmdack $bus
-set_property physical_name bus2ip_mst_cmdack [ipx::get_port_maps bus2ip_mst_cmdack -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_eof_n $bus
-set_property physical_name bus2ip_mstrd_eof_n [ipx::get_port_maps bus2ip_mstrd_eof_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_rearbitrate $bus
-set_property physical_name bus2ip_mst_rearbitrate [ipx::get_port_maps bus2ip_mst_rearbitrate -of_objects $bus]
-ipx::add_port_map bus2ip_mstwr_dst_dsc_n $bus
-set_property physical_name bus2ip_mstwr_dst_dsc_n [ipx::get_port_maps bus2ip_mstwr_dst_dsc_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_cmplt $bus
-set_property physical_name bus2ip_mst_cmplt [ipx::get_port_maps bus2ip_mst_cmplt -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_src_rdy_n $bus
-set_property physical_name ip2bus_mstwr_src_rdy_n [ipx::get_port_maps ip2bus_mstwr_src_rdy_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_length $bus
-set_property physical_name ip2bus_mst_length [ipx::get_port_maps ip2bus_mst_length -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_sof_n $bus
-set_property physical_name bus2ip_mstrd_sof_n [ipx::get_port_maps bus2ip_mstrd_sof_n -of_objects $bus]
-ipx::add_port_map ip2bus_mstrd_req $bus
-set_property physical_name ip2bus_mstrd_req [ipx::get_port_maps ip2bus_mstrd_req -of_objects $bus]
-ipx::add_port_map bus2ip_mst_cmd_timeout $bus
-set_property physical_name bus2ip_mst_cmd_timeout [ipx::get_port_maps bus2ip_mst_cmd_timeout -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_rem $bus
-set_property physical_name ip2bus_mstwr_rem [ipx::get_port_maps ip2bus_mstwr_rem -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_rem $bus
-set_property physical_name bus2ip_mstrd_rem [ipx::get_port_maps bus2ip_mstrd_rem -of_objects $bus]
-ipx::add_port_map ip2bus_mst_addr $bus
-set_property physical_name ip2bus_mst_addr [ipx::get_port_maps ip2bus_mst_addr -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_req $bus
-set_property physical_name ip2bus_mstwr_req [ipx::get_port_maps ip2bus_mstwr_req -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_sof_n $bus
-set_property physical_name ip2bus_mstwr_sof_n [ipx::get_port_maps ip2bus_mstwr_sof_n -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_src_rdy_n $bus
-set_property physical_name bus2ip_mstrd_src_rdy_n [ipx::get_port_maps bus2ip_mstrd_src_rdy_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_type $bus
-set_property physical_name ip2bus_mst_type [ipx::get_port_maps ip2bus_mst_type -of_objects $bus]
-ipx::add_port_map ip2bus_mstrd_dst_rdy_n $bus
-set_property physical_name ip2bus_mstrd_dst_rdy_n [ipx::get_port_maps ip2bus_mstrd_dst_rdy_n -of_objects $bus]
-ipx::add_port_map bus2ip_mst_error $bus
-set_property physical_name bus2ip_mst_error [ipx::get_port_maps bus2ip_mst_error -of_objects $bus]
-ipx::add_port_map ip2bus_mstwr_eof_n $bus
-set_property physical_name ip2bus_mstwr_eof_n [ipx::get_port_maps ip2bus_mstwr_eof_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_lock $bus
-set_property physical_name ip2bus_mst_lock [ipx::get_port_maps ip2bus_mst_lock -of_objects $bus]
-ipx::add_port_map bus2ip_mstrd_src_dsc_n $bus
-set_property physical_name bus2ip_mstrd_src_dsc_n [ipx::get_port_maps bus2ip_mstrd_src_dsc_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_be $bus
-set_property physical_name ip2bus_mst_be [ipx::get_port_maps ip2bus_mst_be -of_objects $bus]
-ipx::add_port_map bus2ip_mstwr_dst_rdy_n $bus
-set_property physical_name bus2ip_mstwr_dst_rdy_n [ipx::get_port_maps bus2ip_mstwr_dst_rdy_n -of_objects $bus]
-ipx::add_port_map ip2bus_mst_reset $bus
-set_property physical_name ip2bus_mst_reset [ipx::get_port_maps ip2bus_mst_reset -of_objects $bus]
-ipx::add_port_map ip2bus_mstrd_dst_dsc_n $bus
-set_property physical_name ip2bus_mstrd_dst_dsc_n [ipx::get_port_maps ip2bus_mstrd_dst_dsc_n -of_objects $bus]
-ipx::associate_bus_interfaces -busif axi_master_burst_rx -clock clk [ipx::current_core]
 
 ipx::add_bus_interface udp_rx_ctrl [ipx::current_core]
 set_property abstraction_type_vlnv Xilinx:user:udp_rx_ctrl_rtl:1.0 [ipx::get_bus_interfaces udp_rx_ctrl -of_objects [ipx::current_core]]
