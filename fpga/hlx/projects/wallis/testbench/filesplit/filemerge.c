@@ -21,13 +21,13 @@ int main(int argc, char const *argv[])
 
     FILE* fd;
     long fsize;
-	FILE* fo = fopen(argv[1],"w");
+	FILE* fo = fopen(argv[1],"wb");
 
     // Iterate over every line
     for(int i = 0; i < (argc-2); i++)
     {
         // open file
-        fd = fopen(argv[i+2],"r");
+        fd = fopen(argv[i+2],"rb");
 
         fseek(fd, 0, SEEK_END);
         fsize = ftell(fd);

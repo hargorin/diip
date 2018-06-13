@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
-	FILE* fd = fopen(argv[1],"r");
+	FILE* fd = fopen(argv[1],"rb");
     int w = atoi(argv[2]);
 
     if(fd == NULL) return 1;
@@ -48,7 +48,7 @@ int main(int argc, char const *argv[])
     {
         // open file
         sprintf(str, "%s/row_%03d.bin",argv[3], i);
-        fd = fopen(str,"w");
+        fd = fopen(str,"wb");
         if(fd != NULL)
         {
             fwrite (&data[w*i] , sizeof(char), 21*w, fd);
