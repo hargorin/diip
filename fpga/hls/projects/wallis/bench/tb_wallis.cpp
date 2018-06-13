@@ -13,7 +13,7 @@
 #include <iostream>
 using namespace cv;
 
-#define INPUT_IMAGE "room.jpg"
+#define INPUT_IMAGE "room256x256.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
 #define CONTRAST 	0.82 //0.75 0.82
@@ -37,10 +37,10 @@ int main(int argc, const char * argv[]) {
 	// Edit Image
 	Mat src_gray;
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
-	//uint16_t img_width = src_gray.cols;
-	//uint16_t img_height = src_gray.rows;
-	uint16_t img_height = 40;
-	uint16_t img_width = 40;
+	uint16_t img_width = src_gray.cols;
+	uint16_t img_height = src_gray.rows;
+	//uint16_t img_height = 40;
+	//uint16_t img_width = 40;
 	uint16_t g_height = (img_height - WIN_LENGTH + 1);
 	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
@@ -169,18 +169,18 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	// Show image
-/*	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
-	imwrite("wallis_hw_room.jpg", hw_dst_img);
-	imwrite("wallis_sw_room.jpg", c_dst_img);
+	imwrite("wallis_hw_room256x256.jpg", hw_dst_img);
+	imwrite("wallis_sw_room256x256.jpg", c_dst_img);
 	if (getenv("DISPLAY") != NULL)
 	{
 		imshow( "Original", src_gray );
 		imshow( "HW - Wallis", hw_dst_img );
 		imshow( "SW - Wallis", c_dst_img );
 		waitKey(0);
-	}*/
+	}
 
 
     return 0;
