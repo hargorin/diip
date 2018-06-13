@@ -9,7 +9,8 @@ set_directive_interface -mode s_axilite -bundle ctrl "wallis" g_Mean
 set_directive_interface -mode s_axilite -bundle ctrl "wallis" g_Var
 set_directive_interface -mode s_axilite -bundle ctrl "wallis" contrast
 set_directive_interface -mode s_axilite -bundle ctrl "wallis" brightness
-set_directive_interface -mode s_axilite -bundle ctrl "wallis"
+# set_directive_interface -mode s_axilite -bundle ctrl "wallis"
+set_directive_interface -mode ap_ctrl_none "wallis"
 set_directive_resource -core RAM_2P_BRAM "wallis" pixel
 set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
 set_directive_inline "Cal_Mean"

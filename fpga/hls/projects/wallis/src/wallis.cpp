@@ -23,7 +23,11 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
 			ap_ufixed<5,1> brightness) {
 
-
+	g_Mean = 127;
+	g_Var = 3600;
+	contrast = 0.82;
+	brightness = 0.49;
+	
 	// ************************************************************************
 	// Variables
 	AXI_VALUE inPixel;
