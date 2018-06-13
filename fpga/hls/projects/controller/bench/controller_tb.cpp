@@ -13,7 +13,7 @@
 #define OUT_SIZE 	(IMG_WIDTH-WINDOW_LEN+1)
 
 #define RUN_DUV_N_TIMES(n) for(int duvrunctr=0; duvrunctr<(n); duvrunctr++) { \
-	controller_top(memory, uft_reg, inData, outData, rx_done); \
+	controller_top(memory, uft_reg, inData, outData, rx_done, &outState); \
 }
 
 int main()
@@ -27,6 +27,7 @@ int main()
 	AXI_STREAM inData;
 
     ap_uint<1> rx_done = 0;
+    ap_uint<4> outState = 0;
 
 
 

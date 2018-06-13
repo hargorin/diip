@@ -17,12 +17,14 @@ void fillBuff(volatile uint8_t *memp, volatile uint8_t *buf,
 void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &inData,
      AXI_STREAM &outData,
-     ap_uint<1> rx_done)
+     ap_uint<1> rx_done,
+     ap_uint<4> *outState)
 {
+#pragma HLS INTERFACE ap_none port=outState
 #pragma HLS INTERFACE ap_ctrl_none port=return
 #pragma HLS DATAFLOW
 
-#pragma HLS INTERFACE m_axi depth=16 port=cbus offset=off
+#pragma HLS INTERFACE m_axi depth=16 port=cbus offset=direct bundle=cbus
 #pragma HLS INTERFACE m_axi depth=2796 port=memp offset=off bundle=memp
 #pragma HLS INTERFACE axis register reverse port=inData
 #pragma HLS INTERFACE axis register forward port=outData
@@ -179,13 +181,8 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             to_mem: memcpy((void*)(&memp[OUT_MEMORY_BASE]),(const void*)out_mem,(imgWidth-WINDOW_LEN+1)*sizeof(uint8_t));
             state = S_IDLE;
             break;
-        case S_SEND:
-        	// send processed data
-            cbus[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
-            cbus[UFT_REG_CONTROL] = UFT_REG_CONTROL_TX_START;
-            state = S_IDLE;
-        	break;
     }
+    *outState = state;
 }
 
 /**
