@@ -37,30 +37,63 @@ proc flash {} {
     program_hw_devices [get_hw_devices xc7a200t_0]
 }
 
+#############################################
+# Testbench for commit 6777dc8
+proc tb1 {} {
+  # # Write data to image input base
+  writeto room_in.bin 0
+
+  # Write image width
+  create_hw_axi_txn wrimgwidth [get_hw_axis] -force -address 0xc0000020 -type write -data 00000100
+  run_hw_axi wrimgwidth
+
+  # Push SW5 to run calculation
+  puts "Push SW5 to start processing"
+  puts "Press enter when done"
+  anykey
+
+  # Dump output data
+  # dump room_out.bin 379440 355080
+  dump room_out.bin 10000 55696
+
+  # Check data
+  puts "Check output data in out.bin"
+}
+
+#############################################
+# Testbench for commit xxxxxxx
+proc tb2 {} {
+  # Write image width 128 to uft source register
+  create_hw_axi_txn wrimgwidth [get_hw_axis] -force -address 0xc0000020 -type write -data 00000100
+  run_hw_axi wrimgwidth
+
+
+  for {set i 0} {$i < 108} {incr i} {
+      # Write data to image input base
+      puts [format "filesplit/out/row_%03d.bin" $i]
+      writeto [format "filesplit/out/row_%03d.bin" $i] 0
+      # puts "Push SW5 to start processing"
+      # anykey
+      # launch controller
+      create_hw_axi_txn startctrl [get_hw_axis] -force -address 0x40000000 -type write -data ffffffff
+      run_hw_axi startctrl
+      create_hw_axi_txn startctrl [get_hw_axis] -force -address 0x40000000 -type write -data 00000000
+      run_hw_axi startctrl
+      dump [format "filesplit/out/in_%03d.bin" $i] a80 108
+  }
+
+  # Check data
+  puts "Check output data in filesplit/out/in_*.bin"
+}
+
 # --------
 #   main
 # --------
-source memdump.tcl
-open_hw
-connect
+  source memdump.tcl
+  open_hw
+  connect
 
-# # Write data to image input base
-writeto room_in.bin 0
+  # tb1
+  tb2
 
-# Write image width
-create_hw_axi_txn wrimgwidth [get_hw_axis] -force -address 0xc0000020 -type write -data 00000100
-run_hw_axi wrimgwidth
-
-# Push SW5 to run calculation
-puts "Push SW5 to start processing"
-puts "Press enter when done"
-anykey
-
-# Dump output data
-# dump room_out.bin 379440 355080
-dump room_out.bin 10000 55696
-
-# Check data
-puts "Check output data in out.bin"
-
-close_hw
+  close_hw
