@@ -77,7 +77,7 @@ set_property IOSTANDARD LVCMOS15 [get_ports SW5]
 ############################################################
 # IODELAY
 ############################################################
-set_property IODELAY_GROUP tri_mode_ethernet_mac_iodelay_grp [get_cells system_i/temac_support_0/U0/support/idelayctrl_common]
+set_property IODELAY_GROUP tri_mode_ethernet_mac_iodelay_grp [get_cells system_i/temac_support/U0/support/idelayctrl_common]
 
 
 ############################################################
