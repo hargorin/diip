@@ -24,6 +24,7 @@ typedef enum uftControll
 #define CONTROLL_FTP         0x01
 #define CONTROLL_ACKFP       0x02
 #define CONTROLL_ACKFT       0x03
+#define CONTROLL_USER        0x04
 
 #define UFT_CONTROLL_SIZE    34 // data plus padding
 #define UFT_DATA_PAYLOAD     1464 // remaining data size in data packet
@@ -43,6 +44,7 @@ static int create_recv_socket(uint16_t port, struct sockaddr_in *sa );
 static void assemble_uft_controll (uint8_t *buf, uint8_t tcid, uint32_t nseq);
 static void assemble_uft_ackfp (uint8_t *buf, uint8_t tcid, uint32_t seqnbr);
 static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tcid, uint32_t seq);
+static void assemble_uft_user_reg (uint8_t *buf, uint8_t reg, uint32_t dat);
 
 static int is_command_packet(uint8_t *buf);
 static int get_command (uint8_t *buf);
@@ -392,6 +394,37 @@ void uft_set_verbosity(int v)
     verbosity = v;
 }
 
+/**
+ * @brief      Set a user register in the receiving host
+ *
+ * @param[in]  ip      destination ip address
+ * @param[in]  port    destination port
+ * @param[in]  regadr  user register address 0..7
+ * @param[in]  regval  user register data to be written
+ *
+ * @return     status
+ */
+int uft_write_user_register(const char* ip, uint16_t port, uint32_t regadr, uint32_t regval)
+{
+    int sockfd;
+    struct sockaddr_in sa;
+    uint8_t *controll;
+
+    // Create send socket
+    sockfd = create_send_socket(ip, port, &sa);
+    if (sockfd < 0) return -1;
+
+    // send file start control
+    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+    assemble_uft_user_reg(controll, regadr, regval);
+
+    //send the message
+    Send(sockfd, controll, UFT_CONTROLL_SIZE, 0);
+
+    // TODO: read acknowledge
+    close(sockfd);
+}
+
 // ========================================================
 // Modul private functions
 // ========================================================
@@ -613,6 +646,29 @@ static uint32_t assemble_data(uint8_t *buf, FILE *fd, uint32_t fsize, uint8_t tc
     //     memcpy(&buf[4], &fbuf[seq * UFT_DATA_PAYLOAD], num);
     // }
     // return  num+4;  
+}
+
+/**
+ * @brief      Assemble a set user register packet
+ *
+ * @param      buf   destination buffer already allocated
+ * @param[in]  reg   user target register
+ * @param[in]  dat   user target data
+ */
+static void assemble_uft_user_reg (uint8_t *buf, uint8_t reg, uint32_t dat)
+{
+    memset(buf, 0x0, UFT_CONTROLL_SIZE);
+
+    buf[0] = CONTROLL_USER;
+
+    buf[1] = 0;
+    buf[2] = 0;
+    buf[3] = reg & 0x07;
+
+    buf[4] = ((dat & 0xff000000) >> 24);
+    buf[5] = ((dat & 0x00ff0000) >> 16);
+    buf[6] = ((dat & 0x0000ff00) >>  8);
+    buf[7] = ((dat & 0x000000ff) >>  0);
 }
 
 /**

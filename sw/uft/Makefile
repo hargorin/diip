@@ -2,8 +2,9 @@
 SENDER = sender
 RECEIVER = receiver
 BENCHMARK = benchmark
+COMMAND = command
 
-TARGET = $(SENDER) $(RECEIVER) $(BENCHMARK)
+TARGET = $(SENDER) $(RECEIVER) $(BENCHMARK) $(COMMAND)
 
 LIBS = -lm
 CC = gcc
@@ -21,6 +22,7 @@ HEADERS = $(wildcard *.h)
 RECEIVEROBJ = receiver.o
 SENDEROBJ = sender.o
 BENCHMARKOBJ = benchmark.o
+COMMANDOBJ = command.o
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -35,6 +37,9 @@ $(RECEIVER) : $(OBJECTS) $(RECEIVEROBJ)
 
 $(BENCHMARK) : $(OBJECTS) $(BENCHMARKOBJ)
 	$(CC) $(CFLAGS) $(BENCHMARKOBJ) $(OBJECTS) -Wall $(LIBS) -o $@
+
+$(COMMAND) : $(OBJECTS) $(COMMANDOBJ)
+	$(CC) $(CFLAGS) $(COMMANDOBJ) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
 	-rm -f *.o
