@@ -64,7 +64,10 @@ proc tb1 {} {
 # Testbench for commit xxxxxxx
 proc tb2 {} {
   # Write image width 128 to uft source register
-  create_hw_axi_txn wrimgwidth [get_hw_axis] -force -address 0xc0000020 -type write -data 00000100
+  create_hw_axi_txn wrimgwidth [get_hw_axis] -force -address 0xc0000020 -type write -data 00000080
+  run_hw_axi wrimgwidth
+  # Write UFT status to tx_ready
+  create_hw_axi_txn wrimgwidth [get_hw_axis] -force -address 0xc0000000 -type write -data 00000001
   run_hw_axi wrimgwidth
 
 
