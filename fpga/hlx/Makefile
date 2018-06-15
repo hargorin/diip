@@ -57,7 +57,7 @@ synth: $(BUILD)/projects/$(NAME).runs/synth_1
 project: $(addprefix $(BUILD)/cores/, $(CORES)) $(addprefix $(BUILD)/projects/, $(NAME).xpr)
 
 clean-project:
-	$(RM) $(BUILD)/projects/*
+	$(RM) $(BUILD)/projects/$(NAME)*
 
 $(BUILD)/projects/$(NAME).xpr: projects/$(NAME)/*.tcl
 	mkdir -p $(@D)
