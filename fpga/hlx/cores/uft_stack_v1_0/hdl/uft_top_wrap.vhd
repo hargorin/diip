@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed Jun 13 12:52:29 2018
+-- Last update : Fri Jun 15 11:52:16 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -491,7 +491,7 @@ begin
 	----------------------------------------------------------------------------
     -- UFT top instance
     -- -------------------------------------------------------------------------
-    uft_top : entity work.uft_top
+    uft_top_i : uft_top
         generic map (
             INCOMMING_PORT      => INCOMMING_PORT,
             FIFO_DEPTH          => FIFO_DEPTH,
@@ -615,7 +615,7 @@ begin
 	----------------------------------------------------------------------------
     -- AXI master burst Rx instance
     -- -------------------------------------------------------------------------
-    amb_rx : entity work.axi_master_burst
+    amb_rx : axi_master_burst
         generic map (
             C_M_AXI_ADDR_WIDTH  => C_M_AXI_ADDR_WIDTH,
             C_M_AXI_DATA_WIDTH  => C_M_AXI_DATA_WIDTH,
@@ -692,7 +692,7 @@ begin
 	----------------------------------------------------------------------------
     -- AXI master burst Tx instance
     -- -------------------------------------------------------------------------
-    amb_tx : entity work.axi_master_burst
+    amb_tx : axi_master_burst
         generic map (
             C_M_AXI_ADDR_WIDTH  => C_M_AXI_ADDR_WIDTH,
             C_M_AXI_DATA_WIDTH  => C_M_AXI_DATA_WIDTH,
