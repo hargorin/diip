@@ -20,4 +20,8 @@ HASH=$(git rev-parse --short HEAD)
 ./file2image workdir/room_out.bin workdir/room_fpga_$HASH.jpg 108 108
 
 # diff with sw
-compare -verbose -metric MSE workdir/room_fpga_$HASH.jpg images/wallis_hw_room128x128.jpg diff.jpg
+compare -verbose -metric MSE workdir/room_fpga_$HASH.jpg images/wallis_hw_room128x128.jpg workdir/diff.jpg
+
+# remove split files
+rm workdir/row_*
+rm workdir/in_*
