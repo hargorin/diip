@@ -58,7 +58,7 @@
  ] $clk_wiz
 
   # Create instance: controller_top_0, and set properties
-  set controller_top_0 [ create_bd_cell -type ip -vlnv ime:diip:controller_top:0.3 controller_top_0 ]
+  set controller_top_0 [ create_bd_cell -type ip -vlnv ime:diip:controller_top:0.4 controller_top_0 ]
 
   # Create instance: jtag_axi_0, and set properties
   set jtag_axi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:jtag_axi:1.2 jtag_axi_0 ]
