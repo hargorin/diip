@@ -33,6 +33,7 @@ using namespace std;
 
 // Register MAP
 #define UFT_REG_STATUS  0
+#define UFT_REG_STATUS_TX_READY  0x00000001
 
 #define UFT_REG_CONTROL 1
 #define UFT_REG_CONTROL_TX_START 0x00000001

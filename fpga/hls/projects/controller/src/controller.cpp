@@ -32,7 +32,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
 #pragma HLS INLINE region
 //#pragma HLS pipeline II=1 enable_flush
 
-    static enum myState {S_INIT, S_IDLE, S_READ, S_STREAM, S_WRITE} state = S_IDLE;
+    static enum myState {S_INIT, S_IDLE, S_READ, S_STREAM, S_WRITE, S_SEND} state = S_IDLE;
 
     // Local ping pong memory for image data
     static uint8_t ppBufA[PIN_PONG_BUF_SIZE];
@@ -179,8 +179,24 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
         case S_WRITE:
             // store processed data in memory
             to_mem: memcpy((void*)(&memp[OUT_MEMORY_BASE]),(const void*)out_mem,(imgWidth-WINDOW_LEN+1)*sizeof(uint8_t));
-            state = S_IDLE;
+        	state = S_SEND;
             break;
+        case S_SEND:
+        	// Check wether the UFT core is ready to send data
+        	if(cbus[UFT_REG_STATUS] & UFT_REG_STATUS_TX_READY)
+        	{
+        		// Send start address, size and command
+        		cbus[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
+        		cbus[UFT_REG_TX_SIZE] = imgWidth-WINDOW_LEN+1;
+        		cbus[UFT_REG_CONTROL] = UFT_REG_CONTROL_TX_START;
+                state = S_IDLE;
+        	}
+        	// else, stay here
+        	else
+        	{
+        		state = S_SEND;
+        	}
+        	break;
     }
     *outState = state;
 }

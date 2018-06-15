@@ -77,8 +77,11 @@ int main()
 	rx_done = 0;
 
 	// Run for all Pixels
-	RUN_DUV_N_TIMES(IN_SIZE+2)
-//	RUN_DUV_N_TIMES(4)
+	RUN_DUV_N_TIMES(IN_SIZE+4)
+
+	// indicate ready
+	uft_reg[UFT_REG_STATUS] = UFT_REG_STATUS_TX_READY;
+	RUN_DUV_N_TIMES(2)
 
 	//************************************************************************
 	//Run a software version of the hardware function to validate results
@@ -102,23 +105,13 @@ int main()
 		mem_set[i] = val--;
 	}
 	// uft_reg
-	// memset(uft_reg_set, 0, sizeof(uft_reg_set));
-	// uft_reg_set[0] = 0x1;
-	// uft_reg_set[1] = 0x400;
-	// uft_reg_set[2] = 0x1;
-	// uft_reg_set[3] = 0x400;
-	// uft_reg_set[4] = 0x1;
-	// uft_reg_set[5] = 0x400;
-	// uft_reg_set[6] = 0x1;
-	// uft_reg_set[7] = 0x400;
-	// uft_reg_set[8] = 0x1;
-	// uft_reg_set[9] = 0x400;
-	// uft_reg_set[10] = 0x1;
-	// uft_reg_set[11] = 0x400;
-	// uft_reg_set[12] = 0x1;
-	// uft_reg_set[13] = 0x400;
-	// uft_reg_set[14] = 0x1;
-	// uft_reg_set[15] = 0x400;
+	 memset(uft_reg_set, 0, sizeof(uft_reg_set));
+	 uft_reg_set[UFT_REG_STATUS] = UFT_REG_STATUS_TX_READY;
+	 uft_reg_set[UFT_REG_RX_CTR] = WINDOW_LEN;
+	 uft_reg_set[UFT_REG_IMG_WIDTH] = IMG_WIDTH;
+	 uft_reg_set[UFT_REG_CONTROL] = UFT_REG_CONTROL_TX_START;
+	 uft_reg_set[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
+	 uft_reg_set[UFT_REG_TX_SIZE] = IMG_WIDTH-WINDOW_LEN+1;
 	//************************************************************************
 	//Compare results from output stream
 	//************************************************************************
@@ -173,14 +166,14 @@ int main()
 	}
 
 	// Check UFT register
-//	for(i = 0; i < 16; i++)
-//	{
-//		if(uft_reg[i] != uft_reg_set[i])
-//		{
-//			printf("Error: uft_reg[%d] is %x should %x\n", i, (uint32_t)uft_reg[0], (uint32_t)uft_reg_set[i]);
-//			err = -1;
-//		}
-//	}
+	for(i = 0; i < 16; i++)
+	{
+		if(uft_reg[i] != uft_reg_set[i])
+		{
+			printf("ERROR[uft_reg]: uft_reg[%d] is %04x should %04x\n", i, (uint32_t)uft_reg[0], (uint32_t)uft_reg_set[i]);
+			err = -1;
+		}
+	}
 
 	if(err)
 	{
