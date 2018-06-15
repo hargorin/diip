@@ -1,17 +1,23 @@
 #!/bin/bash
 
+# Workdir
+mkdir -p workdir
+
 # convert image to binary data
-image2file room128x128.jpg room_in.bin
+./image2file images/room128x128.jpg workdir/room_in.bin
 
 # split it into files
-mkdir -p filesplit/out
-filesplit/filesplit room_in.bin 128 filesplit/out/
+filesplit/filesplit workdir/room_in.bin 128 workdir/
 
 # copy to FPGA, run wallis and copy back
 vivado -nolog -nojournal -mode batch -source wallis_tb.tcl
 
 # merge files
-filesplit/filemerge room_out.bin filesplit/out/in_*.bin
+filesplit/filemerge workdir/room_out.bin workdir/in_*.bin
 
 # convert back to imag
-file2image room_out.bin room_out.jpg 108 108 -s
+HASH=$(git rev-parse --short HEAD)
+./file2image workdir/room_out.bin workdir/room_fpga_$HASH.jpg 108 108
+
+# diff with sw
+compare -verbose -metric MSE workdir/room_fpga_$HASH.jpg images/wallis_hw_room128x128.jpg diff.jpg

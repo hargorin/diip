@@ -73,8 +73,8 @@ proc tb2 {} {
 
   for {set i 0} {$i < 108} {incr i} {
       # Write data to image input base
-      puts [format "filesplit/out/row_%03d.bin" $i]
-      writeto [format "filesplit/out/row_%03d.bin" $i] 0
+      puts [format "workdir/row_%03d.bin" $i]
+      writeto [format "workdir/row_%03d.bin" $i] 0
       # puts "Push SW5 to start processing"
       # anykey
       # launch controller
@@ -82,11 +82,11 @@ proc tb2 {} {
       run_hw_axi startctrl
       create_hw_axi_txn startctrl [get_hw_axis] -force -address 0x40000000 -type write -data 00000000
       run_hw_axi startctrl
-      dump [format "filesplit/out/in_%03d.bin" $i] a80 108
+      dump [format "workdir/in_%03d.bin" $i] a80 108
   }
 
   # Check data
-  puts "Check output data in filesplit/out/in_*.bin"
+  puts "Check output data in workdir/in_*.bin"
 }
 
 # --------
