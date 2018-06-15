@@ -33,21 +33,21 @@ Number of bytes to send.
 
 ### Signals
 
-| signal        | R/W | Usage           |
-| ------------- | --- | ------------- |
-| slv_reg0 		| RO  | UFT_REG_STATUS |
-| slv_reg1 		| WO  | UFT_REG_CONTROL |
-| slv_reg2 		| WO  | UFT_REG_RX_BASE |
-| slv_reg3 		| WO  | UFT_REG_TX_BASE |
-| slv_reg4 		| RO  | UFT_REG_RX_CTR |
-| slv_reg5 		| WO  | UFT_REG_TX_SIZE |
-| slv_reg6 		|     |  |
-| slv_reg7 		|     |  |
-| slv_reg8 		| RO  | UFT_REG_USER_0 |
-| slv_reg9 		| RO  | UFT_REG_USER_1 |
-| slv_reg10 	| RO  | UFT_REG_USER_2 |
-| slv_reg11 	| RO  | UFT_REG_USER_3 |
-| slv_reg12 	| RO  | UFT_REG_USER_4 |
-| slv_reg13 	| RO  | UFT_REG_USER_5 |
-| slv_reg14 	| RO  | UFT_REG_USER_6 |
-| slv_reg15 	| RO  | UFT_REG_USER_7 |
+| signal        | R/W | Off [hex] | Usage           |
+| ------------- | --- | --------- | ------------- |
+| slv_reg0 		| RO  |        00 |UFT_REG_STATUS |
+| slv_reg1 		| WO  |        04 |UFT_REG_CONTROL |
+| slv_reg2 		| WO  |        08 |UFT_REG_RX_BASE |
+| slv_reg3 		| WO  |        0C |UFT_REG_TX_BASE |
+| slv_reg4 		| RO  |        10 |UFT_REG_RX_CTR |
+| slv_reg5 		| WO  |        14 |UFT_REG_TX_SIZE |
+| slv_reg6 		|     |        18 | |
+| slv_reg7 		|     |        1C | |
+| slv_reg8 		| RO  |        20 |UFT_REG_USER_0 |
+| slv_reg9 		| RO  |        24 |UFT_REG_USER_1 |
+| slv_reg10 	| RO  |        28 |UFT_REG_USER_2 |
+| slv_reg11 	| RO  |        2C |UFT_REG_USER_3 |
+| slv_reg12 	| RO  |        30 |UFT_REG_USER_4 |
+| slv_reg13 	| RO  |        34 |UFT_REG_USER_5 |
+| slv_reg14 	| RO  |        38 |UFT_REG_USER_6 |
+| slv_reg15 	| RO  |        3C |UFT_REG_USER_7 |
