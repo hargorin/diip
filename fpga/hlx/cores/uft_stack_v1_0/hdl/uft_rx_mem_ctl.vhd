@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Wed May 16 14:12:50 2018
+-- Last update : Tue Jun 19 15:07:28 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -178,6 +178,7 @@ architecture rtl of utf_rx_mem_ctl is
     signal ft_cur_tcid : std_logic_vector(6 downto 0);
     signal ft_nseq : std_logic_vector(23 downto 0);
     signal ft_nseq_received : unsigned(23 downto 0);
+    signal rx_done_int : std_logic;
 begin
 
     ----------------------------------------------------------------------------
@@ -575,7 +576,7 @@ begin
 
     ----------------------------------------------------------------------------
     -- File transfer control
-    -- Asserts rx_done after a file transfer is complete
+    -- Asserts rx_done_int after a file transfer is complete
     ----------------------------------------------------------------------------
     p_ft : process(clk)
     ----------------------------------------------------------------------------
@@ -585,15 +586,15 @@ begin
                 ft_cur_tcid <= (others => '0');
                 ft_nseq <= (others => '1');
                 ft_nseq_received <= (others => '0');
-                rx_done <= '0';
+                rx_done_int <= '0';
             else
-                rx_done <= '0';
+                rx_done_int <= '0';
                 -- latch tcid and nseq if command received is FTS
                 if is_command = '1' and command_data_valid = '1' and command_code = "0000000" then
                     ft_nseq <= command_data2(23 downto 0);
                     ft_cur_tcid <= command_data1(6 downto 0);
                     ft_nseq_received <= (others => '0');
-                    rx_done <= '0';
+                    rx_done_int <= '0';
                 end if;
                 -- increment nseq counter if state is done
                 if current_state = ACK_SEQ then
@@ -601,12 +602,35 @@ begin
                 end if;
                 -- if all packets received
                 if to_integer(unsigned(ft_nseq)) = to_integer(ft_nseq_received) then
-                    rx_done <= '1';
+                    rx_done_int <= '1';
                 end if;
             end if;                
         end if;
     end process p_ft;
     ----------------------------------------------------------------------------
+
+    ----------------------------------------------------------------------------
+    -- Creates a one clock duration impulse on rx_done after rx_done_int
+    -- goes high
+    ----------------------------------------------------------------------------
+    p_ft_imp : process(clk)
+        variable rx_done_int_old : std_logic := '0';
+    ----------------------------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                rx_done <= '0';
+                rx_done_int_old := '0';        
+            else
+                if (rx_done_int_old /= rx_done_int) and (rx_done_int = '1') then
+                    rx_done <= '1';
+                else
+                    rx_done <= '0';
+                end if;
+                rx_done_int_old := rx_done_int;
+            end if;   
+        end if;
+    end process p_ft_imp;
 
 
 end architecture rtl;

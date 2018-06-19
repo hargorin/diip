@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Wed May 16 14:11:06 2018
+-- Last update : Tue Jun 19 15:11:45 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -665,16 +665,16 @@ begin
         ------------
         -- UFT packet send: TEST 10 and 11
         ------------
-        --t10;
-        --t11;
+        t10;
+        t11;
 
         ------------
         -- UFT packet receive:
         ------------
         --t1; -- UFT Command Packet reception
         --t2; -- UFT Data Packet reception
-        --t3; -- NSEQ=2 UFT Data Packet reception
-        --t4; -- NSEQ=1 32byte UFT Data Packet reception
+        t3; -- NSEQ=2 UFT Data Packet reception
+        t4; -- NSEQ=1 32byte UFT Data Packet reception
         --t5; -- NSEQ=1 31byte UFT Data Packet reception
         --t6; -- NSEQ=1 30byte UFT Data Packet reception
         --t7; -- NSEQ=1 29byte UFT Data Packet reception
