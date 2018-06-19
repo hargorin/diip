@@ -30,12 +30,12 @@ cp ../../wallis/testbench/filesplit/filesplit workdir/
 cp ../../wallis/testbench/filesplit/filemerge workdir/
 
 # convert image to binary data
-workdir/image2file $IMAGE workdir/room_in.bin
+./workdir/image2file $IMAGE workdir/room_in.bin
 # split it into files
-workdir/filesplit workdir/room_in.bin 128 workdir/
+./workdir/filesplit workdir/room_in.bin $WIDTH workdir/
 
 # Send configuration
-workdir/command $IP 0 $WIDTH
+./workdir/command $IP 0 $WIDTH
 
 COUNT=`expr $HEIGHT - $WIN_SIZE`
 for (( c=0; c<=$COUNT; c++ ))
@@ -51,10 +51,10 @@ do
 done
 
 # merge files
-filesplit/filemerge workdir/room_out.bin workdir/in_*.bin
+./workdir/filemerge workdir/room_out.bin workdir/in_*.bin
 # convert back to image
 HASH=$(git rev-parse --short HEAD)
-./file2image workdir/room_out.bin workdir/room_fpga_$HASH.jpg `expr $WIDTH - $WIN_SIZE` `expr $HEIGHT - $WIN_SIZE`
+./workdir/file2image workdir/room_out.bin workdir/room_fpga_$HASH.jpg `expr $WIDTH - $WIN_SIZE` `expr $HEIGHT - $WIN_SIZE`
 # diff with sw
 compare -verbose -metric MSE workdir/room_fpga_$HASH.jpg $IMAGE workdir/diff.jpg
 

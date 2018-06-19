@@ -24,7 +24,7 @@
   # Create instance: cbus_offset, and set properties
   set cbus_offset [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 cbus_offset ]
   set_property -dict [ list \
-   CONFIG.CONST_VAL {3221225472} \
+   CONFIG.CONST_VAL {0} \
    CONFIG.CONST_WIDTH {32} \
  ] $cbus_offset
 
@@ -87,9 +87,8 @@
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
    CONFIG.C_BRAM_CNT {12} \
-   CONFIG.C_DATA_DEPTH {2048} \
-   CONFIG.C_MON_TYPE {INTERFACE} \
-   CONFIG.C_NUM_MONITOR_SLOTS {3} \
+   CONFIG.C_MON_TYPE {MIX} \
+   CONFIG.C_NUM_MONITOR_SLOTS {2} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {1} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_TRIG {1} \
@@ -103,22 +102,18 @@
    CONFIG.C_SLOT_0_AXI_W_SEL_TRIG {1} \
    CONFIG.C_SLOT_0_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
    CONFIG.C_SLOT_1_APC_EN {0} \
-   CONFIG.C_SLOT_1_AXI_DATA_SEL {1} \
-   CONFIG.C_SLOT_1_AXI_TRIG_SEL {1} \
-   CONFIG.C_SLOT_1_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
-   CONFIG.C_SLOT_2_APC_EN {0} \
-   CONFIG.C_SLOT_2_AXI_DATA_SEL {1} \
-   CONFIG.C_SLOT_2_AXI_TRIG_SEL {1} \
-   CONFIG.C_SLOT_2_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
+   CONFIG.C_SLOT_1_AXI_AR_SEL_DATA {1} \
+   CONFIG.C_SLOT_1_AXI_AR_SEL_TRIG {1} \
+   CONFIG.C_SLOT_1_AXI_AW_SEL_DATA {1} \
+   CONFIG.C_SLOT_1_AXI_AW_SEL_TRIG {1} \
+   CONFIG.C_SLOT_1_AXI_B_SEL_DATA {1} \
+   CONFIG.C_SLOT_1_AXI_B_SEL_TRIG {1} \
+   CONFIG.C_SLOT_1_AXI_R_SEL_DATA {1} \
+   CONFIG.C_SLOT_1_AXI_R_SEL_TRIG {1} \
+   CONFIG.C_SLOT_1_AXI_W_SEL_DATA {1} \
+   CONFIG.C_SLOT_1_AXI_W_SEL_TRIG {1} \
+   CONFIG.C_SLOT_1_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
  ] $system_ila_0
-
-  # Create instance: system_ila_1, and set properties
-  set system_ila_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_1 ]
-  set_property -dict [ list \
-   CONFIG.C_MON_TYPE {NATIVE} \
-   CONFIG.C_NUM_OF_PROBES {1} \
-   CONFIG.C_PROBE0_TYPE {0} \
- ] $system_ila_1
 
   # Create instance: temac_support, and set properties
   set temac_support [ create_bd_cell -type ip -vlnv ime:diip:temac_support:1.0 temac_support ]
@@ -141,6 +136,25 @@
   # Create instance: uft_stack, and set properties
   set uft_stack [ create_bd_cell -type ip -vlnv ime:diip:uft_stack:1.3 uft_stack ]
 
+  set_property -dict [ list \
+CONFIG.SUPPORTS_NARROW_BURST {1} \
+CONFIG.NUM_READ_OUTSTANDING {2} \
+CONFIG.NUM_WRITE_OUTSTANDING {2} \
+CONFIG.MAX_BURST_LENGTH {256} \
+ ] [get_bd_intf_pins /uft_stack/m_axi_rx]
+
+  set_property -dict [ list \
+CONFIG.SUPPORTS_NARROW_BURST {1} \
+CONFIG.NUM_READ_OUTSTANDING {2} \
+CONFIG.NUM_WRITE_OUTSTANDING {2} \
+CONFIG.MAX_BURST_LENGTH {256} \
+ ] [get_bd_intf_pins /uft_stack/m_axi_tx]
+
+  set_property -dict [ list \
+CONFIG.NUM_READ_OUTSTANDING {1} \
+CONFIG.NUM_WRITE_OUTSTANDING {1} \
+ ] [get_bd_intf_pins /uft_stack/s_axi_ctrl]
+
   # Create instance: wallis, and set properties
   set wallis [ create_bd_cell -type ip -vlnv ime:diip:wallis:0.2 wallis ]
 
@@ -150,16 +164,16 @@
   connect_bd_intf_net -intf_net axi_smc_M00_AXI [get_bd_intf_pins axi_bram/S_AXI] [get_bd_intf_pins axi_smc/M00_AXI]
   connect_bd_intf_net -intf_net controller_top_1_axi_periph_M00_AXI [get_bd_intf_pins controller_top_1_axi_periph/M00_AXI] [get_bd_intf_pins uft_stack/s_axi_ctrl]
   connect_bd_intf_net -intf_net controller_top_1_m_axi_cbus [get_bd_intf_pins controller_top/m_axi_cbus] [get_bd_intf_pins controller_top_1_axi_periph/S00_AXI]
+connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_m_axi_cbus] [get_bd_intf_pins controller_top_1_axi_periph/S00_AXI] [get_bd_intf_pins system_ila_0/SLOT_0_AXI]
+  set_property -dict [ list \
+HDL_ATTRIBUTE.DEBUG {true} \
+ ] [get_bd_intf_nets controller_top_1_m_axi_cbus]
   connect_bd_intf_net -intf_net controller_top_1_m_axi_memp [get_bd_intf_pins axi_smc/S00_AXI] [get_bd_intf_pins controller_top/m_axi_memp]
-connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_m_axi_memp] [get_bd_intf_pins axi_smc/S00_AXI] [get_bd_intf_pins system_ila_0/SLOT_0_AXI]
+connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_m_axi_memp] [get_bd_intf_pins axi_smc/S00_AXI] [get_bd_intf_pins system_ila_0/SLOT_1_AXI]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_intf_nets controller_top_1_m_axi_memp]
   connect_bd_intf_net -intf_net controller_top_1_outData [get_bd_intf_pins controller_top/outData] [get_bd_intf_pins wallis/inData]
-connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_outData] [get_bd_intf_pins system_ila_0/SLOT_1_AXIS] [get_bd_intf_pins wallis/inData]
-  set_property -dict [ list \
-HDL_ATTRIBUTE.DEBUG {true} \
- ] [get_bd_intf_nets controller_top_1_outData]
   connect_bd_intf_net -intf_net jtag_axi_M_AXI [get_bd_intf_pins axi_smc/S03_AXI] [get_bd_intf_pins jtag_axi_data/M_AXI]
   connect_bd_intf_net -intf_net jtag_axi_wctrl_M_AXI [get_bd_intf_pins jtag_axi_wctrl/M_AXI] [get_bd_intf_pins jtag_axi_wctrl_axi_periph/S00_AXI]
   connect_bd_intf_net -intf_net jtag_axi_wctrl_axi_periph_M00_AXI [get_bd_intf_pins jtag_axi_wctrl_axi_periph/M00_AXI] [get_bd_intf_pins wallis/s_axi_ctrl]
@@ -177,10 +191,6 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_intf_net -intf_net uft_stack_udp_tx [get_bd_intf_pins udp_ip_stack/udp_tx] [get_bd_intf_pins uft_stack/udp_tx]
   connect_bd_intf_net -intf_net uft_stack_udp_tx_ctrl [get_bd_intf_pins udp_ip_stack/udp_tx_ctrl] [get_bd_intf_pins uft_stack/udp_tx_ctrl]
   connect_bd_intf_net -intf_net wallis_outData [get_bd_intf_pins controller_top/inData] [get_bd_intf_pins wallis/outData]
-connect_bd_intf_net -intf_net [get_bd_intf_nets wallis_outData] [get_bd_intf_pins controller_top/inData] [get_bd_intf_pins system_ila_0/SLOT_2_AXIS]
-  set_property -dict [ list \
-HDL_ATTRIBUTE.DEBUG {true} \
- ] [get_bd_intf_nets wallis_outData]
 
   # Create port connections
   connect_bd_net -net Net [get_bd_pins udp_ip_stack/our_ip_address] [get_bd_pins uft_stack/our_ip_address]
@@ -200,7 +210,7 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net temac_support_glbl_rstn [get_bd_pins temac_support/glbl_rstn] [get_bd_pins tri_mode_ethernet_mac/glbl_rstn]
   connect_bd_net -net temac_support_gtx_clk [get_bd_pins temac_support/gtx_clk] [get_bd_pins tri_mode_ethernet_mac/gtx_clk]
   connect_bd_net -net temac_support_gtx_clk90 [get_bd_pins temac_support/gtx_clk90] [get_bd_pins tri_mode_ethernet_mac/gtx_clk90]
-  connect_bd_net -net temac_support_gtx_clk_bufg_out [get_bd_pins axi_bram/s_axi_aclk] [get_bd_pins axi_smc/aclk] [get_bd_pins axi_smc/aclk1] [get_bd_pins controller_top/ap_clk] [get_bd_pins controller_top_1_axi_periph/ACLK] [get_bd_pins controller_top_1_axi_periph/M00_ACLK] [get_bd_pins controller_top_1_axi_periph/S00_ACLK] [get_bd_pins jtag_axi_data/aclk] [get_bd_pins jtag_axi_wctrl/aclk] [get_bd_pins jtag_axi_wctrl_axi_periph/ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ACLK] [get_bd_pins rst_temac_support/slowest_sync_clk] [get_bd_pins system_ila_0/clk] [get_bd_pins system_ila_1/clk] [get_bd_pins temac_support/axi_tclk] [get_bd_pins temac_support/gtx_clk_bufg_out] [get_bd_pins udp_ip_stack/rx_clk] [get_bd_pins udp_ip_stack/tx_clk] [get_bd_pins uft_stack/clk] [get_bd_pins uft_stack/m_axi_rx_aclk] [get_bd_pins uft_stack/m_axi_tx_aclk] [get_bd_pins uft_stack/s_axi_ctrl_aclk] [get_bd_pins wallis/ap_clk]
+  connect_bd_net -net temac_support_gtx_clk_bufg_out [get_bd_pins axi_bram/s_axi_aclk] [get_bd_pins axi_smc/aclk] [get_bd_pins axi_smc/aclk1] [get_bd_pins controller_top/ap_clk] [get_bd_pins controller_top_1_axi_periph/ACLK] [get_bd_pins controller_top_1_axi_periph/M00_ACLK] [get_bd_pins controller_top_1_axi_periph/S00_ACLK] [get_bd_pins jtag_axi_data/aclk] [get_bd_pins jtag_axi_wctrl/aclk] [get_bd_pins jtag_axi_wctrl_axi_periph/ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ACLK] [get_bd_pins rst_temac_support/slowest_sync_clk] [get_bd_pins system_ila_0/clk] [get_bd_pins temac_support/axi_tclk] [get_bd_pins temac_support/gtx_clk_bufg_out] [get_bd_pins udp_ip_stack/rx_clk] [get_bd_pins udp_ip_stack/tx_clk] [get_bd_pins uft_stack/clk] [get_bd_pins uft_stack/m_axi_rx_aclk] [get_bd_pins uft_stack/m_axi_tx_aclk] [get_bd_pins uft_stack/s_axi_ctrl_aclk] [get_bd_pins wallis/ap_clk]
   connect_bd_net -net temac_support_phy_resetn [get_bd_ports phy_resetn] [get_bd_pins temac_support/phy_resetn]
   connect_bd_net -net temac_support_rx_axi_rstn [get_bd_pins temac_support/rx_axi_rstn] [get_bd_pins tri_mode_ethernet_mac/rx_axi_rstn]
   connect_bd_net -net temac_support_s_axi_aclk [get_bd_pins temac_support/s_axi_aclk] [get_bd_pins tri_mode_ethernet_mac/s_axi_aclk]
@@ -215,7 +225,7 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net tri_mode_ethernet_mac_tx_enable [get_bd_pins temac_support/tx_enable] [get_bd_pins tri_mode_ethernet_mac/tx_enable]
   connect_bd_net -net tri_mode_ethernet_mac_tx_mac_aclk [get_bd_pins temac_support/tx_mac_aclk] [get_bd_pins tri_mode_ethernet_mac/tx_mac_aclk]
   connect_bd_net -net tri_mode_ethernet_mac_tx_reset [get_bd_pins temac_support/tx_reset] [get_bd_pins tri_mode_ethernet_mac/tx_reset]
-  connect_bd_net -net uft_stack_rx_done [get_bd_ports led3] [get_bd_pins controller_top/rx_done_V] [get_bd_pins system_ila_1/probe0] [get_bd_pins uft_stack/rx_done]
+  connect_bd_net -net uft_stack_rx_done [get_bd_ports led3] [get_bd_pins controller_top/rx_done_V] [get_bd_pins system_ila_0/probe0] [get_bd_pins uft_stack/rx_done]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_nets uft_stack_rx_done]
@@ -223,10 +233,9 @@ HDL_ATTRIBUTE.DEBUG {true} \
 
   # Create address segments
   create_bd_addr_seg -range 0x00040000 -offset 0x00000000 [get_bd_addr_spaces controller_top/Data_m_axi_memp] [get_bd_addr_segs axi_bram/S_AXI/Mem0] SEG_axi_bram_ctrl_Mem0
-  create_bd_addr_seg -range 0x00001000 -offset 0xC0000000 [get_bd_addr_spaces controller_top/Data_m_axi_cbus] [get_bd_addr_segs uft_stack/s_axi_ctrl/reg0] SEG_uft_stack_reg0
+  create_bd_addr_seg -range 0x00001000 -offset 0x00000000 [get_bd_addr_spaces controller_top/Data_m_axi_cbus] [get_bd_addr_segs uft_stack/s_axi_ctrl/reg0] SEG_uft_stack_reg0
   create_bd_addr_seg -range 0x00040000 -offset 0x00000000 [get_bd_addr_spaces jtag_axi_data/Data] [get_bd_addr_segs axi_bram/S_AXI/Mem0] SEG_axi_bram_ctrl_Mem0
-  create_bd_addr_seg -range 0x00001000 -offset 0xD0000000 [get_bd_addr_spaces jtag_axi_wctrl/Data] [get_bd_addr_segs wallis/s_axi_ctrl/Reg] SEG_wallis_Reg
+  create_bd_addr_seg -range 0x00001000 -offset 0x00000000 [get_bd_addr_spaces jtag_axi_wctrl/Data] [get_bd_addr_segs wallis/s_axi_ctrl/Reg] SEG_wallis_Reg
   create_bd_addr_seg -range 0x00001000 -offset 0x00000000 [get_bd_addr_spaces temac_support/s_axi] [get_bd_addr_segs tri_mode_ethernet_mac/s_axi/Reg] SEG_tri_mode_ethernet_mac_Reg
   create_bd_addr_seg -range 0x00040000 -offset 0x00000000 [get_bd_addr_spaces uft_stack/m_axi_rx] [get_bd_addr_segs axi_bram/S_AXI/Mem0] SEG_axi_bram_ctrl_Mem0
   create_bd_addr_seg -range 0x00040000 -offset 0x00000000 [get_bd_addr_spaces uft_stack/m_axi_tx] [get_bd_addr_segs axi_bram/S_AXI/Mem0] SEG_axi_bram_ctrl_Mem0
-
