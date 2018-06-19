@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Fri Jun 15 11:52:16 2018
+-- Last update : Tue Jun 19 17:42:10 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -56,6 +56,7 @@ entity uft_top_wrap is
         our_mac_address         : out std_logic_vector (47 downto 0);
 
         rx_done        : out  std_logic;
+        tx_ready        : out  std_logic;
 
         -- UDP IP Stack Receiver
         -- ---------------------------------------------------------------------
@@ -241,6 +242,7 @@ architecture structural of uft_top_wrap is
             our_ip_address            : out STD_LOGIC_VECTOR (31 downto 0);
             our_mac_address           : out std_logic_vector (47 downto 0);
             rx_done                   : out std_logic;
+            tx_ready                   : out std_logic;
             udp_rx_start              : in  std_logic;
             udp_rx_hdr_is_valid       : in  std_logic;
             udp_rx_hdr_src_ip_addr    : in  std_logic_vector (31 downto 0);
@@ -511,6 +513,7 @@ begin
             our_ip_address            => our_ip_address,
             our_mac_address           => our_mac_address,
             rx_done                   => rx_done,
+            tx_ready                  => tx_ready,
             udp_rx_start              => udp_rx_start,
             udp_rx_hdr_is_valid       => udp_rx_hdr_is_valid,
             udp_rx_hdr_src_ip_addr    => udp_rx_hdr_src_ip_addr,

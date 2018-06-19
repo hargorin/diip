@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Fri Apr 20 13:24:15 2018
+-- Last update : Tue Jun 19 17:38:19 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -469,11 +469,10 @@ begin
     -- store internal signals
     data_size_int <= to_integer(unsigned(data_size));
     -- calculate number of sequences to send
-    -- ceiled division by c_nbytes_per_packet
-    cmd_nseq <= std_logic_vector( to_unsigned(to_integer(unsigned(data_size)) / c_nbytes_per_packet, cmd_nseq'length) )
-        when data_size(1 downto 0) = "00" else
-        std_logic_vector( to_unsigned(to_integer(unsigned(data_size)) / c_nbytes_per_packet, cmd_nseq'length) + 1);
-    --cmd_nseq <= std_logic_vector(shift_right(unsigned(data_size), 10) + 1);
+    -- ceiled division by 1024
+    cmd_nseq <= std_logic_vector(shift_right(unsigned(data_size), 10) + 1)
+        when data_size(9 downto 0) /= "0000000000" else
+        std_logic_vector(shift_right(unsigned(data_size), 10));
 
     cmd_seqnbr  <= ack_seqnbr;
     

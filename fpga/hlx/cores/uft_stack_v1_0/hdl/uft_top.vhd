@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed May 16 13:53:01 2018
+-- Last update : Tue Jun 19 17:41:13 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -58,6 +58,7 @@ entity uft_top is
         our_mac_address         : out std_logic_vector (47 downto 0);
 
         rx_done        : out  std_logic;
+        tx_ready        : out  std_logic;
 
         -- number of bytes to send ( Max 4GB = 4'294'967'296 Bytes)
         --tx_data_size       : in  std_logic_vector(31 downto 0);
@@ -464,7 +465,7 @@ architecture structural of uft_top is
 
     -- Connecting AXI ctrl
     signal tx_data_size       : std_logic_vector(31 downto 0);
-    signal tx_ready : std_logic;
+    signal tx_ready_int : std_logic;
     signal tx_start : std_logic;
     signal rx_data_dst_addr : std_logic_vector(31 downto 0);
     signal rx_data_transaction_ctr : std_logic_vector(31 downto 0);
@@ -614,7 +615,7 @@ begin
             rst_n                  => rst_n,
             data_size              => tx_data_size,
             data_src_addr          => data_src_addr,
-            tx_ready               => tx_ready,
+            tx_ready               => tx_ready_int,
             tx_start               => tx_start,
             dst_ip_addr            => tx_dst_ip_addr,
             dst_port               => tx_dst_port,
@@ -688,7 +689,7 @@ begin
             user_reg7               => user_reg7,
             tx_data_size            => tx_data_size,
             tx_data_src_addr        => data_src_addr,
-            tx_ready                => tx_ready,
+            tx_ready                => tx_ready_int,
             tx_start                => tx_start,
             rx_data_dst_addr        => rx_data_dst_addr,
             rx_data_transaction_ctr => rx_data_transaction_ctr,
@@ -718,7 +719,8 @@ begin
     --data_src_addr <= x"08000000";
     tx_dst_ip_addr <= x"c0a8050a";      -- 192.168.5.10
     tx_dst_port <= x"08AE"; -- 2222
-
+    tx_ready <= tx_ready_int;
+    
     -- Settings
     -- -------------------------------------------------------------------------
     our_ip_address <= x"c0a80509";      -- 192.168.5.9

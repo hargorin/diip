@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Tue Jun 19 15:11:45 2018
+-- Last update : Tue Jun 19 17:38:21 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -547,7 +547,7 @@ begin
         begin
             cur_test <= 10;
             waitfor(10);
-            report "-- TEST 10 -- UFT Data Packet transmission";
+            report "-- TEST 10 -- UFT Data Packet transmission with ARP reply";
 
             -- get tx_ready
             read("000000");
@@ -633,6 +633,39 @@ begin
 
         end procedure t11;
 
+        -------------------------------------------------------------------
+        procedure t12 is
+        -------------------------------------------------------------------
+        begin
+            cur_test <= 12;
+            waitfor(10);
+            report "-- TEST 12 -- Single packet 108 byte size send";
+
+            -- get tx_ready
+            read("000000");
+            wait until rising_edge(clk);
+            assert (rx = x"00000001") report "ERROR: tx_ready not received" severity error;
+            
+            -- register 5: UFT_REG_TX_SIZE
+            write("010100", std_logic_vector(to_unsigned(108, tx_data_size'length)));
+
+            --tx_start <= '1';
+            write("000100", x"00000001");
+
+            mac_tx_tready <= '1';
+            waitfor(1);
+            tx_start <= '0';
+            
+            --wait until tx_ready = '1';
+            read("000000");
+            wait until rising_edge(clk);
+            while (rx /= x"00000001") loop
+               read("000000");
+               wait until rising_edge(clk);
+            end loop;
+
+        end procedure t12;
+
 
         -------------------------------------------------------------------
         procedure t20 is
@@ -665,16 +698,17 @@ begin
         ------------
         -- UFT packet send: TEST 10 and 11
         ------------
-        t10;
-        t11;
+        t10; -- UFT Data Packet transmission with ARP reply
+        --t11; -- Multi Sequence UFT Data Packet transmission
+        t12; -- Single packet 108 byte size send
 
         ------------
         -- UFT packet receive:
         ------------
         --t1; -- UFT Command Packet reception
         --t2; -- UFT Data Packet reception
-        t3; -- NSEQ=2 UFT Data Packet reception
-        t4; -- NSEQ=1 32byte UFT Data Packet reception
+        --t3; -- NSEQ=2 UFT Data Packet reception
+        --t4; -- NSEQ=1 32byte UFT Data Packet reception
         --t5; -- NSEQ=1 31byte UFT Data Packet reception
         --t6; -- NSEQ=1 30byte UFT Data Packet reception
         --t7; -- NSEQ=1 29byte UFT Data Packet reception
@@ -682,7 +716,7 @@ begin
         ------------
         -- UFT user command packet send
         ------------
-        t20;
+        --t20;
         --t11;
 
 
