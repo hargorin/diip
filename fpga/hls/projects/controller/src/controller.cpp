@@ -18,6 +18,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &inData,
      AXI_STREAM &outData,
      ap_uint<1> rx_done,
+     ap_uint<1> tx_ready,
      ap_uint<4> *outState)
 {
 #pragma HLS INTERFACE ap_none port=outState
@@ -183,8 +184,8 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             break;
         case S_SEND:
         	// Check wether the UFT core is ready to send data
-        	if(cbus[UFT_REG_STATUS] & UFT_REG_STATUS_TX_READY)
-        	{
+            if(tx_ready == 1)
+            {
         		// Send start address, size and command
         		cbus[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
         		cbus[UFT_REG_TX_SIZE] = imgWidth-WINDOW_LEN+1;

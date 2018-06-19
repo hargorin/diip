@@ -118,4 +118,5 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &inData,
      AXI_STREAM &outData,
      ap_uint<1> rx_done,
+     ap_uint<1> tx_ready,
      ap_uint<4> *outState);
