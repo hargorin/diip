@@ -86,9 +86,10 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {12} \
+   CONFIG.C_BRAM_CNT {11.5} \
    CONFIG.C_MON_TYPE {MIX} \
    CONFIG.C_NUM_MONITOR_SLOTS {2} \
+   CONFIG.C_NUM_OF_PROBES {2} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {1} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_TRIG {1} \
@@ -136,25 +137,6 @@
   # Create instance: uft_stack, and set properties
   set uft_stack [ create_bd_cell -type ip -vlnv ime:diip:uft_stack:1.3 uft_stack ]
 
-  set_property -dict [ list \
-CONFIG.SUPPORTS_NARROW_BURST {1} \
-CONFIG.NUM_READ_OUTSTANDING {2} \
-CONFIG.NUM_WRITE_OUTSTANDING {2} \
-CONFIG.MAX_BURST_LENGTH {256} \
- ] [get_bd_intf_pins /uft_stack/m_axi_rx]
-
-  set_property -dict [ list \
-CONFIG.SUPPORTS_NARROW_BURST {1} \
-CONFIG.NUM_READ_OUTSTANDING {2} \
-CONFIG.NUM_WRITE_OUTSTANDING {2} \
-CONFIG.MAX_BURST_LENGTH {256} \
- ] [get_bd_intf_pins /uft_stack/m_axi_tx]
-
-  set_property -dict [ list \
-CONFIG.NUM_READ_OUTSTANDING {1} \
-CONFIG.NUM_WRITE_OUTSTANDING {1} \
- ] [get_bd_intf_pins /uft_stack/s_axi_ctrl]
-
   # Create instance: wallis, and set properties
   set wallis [ create_bd_cell -type ip -vlnv ime:diip:wallis:0.2 wallis ]
 
@@ -199,9 +181,9 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net clk_in_n_1 [get_bd_ports clk_in_n] [get_bd_pins temac_support/clk_in_n]
   connect_bd_net -net clk_in_p_1 [get_bd_ports clk_in_p] [get_bd_pins temac_support/clk_in_p]
   connect_bd_net -net controller_top_outState_V [get_bd_pins controller_top/outState_V] [get_bd_pins fanout_d0/Din] [get_bd_pins fanout_d1/Din] [get_bd_pins fanout_d2/Din]
-  connect_bd_net -net fanout_d0_Dout [get_bd_ports led2] [get_bd_pins fanout_d0/Dout]
+  connect_bd_net -net fanout_d0_Dout [get_bd_ports led0] [get_bd_pins fanout_d0/Dout]
   connect_bd_net -net fanout_d1_Dout [get_bd_ports led1] [get_bd_pins fanout_d1/Dout]
-  connect_bd_net -net fanout_d2_Dout [get_bd_ports led0] [get_bd_pins fanout_d2/Dout]
+  connect_bd_net -net fanout_d2_Dout [get_bd_ports led2] [get_bd_pins fanout_d2/Dout]
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins rst_temac_support/ext_reset_in] [get_bd_pins temac_support/glbl_rst]
   connect_bd_net -net rst_temac_support_125M_interconnect_aresetn [get_bd_pins controller_top_1_axi_periph/ARESETN] [get_bd_pins jtag_axi_wctrl_axi_periph/ARESETN] [get_bd_pins rst_temac_support/interconnect_aresetn]
   connect_bd_net -net rst_temac_support_125M_peripheral_aresetn [get_bd_pins axi_bram/s_axi_aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins controller_top/ap_rst_n] [get_bd_pins controller_top_1_axi_periph/M00_ARESETN] [get_bd_pins controller_top_1_axi_periph/S00_ARESETN] [get_bd_pins jtag_axi_data/aresetn] [get_bd_pins jtag_axi_wctrl/aresetn] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ARESETN] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ARESETN] [get_bd_pins rst_temac_support/peripheral_aresetn] [get_bd_pins system_ila_0/resetn] [get_bd_pins temac_support/axi_tresetn] [get_bd_pins uft_stack/m_axi_rx_aresetn] [get_bd_pins uft_stack/m_axi_tx_aresetn] [get_bd_pins uft_stack/rst_n] [get_bd_pins uft_stack/s_axi_ctrl_aresetn] [get_bd_pins wallis/ap_rst_n]
@@ -229,6 +211,10 @@ HDL_ATTRIBUTE.DEBUG {true} \
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_nets uft_stack_rx_done]
+  connect_bd_net -net uft_stack_tx_ready [get_bd_pins controller_top/tx_ready_V] [get_bd_pins system_ila_0/probe1] [get_bd_pins uft_stack/tx_ready]
+  set_property -dict [ list \
+HDL_ATTRIBUTE.DEBUG {true} \
+ ] [get_bd_nets uft_stack_tx_ready]
   connect_bd_net -net update_speed_1 [get_bd_ports update_speed] [get_bd_pins temac_support/update_speed]
 
   # Create address segments
