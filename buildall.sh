@@ -7,6 +7,6 @@ make NAME=controller export
 popd
 
 # Build hlx project
-push fpga/hlx/
+pushd fpga/hlx/
 make NAME=diip bit
 popd
