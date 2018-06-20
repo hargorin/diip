@@ -2,6 +2,18 @@
   # Create instance: axi_bram, and set properties
   set axi_bram [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.0 axi_bram ]
 
+  # Create instance: axi_protocol_converter_0, and set properties
+  set axi_protocol_converter_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_protocol_converter:2.1 axi_protocol_converter_0 ]
+  set_property -dict [ list \
+   CONFIG.ADDR_WIDTH {32} \
+   CONFIG.DATA_WIDTH {32} \
+   CONFIG.ID_WIDTH {0} \
+   CONFIG.MI_PROTOCOL {AXI4LITE} \
+   CONFIG.READ_WRITE_MODE {READ_WRITE} \
+   CONFIG.SI_PROTOCOL {AXI4} \
+   CONFIG.TRANSLATION_MODE {0} \
+ ] $axi_protocol_converter_0
+
   # Create instance: axi_smc, and set properties
   set axi_smc [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_smc ]
   set_property -dict [ list \
@@ -30,12 +42,6 @@
 
   # Create instance: controller_top, and set properties
   set controller_top [ create_bd_cell -type ip -vlnv ime:diip:controller_top:0.4 controller_top ]
-
-  # Create instance: controller_top_1_axi_periph, and set properties
-  set controller_top_1_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 controller_top_1_axi_periph ]
-  set_property -dict [ list \
-   CONFIG.NUM_MI {1} \
- ] $controller_top_1_axi_periph
 
   # Create instance: fanout_d0, and set properties
   set fanout_d0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 fanout_d0 ]
@@ -86,9 +92,9 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {12} \
+   CONFIG.C_BRAM_CNT {6} \
    CONFIG.C_MON_TYPE {MIX} \
-   CONFIG.C_NUM_MONITOR_SLOTS {2} \
+   CONFIG.C_NUM_MONITOR_SLOTS {3} \
    CONFIG.C_NUM_OF_PROBES {5} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {1} \
@@ -102,6 +108,7 @@
    CONFIG.C_SLOT_0_AXI_W_SEL_DATA {1} \
    CONFIG.C_SLOT_0_AXI_W_SEL_TRIG {1} \
    CONFIG.C_SLOT_0_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
+   CONFIG.C_SLOT_0_TXN_CNTR_EN {0} \
    CONFIG.C_SLOT_1_APC_EN {0} \
    CONFIG.C_SLOT_1_AXI_AR_SEL_DATA {1} \
    CONFIG.C_SLOT_1_AXI_AR_SEL_TRIG {1} \
@@ -114,6 +121,18 @@
    CONFIG.C_SLOT_1_AXI_W_SEL_DATA {1} \
    CONFIG.C_SLOT_1_AXI_W_SEL_TRIG {1} \
    CONFIG.C_SLOT_1_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
+   CONFIG.C_SLOT_2_APC_EN {0} \
+   CONFIG.C_SLOT_2_AXI_AR_SEL_DATA {1} \
+   CONFIG.C_SLOT_2_AXI_AR_SEL_TRIG {1} \
+   CONFIG.C_SLOT_2_AXI_AW_SEL_DATA {1} \
+   CONFIG.C_SLOT_2_AXI_AW_SEL_TRIG {1} \
+   CONFIG.C_SLOT_2_AXI_B_SEL_DATA {1} \
+   CONFIG.C_SLOT_2_AXI_B_SEL_TRIG {1} \
+   CONFIG.C_SLOT_2_AXI_R_SEL_DATA {1} \
+   CONFIG.C_SLOT_2_AXI_R_SEL_TRIG {1} \
+   CONFIG.C_SLOT_2_AXI_W_SEL_DATA {1} \
+   CONFIG.C_SLOT_2_AXI_W_SEL_TRIG {1} \
+   CONFIG.C_SLOT_2_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
  ] $system_ila_0
 
   # Create instance: temac_support, and set properties
@@ -143,19 +162,17 @@
   # Create interface connections
   connect_bd_intf_net -intf_net axi_bram_ctrl_BRAM_PORTA [get_bd_intf_pins axi_bram/BRAM_PORTA] [get_bd_intf_pins blk_mem_gen/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_bram_ctrl_BRAM_PORTB [get_bd_intf_pins axi_bram/BRAM_PORTB] [get_bd_intf_pins blk_mem_gen/BRAM_PORTB]
+  connect_bd_intf_net -intf_net axi_protocol_converter_0_M_AXI [get_bd_intf_pins axi_protocol_converter_0/M_AXI] [get_bd_intf_pins uft_stack/s_axi_ctrl]
+connect_bd_intf_net -intf_net [get_bd_intf_nets axi_protocol_converter_0_M_AXI] [get_bd_intf_pins axi_protocol_converter_0/M_AXI] [get_bd_intf_pins system_ila_0/SLOT_2_AXI]
   connect_bd_intf_net -intf_net axi_smc_M00_AXI [get_bd_intf_pins axi_bram/S_AXI] [get_bd_intf_pins axi_smc/M00_AXI]
-  connect_bd_intf_net -intf_net controller_top_1_axi_periph_M00_AXI [get_bd_intf_pins controller_top_1_axi_periph/M00_AXI] [get_bd_intf_pins uft_stack/s_axi_ctrl]
-  connect_bd_intf_net -intf_net controller_top_1_m_axi_cbus [get_bd_intf_pins controller_top/m_axi_cbus] [get_bd_intf_pins controller_top_1_axi_periph/S00_AXI]
-connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_m_axi_cbus] [get_bd_intf_pins controller_top_1_axi_periph/S00_AXI] [get_bd_intf_pins system_ila_0/SLOT_0_AXI]
-  set_property -dict [ list \
-HDL_ATTRIBUTE.DEBUG {true} \
- ] [get_bd_intf_nets controller_top_1_m_axi_cbus]
   connect_bd_intf_net -intf_net controller_top_1_m_axi_memp [get_bd_intf_pins axi_smc/S00_AXI] [get_bd_intf_pins controller_top/m_axi_memp]
 connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_m_axi_memp] [get_bd_intf_pins axi_smc/S00_AXI] [get_bd_intf_pins system_ila_0/SLOT_1_AXI]
   set_property -dict [ list \
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_intf_nets controller_top_1_m_axi_memp]
   connect_bd_intf_net -intf_net controller_top_1_outData [get_bd_intf_pins controller_top/outData] [get_bd_intf_pins wallis/inData]
+  connect_bd_intf_net -intf_net controller_top_m_axi_cbus [get_bd_intf_pins axi_protocol_converter_0/S_AXI] [get_bd_intf_pins controller_top/m_axi_cbus]
+connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_m_axi_cbus] [get_bd_intf_pins axi_protocol_converter_0/S_AXI] [get_bd_intf_pins system_ila_0/SLOT_0_AXI]
   connect_bd_intf_net -intf_net jtag_axi_M_AXI [get_bd_intf_pins axi_smc/S03_AXI] [get_bd_intf_pins jtag_axi_data/M_AXI]
   connect_bd_intf_net -intf_net jtag_axi_wctrl_M_AXI [get_bd_intf_pins jtag_axi_wctrl/M_AXI] [get_bd_intf_pins jtag_axi_wctrl_axi_periph/S00_AXI]
   connect_bd_intf_net -intf_net jtag_axi_wctrl_axi_periph_M00_AXI [get_bd_intf_pins jtag_axi_wctrl_axi_periph/M00_AXI] [get_bd_intf_pins wallis/s_axi_ctrl]
@@ -185,14 +202,14 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net fanout_d1_Dout [get_bd_ports led1] [get_bd_pins fanout_d1/Dout] [get_bd_pins system_ila_0/probe3]
   connect_bd_net -net fanout_d2_Dout [get_bd_ports led2] [get_bd_pins fanout_d2/Dout] [get_bd_pins system_ila_0/probe4]
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins rst_temac_support/ext_reset_in] [get_bd_pins temac_support/glbl_rst]
-  connect_bd_net -net rst_temac_support_125M_interconnect_aresetn [get_bd_pins controller_top_1_axi_periph/ARESETN] [get_bd_pins jtag_axi_wctrl_axi_periph/ARESETN] [get_bd_pins rst_temac_support/interconnect_aresetn]
-  connect_bd_net -net rst_temac_support_125M_peripheral_aresetn [get_bd_pins axi_bram/s_axi_aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins controller_top/ap_rst_n] [get_bd_pins controller_top_1_axi_periph/M00_ARESETN] [get_bd_pins controller_top_1_axi_periph/S00_ARESETN] [get_bd_pins jtag_axi_data/aresetn] [get_bd_pins jtag_axi_wctrl/aresetn] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ARESETN] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ARESETN] [get_bd_pins rst_temac_support/peripheral_aresetn] [get_bd_pins system_ila_0/resetn] [get_bd_pins temac_support/axi_tresetn] [get_bd_pins uft_stack/m_axi_rx_aresetn] [get_bd_pins uft_stack/m_axi_tx_aresetn] [get_bd_pins uft_stack/rst_n] [get_bd_pins uft_stack/s_axi_ctrl_aresetn] [get_bd_pins wallis/ap_rst_n]
+  connect_bd_net -net rst_temac_support_125M_interconnect_aresetn [get_bd_pins jtag_axi_wctrl_axi_periph/ARESETN] [get_bd_pins rst_temac_support/interconnect_aresetn]
+  connect_bd_net -net rst_temac_support_125M_peripheral_aresetn [get_bd_pins axi_bram/s_axi_aresetn] [get_bd_pins axi_protocol_converter_0/aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins controller_top/ap_rst_n] [get_bd_pins jtag_axi_data/aresetn] [get_bd_pins jtag_axi_wctrl/aresetn] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ARESETN] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ARESETN] [get_bd_pins rst_temac_support/peripheral_aresetn] [get_bd_pins system_ila_0/resetn] [get_bd_pins temac_support/axi_tresetn] [get_bd_pins uft_stack/m_axi_rx_aresetn] [get_bd_pins uft_stack/m_axi_tx_aresetn] [get_bd_pins uft_stack/rst_n] [get_bd_pins uft_stack/s_axi_ctrl_aresetn] [get_bd_pins wallis/ap_rst_n]
   connect_bd_net -net rst_temac_support_peripheral_reset [get_bd_pins rst_temac_support/peripheral_reset] [get_bd_pins udp_ip_stack/reset]
   connect_bd_net -net speed_1 [get_bd_ports speed] [get_bd_pins temac_support/speed]
   connect_bd_net -net temac_support_glbl_rstn [get_bd_pins temac_support/glbl_rstn] [get_bd_pins tri_mode_ethernet_mac/glbl_rstn]
   connect_bd_net -net temac_support_gtx_clk [get_bd_pins temac_support/gtx_clk] [get_bd_pins tri_mode_ethernet_mac/gtx_clk]
   connect_bd_net -net temac_support_gtx_clk90 [get_bd_pins temac_support/gtx_clk90] [get_bd_pins tri_mode_ethernet_mac/gtx_clk90]
-  connect_bd_net -net temac_support_gtx_clk_bufg_out [get_bd_pins axi_bram/s_axi_aclk] [get_bd_pins axi_smc/aclk] [get_bd_pins axi_smc/aclk1] [get_bd_pins controller_top/ap_clk] [get_bd_pins controller_top_1_axi_periph/ACLK] [get_bd_pins controller_top_1_axi_periph/M00_ACLK] [get_bd_pins controller_top_1_axi_periph/S00_ACLK] [get_bd_pins jtag_axi_data/aclk] [get_bd_pins jtag_axi_wctrl/aclk] [get_bd_pins jtag_axi_wctrl_axi_periph/ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ACLK] [get_bd_pins rst_temac_support/slowest_sync_clk] [get_bd_pins system_ila_0/clk] [get_bd_pins temac_support/axi_tclk] [get_bd_pins temac_support/gtx_clk_bufg_out] [get_bd_pins udp_ip_stack/rx_clk] [get_bd_pins udp_ip_stack/tx_clk] [get_bd_pins uft_stack/clk] [get_bd_pins uft_stack/m_axi_rx_aclk] [get_bd_pins uft_stack/m_axi_tx_aclk] [get_bd_pins uft_stack/s_axi_ctrl_aclk] [get_bd_pins wallis/ap_clk]
+  connect_bd_net -net temac_support_gtx_clk_bufg_out [get_bd_pins axi_bram/s_axi_aclk] [get_bd_pins axi_protocol_converter_0/aclk] [get_bd_pins axi_smc/aclk] [get_bd_pins axi_smc/aclk1] [get_bd_pins controller_top/ap_clk] [get_bd_pins jtag_axi_data/aclk] [get_bd_pins jtag_axi_wctrl/aclk] [get_bd_pins jtag_axi_wctrl_axi_periph/ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ACLK] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ACLK] [get_bd_pins rst_temac_support/slowest_sync_clk] [get_bd_pins system_ila_0/clk] [get_bd_pins temac_support/axi_tclk] [get_bd_pins temac_support/gtx_clk_bufg_out] [get_bd_pins udp_ip_stack/rx_clk] [get_bd_pins udp_ip_stack/tx_clk] [get_bd_pins uft_stack/clk] [get_bd_pins uft_stack/m_axi_rx_aclk] [get_bd_pins uft_stack/m_axi_tx_aclk] [get_bd_pins uft_stack/s_axi_ctrl_aclk] [get_bd_pins wallis/ap_clk]
   connect_bd_net -net temac_support_phy_resetn [get_bd_ports phy_resetn] [get_bd_pins temac_support/phy_resetn]
   connect_bd_net -net temac_support_rx_axi_rstn [get_bd_pins temac_support/rx_axi_rstn] [get_bd_pins tri_mode_ethernet_mac/rx_axi_rstn]
   connect_bd_net -net temac_support_s_axi_aclk [get_bd_pins temac_support/s_axi_aclk] [get_bd_pins tri_mode_ethernet_mac/s_axi_aclk]
