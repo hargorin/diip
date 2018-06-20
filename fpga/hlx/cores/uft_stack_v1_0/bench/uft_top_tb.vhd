@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Tue Jun 19 17:38:21 2018
+-- Last update : Wed Jun 20 12:04:22 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -646,6 +646,8 @@ begin
             wait until rising_edge(clk);
             assert (rx = x"00000001") report "ERROR: tx_ready not received" severity error;
             
+            -- register : UFT_REG_TX_BASE
+            write("001100", x"00000000");
             -- register 5: UFT_REG_TX_SIZE
             write("010100", std_logic_vector(to_unsigned(108, tx_data_size'length)));
 

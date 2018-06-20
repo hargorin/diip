@@ -327,7 +327,7 @@ begin
 	                slv_reg7(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	              end if;
 	            end loop;
-	          --when b"1000" =>
+	          when b"1000" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
@@ -335,7 +335,7 @@ begin
 	          --      slv_reg8(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	          --    end if;
 	          --  end loop;
-	          --when b"1001" =>
+	          when b"1001" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
@@ -343,7 +343,7 @@ begin
 	          --      slv_reg9(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	          --    end if;
 	          --  end loop;
-	          --when b"1010" =>
+	          when b"1010" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
@@ -351,7 +351,7 @@ begin
 	          --      slv_reg10(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	          --    end if;
 	          --  end loop;
-	          --when b"1011" =>
+	          when b"1011" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
@@ -359,7 +359,7 @@ begin
 	          --      slv_reg11(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	          --    end if;
 	          --  end loop;
-	          --when b"1100" =>
+	          when b"1100" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
@@ -367,7 +367,7 @@ begin
 	          --      slv_reg12(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	          --    end if;
 	          --  end loop;
-	          --when b"1101" =>
+	          when b"1101" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
@@ -375,7 +375,7 @@ begin
 	          --      slv_reg13(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	          --    end if;
 	          --  end loop;
-	          --when b"1110" =>
+	          when b"1110" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
@@ -383,7 +383,7 @@ begin
 	          --      slv_reg14(byte_index*8+7 downto byte_index*8) <= S_AXI_WDATA(byte_index*8+7 downto byte_index*8);
 	          --    end if;
 	          --  end loop;
-	          --when b"1111" =>
+	          when b"1111" => -- Read only
 	          --  for byte_index in 0 to (C_S_AXI_DATA_WIDTH/8-1) loop
 	          --    if ( S_AXI_WSTRB(byte_index) = '1' ) then
 	          --      -- Respective byte enables are asserted as per write strobes                   
