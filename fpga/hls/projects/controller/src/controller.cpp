@@ -196,9 +196,15 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
         case S_SEND:
 			// Send start address, size and command
 			state = S_IDLE;
-			cbus[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
-			cbus[UFT_REG_TX_SIZE] = imgWidth-WINDOW_LEN+1;
-			cbus[UFT_REG_CONTROL] = UFT_REG_CONTROL_TX_START;
+			b_config: {
+			#pragma HLS PROTOCOL floating
+				cbus[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
+				ap_wait_n(5);
+				cbus[UFT_REG_TX_SIZE] = imgWidth-WINDOW_LEN+1;
+				ap_wait_n(5);
+				cbus[UFT_REG_CONTROL] = UFT_REG_CONTROL_TX_START;
+				ap_wait_n(5);
+			}
         	break;
     }
     *outState = state;
