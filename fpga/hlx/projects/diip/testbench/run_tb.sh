@@ -38,26 +38,54 @@ cp ../../wallis/testbench/filesplit/filemerge workdir/
 ./workdir/command $IP 0 $WIDTH
 
 COUNT=`expr $HEIGHT - $WIN_SIZE`
-for (( c=0; c<=$COUNT; c++ ))
+for (( c=0; c<=$COUNT; ))
 do
 	fnamein=$(printf 'workdir/row_%03d.bin' "$c")
 	fnameout=$(printf 'workdir/in_%03d.bin' "$c")
+	# Status
+	echo "----------------------------------------"
+	echo "c = $c"
+	echo "fnamein = $fnamein"
+	echo "fnameout = $fnameout"
+	echo "----------------------------------------"
 	# Start receiver in background
-	workdir/receiver $fnameout &
+	nohup workdir/receiver 2222 $fnameout &
+	pid=$!
 	# Start transmitter
-	workdir/sender $IP $fnameout
-	# wait for receive to complete
-	wait $(jobs -p)
+	nohup workdir/sender $IP 42042 $fnamein
+	# Give the data change to receive
+	# sleep 0.5
+	# If receiver still running, kill it and try again
+	ps -p $pid > /dev/null
+	if [ $? == 1 ]; then
+	    echo "Data received"
+	    c=$[c+1]
+	else
+	    echo "Data not received"
+	    kill $pid
+	fi
+
+	# PID=$(jobs -p)
+	# PID=$(jobs -p)
+	# if [ -z "$PID" ]; then
+	# 	# no background jobs running -> data received
+	#     echo "Data received"
+	#     c=$[c+1]
+	# else
+	#     echo "Data not received"
+	#     kill $(jobs -p)
+	# fi
+
 done
 
 # merge files
 ./workdir/filemerge workdir/room_out.bin workdir/in_*.bin
 # convert back to image
 HASH=$(git rev-parse --short HEAD)
-./workdir/file2image workdir/room_out.bin workdir/room_fpga_$HASH.jpg `expr $WIDTH - $WIN_SIZE` `expr $HEIGHT - $WIN_SIZE`
+./workdir/file2image workdir/room_out.bin workdir/room_fpga_$HASH.jpg `expr $WIDTH - $WIN_SIZE + 1` `expr $HEIGHT - $WIN_SIZE + 1` -s
 # diff with sw
-compare -verbose -metric MSE workdir/room_fpga_$HASH.jpg $IMAGE workdir/diff.jpg
+compare -verbose -metric MSE workdir/room_fpga_$HASH.jpg images/wallis_hw_room128x128.jpg workdir/diff.jpg
 
 # remove split files
-rm workdir/row_*
-rm workdir/in_*
+# rm workdir/row_*
+# rm workdir/in_*
