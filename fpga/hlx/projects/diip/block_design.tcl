@@ -86,10 +86,10 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {11.5} \
+   CONFIG.C_BRAM_CNT {12} \
    CONFIG.C_MON_TYPE {MIX} \
    CONFIG.C_NUM_MONITOR_SLOTS {2} \
-   CONFIG.C_NUM_OF_PROBES {2} \
+   CONFIG.C_NUM_OF_PROBES {5} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {1} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_TRIG {1} \
@@ -181,9 +181,9 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net clk_in_n_1 [get_bd_ports clk_in_n] [get_bd_pins temac_support/clk_in_n]
   connect_bd_net -net clk_in_p_1 [get_bd_ports clk_in_p] [get_bd_pins temac_support/clk_in_p]
   connect_bd_net -net controller_top_outState_V [get_bd_pins controller_top/outState_V] [get_bd_pins fanout_d0/Din] [get_bd_pins fanout_d1/Din] [get_bd_pins fanout_d2/Din]
-  connect_bd_net -net fanout_d0_Dout [get_bd_ports led0] [get_bd_pins fanout_d0/Dout]
-  connect_bd_net -net fanout_d1_Dout [get_bd_ports led1] [get_bd_pins fanout_d1/Dout]
-  connect_bd_net -net fanout_d2_Dout [get_bd_ports led2] [get_bd_pins fanout_d2/Dout]
+  connect_bd_net -net fanout_d0_Dout [get_bd_ports led0] [get_bd_pins fanout_d0/Dout] [get_bd_pins system_ila_0/probe2]
+  connect_bd_net -net fanout_d1_Dout [get_bd_ports led1] [get_bd_pins fanout_d1/Dout] [get_bd_pins system_ila_0/probe3]
+  connect_bd_net -net fanout_d2_Dout [get_bd_ports led2] [get_bd_pins fanout_d2/Dout] [get_bd_pins system_ila_0/probe4]
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins rst_temac_support/ext_reset_in] [get_bd_pins temac_support/glbl_rst]
   connect_bd_net -net rst_temac_support_125M_interconnect_aresetn [get_bd_pins controller_top_1_axi_periph/ARESETN] [get_bd_pins jtag_axi_wctrl_axi_periph/ARESETN] [get_bd_pins rst_temac_support/interconnect_aresetn]
   connect_bd_net -net rst_temac_support_125M_peripheral_aresetn [get_bd_pins axi_bram/s_axi_aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins controller_top/ap_rst_n] [get_bd_pins controller_top_1_axi_periph/M00_ARESETN] [get_bd_pins controller_top_1_axi_periph/S00_ARESETN] [get_bd_pins jtag_axi_data/aresetn] [get_bd_pins jtag_axi_wctrl/aresetn] [get_bd_pins jtag_axi_wctrl_axi_periph/M00_ARESETN] [get_bd_pins jtag_axi_wctrl_axi_periph/S00_ARESETN] [get_bd_pins rst_temac_support/peripheral_aresetn] [get_bd_pins system_ila_0/resetn] [get_bd_pins temac_support/axi_tresetn] [get_bd_pins uft_stack/m_axi_rx_aresetn] [get_bd_pins uft_stack/m_axi_tx_aresetn] [get_bd_pins uft_stack/rst_n] [get_bd_pins uft_stack/s_axi_ctrl_aresetn] [get_bd_pins wallis/ap_rst_n]
