@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Wed Jun 20 12:04:22 2018
+-- Last update : Wed Jun 20 17:15:30 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -709,7 +709,7 @@ begin
         ------------
         --t1; -- UFT Command Packet reception
         --t2; -- UFT Data Packet reception
-        --t3; -- NSEQ=2 UFT Data Packet reception
+        t3; -- NSEQ=2 UFT Data Packet reception
         --t4; -- NSEQ=1 32byte UFT Data Packet reception
         --t5; -- NSEQ=1 31byte UFT Data Packet reception
         --t6; -- NSEQ=1 30byte UFT Data Packet reception

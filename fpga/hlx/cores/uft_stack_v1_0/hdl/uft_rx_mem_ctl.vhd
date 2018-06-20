@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Tue Jun 19 15:07:28 2018
+-- Last update : Wed Jun 20 17:16:44 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -179,6 +179,8 @@ architecture rtl of utf_rx_mem_ctl is
     signal ft_nseq : std_logic_vector(23 downto 0);
     signal ft_nseq_received : unsigned(23 downto 0);
     signal rx_done_int : std_logic;
+    type rx_done_imp_state is (SRXI_IDLE, SRXI_IMP, SRXI_DONE);   
+    signal rx_done_state : rx_done_imp_state := SRXI_IDLE;
 begin
 
     ----------------------------------------------------------------------------
@@ -608,28 +610,42 @@ begin
         end if;
     end process p_ft;
     ----------------------------------------------------------------------------
-
+    
     ----------------------------------------------------------------------------
-    -- Creates a one clock duration impulse on rx_done after rx_done_int
+    -- Creates a 10 clock duration impulse on rx_done after rx_done_int
     -- goes high
     ----------------------------------------------------------------------------
+    rx_done <= '1' when rx_done_state = SRXI_IMP else '0';
     p_ft_imp : process(clk)
-        variable rx_done_int_old : std_logic := '0';
+        variable counter : integer range 0 to 10 := 0;
     ----------------------------------------------------------------------------
     begin
         if rising_edge(clk) then
-            if rst_n = '0' then
-                rx_done <= '0';
-                rx_done_int_old := '0';        
-            else
-                if (rx_done_int_old /= rx_done_int) and (rx_done_int = '1') then
-                    rx_done <= '1';
+                if (rst_n = '0') then
+                    rx_done_state <= SRXI_IDLE;
+                    counter := 0;
                 else
-                    rx_done <= '0';
+                    case (rx_done_state) is
+                        when SRXI_IDLE =>
+                            counter := 0;
+                            --impulse <= '0';
+                            if rx_done_int = '1' then
+                                rx_done_state <= SRXI_IMP;
+                            end if;
+                        when SRXI_IMP =>
+                            counter := counter + 1;
+                            --impulse <= '1';
+                            if counter = 10 then
+                                rx_done_state <= SRXI_DONE;
+                            end if;
+                        when SRXI_DONE =>
+                            --impulse <= '0';
+                            if rx_done_int = '0' then
+                                rx_done_state <= SRXI_IDLE;
+                            end if;
+                    end case;
                 end if;
-                rx_done_int_old := rx_done_int;
-            end if;   
-        end if;
+            end if;
     end process p_ft_imp;
 
 
