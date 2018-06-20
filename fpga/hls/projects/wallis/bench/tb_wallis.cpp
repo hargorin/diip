@@ -13,7 +13,7 @@
 #include <iostream>
 using namespace cv;
 
-#define INPUT_IMAGE "room256x256.jpg"
+#define INPUT_IMAGE "room.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
 #define CONTRAST 	0.82 //0.75 0.82
@@ -38,9 +38,9 @@ int main(int argc, const char * argv[]) {
 	Mat src_gray;
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
 	uint16_t img_width = src_gray.cols;
-	uint16_t img_height = src_gray.rows;
-	//uint16_t img_height = 40;
-	//uint16_t img_width = 40;
+	//uint16_t img_height = src_gray.rows;
+	uint16_t img_height = 21;
+	//uint16_t img_width = 30;
 	uint16_t g_height = (img_height - WIN_LENGTH + 1);
 	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
@@ -91,7 +91,6 @@ int main(int argc, const char * argv[]) {
 
 			c_mean = C_Mean(c_pixel);
 			c_var = C_Var(c_pixel, c_mean);
-			//printf("Var %2d: %5d\n", i_wallis, c_var);
 			c_wallis[i_wallis++] = C_Wallis(c_pixel[(WIN_SIZE - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
 		}
 	}

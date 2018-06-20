@@ -198,8 +198,8 @@ apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
 
 	//fp_Var = 2;
 	// <20,5> = 1/ <19,15>
-	ap_ufixed<18,1> noah = 1.0;
-	fp_Den = noah/fp_Var;
+	ap_ufixed<18,1> rec = 1.0;
+	fp_Den = rec/fp_Var;
 	//printf("%.15f\n", (float)fp_Den);
 
 	// <35,29> = <27,23> * <20,5>
