@@ -40,15 +40,15 @@ int main(int argc, const char * argv[]) {
 	uint16_t img_width = src_gray.cols;
 	//uint16_t img_height = src_gray.rows;
 	uint16_t img_height = 21;
-	//uint16_t img_width = 30;
+	//uint16_t img_width = 22;
 	uint16_t g_height = (img_height - WIN_LENGTH + 1);
 	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
 	// ************************************************************************
 	// Variables
-	AXI_STREAM inDataFIFO;
-	AXI_STREAM outData;
-	AXI_VALUE inData;
+	AXI_STREAM_IN inDataFIFO;
+	AXI_STREAM_OUT outData;
+	AXI_VALUE_IN inData;
 
 	// C-Variables
 	uint8_t c_pixel[WIN_SIZE];
@@ -56,19 +56,18 @@ int main(int argc, const char * argv[]) {
 	uint16_t c_var = 0;
 	uint8_t c_wallis[g_width * g_height];
 
-
+	uint8_t value = 0b10000001;
 	// ************************************************************************
 	// HW Testbench
 	// ************************************************************************
 	for(uint16_t offset = 0; offset < g_height; offset++) {
 		for (uint16_t x = 0; x < img_width; x++) {
+			inData.data = 0;
 			for (uint16_t y = 0; y < WIN_LENGTH; y++) {
-				inData.data = src_gray.at<apuint8_t>(Point(x, (y + offset)));
-				if((x == img_width- 1) && (y == WIN_LENGTH - 1)){
-					inData.last = 1;
-				}
-				inDataFIFO.write(inData);
+				inData.data = ((inData.data << 8) | src_gray.at<apuint8_t>(Point(x, (y + offset))));
 			}
+			if(x == (img_width - 1)) inData.last = 1;
+			inDataFIFO.write(inData);
 		}
 		wallis(inDataFIFO, outData, G_MEAN, G_VAR, CONTRAST, BRIGHTNESS);
 		inData.last = 0;
@@ -90,6 +89,7 @@ int main(int argc, const char * argv[]) {
 			}
 
 			c_mean = C_Mean(c_pixel);
+			//printf("SW: %d\n", c_mean);
 			c_var = C_Var(c_pixel, c_mean);
 			c_wallis[i_wallis++] = C_Wallis(c_pixel[(WIN_SIZE - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
 		}
@@ -108,7 +108,7 @@ int main(int argc, const char * argv[]) {
 	
 	while(!outData.empty()) {
 	//for(uint32_t i = 0; i < (g_length * g_width); i++) {
-		AXI_VALUE tmp = outData.read();
+		AXI_VALUE_OUT tmp = outData.read();
 		w_data[index_pix] = (uint8_t)tmp.data;
 
 		// ************************************************************************
@@ -168,7 +168,7 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	// Show image
-	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+/*	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
 	imwrite("wallis_hw_room256x256.jpg", hw_dst_img);
@@ -179,7 +179,7 @@ int main(int argc, const char * argv[]) {
 		imshow( "HW - Wallis", hw_dst_img );
 		imshow( "SW - Wallis", c_dst_img );
 		waitKey(0);
-	}
+	}*/
 
 
     return 0;
