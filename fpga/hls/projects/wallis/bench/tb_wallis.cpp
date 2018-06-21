@@ -13,7 +13,7 @@
 #include <iostream>
 using namespace cv;
 
-#define INPUT_IMAGE "room.jpg"
+#define INPUT_IMAGE "mountain.jpg"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
 #define CONTRAST 	0.82 //0.75 0.82
