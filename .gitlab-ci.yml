@@ -46,6 +46,7 @@ fpga:
     - time make NAME=diip impl
   artifacts:
     paths:
-    - "*.dcp"
-    - "*.bit"
-    - "*.ltx"
+    - "fpga/hlx/build/projects/*/*/*.dcp"
+    - "fpga/hlx/build/*.bit"
+    - "fpga/hlx/build/*.ltx"
+    - "fpga/hls/build/*/*/impl/ip/*"
