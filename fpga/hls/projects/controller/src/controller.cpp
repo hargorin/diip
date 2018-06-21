@@ -179,7 +179,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             break;
         case S_WRITE:
             // store processed data in memory
-            to_mem: memcpy((void*)(&memp[OUT_MEMORY_BASE]),(const void*)out_mem,(imgWidth-WINDOW_LEN+1)*sizeof(uint8_t));
+            to_mem: memcpy((void*)(&memp[inLineSize]),(const void*)out_mem,(imgWidth-WINDOW_LEN+1)*sizeof(uint8_t));
         	state = S_WAIT_TO_SEND;
             break;
         case S_WAIT_TO_SEND:
@@ -198,7 +198,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
 			state = S_IDLE;
 			b_config: {
 			#pragma HLS PROTOCOL floating
-				cbus[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
+				cbus[UFT_REG_TX_BASE] = inLineSize;
 				ap_wait_n(5);
 				cbus[UFT_REG_TX_SIZE] = imgWidth-WINDOW_LEN+1;
 				ap_wait_n(5);
