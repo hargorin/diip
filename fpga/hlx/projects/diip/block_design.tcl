@@ -92,9 +92,9 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {6} \
+   CONFIG.C_BRAM_CNT {15.5} \
    CONFIG.C_MON_TYPE {MIX} \
-   CONFIG.C_NUM_MONITOR_SLOTS {3} \
+   CONFIG.C_NUM_MONITOR_SLOTS {5} \
    CONFIG.C_NUM_OF_PROBES {5} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {1} \
@@ -185,7 +185,9 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_m_axi_cbus] [get_
   connect_bd_intf_net -intf_net udp_ip_stack_mac_tx [get_bd_intf_pins temac_support/tx_axis] [get_bd_intf_pins udp_ip_stack/mac_tx]
   connect_bd_intf_net -intf_net udp_ip_stack_udp_rx [get_bd_intf_pins udp_ip_stack/udp_rx] [get_bd_intf_pins uft_stack/udp_rx]
   connect_bd_intf_net -intf_net uft_stack_m_axi_rx [get_bd_intf_pins axi_smc/S01_AXI] [get_bd_intf_pins uft_stack/m_axi_rx]
+connect_bd_intf_net -intf_net [get_bd_intf_nets uft_stack_m_axi_rx] [get_bd_intf_pins axi_smc/S01_AXI] [get_bd_intf_pins system_ila_0/SLOT_3_AXI]
   connect_bd_intf_net -intf_net uft_stack_m_axi_tx [get_bd_intf_pins axi_smc/S02_AXI] [get_bd_intf_pins uft_stack/m_axi_tx]
+connect_bd_intf_net -intf_net [get_bd_intf_nets uft_stack_m_axi_tx] [get_bd_intf_pins axi_smc/S02_AXI] [get_bd_intf_pins system_ila_0/SLOT_4_AXI]
   connect_bd_intf_net -intf_net uft_stack_udp_rx_ctrl [get_bd_intf_pins udp_ip_stack/udp_rx_ctrl] [get_bd_intf_pins uft_stack/udp_rx_ctrl]
   connect_bd_intf_net -intf_net uft_stack_udp_tx [get_bd_intf_pins udp_ip_stack/udp_tx] [get_bd_intf_pins uft_stack/udp_tx]
   connect_bd_intf_net -intf_net uft_stack_udp_tx_ctrl [get_bd_intf_pins udp_ip_stack/udp_tx_ctrl] [get_bd_intf_pins uft_stack/udp_tx_ctrl]
