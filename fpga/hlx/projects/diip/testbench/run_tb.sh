@@ -2,7 +2,7 @@
 
 # Input arguments
 IP="192.168.5.9"
-IMAGE="images/room128x128.jpg"
+IMAGE="images/room256x256.jpg"
 WIN_SIZE=21
 
 # Get information
@@ -10,7 +10,7 @@ WIDTH=$(identify  -format '%w' $IMAGE)
 HEIGHT=$(identify  -format '%h' $IMAGE)
 
 # work directory
-mkdir -p workdir
+mkdir -p workdir/split/
 
 # Compile and copy binary from UFT
 pushd ../../../../../sw/uft/ && make && popd
@@ -32,22 +32,25 @@ cp ../../wallis/testbench/filesplit/filemerge workdir/
 # convert image to binary data
 ./workdir/image2file $IMAGE workdir/room_in.bin
 # split it into files
-./workdir/filesplit workdir/room_in.bin $WIDTH workdir/
+./workdir/filesplit workdir/room_in.bin $WIDTH workdir/split/
 
 # Send configuration
 ./workdir/command $IP 0 $WIDTH
 
-COUNT=`expr $HEIGHT - $WIN_SIZE`
-for (( c=0; c<=$COUNT; ))
+
+# copy to FPGA, run wallis and copy back
+# vivado -nolog -nojournal -mode batch -source diip_tb.tcl
+# ./workdir/filemerge workdir/room_out_jtag.bin workdir/split/ij_*.bin
+# HASH=$(git rev-parse --short HEAD)
+# ./workdir/file2image workdir/room_out_jtag.bin workdir/room_fpga_$HASH.jpg `expr $WIDTH - $WIN_SIZE + 1` `expr $HEIGHT - $WIN_SIZE + 1` -s
+
+COUNT=`expr $HEIGHT - $WIN_SIZE + 1`
+for (( c=0; c<$COUNT; ))
 do
-	fnamein=$(printf 'workdir/row_%03d.bin' "$c")
-	fnameout=$(printf 'workdir/in_%03d.bin' "$c")
+	fnamein=$(printf 'workdir/split/row_%03d.bin' "$c")
+	fnameout=$(printf 'workdir/split/in_%03d.bin' "$c")
 	# Status
-	echo "----------------------------------------"
 	echo "c = $c"
-	echo "fnamein = $fnamein"
-	echo "fnameout = $fnameout"
-	echo "----------------------------------------"
 	# Start receiver in background
 	nohup workdir/receiver 2222 $fnameout &
 	pid=$!
@@ -64,22 +67,10 @@ do
 	    echo "Data not received"
 	    kill $pid
 	fi
-
-	# PID=$(jobs -p)
-	# PID=$(jobs -p)
-	# if [ -z "$PID" ]; then
-	# 	# no background jobs running -> data received
-	#     echo "Data received"
-	#     c=$[c+1]
-	# else
-	#     echo "Data not received"
-	#     kill $(jobs -p)
-	# fi
-
 done
 
 # merge files
-./workdir/filemerge workdir/room_out.bin workdir/in_*.bin
+./workdir/filemerge workdir/room_out.bin workdir/split/in_*.bin
 # convert back to image
 HASH=$(git rev-parse --short HEAD)
 ./workdir/file2image workdir/room_out.bin workdir/room_fpga_$HASH.jpg `expr $WIDTH - $WIN_SIZE + 1` `expr $HEIGHT - $WIN_SIZE + 1` -s
