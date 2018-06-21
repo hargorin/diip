@@ -9,9 +9,9 @@ proc connect {} {
   connect_hw_server
   open_hw_target
 
-  set_property PROGRAM.FILE {../../../build/projects/wallis.runs/impl_1/system_wrapper.bit} [get_hw_devices xc7a200t_0]
-  set_property PROBES.FILE {../../../build/projects/wallis.runs/impl_1/system_wrapper.ltx} [get_hw_devices xc7a200t_0]
-  set_property FULL_PROBES.FILE {../../../build/projects/wallis.runs/impl_1/system_wrapper.ltx} [get_hw_devices xc7a200t_0]
+  set_property PROGRAM.FILE {../../../build/wallis.bit} [get_hw_devices xc7a200t_0]
+  set_property PROBES.FILE {../../../build/wallis.ltx} [get_hw_devices xc7a200t_0]
+  set_property FULL_PROBES.FILE {../../../build/wallis.ltx} [get_hw_devices xc7a200t_0]
   current_hw_device [get_hw_devices xc7a200t_0]
   refresh_hw_device [lindex [get_hw_devices xc7a200t_0] 0]
 }
