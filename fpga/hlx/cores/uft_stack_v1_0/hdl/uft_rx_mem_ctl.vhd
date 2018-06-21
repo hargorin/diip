@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Wed Jun 20 17:16:44 2018
+-- Last update : Thu Jun 21 17:06:13 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -266,12 +266,12 @@ begin
         ctrp1 := ctr + 1;
         if current_state = STORE_DONE then
             -- amb_word_cnt in WORDS is ceil((ctr+1) / 4 )
-            if ctrp1(1 downto 0) /= "00" then
-                amb_word_cnt <= shift_right(ctrp1, 2)(C_LENGTH_WIDTH-1 downto 0) + 1;
+            if ctr(1 downto 0) /= "00" then
+                amb_word_cnt <= shift_right(ctr, 2)(C_LENGTH_WIDTH-1 downto 0) + 1;
             else
-                amb_word_cnt <= shift_right(ctrp1, 2)(C_LENGTH_WIDTH-1 downto 0);
+                amb_word_cnt <= shift_right(ctr, 2)(C_LENGTH_WIDTH-1 downto 0);
             end if;        
-            mem_length <= ctr(C_LENGTH_WIDTH-1 downto 0) + 1;
+            mem_length <= ctr(C_LENGTH_WIDTH-1 downto 0);
             axi_addr <= unsigned(rx_base_adr) + to_unsigned((to_integer(c_pkg_uft_rx_pack_size) * to_integer(unsigned(data_seq))),axi_addr'length);
         else
             amb_word_cnt <= amb_word_cnt;
