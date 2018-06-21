@@ -27,7 +27,7 @@ typedef enum uftControll
 #define CONTROLL_USER        0x04
 
 #define UFT_CONTROLL_SIZE    34 // data plus padding
-#define UFT_DATA_PAYLOAD     1464 // remaining data size in data packet
+#define UFT_DATA_PAYLOAD     1024 // remaining data size in data packet
 #define UFT_DATA_SIZEW       1472 // data packet size
 
 #define USE_RETRANSMISSION

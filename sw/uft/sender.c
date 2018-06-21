@@ -42,7 +42,7 @@ int main(int argc, char const *argv[])
     printf("destination %s:%d\n", ip, port);
 
     // open file for sending
-    FILE *fp = fopen( fname, "r" );
+    FILE *fp = fopen( fname, "rb" );
     if(fp == 0)
     {
         printf("Error: File not found\n");
