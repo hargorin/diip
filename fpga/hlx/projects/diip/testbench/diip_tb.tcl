@@ -63,7 +63,9 @@ proc tb1 {} {
 #############################################
 # Testbench for commit xxxxxxx
 proc tb2 {} {
-  for {set i 0} {$i < 108} {incr i} {
+  set width 256
+  set win 21
+  for {set i 0} {$i < ($width-$win+1)} {incr i} {
       # Write data to image input base
       puts [format "workdir/row_%03d.bin" $i]
 
@@ -72,24 +74,49 @@ proc tb2 {} {
       # Start transmitter
       exec workdir/sender 192.168.5.9 42042 [format "workdir/split/row_%03d.bin" $i]
       # Give the data change to receive
-      exec sleep 0.5
-      # If receiver still running, kill it and try again
-      
-      dump [format "workdir/split/ij_%03d.bin" $i] a80 108
+      exec sleep 0.1
+      # Dumpt output data
+      dump [format "workdir/split/ij_%03d.bin" $i] [format %X [expr {$width*21}]] [expr {$width-$win+1}]
+      # Dumpt input data
+      dump [format "workdir/split/ii_%03d.bin" $i] 0 [expr {$width*$win}]
   }
 
   # Check data
   puts "Check output data in workdir/in_*.bin"
 }
 
+#############################################
+# Send same row N times
+proc tb3 {} {
+  set width 256
+  set win 21
+  for {set i 0} {$i < (16)} {incr i} {
+      # Write data to image input base
+      puts "workdir/row_000.bin"
+
+      # Start receiver in background
+      exec workdir/receiver 2222 [format "workdir/split/in_000_%02d.bin" $i] &
+      # Start transmitter
+      exec workdir/sender 192.168.5.9 42042 [format "workdir/split/row_000.bin" $i]
+      # Give the data change to receive
+      exec sleep 0.1
+      # Dumpt output data
+      dump [format "workdir/split/ij_000_%02d.bin" $i] [format %X [expr {$width*21}]] [expr {$width-$win+1}]
+      # Dumpt input data
+      dump [format "workdir/split/ii_000_%02d.bin" $i] 0 [expr {$width*$win}]
+  }
+}
+
 # --------
 #   main
 # --------
-  source memdump.tcl
-  open_hw
-  connect
+set tb [lindex $argv 0]
+source memdump.tcl
+open_hw
+connect
 
-  # tb1
-  tb2
+# tb1
+# tb2
+$tb
 
-  close_hw
+close_hw
