@@ -30,7 +30,7 @@ typedef enum uftControll
 #define UFT_DATA_PAYLOAD     1024 // remaining data size in data packet
 #define UFT_DATA_SIZEW       1472 // data packet size
 
-#define USE_RETRANSMISSION
+// #define USE_RETRANSMISSION
 #define N_PACK_RETRY            30  // how many times to resend a packets
 
 // ========================================================
@@ -172,6 +172,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
+        usleep(100); 
     }
     usleep(100); 
     // wait a bit for the last few acks
