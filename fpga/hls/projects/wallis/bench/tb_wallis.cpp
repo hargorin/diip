@@ -14,7 +14,7 @@
 using namespace cv;
 using namespace std;
 
-#define FILE_NAME "room128x128"
+#define FILE_NAME "room"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
 #define CONTRAST 	0.82 //0.75 0.82
@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
 
 	// Read Image
 	ostringstream input_image;
-	input_image << FILE_NAME << ".jpg";
+	input_image << FILE_NAME << ".tif";
 	Mat src_img = imread(input_image.str());
 	if (!src_img.data) {
 		printf("***********************************************************\n");
@@ -188,9 +188,9 @@ int main(int argc, const char * argv[]) {
 		ostringstream name;
 		char buffer[2];
 		sprintf(buffer, "%d", a);
-		name << "wallis_hw_" << FILE_NAME << "_" << buffer << ".jpg";
+		name << "wallis_hw_" << FILE_NAME << "_" << buffer << ".tif";
 		imwrite(name.str(), hw_dst_img);
-		name << "wallis_sw_" << FILE_NAME << "_" << buffer << ".jpg";
+		name << "wallis_sw_" << FILE_NAME << "_" << buffer << ".tif";
 		//imwrite(name.str(), c_dst_img);
 	/*	if (getenv("DISPLAY") != NULL)
 		{
