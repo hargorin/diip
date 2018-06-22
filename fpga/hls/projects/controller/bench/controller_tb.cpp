@@ -5,6 +5,7 @@
 //  Copyright © 2017 Jan Stocker. All rights reserved.
 //
 #include <stdlib.h>
+#include <time.h>
 
 #include "../inc/controller.h"
 
@@ -25,6 +26,7 @@ int main()
     uint32_t uft_reg[16];
 	AXI_STREAM outData;
 	AXI_STREAM inData;
+	uint8_t inDataValidate[OUT_SIZE];
 
     ap_uint<1> rx_done = 0;
     ap_uint<1> tx_ready = 0;
@@ -33,7 +35,7 @@ int main()
 
 
 	uint8_t stream_set[IN_SIZE];
-	uint8_t mem_set[IMG_WIDTH-WINDOW_LEN+1];
+	uint8_t mem_set[OUT_SIZE];
 
 
     uint32_t uft_reg_set[16];
@@ -44,20 +46,21 @@ int main()
 	printf("***************\n");
 	printf("Start Testbench\n");
 	printf("Required memory size is %d bytes\n", IN_SIZE+OUT_SIZE);
-	
+	srand (time(NULL));
+
 	//************************************************************************
 	//Put data into memory
 	//************************************************************************
 	uint8_t val = 0;
 	for(i=0; i < (IN_SIZE); i++)
 	{
-		memory[i] = val++;
+		memory[i] = rand() % 256;
 	}
 	// Put data into stream comming from the core
-	val = 255;
-	for(i=0; i < (IMG_WIDTH-WINDOW_LEN+1); i++)
+	for(i=0; i < (OUT_SIZE); i++)
 	{
-		aval.data = val--;
+		inDataValidate[i] = rand() % 256;
+		aval.data = inDataValidate[i];
 		if(i == (IMG_WIDTH-WINDOW_LEN))
 			aval.last = 1;
 		inData.write(aval);
@@ -102,9 +105,9 @@ int main()
 	}
 	// write the stream data to memory
 	val = 255;
-	for(i=0; i < (IMG_WIDTH-WINDOW_LEN+1); i++)
+	for(i=0; i < (OUT_SIZE); i++)
 	{
-		mem_set[i] = val--;
+		mem_set[i] = inDataValidate[i];
 	}
 	// uft_reg
 	 memset(uft_reg_set, 0, sizeof(uft_reg_set));
@@ -113,7 +116,7 @@ int main()
 	 uft_reg_set[UFT_REG_IMG_WIDTH] = IMG_WIDTH;
 	 uft_reg_set[UFT_REG_CONTROL] = UFT_REG_CONTROL_TX_START;
 	 uft_reg_set[UFT_REG_TX_BASE] = OUT_MEMORY_BASE;
-	 uft_reg_set[UFT_REG_TX_SIZE] = IMG_WIDTH-WINDOW_LEN+1;
+	 uft_reg_set[UFT_REG_TX_SIZE] = OUT_SIZE;
 	//************************************************************************
 	//Compare results from output stream
 	//************************************************************************
