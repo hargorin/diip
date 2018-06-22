@@ -92,9 +92,9 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {15.5} \
+   CONFIG.C_BRAM_CNT {28} \
    CONFIG.C_MON_TYPE {MIX} \
-   CONFIG.C_NUM_MONITOR_SLOTS {5} \
+   CONFIG.C_NUM_MONITOR_SLOTS {7} \
    CONFIG.C_NUM_OF_PROBES {5} \
    CONFIG.C_SLOT_0_APC_EN {0} \
    CONFIG.C_SLOT_0_AXI_AR_SEL_DATA {1} \
@@ -133,6 +133,14 @@
    CONFIG.C_SLOT_2_AXI_W_SEL_DATA {1} \
    CONFIG.C_SLOT_2_AXI_W_SEL_TRIG {1} \
    CONFIG.C_SLOT_2_INTF_TYPE {xilinx.com:interface:aximm_rtl:1.0} \
+   CONFIG.C_SLOT_5_APC_EN {0} \
+   CONFIG.C_SLOT_5_AXI_DATA_SEL {1} \
+   CONFIG.C_SLOT_5_AXI_TRIG_SEL {1} \
+   CONFIG.C_SLOT_5_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
+   CONFIG.C_SLOT_6_APC_EN {0} \
+   CONFIG.C_SLOT_6_AXI_DATA_SEL {1} \
+   CONFIG.C_SLOT_6_AXI_TRIG_SEL {1} \
+   CONFIG.C_SLOT_6_INTF_TYPE {xilinx.com:interface:axis_rtl:1.0} \
  ] $system_ila_0
 
   # Create instance: temac_support, and set properties
@@ -171,6 +179,10 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_m_axi_memp] [ge
 HDL_ATTRIBUTE.DEBUG {true} \
  ] [get_bd_intf_nets controller_top_1_m_axi_memp]
   connect_bd_intf_net -intf_net controller_top_1_outData [get_bd_intf_pins controller_top/outData] [get_bd_intf_pins wallis/inData]
+connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_1_outData] [get_bd_intf_pins system_ila_0/SLOT_5_AXIS] [get_bd_intf_pins wallis/inData]
+  set_property -dict [ list \
+HDL_ATTRIBUTE.DEBUG {true} \
+ ] [get_bd_intf_nets controller_top_1_outData]
   connect_bd_intf_net -intf_net controller_top_m_axi_cbus [get_bd_intf_pins axi_protocol_converter_0/S_AXI] [get_bd_intf_pins controller_top/m_axi_cbus]
 connect_bd_intf_net -intf_net [get_bd_intf_nets controller_top_m_axi_cbus] [get_bd_intf_pins axi_protocol_converter_0/S_AXI] [get_bd_intf_pins system_ila_0/SLOT_0_AXI]
   connect_bd_intf_net -intf_net jtag_axi_M_AXI [get_bd_intf_pins axi_smc/S03_AXI] [get_bd_intf_pins jtag_axi_data/M_AXI]
@@ -192,6 +204,10 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets uft_stack_m_axi_tx] [get_bd_intf
   connect_bd_intf_net -intf_net uft_stack_udp_tx [get_bd_intf_pins udp_ip_stack/udp_tx] [get_bd_intf_pins uft_stack/udp_tx]
   connect_bd_intf_net -intf_net uft_stack_udp_tx_ctrl [get_bd_intf_pins udp_ip_stack/udp_tx_ctrl] [get_bd_intf_pins uft_stack/udp_tx_ctrl]
   connect_bd_intf_net -intf_net wallis_outData [get_bd_intf_pins controller_top/inData] [get_bd_intf_pins wallis/outData]
+connect_bd_intf_net -intf_net [get_bd_intf_nets wallis_outData] [get_bd_intf_pins controller_top/inData] [get_bd_intf_pins system_ila_0/SLOT_6_AXIS]
+  set_property -dict [ list \
+HDL_ATTRIBUTE.DEBUG {true} \
+ ] [get_bd_intf_nets wallis_outData]
 
   # Create port connections
   connect_bd_net -net Net [get_bd_pins udp_ip_stack/our_ip_address] [get_bd_pins uft_stack/our_ip_address]
