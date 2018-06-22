@@ -78,6 +78,7 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             break;
         case S_READ:
             // Initially fill first pp buf
+            printf("Start filling buff A\n");
             fillBuff(memp, ppBufA, imgWidth, 0);
             bufOff = AXI_BURST_SIZE;
             // Init variables for ping pong buffers
@@ -96,20 +97,22 @@ void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
             break;
         case S_STREAM:
             /********* Buffer Switching and reloading *********/
-            if(outPpBuf == ppBufA)
+            if( (outPpBuf == ppBufA) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) )
             {
                 if(!ppBufBrdy)
                 {
+                    printf("Start filling buff B\n");
                     fillBuff(memp, ppBufB, imgWidth, bufOff);
                     bufOff += AXI_BURST_SIZE;
                     ppBufBrdy = true;
                     runOut = true;
                 }
             }
-            if(outPpBuf == ppBufB)
+            if( (outPpBuf == ppBufB) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) )
             {
                 if(!ppBufArdy)
                 {
+                    printf("Start filling buff A\n");
                     fillBuff(memp, ppBufA, imgWidth, bufOff);
                     bufOff += AXI_BURST_SIZE;
                     ppBufArdy = true;
