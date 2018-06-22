@@ -20,9 +20,9 @@ create_solution "sol14_S2P_BRAM" "wallis" "directives_sol14.tcl"
 
 
 # Add custom files
-add_files -tb ../projects/wallis/input_files/landscape.jpg
-add_files -tb ../projects/wallis/input_files/room.jpg
-add_files -tb ../projects/wallis/input_files/room32x32.jpg
-add_files -tb ../projects/wallis/input_files/room128x128.jpg
-add_files -tb ../projects/wallis/input_files/room256x256.jpg
-add_files -tb ../projects/wallis/input_files/mountain.jpg
+add_files -tb ../projects/wallis/input_files/landscape.tif
+add_files -tb ../projects/wallis/input_files/room.tif
+add_files -tb ../projects/wallis/input_files/room32x32.tif
+add_files -tb ../projects/wallis/input_files/room128x128.tif
+add_files -tb ../projects/wallis/input_files/room256x256.tif
+add_files -tb ../projects/wallis/input_files/mountain.tif
