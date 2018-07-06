@@ -7,6 +7,10 @@
 #include <sys/time.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct tictocstruct
 {
     struct timeval tv;
@@ -21,5 +25,9 @@ typedef struct tictocstruct
 void tic(tictoc_t *tt);
 void toc(tictoc_t *tt);
 uint32_t get_filesize_bytes (FILE *fp);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

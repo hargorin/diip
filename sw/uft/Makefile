@@ -3,16 +3,18 @@ SENDER = sender
 RECEIVER = receiver
 BENCHMARK = benchmark
 COMMAND = command
+LIB = libuft.a
 
 TARGET = $(SENDER) $(RECEIVER) $(BENCHMARK) $(COMMAND)
 
 LIBS = -lm
 CC = gcc
 CFLAGS = -O3 -g -Wall
+AR = ar
 
 .PHONY: default all clean
 
-default: $(TARGET)
+default: $(TARGET) $(LIB)
 all: default
 
 OBJECTS = uft.o wrapper.o error.o util.o
@@ -40,6 +42,10 @@ $(BENCHMARK) : $(OBJECTS) $(BENCHMARKOBJ)
 
 $(COMMAND) : $(OBJECTS) $(COMMANDOBJ)
 	$(CC) $(CFLAGS) $(COMMANDOBJ) $(OBJECTS) -Wall $(LIBS) -o $@
+
+lib : $(LIB)
+$(LIB) : uft.o uft.h
+	$(AR) -cvq $(LIB) uft.o wrapper.o error.o util.o
 
 clean:
 	-rm -f *.o
