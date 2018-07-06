@@ -3,7 +3,7 @@
 # Input arguments
 IP="192.168.5.9"
 # IMAGE="images/room256x256.jpg"
-IMAGE="images/mountain.tif"
+IMAGE="images/mountain_medium.tif"
 WIN_SIZE=21
 
 # Get information
