@@ -3,6 +3,7 @@
 
 ## Requirements
 ```bash
+sudo apt install libopencv-dev
 ```
 
 ## Build

@@ -50,3 +50,14 @@ fpga:
     - "fpga/hlx/build/*.bit"
     - "fpga/hlx/build/*.ltx"
     - "fpga/hls/build/*/*/impl/ip/*"
+
+sw:
+  stage: build
+  image: madduci/docker-linux-cpp
+  before_script:
+    - sudo apt install libopencv-dev
+  script:
+    - pushd sw/diip_cc/ && make && popd
+  artifacts:
+    paths:
+      - "sw/diip_cc/bin/*"
