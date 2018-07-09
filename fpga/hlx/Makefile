@@ -35,7 +35,7 @@ RM = rm -rf
 # if make is killed or interrupted during the execution of their recipes, 
 # the target is not deleted
 .PRECIOUS: $(BUILD)/cores/% $(BUILD)/%.xpr $(BUILD)/%.bit
-.PHONY: all bit cores clean-cores project clean-project flash sim clean-sim clean impl
+.PHONY: all bit cores clean-cores project clean-project flash sim clean-sim clean impl flashqspi
 
 all: bit
 
@@ -103,6 +103,13 @@ $(BUILD)/$(NAME).bit: $(addprefix $(BUILD)/cores/, $(CORES)) $(BUILD)/projects/$
 # 
 flash: $(BUILD)/$(NAME).bit
 	$(VIVADO) -source scripts/flash.tcl -tclargs $(NAME) $(BUILD)/projects/ $(BUILD)/
+$(VIVADO) -source scripts/bitstream.tcl -tclargs $(NAME) $(BUILD)/projects/ $(BUILD)/
+
+#
+# Flash QSPI
+# 
+flashqspi: $(BUILD)/$(NAME).bit
+	$(VIVADO) -source scripts/flashqspi.tcl -tclargs $(NAME) $(BUILD)/projects/ $(BUILD)/
 
 #
 # Simulation
