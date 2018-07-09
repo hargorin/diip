@@ -36,7 +36,7 @@ CFLAGS += $(shell pkg-config opencv --cflags)
 #Defauilt Make
 all: ../uft/libuft.a resources $(TARGET)
 
-../uft/libuft.a: ../uft/uft.c ../uft/error.c ../uft/util.c ../uft/wrapper.c ../uft/uft.h
+../uft/libuft.a: ../uft/uft.o ../uft/error.o ../uft/util.o ../uft/wrapper.o ../uft/uft.h
 	@rm ../uft/libuft.a 2>/dev/null || :
 	@make -C ../uft/ lib
 
@@ -68,6 +68,10 @@ $(TARGET): $(OBJECTS)
 	$(CC) -o $(TARGETDIR)/$(TARGET) $^ $(LIBS)
 
 #Compile
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
 $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
