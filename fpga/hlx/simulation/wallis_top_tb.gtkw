@@ -1,0 +1,21 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Mon Jul  9 11:02:55 2018
+[*]
+[dumpfile] "/home/jan/git/diip/fpga/hlx/build/ghdl/wallis_top_tb.ghw"
+[dumpfile_mtime] "Mon Jul  9 11:00:32 2018"
+[dumpfile_size] 847
+[savefile] "/home/jan/git/diip/fpga/hlx/simulation/wallis_top_tb.gtkw"
+[timestart] 0
+[size] 1371 719
+[pos] -1 -1
+*-25.988525 9600000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[sst_width] 225
+[signals_width] 363
+[sst_expanded] 1
+[sst_vpaned_height] 202
+@28
+top.wallis_top_tb.clk
+[pattern_trace] 1
+[pattern_trace] 0
