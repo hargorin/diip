@@ -22,6 +22,9 @@ ImageHandler::ImageHandler(const char* fn)
     mimg = imread(fname, CV_8UC1);
     inWidth = mimg.cols;
     inHeight = mimg.rows;
+
+    // init
+    out_mat = NULL;
 }
 
 /**
@@ -59,18 +62,29 @@ int ImageHandler::getWidth()
  */
 int ImageHandler::load()
 {
-    imBuf = (uint8_t*)malloc(mimg.cols * mimg.rows);
-
-    if(!imBuf)
+    // If the image in opencv is stored in memory confinuously
+    // we can access it linearly with a pointer to the Mat's data
+    if(mimg.isContinuous())
     {
-        printf("[ImageHandler::load] malloc failed : %s\n",fname);
-        return -1;
+        imBuf = mimg.ptr<uchar>(0);
     }
+    else
+    {   
+        printf("in Mat is not stored continuous!!\n");
 
-    uint32_t i = 0;
-    for (int y = 0; y < mimg.rows; y++) {
-        for (int x = 0; x < mimg.cols; x++) {
-            imBuf[i++] = mimg.at<uchar>(Point(x, y));
+        imBuf = (uint8_t*)malloc(mimg.cols * mimg.rows);
+
+        if(!imBuf)
+        {
+            printf("[ImageHandler::load] malloc failed : %s\n",fname);
+            return -1;
+        }
+
+        uint32_t i = 0;
+        for (int y = 0; y < mimg.rows; y++) {
+            for (int x = 0; x < mimg.cols; x++) {
+                imBuf[i++] = mimg.at<uchar>(Point(x, y));
+            }
         }
     }
 
@@ -89,13 +103,21 @@ int ImageHandler::load()
 int
 ImageHandler::allocateOutputImage(const char* fname, size_t w, size_t h)
 {
+    int allocSize;
     // store file name
     out_fname = new char[strlen(fname)+1];
     strcpy(out_fname,fname);
 
     // allocate memory
-    outBuf = new uint8_t[w*h];
+    // round up to the next multiple of 1024 to make UFT packets safe
+    int remainder = (w*h) % 1500;
+    if (remainder == 0)
+        allocSize = w*h;
+    else
+        allocSize = (w*h) + 1500 - remainder;
 
+    outBuf = new uint8_t[allocSize];
+    
     // store size
     out_width = w;
     out_height = h;
@@ -111,8 +133,13 @@ ImageHandler::allocateOutputImage(const char* fname, size_t w, size_t h)
 int 
 ImageHandler::storeOutputImage()
 {
-    out_mat = new Mat(out_height, out_width, CV_8UC1, outBuf);
+    if(out_mat == NULL)
+    {
+        out_mat = new Mat(out_height, out_width, CV_8UC1, outBuf);
+    }
     imwrite(out_fname, *out_mat);
+
+    return 0;
 }
 
 /**
@@ -123,9 +150,14 @@ ImageHandler::storeOutputImage()
 int 
 ImageHandler::showOutputImage()
 {
-    out_mat = new Mat(out_height, out_width, CV_8UC1, outBuf);
+    if(out_mat == NULL)
+    {
+        out_mat = new Mat(out_height, out_width, CV_8UC1, outBuf);
+    }
     imshow( "Output Image", *out_mat );                  
     waitKey(0);  
+    
+    return 0;
 }
 
 /**
@@ -181,7 +213,7 @@ ImageHandler::LoadImage(uint8_t* ptr, char* fname)
 int
 ImageHandler::StoreImage(uint8_t* ptr, int w, int h, char* fname)
 {
-    printf("w=%d h=%d fname=%s ptr=%d\n",w,h,fname,ptr);
+    printf("w=%d h=%d fname=%s ptr=%lu\n",w,h,fname,(unsigned long)ptr);
     Mat img(h, w, CV_8UC1, ptr);
 
     // imshow( "Sobel", img );                  

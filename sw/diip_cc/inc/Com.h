@@ -17,7 +17,7 @@ public:
 
 	// Receiving
 	int
-	setupReceive(int port, size_t size);
+	setupReceive(int port, uint8_t* ptr, size_t size);
 	void
 	receive(void );
 

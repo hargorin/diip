@@ -6,7 +6,7 @@ CC = g++
 AR = ar
 
 #Compiler flags and libraries
-CFLAGS = -pedantic -Wall -g -O0 -I../uft/  -std=c++11
+CFLAGS = -pg -pedantic -Wall -g -O0 -I../uft/ -std=c++11
 LIBS = $(shell pkg-config opencv --libs)
 LIBS += -L../uft/ -luft -lpthread 
 
@@ -59,13 +59,14 @@ clean:
 #Full Clean, Objects and Binaries
 cleaner: clean
 	@$(RM) -rf $(TARGETDIR)
+	@make -C ../uft/ clean
 
 #Pull in dependency info for *existing* .o files
 -include $(OBJECTS:.$(OBJEXT)=.$(DEPEXT))
 
 #Link
 $(TARGET): $(OBJECTS)
-	$(CC) -o $(TARGETDIR)/$(TARGET) $^ $(LIBS)
+	$(CC) $(CFLAGS) -o $(TARGETDIR)/$(TARGET) $^ $(LIBS)
 
 #Compile
 $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
@@ -77,5 +78,10 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 	@sed -e 's/.*://' -e 's/\\$$//' < $(BUILDDIR)/$*.$(DEPEXT).tmp | fmt -1 | sed -e 's/^ *//' -e 's/$$/:/' >> $(BUILDDIR)/$*.$(DEPEXT)
 	@rm -f $(BUILDDIR)/$*.$(DEPEXT).tmp
 
+profile: 
+	@rm callgrind.out.*
+	valgrind --tool=callgrind ./bin/diip_cc res/room.jpg
+	kcachegrind callgrind.out.*
+
 #Non-File Targets
-.PHONY: all remake clean cleaner resources
+.PHONY: all remake clean cleaner resources profile

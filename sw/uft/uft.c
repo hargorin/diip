@@ -645,7 +645,8 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                 obuf_ptr = 0;
                 payload_size = 0; // will be set on first data packet
                 // allocate enough space to hold the data
-                outbuf = (uint8_t*)malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
+                // outbuf = (uint8_t*)malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
+                outbuf = data;
                 memset(outbuf, 0x0, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t));
                 // make room for ack array and set all to 0
                 ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
@@ -683,7 +684,7 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                     if(is_all_set(ack_buf, nseq))
                     {
                         DBG_V2("Done receiving. Copy to %08x\n", data);
-                        memcpy(data, outbuf, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
+                        // memcpy(data, outbuf, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
                         if(verbosity) toc(&tt);
                         do_receive = 0;
                     }

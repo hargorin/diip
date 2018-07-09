@@ -10,3 +10,13 @@ sudo apt install libopencv-dev
 ```bash
 make
 ```
+
+## Dev notes
+To detect memory leaks:
+```bash
+valgrind ./bin/diip_cc res/mountain_medium.tif -s
+```
+Debugging:
+```bash
+gdb --args ./bin/diip_cc res/mountain_medium.tif -s
+```

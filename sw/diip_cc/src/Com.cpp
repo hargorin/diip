@@ -53,15 +53,17 @@ Com::writeUserReg(uint32_t regadr, uint32_t regval)
  * @brief      set the receive listen port
  *
  * @param[in]  port  The port
+ * @param[out] ptr   memory location to write to
  * @param[in]  size  Maximum receive size
  *
  * @return     nothing
  */
 int
-Com::setupReceive(int port, size_t size)
+Com::setupReceive(int port, uint8_t* ptr, size_t size)
 {
 	rx_port = port;
 	rx_size = size;
+	rx_data = ptr;
 }
 
 /**
@@ -70,7 +72,7 @@ Com::setupReceive(int port, size_t size)
 void
 Com::receive(void)
 {	
-	this->rx_data = new uint8_t[rx_size];
+	// this->rx_data = new uint8_t[rx_size];
 	this->rx_size = uft_receive_data(this->rx_data, this->rx_port);
 }
 
