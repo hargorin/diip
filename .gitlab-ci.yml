@@ -53,9 +53,11 @@ fpga:
 
 sw:
   stage: build
-  image: madduci/docker-linux-cpp
+  image: ubuntu:16.04
   before_script:
-    - sudo apt install libopencv-dev
+    - apt-get update
+    - apt-get install -y gcc g++ build-essential
+    - apt-get install -y libopencv-dev
   script:
     - pushd sw/diip_cc/ && make && popd
   artifacts:
