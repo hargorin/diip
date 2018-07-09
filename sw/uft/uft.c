@@ -121,7 +121,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     }
 
     // make room for ack array and set all to 0
-    ack_buf = malloc( nseq * sizeof(uint8_t) );
+    ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
     memset(ack_buf, 0, nseq * sizeof(uint8_t));
 
     // Create send socket
@@ -129,14 +129,14 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     if (sockfd < 0) return -1;
 
     // send file start control
-    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+    controll = (uint8_t*)malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
     assemble_uft_controll(controll, tcid, nseq);
 
     //send the message
     Send(sockfd, controll, UFT_CONTROLL_SIZE, 0);
 
     // start data transmission
-    dbuf = malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
+    dbuf = (uint8_t*)malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
     memset(dbuf, 0x0, UFT_DATA_SIZEW);
     if(verbosity) tic(&tt);
     int seq_ctr = 0;
@@ -332,10 +332,10 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                 obuf_ptr = 0;
                 payload_size = 0; // will be set on first data packet
                 // allocate enough space to hold the data
-                outbuf = malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
+                outbuf = (uint8_t*)malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
                 memset(outbuf, 0x0, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t));
                 // make room for ack array and set all to 0
-                ack_buf = malloc( nseq * sizeof(uint8_t) );
+                ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
                 memset(ack_buf, 0, nseq * sizeof(uint8_t));
                 // Connect Socket to receive only from this host
                 Connect(sockfd, (const struct sockaddr*)&si_other, sizeof(si_other));
@@ -357,7 +357,7 @@ int uft_receive_file( FILE *fp,  uint16_t port)
                     data_ctr += recv_len - 4;
 
                     // send acknowledge
-                    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+                    controll = (uint8_t*)malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
                     memset(controll, 0x0, UFT_CONTROLL_SIZE);
                     assemble_uft_ackfp(controll, tcid, get_data_seqnbr(buf));
                     //send the message
@@ -432,7 +432,7 @@ int uft_send_data( uint8_t* data, size_t datasize,  const char* ip, uint16_t por
     }
 
     // make room for ack array and set all to 0
-    ack_buf = malloc( nseq * sizeof(uint8_t) );
+    ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
     memset(ack_buf, 0, nseq * sizeof(uint8_t));
 
     // Create send socket
@@ -440,14 +440,14 @@ int uft_send_data( uint8_t* data, size_t datasize,  const char* ip, uint16_t por
     if (sockfd < 0) return -1;
 
     // send file start control
-    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+    controll = (uint8_t*)malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
     assemble_uft_controll(controll, tcid, nseq);
 
     //send the message
     Send(sockfd, controll, UFT_CONTROLL_SIZE, 0);
 
     // start data transmission
-    dbuf = malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
+    dbuf = (uint8_t*)malloc( UFT_DATA_SIZEW * sizeof(uint8_t) );
     memset(dbuf, 0x0, UFT_DATA_SIZEW);
     if(verbosity) tic(&tt);
     int seq_ctr = 0;
@@ -645,10 +645,10 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                 obuf_ptr = 0;
                 payload_size = 0; // will be set on first data packet
                 // allocate enough space to hold the data
-                outbuf = malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
+                outbuf = (uint8_t*)malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
                 memset(outbuf, 0x0, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t));
                 // make room for ack array and set all to 0
-                ack_buf = malloc( nseq * sizeof(uint8_t) );
+                ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
                 memset(ack_buf, 0, nseq * sizeof(uint8_t));
                 // Connect Socket to receive only from this host
                 Connect(sockfd, (const struct sockaddr*)&si_other, sizeof(si_other));
@@ -670,7 +670,7 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                     data_ctr += recv_len - 4;
 
                     // send acknowledge
-                    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+                    controll = (uint8_t*)malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
                     memset(controll, 0x0, UFT_CONTROLL_SIZE);
                     assemble_uft_ackfp(controll, tcid, get_data_seqnbr(buf));
                     //send the message
@@ -727,7 +727,7 @@ int uft_write_user_register(const char* ip, uint16_t port, uint32_t regadr, uint
     if (sockfd < 0) return -1;
 
     // send file start control
-    controll = malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
+    controll = (uint8_t*)malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
     assemble_uft_user_reg(controll, regadr, regval);
 
     //send the message
@@ -985,12 +985,12 @@ static uint32_t assemble_data_from_mem(uint8_t *buf, void *data, uint32_t datasi
     // enough data for a full data packet
     if((datasize - curr) > UFT_DATA_PAYLOAD)
     {
-        memcpy(&buf[4], &data[curr], UFT_DATA_PAYLOAD);
+        memcpy(&buf[4], &((uint8_t*)data)[curr], UFT_DATA_PAYLOAD);
         num = UFT_DATA_PAYLOAD;
     }
     else
     {
-        memcpy(&buf[4], &data[curr], (datasize - curr));
+        memcpy(&buf[4], &((uint8_t*)data)[curr], (datasize - curr));
         num = (datasize - curr);
     }
     return  num+4;  
