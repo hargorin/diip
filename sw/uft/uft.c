@@ -31,6 +31,8 @@ typedef enum uftControll
 #define UFT_DATA_SIZEW       1472 // data packet size
 
 // #define USE_RETRANSMISSION
+// #define USE_ACKNOWLEDGE_ON_SEND
+// #define USE_ACKNOWLEDGE_ON_RECEIVE
 #define N_PACK_RETRY            30  // how many times to resend a packets
 
 // ========================================================
@@ -414,7 +416,6 @@ int uft_send_data( uint8_t* data, size_t datasize,  const char* ip, uint16_t por
     int count, recv_len;
     uint8_t buf[1500];
 
-    uint8_t *ack_buf;
 
     tictoc_t tt;
     tt.fp = NULL;
@@ -432,8 +433,11 @@ int uft_send_data( uint8_t* data, size_t datasize,  const char* ip, uint16_t por
     }
 
     // make room for ack array and set all to 0
+    #ifdef USE_ACKNOWLEDGE_ON_SEND
+    uint8_t *ack_buf;
     ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
     memset(ack_buf, 0, nseq * sizeof(uint8_t));
+    #endif
 
     // Create send socket
     sockfd = create_send_socket(ip, port, &sa);
@@ -473,6 +477,7 @@ int uft_send_data( uint8_t* data, size_t datasize,  const char* ip, uint16_t por
             // packet got sent successfuly , increment counter
             seq_ctr++;
         }
+        #ifdef USE_ACKNOWLEDGE_ON_SEND
         // Check if packet received
         ioctl(sockfd, FIONREAD, &count);
         if(count > 0)
@@ -486,9 +491,12 @@ int uft_send_data( uint8_t* data, size_t datasize,  const char* ip, uint16_t por
                 ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
             }
         }
-        usleep(100); 
+        #endif
+        usleep(5); 
     }
-    usleep(100); 
+
+
+    #ifdef USE_ACKNOWLEDGE_ON_SEND
     // wait a bit for the last few acks
     struct timeval tv;
     tv.tv_sec = 0;
@@ -522,8 +530,8 @@ int uft_send_data( uint8_t* data, size_t datasize,  const char* ip, uint16_t por
             }
         }
     }
-    
     nack_ctr = ack_stats(ack_buf, nseq);
+    #endif
 
 #ifdef USE_RETRANSMISSION
     for (int retrycnt = 0; (retrycnt < N_PACK_RETRY) && nack_ctr; retrycnt++)
@@ -615,6 +623,11 @@ int uft_receive_data( uint8_t* data, uint16_t port)
     tictoc_t tt;
     tt.fp = NULL;
 
+
+    tictoc_t td;
+    td.fp = NULL;
+    tic(&td);
+
     // create UDP receive socket
     sockfd = create_recv_socket(port, &si_other);
     if(sockfd < 0) return -1;
@@ -637,6 +650,8 @@ int uft_receive_data( uint8_t* data, uint16_t port)
             {
                 if(verbosity) tic(&tt);
                 // start of data transmission
+
+                toc(&td);
                 recv_state++;
                 tcid = get_tcid(buf);
                 nseq = get_nseq(buf);
@@ -670,13 +685,15 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                     memcpy(&outbuf[ get_seq(buf) * payload_size ], &buf[4], recv_len - 4);
                     data_ctr += recv_len - 4;
 
+                    #ifdef USE_ACKNOWLEDGE_ON_RECEIVE
                     // send acknowledge
                     controll = (uint8_t*)malloc( UFT_CONTROLL_SIZE * sizeof(uint8_t) );
                     memset(controll, 0x0, UFT_CONTROLL_SIZE);
                     assemble_uft_ackfp(controll, tcid, get_data_seqnbr(buf));
                     //send the message
                     Send(sockfd, controll, UFT_CONTROLL_SIZE , 0);
-                        
+                    #endif 
+
                     // store acknowledged
                     ack_buf[get_seq(buf)] = 1;
 

@@ -1,3 +1,5 @@
 bin
 obj
 out.jpg
+*.out
+*.tif

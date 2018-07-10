@@ -97,5 +97,6 @@ Com::setTransmitPayload(uint8_t* data, size_t size)
 void
 Com::transmit(void)
 {
+    uft_set_verbosity(0);
 	int s = uft_send_data(tx_data, tx_size, this->ip, (uint16_t)this->tx_port);
 }

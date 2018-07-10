@@ -40,6 +40,12 @@ int main(int argc, char const *argv[])
     pthread_t tx_thd; // transmit thread
 
     tictoc_t tt;
+    
+    // for debugging
+    tictoc_t dt;
+    double mean = 0.0;
+    dt.fp = NULL;
+    dt.bytes = 1024;
 
     // get filename
     if(argc < 2) 
@@ -86,11 +92,18 @@ int main(int argc, char const *argv[])
         // start transmitter
         com->setTransmitPayload(&ih->imBuf[currline*ih->getWidth()], ih->getWidth()*WINDOW_SIZE);
         std::thread txth(& Com::transmit, com);
+
         
         // wait for both to finish
         txth.join();
+        tic(&dt);
         rxth.join();
+        // toc(&dt);
+
+        mean += (dt.end-dt.start);
     }
+
+    printf("Mean time %.2fus\n", mean / (ih->getHeight()-WINDOW_SIZE+1));
 
     printf("\nDone\n");
     toc(&tt);
