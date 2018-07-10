@@ -1,18 +1,18 @@
 -------------------------------------------------------------------------------
--- Title       : UFT Top Module
+-- Title       : Difference and Add
 -- Project     : Default Project Name
 -------------------------------------------------------------------------------
--- File        : uft_top.vhd
--- Author      : User Name <user.email@user.company.com>
+-- File        : sum_diff.vhd
+-- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Mon Jul  9 15:47:37 2018
+-- Last update : Tue Jul 10 12:34:48 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
 -- Copyright (c) 2017 User Company Name
 -------------------------------------------------------------------------------
--- Description: UDP File Transfer top module, combines transmitter and receiver
+-- Description: Calculate the difference from two inputs and sum them up
 -------------------------------------------------------------------------------
 -- Revisions:  Revisions and documentation are controlled by
 -- the revision control system (RCS).  The RCS should be consulted
@@ -42,7 +42,7 @@ entity sum_diff is
 
         -- outputs
         ------------------------------------------------------------------------
-        sum 	: out	std_logic_vector(16 downto 0);
+        sum 	: out	std_logic_vector(17 downto 0);
 
         -- controls
         ------------------------------------------------------------------------
@@ -61,16 +61,13 @@ architecture rtl of sum_diff is
 	signal inmi : signed(9 downto 0);
 begin
 
-	--inpi(7 downto 0) <= signed(inp);
-	--inpi(9 downto 8)  <=  (others => '0');
-	--inmi(7 downto 0) <= signed(inm);
-	--inmi(9 downto 8)  <=  (others => '0');
+	inpi(7 downto 0) <= signed(inp);
+	inpi(9 downto 8) <= (others => '0');
+	inmi(7 downto 0) <= signed(inm);
+	inmi(9 downto 8) <= (others => '0');
 
-	--difference <= inpi - inmi;
-	--sum <= std_logic_vector(sumi(16 downto 0));
-
-	difference <= resize(signed(inp),10) - resize(signed(inm),10);
-	sum <= std_logic_vector(sumi(16 downto 0));
+	difference <= inpi - inmi;
+	sum <= std_logic_vector(sumi(17 downto 0));
 
 	p_add : process(clk) is
 	begin
@@ -78,10 +75,14 @@ begin
 			if (rst_n = '0') then
 				sumi <= (others  => '0');
 			else
-				if (en = '1') then
-					sumi <= sumi + difference;
-				elsif (clear = '1') then
+				if (clear = '1') then
 					sumi <= (others  => '0');
+				else	
+					if (en = '1') then
+						sumi <= sumi + difference;
+					else 
+						sumi <= sumi;
+					end if;	
 				end if;
 			end if;
 		end if;		
