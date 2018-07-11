@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 10 12:34:48 2018
+-- Last update : Wed Jul 11 16:27:41 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -26,9 +26,10 @@ USE IEEE.NUMERIC_STD.ALL;
 
 
 entity sum_diff is
-    --generic (
-
-    --);
+    generic (
+    	constant IN_WIDTH : positive := 8;
+    	constant OUT_WIDTH : positive := 17
+    );
     port (
         -- clk and reset
         ------------------------------------------------------------------------
@@ -37,12 +38,12 @@ entity sum_diff is
 
         -- inputs
         ------------------------------------------------------------------------
-        inp 	: in 	std_logic_vector(7 downto 0);
-        inm 	: in 	std_logic_vector(7 downto 0);
+        inp 	: in 	std_logic_vector(IN_WIDTH - 1 downto 0);
+        inm 	: in 	std_logic_vector(IN_WIDTH - 1 downto 0);
 
         -- outputs
         ------------------------------------------------------------------------
-        sum 	: out	std_logic_vector(17 downto 0);
+        sum 	: out	std_logic_vector(OUT_WIDTH - 1 downto 0);
 
         -- controls
         ------------------------------------------------------------------------
@@ -54,20 +55,20 @@ end entity sum_diff;
 
 architecture rtl of sum_diff is
 
-	signal difference : signed(9 downto 0);
-	signal sumi : signed(17 downto 0);
+	signal difference : signed(IN_WIDTH downto 0);
+	signal sumi : signed(OUT_WIDTH - 1 downto 0);
 
-	signal inpi : signed(9 downto 0);
-	signal inmi : signed(9 downto 0);
+	signal inpi : signed(IN_WIDTH downto 0);
+	signal inmi : signed(IN_WIDTH downto 0);
 begin
 
-	inpi(7 downto 0) <= signed(inp);
-	inpi(9 downto 8) <= (others => '0');
-	inmi(7 downto 0) <= signed(inm);
-	inmi(9 downto 8) <= (others => '0');
+	inpi(IN_WIDTH - 1 downto 0) <= signed(inp);
+	inpi(IN_WIDTH downto IN_WIDTH) <= (others => '0');
+	inmi(IN_WIDTH - 1 downto 0) <= signed(inm);
+	inmi(IN_WIDTH downto IN_WIDTH) <= (others => '0');
 
 	difference <= inpi - inmi;
-	sum <= std_logic_vector(sumi(17 downto 0));
+	sum <= std_logic_vector(sumi(MAX_COUNT_WIDTH + BIT_WIDTH - 2 downto 0));
 
 	p_add : process(clk) is
 	begin
