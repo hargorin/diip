@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 10 14:04:56 2018
+-- Last update : Wed Jul 11 11:11:19 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ entity dir_shift_reg is
 end entity dir_shift_reg;
 
 architecture rtl of dir_shift_reg is
-	type shift_reg is array (0 to delay - 1) of std_logic_vector(7 downto 0);
+	type shift_reg is array (0 to delay) of std_logic_vector(7 downto 0);
 
 begin
 
@@ -72,9 +72,9 @@ begin
 					byte_shift_reg := (others => (others => '0'));
 				else
 					if (en = '1') then
-						byte_shift_reg(1 to delay - 1) := byte_shift_reg(0 to delay - 2);
+						byte_shift_reg(1 to delay) := byte_shift_reg(0 to delay - 1);
 						byte_shift_reg(0) := datain;
-						dataoutm <= byte_shift_reg(delay - 1);
+						dataoutm <= byte_shift_reg(delay);
 					else
 						byte_shift_reg := byte_shift_reg;
 					end if;
