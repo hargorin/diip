@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 10 16:30:40 2018
+-- Last update : Wed Jul 11 15:25:37 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -20,16 +20,23 @@
 -------------------------------------------------------------------------------
 
 
-library IEEE;
-USE IEEE.std_logic_1164.ALL;
-USE IEEE.NUMERIC_STD.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.fixed_pkg.all;
+
+--library IEEE_PROPOSED;
+--use ieee_proposed.fixed_pkg.all;
 
 
 entity mean_var is
     generic (
-    	constant WIN_LENGTH : positive := 21;
-    	constant WIN_SIZE	: positive := (WIN_LENGTH * WIN_LENGTH);
-    	constant WIN_DEN	: positive := (1/WIN_SIZE)
+    	delay	: positive := 4;
+    	--constant WIN_LENGTH	: integer := 21;
+    	--constant WIN_SIZE	: integer := (WIN_LENGTH * WIN_LENGTH);
+
+    	-- WIN_DEN = 2^14/WIN_SIZE
+    	constant WIN_DEN		: unsigned(13 downto 0) := to_unsigned(37,14)
     );
 
     port (
@@ -49,7 +56,6 @@ entity mean_var is
 
         -- controls
         ------------------------------------------------------------------------
-        valid	: out	std_logic;
         en 		: in 	std_logic;
         clear	: in 	std_logic
 
@@ -86,113 +92,71 @@ architecture rtl of mean_var is
         );
     end component sum_diff;            
 
+    -- Shift Register Connections
+    signal shift_DataIn 	: std_logic_vector(7 downto 0);
+    signal shift_DataOutp	: std_logic_vector(7 downto 0);
+    signal shift_DataOutm 	: std_logic_vector(7 downto 0);
+    signal shift_Valid 		: std_logic;
+    signal shift_En 		: std_logic;
+    signal shift_Clear 		: std_logic;
 
-	signal mean : unsigned(7 downto 0);
-	signal mean2 : unsigned(13 downto 0);
+    -- Difference Connections
+    signal diffM_Inp	: std_logic_vector(7 downto 0);
+    signal diffM_Inm	: std_logic_vector(7 downto 0);
+    signal diffM_Sum	: std_logic_vector(17 downto 0);
+    signal diffM_En		: std_logic;
+    signal diffM_Clear	: std_logic;
+
+   	signal diffV_Inp	: std_logic_vector(7 downto 0);
+    signal diffV_Inm	: std_logic_vector(7 downto 0);
+    signal diffV_Sum	: std_logic_vector(17 downto 0);
+    signal diffV_En		: std_logic;
+    signal diffV_Clear	: std_logic;
+
+    -- signals
+	signal mean : unsigned(21 downto 0);
 	signal var : unsigned(13 downto 0);
 
 begin
+	-- Pixel Input and Enable
+	shift_DataIn  <= inData;
+	shift_En <= en;
 
-	outMean <= mean;
-	outVar <= var;
+	-- Difference Calculation from Input Pixels
+    diffM_Inp <= shift_DataOutp;
+    diffM_Inm <= shift_DataOutm;
+    diffM_En <= shift_Valid;
 
-	p_in : process(clk) is	
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then
-				outMean <= (others => '0');
-				outVar <= (others => '0');
-			else
-				if (clear = '1') then
-					shift_Clear  <= '1';
-					diffM_Clear <= '1';
-					diffV_Clear <= '1';
-				else
-					if (en = '1') then
-						shift_DataIn  <= inData;
-					else
-						shift_DataIn  <= shift_DataIn;
-					end if;
-				end if;
-			end if;
-		end if;		
-	end process; -- p_in
+    diffV_Inp <= (shift_DataOutp * shift_DataOutp);
+    diffV_Inm <= (shift_DataOutm * shift_DataOutm);   
+    diffV_En <= shift_Valid;  
 
+    -- Output Mean and Variance
+    mean <= (diffM_Sum * WIN_DEN + (2**13));
+    var <= (diffV_Sum * WIN_DEN + (2**13)) - (mean**2);
 
+    -- Output FlipFlops
 	p_out_mean : process(clk) is
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
-				mean := (others => '0');
+				outMean <= (others => '0');
 			else
-				if (clear = '1') then
-					mean := (others => '0');
-				else
-					if (en = '1') then
-						mean := diffM_Sum * WIN_DEN;
-					else
-						mean := mean;
-					end if;
-				end if;
+				outMean <= std_logic_vector(mean(21 downto 14));
 			end if;
 		end if;	
 	end process; -- p_out_mean
-
-
-	p_mean2 : process(clk) is
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then
-				mean2 := (others => '0');
-			else
-				if (clear = '1') then
-					mean2 := (others => '0');
-				else
-					if (en = '1') then
-						mean2 := mean * mean;
-					else
-						mean2 := mean2;
-					end if;
-				end if;
-			end if;
-		end if;		
-	end process; -- p_mean2
-
 
 	p_out_var : process(clk) is
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
-				var := (others => '0');
+				outVar <= (others => '0');
 			else
-				if (clear = '1') then
-					var := (others => '0');
-				else
-					if (en = '1') then
-						var := (diffV_Sum * WIN_DEN - mean2);
-					else
-						var := var;
-					end if;
-				end if;
+				outVar <= std_logic_vector(var);
 			end if;
 		end if;	
 	end process; -- p_out_var
-
-
-	p_valid : process(clk) is
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then
-				valid  <= '0';
-			else
-				if (en = '1') then
-					valid  <= '1';
-				else
-					valid  <= '0';
-				end if;
-			end if;
-		end if;	
-	end process; -- p_valid
 
 
     c_dir_shift_reg : dir_shift_reg
@@ -210,7 +174,6 @@ begin
             clear    => shift_Clear
         );
 
-
     c_sum_diff_m : sum_diff
         port map (
             clk   => clk,
@@ -222,11 +185,6 @@ begin
             clear => diffM_Clear
         ); 
 
-    diffM_Inp <= shift_DataOutp;
-    diffM_Inm <= shift_DataOutm;
-    diffM_En <= shift_Valid;
-
-
     c_sum_diff_v : sum_diff
         port map (
             clk   => clk,
@@ -237,9 +195,4 @@ begin
             en    => diffV_En,
             clear => diffV_Clear
         );   
-
-    diffV_Inp <= (shift_DataOutp * shift_DataOutp);
-    diffV_Inm <= (shift_DataOutm * shift_DataOutm);   
-    diffV_En <= shift_Valid;         
-
 end architecture rtl;
