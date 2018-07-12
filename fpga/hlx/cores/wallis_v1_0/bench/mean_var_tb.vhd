@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Tue Jul 10 16:22:03 2018
--- Last update : Wed Jul 11 12:40:36 2018
+-- Last update : Thu Jul 12 16:58:23 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -22,11 +22,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.fixed_pkg.all;
-
---library IEEE_PROPOSED;
---use ieee_proposed.fixed_pkg.all;
-
 use std.textio.all;
 use ieee.std_logic_textio.all;
 
@@ -41,9 +36,13 @@ end entity mean_var_tb;
 architecture testbench of mean_var_tb is
 
 	-- Testbench DUT generics as constants
-    --constant WIN_LENGTH : integer := 21;
-    --constant WIN_SIZE   : integer := (WIN_LENGTH * WIN_LENGTH);
-    constant WIN_DEN		: ufixed(0 downto -9) := 0.001953125; --0.002267574
+    constant delay       : positive                  := 21*21;
+    constant M_IN_WIDTH  : positive                  := 8;
+    constant M_OUT_WIDTH : positive                  := 17;
+    constant V_IN_WIDTH  : positive                  := 16;
+    constant V_OUT_WIDTH : positive                  := 25;
+    constant ACCURACY    : positive                  := 15;
+    constant WIN_DEN	 : unsigned(6 downto 0)      := to_unsigned(74, 7);
 
 	-- Testbench DUT ports as signals
     signal clk     : std_logic;
@@ -51,8 +50,8 @@ architecture testbench of mean_var_tb is
     signal inData  : std_logic_vector(7 downto 0);
     signal outMean : std_logic_vector(7 downto 0);
     signal outVar  : std_logic_vector(13 downto 0);
-    signal en       : std_logic := '0';
-    signal clear    : std_logic := '0';
+    signal en      : std_logic :='0';
+    signal clear   : std_logic :='0';
 
 	-- Other constants
     constant clk_period : time := 10 ns;
@@ -93,6 +92,11 @@ begin
 
 	begin
 		waitfor(25);
+		en <= '1';
+		inData <= x"FF";
+		waitfor(500);
+		en <= '0';
+		assert (outMean = x"FF") report "Mean is not 2" severity error;
 
 		waitfor(5);
         stop_sim <= '1';
@@ -103,9 +107,13 @@ begin
 	-----------------------------------------------------------
     DUT : entity work.mean_var
         generic map (
-            --WIN_LENGTH => WIN_LENGTH,
-            --WIN_SIZE   => WIN_SIZE,
-            WIN_DEN    => WIN_DEN
+            delay       => delay,
+            M_IN_WIDTH  => M_IN_WIDTH,
+            M_OUT_WIDTH => M_OUT_WIDTH,
+            V_IN_WIDTH  => V_IN_WIDTH,
+            V_OUT_WIDTH => V_OUT_WIDTH,
+            ACCURACY    => ACCURACY,
+            WIN_DEN     => WIN_DEN
         )
         port map (
             clk     => clk,

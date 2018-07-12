@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed Jul 11 16:27:41 2018
+-- Last update : Thu Jul 12 09:24:16 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ end entity sum_diff;
 architecture rtl of sum_diff is
 
 	signal difference : signed(IN_WIDTH downto 0);
-	signal sumi : signed(OUT_WIDTH - 1 downto 0);
+	signal sumi : signed(OUT_WIDTH downto 0);
 
 	signal inpi : signed(IN_WIDTH downto 0);
 	signal inmi : signed(IN_WIDTH downto 0);
@@ -68,7 +68,7 @@ begin
 	inmi(IN_WIDTH downto IN_WIDTH) <= (others => '0');
 
 	difference <= inpi - inmi;
-	sum <= std_logic_vector(sumi(MAX_COUNT_WIDTH + BIT_WIDTH - 2 downto 0));
+	sum <= std_logic_vector(sumi(OUT_WIDTH - 1 downto 0));
 
 	p_add : process(clk) is
 	begin

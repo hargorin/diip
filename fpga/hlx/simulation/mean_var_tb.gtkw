@@ -1,0 +1,59 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Thu Jul 12 14:43:49 2018
+[*]
+[dumpfile] "/home/jan/git/diip/fpga/hlx/build/ghdl/mean_var_tb.ghw"
+[dumpfile_mtime] "Thu Jul 12 14:40:39 2018"
+[dumpfile_size] 64600
+[savefile] "/home/jan/git/diip/fpga/hlx/simulation/mean_var_tb.gtkw"
+[timestart] 4586300000
+[size] 1992 665
+[pos] 25 -109
+*-25.247923 4694000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.mean_var_tb.
+[treeopen] top.mean_var_tb.dut.
+[sst_width] 226
+[signals_width] 266
+[sst_expanded] 1
+[sst_vpaned_height] 251
+@28
+top.mean_var_tb.clk
+top.mean_var_tb.rst_n
+@200
+-
+@28
+top.mean_var_tb.en
+top.mean_var_tb.clear
+@200
+-
+@24
+#{top.mean_var_tb.indata[7:0]} top.mean_var_tb.indata[7] top.mean_var_tb.indata[6] top.mean_var_tb.indata[5] top.mean_var_tb.indata[4] top.mean_var_tb.indata[3] top.mean_var_tb.indata[2] top.mean_var_tb.indata[1] top.mean_var_tb.indata[0]
+#{top.mean_var_tb.dut.shift_datain[7:0]} top.mean_var_tb.dut.shift_datain[7] top.mean_var_tb.dut.shift_datain[6] top.mean_var_tb.dut.shift_datain[5] top.mean_var_tb.dut.shift_datain[4] top.mean_var_tb.dut.shift_datain[3] top.mean_var_tb.dut.shift_datain[2] top.mean_var_tb.dut.shift_datain[1] top.mean_var_tb.dut.shift_datain[0]
+@200
+-
+@24
+#{top.mean_var_tb.dut.diffm_inp[7:0]} top.mean_var_tb.dut.diffm_inp[7] top.mean_var_tb.dut.diffm_inp[6] top.mean_var_tb.dut.diffm_inp[5] top.mean_var_tb.dut.diffm_inp[4] top.mean_var_tb.dut.diffm_inp[3] top.mean_var_tb.dut.diffm_inp[2] top.mean_var_tb.dut.diffm_inp[1] top.mean_var_tb.dut.diffm_inp[0]
+#{top.mean_var_tb.dut.diffm_inm[7:0]} top.mean_var_tb.dut.diffm_inm[7] top.mean_var_tb.dut.diffm_inm[6] top.mean_var_tb.dut.diffm_inm[5] top.mean_var_tb.dut.diffm_inm[4] top.mean_var_tb.dut.diffm_inm[3] top.mean_var_tb.dut.diffm_inm[2] top.mean_var_tb.dut.diffm_inm[1] top.mean_var_tb.dut.diffm_inm[0]
+#{top.mean_var_tb.dut.diffm_sum[16:0]} top.mean_var_tb.dut.diffm_sum[16] top.mean_var_tb.dut.diffm_sum[15] top.mean_var_tb.dut.diffm_sum[14] top.mean_var_tb.dut.diffm_sum[13] top.mean_var_tb.dut.diffm_sum[12] top.mean_var_tb.dut.diffm_sum[11] top.mean_var_tb.dut.diffm_sum[10] top.mean_var_tb.dut.diffm_sum[9] top.mean_var_tb.dut.diffm_sum[8] top.mean_var_tb.dut.diffm_sum[7] top.mean_var_tb.dut.diffm_sum[6] top.mean_var_tb.dut.diffm_sum[5] top.mean_var_tb.dut.diffm_sum[4] top.mean_var_tb.dut.diffm_sum[3] top.mean_var_tb.dut.diffm_sum[2] top.mean_var_tb.dut.diffm_sum[1] top.mean_var_tb.dut.diffm_sum[0]
+@200
+-
+@28
+#{top.mean_var_tb.dut.mean[22:0]} top.mean_var_tb.dut.mean[22] top.mean_var_tb.dut.mean[21] top.mean_var_tb.dut.mean[20] top.mean_var_tb.dut.mean[19] top.mean_var_tb.dut.mean[18] top.mean_var_tb.dut.mean[17] top.mean_var_tb.dut.mean[16] top.mean_var_tb.dut.mean[15] top.mean_var_tb.dut.mean[14] top.mean_var_tb.dut.mean[13] top.mean_var_tb.dut.mean[12] top.mean_var_tb.dut.mean[11] top.mean_var_tb.dut.mean[10] top.mean_var_tb.dut.mean[9] top.mean_var_tb.dut.mean[8] top.mean_var_tb.dut.mean[7] top.mean_var_tb.dut.mean[6] top.mean_var_tb.dut.mean[5] top.mean_var_tb.dut.mean[4] top.mean_var_tb.dut.mean[3] top.mean_var_tb.dut.mean[2] top.mean_var_tb.dut.mean[1] top.mean_var_tb.dut.mean[0]
+@24
+#{top.mean_var_tb.outmean[7:0]} top.mean_var_tb.outmean[7] top.mean_var_tb.outmean[6] top.mean_var_tb.outmean[5] top.mean_var_tb.outmean[4] top.mean_var_tb.outmean[3] top.mean_var_tb.outmean[2] top.mean_var_tb.outmean[1] top.mean_var_tb.outmean[0]
+@200
+-
+@24
+#{top.mean_var_tb.dut.diffv_inp[15:0]} top.mean_var_tb.dut.diffv_inp[15] top.mean_var_tb.dut.diffv_inp[14] top.mean_var_tb.dut.diffv_inp[13] top.mean_var_tb.dut.diffv_inp[12] top.mean_var_tb.dut.diffv_inp[11] top.mean_var_tb.dut.diffv_inp[10] top.mean_var_tb.dut.diffv_inp[9] top.mean_var_tb.dut.diffv_inp[8] top.mean_var_tb.dut.diffv_inp[7] top.mean_var_tb.dut.diffv_inp[6] top.mean_var_tb.dut.diffv_inp[5] top.mean_var_tb.dut.diffv_inp[4] top.mean_var_tb.dut.diffv_inp[3] top.mean_var_tb.dut.diffv_inp[2] top.mean_var_tb.dut.diffv_inp[1] top.mean_var_tb.dut.diffv_inp[0]
+#{top.mean_var_tb.dut.diffv_inm[15:0]} top.mean_var_tb.dut.diffv_inm[15] top.mean_var_tb.dut.diffv_inm[14] top.mean_var_tb.dut.diffv_inm[13] top.mean_var_tb.dut.diffv_inm[12] top.mean_var_tb.dut.diffv_inm[11] top.mean_var_tb.dut.diffv_inm[10] top.mean_var_tb.dut.diffv_inm[9] top.mean_var_tb.dut.diffv_inm[8] top.mean_var_tb.dut.diffv_inm[7] top.mean_var_tb.dut.diffv_inm[6] top.mean_var_tb.dut.diffv_inm[5] top.mean_var_tb.dut.diffv_inm[4] top.mean_var_tb.dut.diffv_inm[3] top.mean_var_tb.dut.diffv_inm[2] top.mean_var_tb.dut.diffv_inm[1] top.mean_var_tb.dut.diffv_inm[0]
+#{top.mean_var_tb.dut.diffv_sum[24:0]} top.mean_var_tb.dut.diffv_sum[24] top.mean_var_tb.dut.diffv_sum[23] top.mean_var_tb.dut.diffv_sum[22] top.mean_var_tb.dut.diffv_sum[21] top.mean_var_tb.dut.diffv_sum[20] top.mean_var_tb.dut.diffv_sum[19] top.mean_var_tb.dut.diffv_sum[18] top.mean_var_tb.dut.diffv_sum[17] top.mean_var_tb.dut.diffv_sum[16] top.mean_var_tb.dut.diffv_sum[15] top.mean_var_tb.dut.diffv_sum[14] top.mean_var_tb.dut.diffv_sum[13] top.mean_var_tb.dut.diffv_sum[12] top.mean_var_tb.dut.diffv_sum[11] top.mean_var_tb.dut.diffv_sum[10] top.mean_var_tb.dut.diffv_sum[9] top.mean_var_tb.dut.diffv_sum[8] top.mean_var_tb.dut.diffv_sum[7] top.mean_var_tb.dut.diffv_sum[6] top.mean_var_tb.dut.diffv_sum[5] top.mean_var_tb.dut.diffv_sum[4] top.mean_var_tb.dut.diffv_sum[3] top.mean_var_tb.dut.diffv_sum[2] top.mean_var_tb.dut.diffv_sum[1] top.mean_var_tb.dut.diffv_sum[0]
+@200
+-
+@24
+#{top.mean_var_tb.dut.var_tmp[30:0]} top.mean_var_tb.dut.var_tmp[30] top.mean_var_tb.dut.var_tmp[29] top.mean_var_tb.dut.var_tmp[28] top.mean_var_tb.dut.var_tmp[27] top.mean_var_tb.dut.var_tmp[26] top.mean_var_tb.dut.var_tmp[25] top.mean_var_tb.dut.var_tmp[24] top.mean_var_tb.dut.var_tmp[23] top.mean_var_tb.dut.var_tmp[22] top.mean_var_tb.dut.var_tmp[21] top.mean_var_tb.dut.var_tmp[20] top.mean_var_tb.dut.var_tmp[19] top.mean_var_tb.dut.var_tmp[18] top.mean_var_tb.dut.var_tmp[17] top.mean_var_tb.dut.var_tmp[16] top.mean_var_tb.dut.var_tmp[15] top.mean_var_tb.dut.var_tmp[14] top.mean_var_tb.dut.var_tmp[13] top.mean_var_tb.dut.var_tmp[12] top.mean_var_tb.dut.var_tmp[11] top.mean_var_tb.dut.var_tmp[10] top.mean_var_tb.dut.var_tmp[9] top.mean_var_tb.dut.var_tmp[8] top.mean_var_tb.dut.var_tmp[7] top.mean_var_tb.dut.var_tmp[6] top.mean_var_tb.dut.var_tmp[5] top.mean_var_tb.dut.var_tmp[4] top.mean_var_tb.dut.var_tmp[3] top.mean_var_tb.dut.var_tmp[2] top.mean_var_tb.dut.var_tmp[1] top.mean_var_tb.dut.var_tmp[0]
+#{top.mean_var_tb.dut.s_mean[15:0]} top.mean_var_tb.dut.s_mean[15] top.mean_var_tb.dut.s_mean[14] top.mean_var_tb.dut.s_mean[13] top.mean_var_tb.dut.s_mean[12] top.mean_var_tb.dut.s_mean[11] top.mean_var_tb.dut.s_mean[10] top.mean_var_tb.dut.s_mean[9] top.mean_var_tb.dut.s_mean[8] top.mean_var_tb.dut.s_mean[7] top.mean_var_tb.dut.s_mean[6] top.mean_var_tb.dut.s_mean[5] top.mean_var_tb.dut.s_mean[4] top.mean_var_tb.dut.s_mean[3] top.mean_var_tb.dut.s_mean[2] top.mean_var_tb.dut.s_mean[1] top.mean_var_tb.dut.s_mean[0]
+#{top.mean_var_tb.dut.var[15:0]} top.mean_var_tb.dut.var[15] top.mean_var_tb.dut.var[14] top.mean_var_tb.dut.var[13] top.mean_var_tb.dut.var[12] top.mean_var_tb.dut.var[11] top.mean_var_tb.dut.var[10] top.mean_var_tb.dut.var[9] top.mean_var_tb.dut.var[8] top.mean_var_tb.dut.var[7] top.mean_var_tb.dut.var[6] top.mean_var_tb.dut.var[5] top.mean_var_tb.dut.var[4] top.mean_var_tb.dut.var[3] top.mean_var_tb.dut.var[2] top.mean_var_tb.dut.var[1] top.mean_var_tb.dut.var[0]
+#{top.mean_var_tb.outvar[13:0]} top.mean_var_tb.outvar[13] top.mean_var_tb.outvar[12] top.mean_var_tb.outvar[11] top.mean_var_tb.outvar[10] top.mean_var_tb.outvar[9] top.mean_var_tb.outvar[8] top.mean_var_tb.outvar[7] top.mean_var_tb.outvar[6] top.mean_var_tb.outvar[5] top.mean_var_tb.outvar[4] top.mean_var_tb.outvar[3] top.mean_var_tb.outvar[2] top.mean_var_tb.outvar[1] top.mean_var_tb.outvar[0]
+[pattern_trace] 1
+[pattern_trace] 0

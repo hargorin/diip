@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed Jul 11 15:25:37 2018
+-- Last update : Thu Jul 12 16:59:09 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -23,20 +23,19 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.fixed_pkg.all;
-
---library IEEE_PROPOSED;
---use ieee_proposed.fixed_pkg.all;
 
 
 entity mean_var is
     generic (
     	delay	: positive := 4;
-    	--constant WIN_LENGTH	: integer := 21;
-    	--constant WIN_SIZE	: integer := (WIN_LENGTH * WIN_LENGTH);
+		M_IN_WIDTH : positive := 8;
+		M_OUT_WIDTH : positive := 17;
+		V_IN_WIDTH : positive := 16;
+		V_OUT_WIDTH : positive := 25;	
 
-    	-- WIN_DEN = 2^14/WIN_SIZE
-    	constant WIN_DEN		: unsigned(13 downto 0) := to_unsigned(37,14)
+    	-- WIN_DEN = 2^15/WIN_SIZE
+    	ACCURACY	: positive := 15;
+    	WIN_DEN	: unsigned(6 downto 0) := to_unsigned(74, 7)
     );
 
     port (
@@ -81,12 +80,16 @@ architecture rtl of mean_var is
     end component dir_shift_reg;	
 
     component sum_diff is
+        generic (
+        	constant IN_WIDTH : positive := 8;
+    		constant OUT_WIDTH : positive := 17
+        );
         port (
             clk   : in  std_logic;
             rst_n : in  std_logic;
-            inp   : in  std_logic_vector(7 downto 0);
-            inm   : in  std_logic_vector(7 downto 0);
-            sum   : out std_logic_vector(17 downto 0);
+            inp   : in  std_logic_vector(IN_WIDTH - 1  downto 0);
+            inm   : in  std_logic_vector(IN_WIDTH - 1  downto 0);
+            sum   : out std_logic_vector(OUT_WIDTH - 1 downto 0);
             en    : in  std_logic;
             clear : in  std_logic
         );
@@ -101,21 +104,24 @@ architecture rtl of mean_var is
     signal shift_Clear 		: std_logic;
 
     -- Difference Connections
-    signal diffM_Inp	: std_logic_vector(7 downto 0);
-    signal diffM_Inm	: std_logic_vector(7 downto 0);
-    signal diffM_Sum	: std_logic_vector(17 downto 0);
+    signal diffM_Inp	: std_logic_vector(M_IN_WIDTH - 1 downto 0);
+    signal diffM_Inm	: std_logic_vector(M_IN_WIDTH - 1 downto 0);
+    signal diffM_Sum	: std_logic_vector(M_OUT_WIDTH - 1 downto 0);
     signal diffM_En		: std_logic;
     signal diffM_Clear	: std_logic;
 
-   	signal diffV_Inp	: std_logic_vector(7 downto 0);
-    signal diffV_Inm	: std_logic_vector(7 downto 0);
-    signal diffV_Sum	: std_logic_vector(17 downto 0);
+   	signal diffV_Inp	: std_logic_vector(V_IN_WIDTH - 1 downto 0);
+    signal diffV_Inm	: std_logic_vector(V_IN_WIDTH - 1 downto 0);
+    signal diffV_Sum	: std_logic_vector(V_OUT_WIDTH - 1 downto 0);
     signal diffV_En		: std_logic;
     signal diffV_Clear	: std_logic;
 
     -- signals
-	signal mean : unsigned(21 downto 0);
-	signal var : unsigned(13 downto 0);
+	signal mean : unsigned((M_OUT_WIDTH + WIN_DEN'length - 1) downto 0);
+	signal s_mean : unsigned(15 downto 0);
+	signal var_tmp : unsigned((V_OUT_WIDTH + WIN_DEN'length - 1) downto 0);
+	signal var : unsigned(15 downto 0);
+
 
 begin
 	-- Pixel Input and Enable
@@ -127,13 +133,17 @@ begin
     diffM_Inm <= shift_DataOutm;
     diffM_En <= shift_Valid;
 
-    diffV_Inp <= (shift_DataOutp * shift_DataOutp);
-    diffV_Inm <= (shift_DataOutm * shift_DataOutm);   
+	diffV_Inp <= std_logic_vector(unsigned(shift_DataOutp) * unsigned(shift_DataOutp));
+    diffV_Inm <= std_logic_vector(unsigned(shift_DataOutm) * unsigned(shift_DataOutm)); 
     diffV_En <= shift_Valid;  
 
     -- Output Mean and Variance
-    mean <= (diffM_Sum * WIN_DEN + (2**13));
-    var <= (diffV_Sum * WIN_DEN + (2**13)) - (mean**2);
+    mean <= (unsigned(diffM_Sum) * WIN_DEN + (2**(ACCURACY - 1)));
+    --s_mean <= mean((M_OUT_WIDTH + WIN_DEN'length - 1) downto (M_OUT_WIDTH + WIN_DEN'length - 8))*mean((M_OUT_WIDTH + WIN_DEN'length - 1) downto (M_OUT_WIDTH + WIN_DEN'length - 8));
+    --s_mean <= (shift_right(mean, ACCURACY)(outMean'length-1 downto 0)) * (shift_right(mean, ACCURACY)(outMean'length-1 downto 0));
+    s_mean <= (shift_right(mean * mean, 2*ACCURACY)(s_mean'length - 1 downto 0));
+    var_tmp <= (unsigned(diffV_Sum) * WIN_DEN + (2**(ACCURACY - 1)));
+    var <= unsigned(shift_right(var_tmp, ACCURACY)(var'length-1 downto 0)) - s_mean;
 
     -- Output FlipFlops
 	p_out_mean : process(clk) is
@@ -142,7 +152,7 @@ begin
 			if (rst_n = '0') then
 				outMean <= (others => '0');
 			else
-				outMean <= std_logic_vector(mean(21 downto 14));
+				outMean <= std_logic_vector(shift_right(mean, ACCURACY)(outMean'length-1 downto 0));
 			end if;
 		end if;	
 	end process; -- p_out_mean
@@ -153,7 +163,8 @@ begin
 			if (rst_n = '0') then
 				outVar <= (others => '0');
 			else
-				outVar <= std_logic_vector(var);
+				--outVar <= std_logic_vector(var((V_OUT_WIDTH + ACCURACY - 1) downto (V_OUT_WIDTH + ACCURACY - outVar'length)));
+				outVar <= std_logic_vector(var(outVar'length - 1 downto 0));
 			end if;
 		end if;	
 	end process; -- p_out_var
@@ -175,6 +186,10 @@ begin
         );
 
     c_sum_diff_m : sum_diff
+        generic map (
+            IN_WIDTH => M_IN_WIDTH,
+            OUT_WIDTH => M_OUT_WIDTH
+        )
         port map (
             clk   => clk,
             rst_n => rst_n,
@@ -186,6 +201,10 @@ begin
         ); 
 
     c_sum_diff_v : sum_diff
+        generic map (
+            IN_WIDTH => V_IN_WIDTH,
+            OUT_WIDTH => V_OUT_WIDTH
+        )
         port map (
             clk   => clk,
             rst_n => rst_n,

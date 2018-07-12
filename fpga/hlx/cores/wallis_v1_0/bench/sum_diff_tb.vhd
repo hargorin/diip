@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul  9 14:35:47 2018
--- Last update : Tue Jul 10 08:51:03 2018
+-- Last update : Thu Jul 12 09:14:21 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -36,14 +36,15 @@ end entity sum_diff_tb;
 architecture testbench of sum_diff_tb is
 
 	-- Testbench DUT generics as constants
-
+	constant IN_WIDTH : positive := 8;
+	constant OUT_WIDTH : positive := 17;
 
 	-- Testbench DUT ports as signals
     signal clk   : std_logic;
     signal rst_n : std_logic;
-    signal inp   : std_logic_vector(7 downto 0) := "00000000";
-    signal inm   : std_logic_vector(7 downto 0) := "00000000";
-    signal sum   : std_logic_vector(17 downto 0);
+    signal inp   : std_logic_vector(IN_WIDTH - 1 downto 0) := (others => '0');
+    signal inm   : std_logic_vector(IN_WIDTH - 1 downto 0) := (others => '0');
+    signal sum   : std_logic_vector(OUT_WIDTH - 1 downto 0);
     signal en    : std_logic := '0';
     signal clear : std_logic := '0';
 
@@ -98,13 +99,13 @@ begin
     	inm <= "00000000";
 
     	waitfor(1);
-    	assert (sum = "000000000000000010") report "Sum is not 2" severity error;
+    	assert (sum = "00000000000000010") report "Sum is not 2" severity error;
     	waitfor(1);
 
     	-- Clear
     	clear <= '1';
     	waitfor(3);
-    	assert (sum = "000000000000000000") report "Sum is not 0" severity error;
+    	assert (sum = "00000000000000000") report "Sum is not 0" severity error;
     	waitfor(3);
     	clear <= '0';
     	waitfor(5);
@@ -120,29 +121,30 @@ begin
     	inm <= "00000000";
 
     	waitfor(1);
-    	assert (sum = "011011011101000111") report "Sum is not 112455" severity error;
+    	assert (sum = "11011011101000111") report "Sum is not 112455" severity error;
     	waitfor(1);
 
     	-- Clear
     	clear <= '1';
     	waitfor(3);
-    	assert (sum = "000000000000000000") report "Sum is not 0" severity error;
+    	assert (sum = "00000000000000000") report "Sum is not 0" severity error;
     	waitfor(3);
     	clear <= '0';
-    	waitfor(5);
+    	waitfor(1);
 
-  		-- Count 441 (Min)
+    	-- Count Plus and Minus
     	en <= '1';
+    	waitfor(1);
+    	inp <= "11111111";
+    	inm <= "00000000";
     	waitfor(2);
     	inp <= "00000000";
-    	inm <= "11111111";
-    	waitfor(441);
+    	inm <= "00001010";
+    	waitfor(10);
     	en <= '0';
-    	inp <= "00000000";
-    	inm <= "00000000";
 
     	waitfor(1);
-    	assert (sum = "100100100010111001") report "Sum is not -112455" severity error;
+    	assert (sum = "00000000110011010") report "Sum is not 410" severity error;
     	waitfor(1);
 
  
@@ -155,6 +157,10 @@ begin
 	-- Entity Under Test
 	-----------------------------------------------------------
     DUT : entity work.sum_diff
+	    generic map (
+	    	IN_WIDTH  => IN_WIDTH,
+	    	OUT_WIDTH  => OUT_WIDTH
+	    )
         port map (
             clk   => clk,
             rst_n => rst_n,
