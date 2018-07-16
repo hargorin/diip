@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Tue Jul 10 16:22:03 2018
--- Last update : Thu Jul 12 16:58:23 2018
+-- Last update : Mon Jul 16 16:15:27 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -41,8 +41,8 @@ architecture testbench of mean_var_tb is
     constant M_OUT_WIDTH : positive                  := 17;
     constant V_IN_WIDTH  : positive                  := 16;
     constant V_OUT_WIDTH : positive                  := 25;
-    constant ACCURACY    : positive                  := 15;
-    constant WIN_DEN	 : unsigned(6 downto 0)      := to_unsigned(74, 7);
+	constant FIX_M		 : unsigned(24 downto 0) := "1001010010011011100100101";
+	constant FIX_V	     : unsigned(17 downto 0) := "100101001001101110";
 
 	-- Testbench DUT ports as signals
     signal clk     : std_logic;
@@ -90,15 +90,83 @@ begin
             wait until rising_edge(clk);
         end procedure waitfor;
 
-	begin
-		waitfor(25);
-		en <= '1';
-		inData <= x"FF";
-		waitfor(500);
-		en <= '0';
-		assert (outMean = x"FF") report "Mean is not 2" severity error;
+        ------------------------------------------------------------------------
+        -- Sends a file via axi stream
+        -- Data in file must be 1 byte per line, hex without 0x
+        -- ---------------------------------------------------------------------
+        procedure file2axistream ( fname : in string ) is
+        ------------------------------------------------------------------------
+            file fd             : text;
+            variable iline      : line;
+            variable byte       : std_logic_vector(7 downto 0);
+            variable nbytes     : integer := 0;
+        begin
+            file_open(fd, fname, read_mode);
+            -- Count numbers of bytes in file
+            while not endfile(fd) loop
+                readline (fd, iline);
+                nbytes := nbytes + 1;
+            end loop;
+            file_close(fd);
+            file_open(fd, fname, read_mode);
+            --mac_rx_tlast <= '0';
+            -- output the bytes to the axi stream
+            while not endfile(fd) loop
+                --if mac_rx_tready = '1' then
+                    en <= '1';
+                    --if nbytes = 1 then mac_rx_tlast <= '1'; end if;
+                    readline (fd, iline);
+                    hread(iline,byte);
+                    inData <= byte;
+                    nbytes := nbytes - 1;
+                --end if;
+                waitfor(1);
+            end loop;
+            en <= '0';
+            --mac_rx_tlast <= '0';
+            waitfor(1);
+        end procedure file2axistream;
 
-		waitfor(5);
+
+    begin
+    	waitfor(25);
+
+    	-- randi([0,255],441,1)
+    	-- mean: 132.3832
+    	-- var: 5645.7
+    	file2axistream("../../cores/wallis_v1_0/bench/rand01.txt");
+    	report "mean (132.4) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (5645.7) = " & integer'image(to_integer(unsigned(outVar)));
+
+    	-- randi([74,255],441,1)
+    	-- mean: 164.9683
+    	-- var: 2833.0
+    	file2axistream("../../cores/wallis_v1_0/bench/rand02.txt");
+    	report "mean (165) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (2833.0) = " & integer'image(to_integer(unsigned(outVar)));
+
+    	-- randi([74,157],441,1)
+    	-- mean: 117.3107
+    	-- var: 541.9237
+    	file2axistream("../../cores/wallis_v1_0/bench/rand03.txt");
+    	report "mean (117.3) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (541.92) = " & integer'image(to_integer(unsigned(outVar)));
+
+    	-- randi([10,194],441,1)
+    	-- mean: 104.1950
+    	-- var: 2962.7
+    	file2axistream("../../cores/wallis_v1_0/bench/rand04.txt");
+    	report "mean (104.2) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (2962.7) = " & integer'image(to_integer(unsigned(outVar)));
+
+
+		--en <= '1';
+		--inData <= x"FF";
+		--waitfor(500);
+		--en <= '0';
+		--assert (outMean = x"FF") report "Mean is not 2" severity error;
+
+		waitfor(20);
         stop_sim <= '1';
         wait;
 	end process; -- p_sim
@@ -112,8 +180,8 @@ begin
             M_OUT_WIDTH => M_OUT_WIDTH,
             V_IN_WIDTH  => V_IN_WIDTH,
             V_OUT_WIDTH => V_OUT_WIDTH,
-            ACCURACY    => ACCURACY,
-            WIN_DEN     => WIN_DEN
+            FIX_M		=> FIX_M,
+            FIX_V		=> FIX_V
         )
         port map (
             clk     => clk,

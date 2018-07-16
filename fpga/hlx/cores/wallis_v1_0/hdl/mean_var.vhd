@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Thu Jul 12 16:59:09 2018
+-- Last update : Mon Jul 16 16:14:52 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,15 +27,14 @@ use ieee.numeric_std.all;
 
 entity mean_var is
     generic (
-    	delay	: positive := 4;
-		M_IN_WIDTH : positive := 8;
+    	delay		: positive := 4;
+		M_IN_WIDTH 	: positive := 8;
 		M_OUT_WIDTH : positive := 17;
-		V_IN_WIDTH : positive := 16;
+		V_IN_WIDTH 	: positive := 16;
 		V_OUT_WIDTH : positive := 25;	
 
-    	-- WIN_DEN = 2^15/WIN_SIZE
-    	ACCURACY	: positive := 15;
-    	WIN_DEN	: unsigned(6 downto 0) := to_unsigned(74, 7)
+    	FIX_M		: unsigned(24 downto 0) := "1001010010011011100100101";
+    	FIX_V		: unsigned(17 downto 0) := "100101001001101110"
     );
 
     port (
@@ -117,10 +116,10 @@ architecture rtl of mean_var is
     signal diffV_Clear	: std_logic;
 
     -- signals
-	signal mean : unsigned((M_OUT_WIDTH + WIN_DEN'length - 1) downto 0);
-	signal s_mean : unsigned(15 downto 0);
-	signal var_tmp : unsigned((V_OUT_WIDTH + WIN_DEN'length - 1) downto 0);
-	signal var : unsigned(15 downto 0);
+	signal mean : unsigned(41 downto 0);
+	signal mean2 : unsigned(35 downto 0);
+	signal var_tmp : unsigned(42 downto 0);
+	signal var : unsigned(35 downto 0);
 
 
 begin
@@ -138,12 +137,10 @@ begin
     diffV_En <= shift_Valid;  
 
     -- Output Mean and Variance
-    mean <= (unsigned(diffM_Sum) * WIN_DEN + (2**(ACCURACY - 1)));
-    --s_mean <= mean((M_OUT_WIDTH + WIN_DEN'length - 1) downto (M_OUT_WIDTH + WIN_DEN'length - 8))*mean((M_OUT_WIDTH + WIN_DEN'length - 1) downto (M_OUT_WIDTH + WIN_DEN'length - 8));
-    --s_mean <= (shift_right(mean, ACCURACY)(outMean'length-1 downto 0)) * (shift_right(mean, ACCURACY)(outMean'length-1 downto 0));
-    s_mean <= (shift_right(mean * mean, 2*ACCURACY)(s_mean'length - 1 downto 0));
-    var_tmp <= (unsigned(diffV_Sum) * WIN_DEN + (2**(ACCURACY - 1)));
-    var <= unsigned(shift_right(var_tmp, ACCURACY)(var'length-1 downto 0)) - s_mean;
+    mean <= unsigned(diffM_Sum) * FIX_M;
+    mean2 <= mean(40 downto 23) * mean(40 downto 23);
+    var_tmp <= unsigned(diffV_Sum) * FIX_V;
+    var <= var_tmp(41 downto 6) - mean2(35 downto 0);
 
     -- Output FlipFlops
 	p_out_mean : process(clk) is
@@ -152,7 +149,7 @@ begin
 			if (rst_n = '0') then
 				outMean <= (others => '0');
 			else
-				outMean <= std_logic_vector(shift_right(mean, ACCURACY)(outMean'length-1 downto 0));
+				outMean <= std_logic_vector(mean(40 downto 33));
 			end if;
 		end if;	
 	end process; -- p_out_mean
@@ -163,8 +160,7 @@ begin
 			if (rst_n = '0') then
 				outVar <= (others => '0');
 			else
-				--outVar <= std_logic_vector(var((V_OUT_WIDTH + ACCURACY - 1) downto (V_OUT_WIDTH + ACCURACY - outVar'length)));
-				outVar <= std_logic_vector(var(outVar'length - 1 downto 0));
+				outVar <= std_logic_vector(var(33 downto 20));
 			end if;
 		end if;	
 	end process; -- p_out_var
