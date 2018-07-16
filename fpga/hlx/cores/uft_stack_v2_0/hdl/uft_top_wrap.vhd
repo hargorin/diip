@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jun 19 17:42:10 2018
+-- Last update : Mon Jul 16 09:38:07 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -50,13 +50,40 @@ entity uft_top_wrap is
 		clk     : in    std_logic;
 		rst_n   : in    std_logic;
 
+        -- Rx pixel
+        -- ---------------------------------------------------------------------
+        M_AXIS_TVALID   : out   std_logic;
+        M_AXIS_TDATA    : out   std_logic_vector(8 downto 0);
+        M_AXIS_TLAST    : out   std_logic;
+        M_AXIS_TREADY   : in    std_logic;
+
+        rx_row_num         : out std_logic_vector(31 downto 0);
+        rx_row_num_valid   : out std_logic;
+        rx_row_size        : out std_logic_vector(31 downto 0);
+        rx_row_size_valid  : out std_logic;
+        rx_user_0          : out std_logic_vector(31 downto 0);
+        rx_user_0_valid    : out std_logic;
+
+        rx_done        : out  std_logic;
+
+        -- Tx pixel
+        -- ---------------------------------------------------------------------
+        S_AXIS_TREADY   : out   std_logic;
+        S_AXIS_TDATA    : in    std_logic_vector(8 downto 0);
+        S_AXIS_TLAST    : in    std_logic;
+        S_AXIS_TVALID   : in    std_logic;
+
+        tx_row_num         : in std_logic_vector(31 downto 0);
+        tx_row_size        : in std_logic_vector(31 downto 0);
+        tx_row_size_valid  : out std_logic;
+
+        tx_ready        : out  std_logic;
+        tx_start        : out  std_logic;
+        
         -- Controll
         -- ---------------------------------------------------------------------
         our_ip_address      : out STD_LOGIC_VECTOR (31 downto 0);
         our_mac_address         : out std_logic_vector (47 downto 0);
-
-        rx_done        : out  std_logic;
-        tx_ready        : out  std_logic;
 
         -- UDP IP Stack Receiver
         -- ---------------------------------------------------------------------
@@ -88,133 +115,7 @@ entity uft_top_wrap is
         udp_tx_tvalid               : out std_logic;
         udp_tx_tlast                : out std_logic;
         udp_tx_tdata                : out std_logic_vector (7 downto 0);
-        udp_tx_tready               : in  std_logic;
-
-		-- RX AXI master Interface
-        -- ---------------------------------------------------------------------
-        --  AXI4 Clock / Reset
-        m_axi_rx_aclk              : in  std_logic;
-        m_axi_rx_aresetn           : in  std_logic;
-        --  AXI4 Read Address Channel
-        m_axi_rx_arready           : in  std_logic;
-        m_axi_rx_arvalid           : out std_logic;
-        m_axi_rx_araddr            : out std_logic_vector(31 downto 0);
-        m_axi_rx_arid              : out std_logic_vector (3 downto 0);
-        m_axi_rx_arlen             : out std_logic_vector (7 downto 0);
-        m_axi_rx_arsize            : out std_logic_vector (2 downto 0);
-        m_axi_rx_arburst           : out std_logic_vector (1 downto 0);
-        m_axi_rx_arlock            : out std_logic;
-        m_axi_rx_arcache           : out std_logic_vector (3 downto 0);
-        m_axi_rx_arprot            : out std_logic_vector (2 downto 0);
-        m_axi_rx_arqos             : out std_logic_vector (3 downto 0);
-        m_axi_rx_arregion          : out std_logic_vector (3 downto 0);
-        --  AXI4 Read Data Channel
-        m_axi_rx_rready            : out std_logic;
-        m_axi_rx_rvalid            : in  std_logic;
-        m_axi_rx_rdata             : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        m_axi_rx_rresp             : in  std_logic_vector(1 downto 0);
-        m_axi_rx_rid               : in  std_logic_vector (3 downto 0);
-        m_axi_rx_rlast             : in  std_logic;
-        -- AXI4 Write Address Channel
-        m_axi_rx_awready           : in  std_logic;
-        m_axi_rx_awvalid           : out std_logic;
-        m_axi_rx_awaddr            : out std_logic_vector(31 downto 0);
-        m_axi_rx_awid              : out std_logic_vector (3 downto 0);
-        m_axi_rx_awlen             : out std_logic_vector (7 downto 0);
-        m_axi_rx_awsize            : out std_logic_vector (2 downto 0);
-        m_axi_rx_awburst           : out std_logic_vector (1 downto 0);
-        m_axi_rx_awlock            : out std_logic;
-        m_axi_rx_awcache           : out std_logic_vector (3 downto 0);
-        m_axi_rx_awprot            : out std_logic_vector (2 downto 0);
-        m_axi_rx_awqos             : out std_logic_vector (3 downto 0);
-        m_axi_rx_awregion          : out std_logic_vector (3 downto 0);
-        -- AXI4 Write Data Channel
-        m_axi_rx_wready            : in  std_logic;
-        m_axi_rx_wvalid            : out std_logic;
-        m_axi_rx_wid			    : out std_logic_vector(3 downto 0);
-        m_axi_rx_wdata             : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        m_axi_rx_wstrb             : out std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
-        m_axi_rx_wlast             : out std_logic;
-        -- AXI4 Write Response Channel
-        m_axi_rx_bready            : out std_logic;
-        m_axi_rx_bvalid            : in  std_logic;
-        m_axi_rx_bresp             : in  std_logic_vector(1 downto 0);
-        m_axi_rx_bid               : in  std_logic_vector(3 downto 0);
-		
-		-- TX AXI master Interface
-        -- ---------------------------------------------------------------------
-        --  AXI4 Clock / Reset
-        m_axi_tx_aclk              : in  std_logic;
-        m_axi_tx_aresetn           : in  std_logic;
-        --  AXI4 Read Address Channel
-        m_axi_tx_arready           : in  std_logic;
-        m_axi_tx_arvalid           : out std_logic;
-        m_axi_tx_araddr            : out std_logic_vector(31 downto 0);
-        m_axi_tx_arid              : out std_logic_vector (3 downto 0);
-        m_axi_tx_arlen             : out std_logic_vector (7 downto 0);
-        m_axi_tx_arsize            : out std_logic_vector (2 downto 0);
-        m_axi_tx_arburst           : out std_logic_vector (1 downto 0);
-        m_axi_tx_arlock            : out std_logic;
-        m_axi_tx_arcache           : out std_logic_vector (3 downto 0);
-        m_axi_tx_arprot            : out std_logic_vector (2 downto 0);
-        m_axi_tx_arqos             : out std_logic_vector (3 downto 0);
-        m_axi_tx_arregion          : out std_logic_vector (3 downto 0);
-        --  AXI4 Read Data Channel
-        m_axi_tx_rready            : out std_logic;
-        m_axi_tx_rvalid            : in  std_logic;
-        m_axi_tx_rdata             : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        m_axi_tx_rresp             : in  std_logic_vector(1 downto 0);
-        m_axi_tx_rid               : in  std_logic_vector (3 downto 0);
-        m_axi_tx_rlast             : in  std_logic;
-        -- AXI4 Write Address Channel
-        m_axi_tx_awready           : in  std_logic;
-        m_axi_tx_awvalid           : out std_logic;
-        m_axi_tx_awaddr            : out std_logic_vector(31 downto 0);
-        m_axi_tx_awid              : out std_logic_vector (3 downto 0);
-        m_axi_tx_awlen             : out std_logic_vector (7 downto 0);
-        m_axi_tx_awsize            : out std_logic_vector (2 downto 0);
-        m_axi_tx_awburst           : out std_logic_vector (1 downto 0);
-        m_axi_tx_awlock            : out std_logic;
-        m_axi_tx_awcache           : out std_logic_vector (3 downto 0);
-        m_axi_tx_awprot            : out std_logic_vector (2 downto 0);
-        m_axi_tx_awqos             : out std_logic_vector (3 downto 0);
-        m_axi_tx_awregion          : out std_logic_vector (3 downto 0);
-        -- AXI4 Write Data Channel
-        m_axi_tx_wready            : in  std_logic;
-        m_axi_tx_wvalid            : out std_logic;
-        m_axi_tx_wid			    : out std_logic_vector(3 downto 0);
-        m_axi_tx_wdata             : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        m_axi_tx_wstrb             : out std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
-        m_axi_tx_wlast             : out std_logic;
-        -- AXI4 Write Response Channel
-        m_axi_tx_bready            : out std_logic;
-        m_axi_tx_bvalid            : in  std_logic;
-        m_axi_tx_bresp             : in  std_logic_vector(1 downto 0);
-        m_axi_tx_bid               : in  std_logic_vector(3 downto 0);
-
-        -- AXI lite interface for control
-        -- ---------------------------------------------------------------------
-        s_axi_ctrl_aclk     : in std_logic;
-        s_axi_ctrl_aresetn  : in std_logic;
-        s_axi_ctrl_awaddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-        s_axi_ctrl_awprot   : in std_logic_vector(2 downto 0);
-        s_axi_ctrl_awvalid  : in std_logic;
-        s_axi_ctrl_awready  : out std_logic;
-        s_axi_ctrl_wdata    : in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        s_axi_ctrl_wstrb    : in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
-        s_axi_ctrl_wvalid   : in std_logic;
-        s_axi_ctrl_wready   : out std_logic;
-        s_axi_ctrl_bresp    : out std_logic_vector(1 downto 0);
-        s_axi_ctrl_bvalid   : out std_logic;
-        s_axi_ctrl_bready   : in std_logic;
-        s_axi_ctrl_araddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-        s_axi_ctrl_arprot   : in std_logic_vector(2 downto 0);
-        s_axi_ctrl_arvalid  : in std_logic;
-        s_axi_ctrl_arready  : out std_logic;
-        s_axi_ctrl_rdata    : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        s_axi_ctrl_rresp    : out std_logic_vector(1 downto 0);
-        s_axi_ctrl_rvalid   : out std_logic;
-        s_axi_ctrl_rready   : in std_logic
+        udp_tx_tready               : in  std_logic
 	) ;
 end entity ; -- uft_top_wrap
 

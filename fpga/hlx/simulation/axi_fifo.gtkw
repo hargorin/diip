@@ -1,0 +1,47 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Mon Jul 16 12:18:12 2018
+[*]
+[dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/axis_fifo_tb.ghw"
+[dumpfile_mtime] "Mon Jul 16 12:17:40 2018"
+[dumpfile_size] 1522
+[savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/axi_fifo.gtkw"
+[timestart] 0
+[size] 1727 944
+[pos] -1 -1
+*-25.890926 266600000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.axis_fifo_tb.
+[treeopen] top.axis_fifo_tb.dut.
+[sst_width] 217
+[signals_width] 203
+[sst_expanded] 1
+[sst_vpaned_height] 264
+@28
+top.axis_fifo_tb.clk
+top.axis_fifo_tb.rst_n
+@200
+-
+-In
+@28
+top.axis_fifo_tb.dut.s_axis_tready
+top.axis_fifo_tb.dut.s_axis_tvalid
+@22
+#{top.axis_fifo_tb.s_axis_tdata[7:0]} top.axis_fifo_tb.s_axis_tdata[7] top.axis_fifo_tb.s_axis_tdata[6] top.axis_fifo_tb.s_axis_tdata[5] top.axis_fifo_tb.s_axis_tdata[4] top.axis_fifo_tb.s_axis_tdata[3] top.axis_fifo_tb.s_axis_tdata[2] top.axis_fifo_tb.s_axis_tdata[1] top.axis_fifo_tb.s_axis_tdata[0]
+@200
+-
+-Out
+@28
+top.axis_fifo_tb.dut.m_axis_tready
+top.axis_fifo_tb.dut.m_axis_tvalid
+@22
+#{top.axis_fifo_tb.m_axis_tdata[7:0]} top.axis_fifo_tb.m_axis_tdata[7] top.axis_fifo_tb.m_axis_tdata[6] top.axis_fifo_tb.m_axis_tdata[5] top.axis_fifo_tb.m_axis_tdata[4] top.axis_fifo_tb.m_axis_tdata[3] top.axis_fifo_tb.m_axis_tdata[2] top.axis_fifo_tb.m_axis_tdata[1] top.axis_fifo_tb.m_axis_tdata[0]
+@200
+-
+-DBG
+@28
+top.axis_fifo_tb.dut.head_i
+top.axis_fifo_tb.dut.tail_i
+top.axis_fifo_tb.dut.looped_i
+[pattern_trace] 1
+[pattern_trace] 0

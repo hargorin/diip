@@ -1,0 +1,84 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Mon Jul 16 12:36:42 2018
+[*]
+[dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/uft_top_tb.ghw"
+[dumpfile_mtime] "Mon Jul 16 12:34:37 2018"
+[dumpfile_size] 436342
+[savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/uft2_top_tb.gtkw"
+[timestart] 13090100000
+[size] 1727 944
+[pos] -1 -1
+*-25.222469 13133800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.uft_top_tb.
+[treeopen] top.uft_top_tb.duv.
+[treeopen] top.uft_top_tb.duv.rx.
+[treeopen] top.uft_top_tb.duv.rx.rx_mem_ctl.
+[treeopen] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.
+[treeopen] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.
+[sst_width] 217
+[signals_width] 278
+[sst_expanded] 1
+[sst_vpaned_height] 252
+@28
+top.uft_top_tb.clk
+top.uft_top_tb.rst_n
+top.uft_top_tb.cur_test
+@200
+-
+-User Rx
+@28
+top.uft_top_tb.duv.m_axis_tready
+top.uft_top_tb.duv.m_axis_tvalid
+top.uft_top_tb.duv.m_axis_tlast
+@22
+#{top.uft_top_tb.m_axis_tdata[7:0]} top.uft_top_tb.m_axis_tdata[7] top.uft_top_tb.m_axis_tdata[6] top.uft_top_tb.m_axis_tdata[5] top.uft_top_tb.m_axis_tdata[4] top.uft_top_tb.m_axis_tdata[3] top.uft_top_tb.m_axis_tdata[2] top.uft_top_tb.m_axis_tdata[1] top.uft_top_tb.m_axis_tdata[0]
+@200
+-
+-UDP Rx
+@28
+top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in_last
+top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in_valid
+@22
+#{top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[7:0]} top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[7] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[6] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[5] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[4] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[3] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[2] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[1] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.data_in[0]
+@200
+-
+-Rx DBG
+@c00024
+#{top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[23:0]} top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[23] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[22] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[21] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[20] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[19] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[18] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[17] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[16] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[15] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[14] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[13] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[12] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[11] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[10] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[9] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[8] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[7] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[6] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[5] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[4] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[3] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[2] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[1] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[0]
+@28
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[23]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[22]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[21]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[20]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[19]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[18]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[17]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[16]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[15]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[14]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[13]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[12]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[11]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[10]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[9]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[8]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[7]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[6]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[5]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[4]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[3]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[2]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[1]
+top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[0]
+@1401204
+-group_end
+@24
+#{top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[23:0]} top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[23] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[22] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[21] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[20] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[19] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[18] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[17] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[16] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[15] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[14] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[13] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[12] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[11] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[10] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[9] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[8] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[7] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[6] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[5] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[4] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[3] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[2] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[1] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[0]
+@28
+top.uft_top_tb.duv.rx.rx_mem_ctl.c_axis_fifo.s_axis_tvalid
+top.uft_top_tb.duv.rx.rx_mem_ctl.c_axis_fifo.m_axis_tready
+top.uft_top_tb.duv.rx.rx_mem_ctl.c_axis_fifo.m_axis_tvalid
+[pattern_trace] 1
+[pattern_trace] 0

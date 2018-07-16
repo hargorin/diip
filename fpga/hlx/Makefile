@@ -22,7 +22,7 @@ BUILD = build
 CORES = axi_master_burst_v2_0		\
 		temac_support_v1_0 			\
 		udp_ip_stack_v1_0			\
-		uft_stack_v1_0				\
+		uft_stack_v2_0				\
 		debounce_v1_0				\
 		impulse_generator_v1_0
 
@@ -103,7 +103,6 @@ $(BUILD)/$(NAME).bit: $(addprefix $(BUILD)/cores/, $(CORES)) $(BUILD)/projects/$
 # 
 flash: $(BUILD)/$(NAME).bit
 	$(VIVADO) -source scripts/flash.tcl -tclargs $(NAME) $(BUILD)/projects/ $(BUILD)/
-$(VIVADO) -source scripts/bitstream.tcl -tclargs $(NAME) $(BUILD)/projects/ $(BUILD)/
 
 #
 # Flash QSPI
@@ -119,13 +118,13 @@ sim:
 ifeq ($(LASTTOP),$(TOP))
 	$(RM) $(BUILD)/ghdl/*.log
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-	./simulation/uftcheck.py -e $(BUILD)/ghdl/*.log
+	./simulation/uftcheck.py -e $(BUILD)/ghdl/axi_stream_res*.log
 else
 	$(RM) $(BUILD)/ghdl/*
 	scripts/configure_ghdl.sh ${TOP}
 	@echo "$(TOP)" > $(BUILD)/ghdl/stamp
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-	./simulation/uftcheck.py -e build/ghdl/*.log
+	./simulation/uftcheck.py -e build/ghdl/axi_stream_res*.log
 endif
 
 clean-sim:

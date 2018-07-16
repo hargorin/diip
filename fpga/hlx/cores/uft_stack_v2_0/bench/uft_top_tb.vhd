@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Thu Jun 21 16:50:56 2018
+-- Last update : Mon Jul 16 14:51:26 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -87,7 +87,6 @@ architecture testbench of uft_top_tb is
     -- ---------------------------------------------------------------------
     signal our_ip_address      : STD_LOGIC_VECTOR (31 downto 0);
     signal our_mac_address         : std_logic_vector (47 downto 0);
-    signal rx_done : std_logic;
 
     -- Receiver
     -- ---------------------------------------------------------------------
@@ -121,37 +120,29 @@ architecture testbench of uft_top_tb is
     signal udp_tx_tdata                : std_logic_vector (7 downto 0);
     signal udp_tx_tready               :  std_logic;
 
-    -- RX Memory IP Interface
+    -- RX ports
     -- ---------------------------------------------------------------------
-    signal ip2bus_mstrd_req       : std_logic;
-    signal ip2bus_mstwr_req       : std_logic;
-    signal ip2bus_mst_addr        : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-    signal ip2bus_mst_length      : std_logic_vector(C_LENGTH_WIDTH-1 downto 0);
-    signal ip2bus_mst_be          : std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-    signal ip2bus_mst_type        : std_logic;
-    signal ip2bus_mst_lock        : std_logic;
-    signal ip2bus_mst_reset       : std_logic;
-    signal bus2ip_mst_cmdack      :  std_logic;
-    signal bus2ip_mst_cmplt       :  std_logic;
-    signal bus2ip_mst_error       :  std_logic;
-    signal bus2ip_mst_rearbitrate :  std_logic;
-    signal bus2ip_mst_cmd_timeout :  std_logic;
-    signal bus2ip_mstrd_d         :  std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0 );
-    signal bus2ip_mstrd_rem       :  std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-    signal bus2ip_mstrd_sof_n     :  std_logic;
-    signal bus2ip_mstrd_eof_n     :  std_logic;
-    signal bus2ip_mstrd_src_rdy_n :  std_logic;
-    signal bus2ip_mstrd_src_dsc_n :  std_logic;
-    signal ip2bus_mstrd_dst_rdy_n : std_logic;
-    signal ip2bus_mstrd_dst_dsc_n : std_logic;
-    signal ip2bus_mstwr_d         : std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0);
-    signal ip2bus_mstwr_rem       : std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-    signal ip2bus_mstwr_sof_n     : std_logic;
-    signal ip2bus_mstwr_eof_n     : std_logic;
-    signal ip2bus_mstwr_src_rdy_n : std_logic;
-    signal ip2bus_mstwr_src_dsc_n : std_logic;
-    signal bus2ip_mstwr_dst_rdy_n :  std_logic;
-    signal bus2ip_mstwr_dst_dsc_n :  std_logic;
+    signal M_AXIS_TVALID   :    std_logic;
+    signal M_AXIS_TDATA    :    std_logic_vector(7 downto 0);
+    signal M_AXIS_TLAST    :    std_logic;
+    signal M_AXIS_TREADY   :    std_logic := '0';
+
+    signal rx_done            :    std_logic;
+    signal rx_row_num         :  std_logic_vector(31 downto 0);
+    signal rx_row_num_valid   :  std_logic;
+    signal rx_row_size        :  std_logic_vector(31 downto 0);
+    signal rx_row_size_valid  :  std_logic;
+
+    -- User registers
+    signal user_reg0           :   std_logic_vector(31 downto 0);
+    signal user_reg1           :   std_logic_vector(31 downto 0);
+    signal user_reg2           :   std_logic_vector(31 downto 0);
+    signal user_reg3           :   std_logic_vector(31 downto 0);
+    signal user_reg4           :   std_logic_vector(31 downto 0);
+    signal user_reg5           :   std_logic_vector(31 downto 0);
+    signal user_reg6           :   std_logic_vector(31 downto 0);
+    signal user_reg7           :   std_logic_vector(31 downto 0);
+
     -- TX Memory IP Interface
     -- ---------------------------------------------------------------------
     signal tx_ip2bus_mstrd_req       : std_logic;
@@ -403,7 +394,7 @@ begin
             end if;
 
             report "-- TEST 1 -- UFT Command Packet reception";
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1.txt");
 
             waitfor(10);
         end procedure t1;
@@ -414,15 +405,18 @@ begin
         begin
             cur_test <= 2;
             waitfor(10);
+            M_AXIS_TREADY <= '1';
+
             if mac_rx_tready = '0' then
                 wait until mac_rx_tready = '1';
             end if;
 
             report "-- TEST 2 -- UFT Data Packet reception";
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1.txt");
             
             waitfor(1500);
+            M_AXIS_TREADY <= '0';
         end procedure t2;
 
         -------------------------------------------------------------------
@@ -441,21 +435,23 @@ begin
 
             report "-- TEST 3 -- NSEQ=2 UFT Data Packet reception";
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_09_nseq_2.txt");
+            M_AXIS_TREADY <= '1';
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_09_nseq_2.txt");
             wait for 5 us;
             --waitfor(1);
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_09_nseq_2_0.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_09_nseq_2_0.txt");
             
-            wait until ip2bus_mstwr_src_rdy_n = '0';
-            assert (ip2bus_mst_addr = x"98752222") report "ERROR: UFT rx wrong base adr" severity error;
+            --wait until ip2bus_mstwr_src_rdy_n = '0';
+            --assert (ip2bus_mst_addr = x"98752222") report "ERROR: UFT rx wrong base adr" severity error;
 
             wait for 5 us;
             --waitfor(1);
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_09_nseq_2_1.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_09_nseq_2_1.txt");
             
             waitfor(1500);
+            M_AXIS_TREADY <= '0';
         end procedure t3;
         -------------------------------------------------------------------
         -- 32 byte packet
@@ -470,11 +466,11 @@ begin
 
             report "-- TEST 4 -- NSEQ=1 32byte UFT Data Packet reception";
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_v2.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_v2.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_v2.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_v2.txt");
 
             waitfor(1500);
         end procedure t4;
@@ -491,11 +487,11 @@ begin
 
             report "-- TEST 5 -- NSEQ=1 31byte UFT Data Packet reception";
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_31bytes.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_31bytes.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_31bytes.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_31bytes.txt");
 
             waitfor(1500);
         end procedure t5;
@@ -512,11 +508,11 @@ begin
 
             report "-- TEST 6 -- NSEQ=1 30byte UFT Data Packet reception";
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_30bytes.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_30bytes.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_30bytes.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_30bytes.txt");
 
             waitfor(1500);
         end procedure t6;
@@ -533,11 +529,11 @@ begin
 
             report "-- TEST 7 -- NSEQ=1 29byte UFT Data Packet reception";
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_tcid_0c_nseq_1_29bytes.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_29bytes.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_data_tcid_0c_nseq_1_29bytes.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_29bytes.txt");
 
             waitfor(1500);
         end procedure t7;
@@ -577,7 +573,7 @@ begin
             -- Reply ARP request
             wait until mac_tx_tlast = '1';
             waitfor(5);
-            file2axistream("../../cores/uft_stack_v1_0/bench/arp_reply.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/arp_reply.txt");
 
             read("000000");
             wait until rising_edge(clk);
@@ -621,7 +617,7 @@ begin
             -- Reply ARP request NOT required, should be in cache
             --wait until mac_tx_tlast = '1';
             --waitfor(5);
-            --file2axistream("../../cores/uft_stack_v1_0/bench/arp_reply.txt");
+            --file2axistream("../../cores/uft_stack_v2_0/bench/arp_reply.txt");
 
             --wait until tx_ready = '1';
             read("000000");
@@ -680,7 +676,7 @@ begin
             end if;
 
             report "-- TEST 20 -- UFT Command Packet reception with user data";
-            file2axistream("../../cores/uft_stack_v1_0/bench/uft_cmd_user_0_0xeeeeeeee.txt");
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_user_0_0xeeeeeeee.txt");
 
             read("100000");
             wait until rising_edge(clk);
@@ -702,18 +698,18 @@ begin
         ------------
         t10; -- UFT Data Packet transmission with ARP reply
         --t11; -- Multi Sequence UFT Data Packet transmission
-        t12; -- Single packet 108 byte size send
+        --t12; -- Single packet 108 byte size send
 
         ------------
         -- UFT packet receive:
         ------------
-        --t1; -- UFT Command Packet reception
-        --t2; -- UFT Data Packet reception
-        --t3; -- NSEQ=2 UFT Data Packet reception
-        t4; -- NSEQ=1 32byte UFT Data Packet reception
-        t5; -- NSEQ=1 31byte UFT Data Packet reception
-        t6; -- NSEQ=1 30byte UFT Data Packet reception
-        t7; -- NSEQ=1 29byte UFT Data Packet reception
+        t1; -- UFT Command Packet reception
+        t2; -- UFT Data Packet reception
+        t3; -- NSEQ=2 UFT Data Packet reception
+        --t4; -- NSEQ=1 32byte UFT Data Packet reception
+        --t5; -- NSEQ=1 31byte UFT Data Packet reception
+        --t6; -- NSEQ=1 30byte UFT Data Packet reception
+        --t7; -- NSEQ=1 29byte UFT Data Packet reception
         
         ------------
         -- UFT user command packet send
@@ -763,9 +759,42 @@ begin
         end if;
     end process ; -- p_axi_stream_check
 
+    p_axi_rx_stream_check : process( clk, rst_n )
+        type buf is array (0 to 1800) of std_logic_vector (7 downto 0);
+        variable axi_buf : buf;
+        variable ctr : natural range 0 to 1800 := 0;
+        variable i : natural range 0 to 1800 := 0;
+        variable fi : natural range 0 to 1800 := 0;
+
+        file file_axi_s     : text;
+        variable oline      : line;
+    begin
+        if rst_n = '0' then
+            ctr := 0;
+        elsif rising_edge(clk) then
+            if M_AXIS_TVALID = '1' and M_AXIS_TREADY = '1' then
+                axi_buf(ctr) := M_AXIS_TDATA;
+                ctr := ctr + 1;
+            end if;
+            if M_AXIS_TLAST = '1' then
+                file_open(file_axi_s, "axi_rx_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
+                report "Start writing file: " & "axi_rx_stream_res_" & INTEGER'IMAGE(fi) & ".log";
+                for i in 0 to (ctr-1) loop
+                    hwrite(oline, axi_buf(i), left, 8);
+                    writeline(file_axi_s, oline);
+                end loop;
+                file_close(file_axi_s);
+                ctr := 0;
+                fi := fi + 1;
+            end if;
+        end if;
+    end process ; -- p_axi_stream_check
+
     -----------------------------------------------------------
     -- Entity Under Test
     -----------------------------------------------------------
+
+    
 
     DUV : entity work.uft_top
         generic map (
@@ -786,7 +815,26 @@ begin
             rst_n                     => rst_n,
             our_ip_address            => our_ip_address,
             our_mac_address           => our_mac_address,
+
+            tx_ready                  => tx_ready,
+            M_AXIS_TVALID             => M_AXIS_TVALID,
+            M_AXIS_TDATA              => M_AXIS_TDATA,
+            M_AXIS_TLAST              => M_AXIS_TLAST,
+            M_AXIS_TREADY             => M_AXIS_TREADY,
             rx_done                   => rx_done,
+            rx_row_num                => rx_row_num,
+            rx_row_num_valid          => rx_row_num_valid,
+            rx_row_size               => rx_row_size,
+            rx_row_size_valid         => rx_row_size_valid,
+            user_reg0                 => user_reg0,
+            user_reg1                 => user_reg1,
+            user_reg2                 => user_reg2,
+            user_reg3                 => user_reg3,
+            user_reg4                 => user_reg4,
+            user_reg5                 => user_reg5,
+            user_reg6                 => user_reg6,
+            user_reg7                 => user_reg7,
+
             udp_rx_start              => udp_rx_start,
             udp_rx_hdr_is_valid       => udp_rx_hdr_is_valid,
             udp_rx_hdr_src_ip_addr    => udp_rx_hdr_src_ip_addr,
@@ -807,35 +855,7 @@ begin
             udp_tx_tlast              => udp_tx_tlast,
             udp_tx_tdata              => udp_tx_tdata,
             udp_tx_tready             => udp_tx_tready,
-            ip2bus_mstrd_req          => ip2bus_mstrd_req,
-            ip2bus_mstwr_req          => ip2bus_mstwr_req,
-            ip2bus_mst_addr           => ip2bus_mst_addr,
-            ip2bus_mst_length         => ip2bus_mst_length,
-            ip2bus_mst_be             => ip2bus_mst_be,
-            ip2bus_mst_type           => ip2bus_mst_type,
-            ip2bus_mst_lock           => ip2bus_mst_lock,
-            ip2bus_mst_reset          => ip2bus_mst_reset,
-            bus2ip_mst_cmdack         => bus2ip_mst_cmdack,
-            bus2ip_mst_cmplt          => bus2ip_mst_cmplt,
-            bus2ip_mst_error          => bus2ip_mst_error,
-            bus2ip_mst_rearbitrate    => bus2ip_mst_rearbitrate,
-            bus2ip_mst_cmd_timeout    => bus2ip_mst_cmd_timeout,
-            bus2ip_mstrd_d            => bus2ip_mstrd_d,
-            bus2ip_mstrd_rem          => bus2ip_mstrd_rem,
-            bus2ip_mstrd_sof_n        => bus2ip_mstrd_sof_n,
-            bus2ip_mstrd_eof_n        => bus2ip_mstrd_eof_n,
-            bus2ip_mstrd_src_rdy_n    => bus2ip_mstrd_src_rdy_n,
-            bus2ip_mstrd_src_dsc_n    => bus2ip_mstrd_src_dsc_n,
-            ip2bus_mstrd_dst_rdy_n    => ip2bus_mstrd_dst_rdy_n,
-            ip2bus_mstrd_dst_dsc_n    => ip2bus_mstrd_dst_dsc_n,
-            ip2bus_mstwr_d            => ip2bus_mstwr_d,
-            ip2bus_mstwr_rem          => ip2bus_mstwr_rem,
-            ip2bus_mstwr_sof_n        => ip2bus_mstwr_sof_n,
-            ip2bus_mstwr_eof_n        => ip2bus_mstwr_eof_n,
-            ip2bus_mstwr_src_rdy_n    => ip2bus_mstwr_src_rdy_n,
-            ip2bus_mstwr_src_dsc_n    => ip2bus_mstwr_src_dsc_n,
-            bus2ip_mstwr_dst_rdy_n    => bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n    => bus2ip_mstwr_dst_dsc_n,
+            
             tx_ip2bus_mstrd_req       => tx_ip2bus_mstrd_req,
             tx_ip2bus_mstwr_req       => tx_ip2bus_mstwr_req,
             tx_ip2bus_mst_addr        => tx_ip2bus_mst_addr,
@@ -865,6 +885,7 @@ begin
             tx_ip2bus_mstwr_src_dsc_n => tx_ip2bus_mstwr_src_dsc_n,
             tx_bus2ip_mstwr_dst_rdy_n => tx_bus2ip_mstwr_dst_rdy_n,
             tx_bus2ip_mstwr_dst_dsc_n => tx_bus2ip_mstwr_dst_dsc_n,
+
             s_axi_ctrl_aclk           => clk,
             s_axi_ctrl_aresetn        => rst_n,
             s_axi_ctrl_awaddr         => s_axi_awaddr,
@@ -942,53 +963,6 @@ begin
             mac_rx_tlast               => mac_rx_tlast
         );    
 
-    axi_master_burst_model_1 : entity work.axi_master_burst_model
-        generic map (
-            C_M_AXI_ADDR_WIDTH     => C_M_AXI_ADDR_WIDTH,
-            C_M_AXI_DATA_WIDTH     => C_M_AXI_DATA_WIDTH,
-            C_MAX_BURST_LEN        => C_MAX_BURST_LEN,
-            C_ADDR_PIPE_DEPTH      => C_ADDR_PIPE_DEPTH,
-            C_NATIVE_DATA_WIDTH    => C_NATIVE_DATA_WIDTH,
-            C_LENGTH_WIDTH         => C_LENGTH_WIDTH,
-            C_FAMILY               => C_FAMILY,
-            C_WRITE_INTERRUPTION   => C_WRITE_INTERRUPTION,
-            C_WRITE_INTERRUPTION_N => C_WRITE_INTERRUPTION_N,
-            C_AXI_WAIT_TIME        => C_AXI_WAIT_TIME,
-            C_WR_WAIT_TIME         => C_WR_WAIT_TIME
-        )
-        port map (
-            m_axi_aclk             => clk,
-            m_axi_aresetn          => rst_n,
-            ip2bus_mstrd_req       => ip2bus_mstrd_req,
-            ip2bus_mstwr_req       => ip2bus_mstwr_req,
-            ip2bus_mst_addr        => ip2bus_mst_addr,
-            ip2bus_mst_length      => ip2bus_mst_length,
-            ip2bus_mst_be          => ip2bus_mst_be,
-            ip2bus_mst_type        => ip2bus_mst_type,
-            ip2bus_mst_lock        => ip2bus_mst_lock,
-            ip2bus_mst_reset       => ip2bus_mst_reset,
-            bus2ip_mst_cmdack      => bus2ip_mst_cmdack,
-            bus2ip_mst_cmplt       => bus2ip_mst_cmplt,
-            bus2ip_mst_error       => bus2ip_mst_error,
-            bus2ip_mst_rearbitrate => bus2ip_mst_rearbitrate,
-            bus2ip_mst_cmd_timeout => bus2ip_mst_cmd_timeout,
-            bus2ip_mstrd_d         => bus2ip_mstrd_d,
-            bus2ip_mstrd_rem       => bus2ip_mstrd_rem,
-            bus2ip_mstrd_sof_n     => bus2ip_mstrd_sof_n,
-            bus2ip_mstrd_eof_n     => bus2ip_mstrd_eof_n,
-            bus2ip_mstrd_src_rdy_n => bus2ip_mstrd_src_rdy_n,
-            bus2ip_mstrd_src_dsc_n => bus2ip_mstrd_src_dsc_n,
-            ip2bus_mstrd_dst_rdy_n => ip2bus_mstrd_dst_rdy_n,
-            ip2bus_mstrd_dst_dsc_n => ip2bus_mstrd_dst_dsc_n,
-            ip2bus_mstwr_d         => ip2bus_mstwr_d,
-            ip2bus_mstwr_rem       => ip2bus_mstwr_rem,
-            ip2bus_mstwr_sof_n     => ip2bus_mstwr_sof_n,
-            ip2bus_mstwr_eof_n     => ip2bus_mstwr_eof_n,
-            ip2bus_mstwr_src_rdy_n => ip2bus_mstwr_src_rdy_n,
-            ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
-            bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
-        ); 
     axi_master_burst_model_tx : entity work.axi_master_burst_model
         generic map (
             C_M_AXI_ADDR_WIDTH     => C_M_AXI_ADDR_WIDTH,

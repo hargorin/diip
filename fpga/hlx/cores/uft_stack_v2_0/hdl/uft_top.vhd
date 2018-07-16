@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jun 19 17:41:13 2018
+-- Last update : Mon Jul 16 11:19:18 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -57,19 +57,32 @@ entity uft_top is
         our_ip_address      : out STD_LOGIC_VECTOR (31 downto 0);
         our_mac_address         : out std_logic_vector (47 downto 0);
 
-        rx_done        : out  std_logic;
         tx_ready        : out  std_logic;
 
-        -- number of bytes to send ( Max 4GB = 4'294'967'296 Bytes)
-        --tx_data_size       : in  std_logic_vector(31 downto 0);
-        -- Data source address
-        
-        -- Indicates if the system is ready for a new file transfer
-        --tx_ready        : out std_logic;
-        -- assert high to start a transmission
-        --tx_start        : in  std_logic;
+        -- RX user interface
+        -- ---------------------------------------------------------------------
+        M_AXIS_TVALID   : out   std_logic;
+        M_AXIS_TDATA    : out   std_logic_vector(7 downto 0);
+        M_AXIS_TLAST    : out   std_logic;
+        M_AXIS_TREADY   : in    std_logic;
 
-        -- Receiver
+        rx_done        : out  std_logic; 
+        rx_row_num         : out std_logic_vector(31 downto 0);
+        rx_row_num_valid   : out std_logic;
+        rx_row_size        : out std_logic_vector(31 downto 0);
+        rx_row_size_valid  : out std_logic;
+
+        -- User registers
+        user_reg0           : out  std_logic_vector(31 downto 0);
+        user_reg1           : out  std_logic_vector(31 downto 0);
+        user_reg2           : out  std_logic_vector(31 downto 0);
+        user_reg3           : out  std_logic_vector(31 downto 0);
+        user_reg4           : out  std_logic_vector(31 downto 0);
+        user_reg5           : out  std_logic_vector(31 downto 0);
+        user_reg6           : out  std_logic_vector(31 downto 0);
+        user_reg7           : out  std_logic_vector(31 downto 0);
+
+        -- To UDP Receiver
         -- ---------------------------------------------------------------------
         -- Control
         udp_rx_start                : in std_logic;
@@ -84,7 +97,7 @@ entity uft_top is
         udp_rx_tvalid               : in std_logic;
         udp_rx_tlast                : in std_logic;
 
-        -- Transmitter
+        -- To UDP Transmitter
         -- ---------------------------------------------------------------------
         -- Control
         udp_tx_start                : out std_logic;
@@ -101,37 +114,6 @@ entity uft_top is
         udp_tx_tdata                : out std_logic_vector (7 downto 0);
         udp_tx_tready               : in  std_logic;
 
-        -- RX Memory IP Interface
-        -- ---------------------------------------------------------------------
-        ip2bus_mstrd_req       : out std_logic;
-        ip2bus_mstwr_req       : out std_logic;
-        ip2bus_mst_addr        : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-        ip2bus_mst_length      : out std_logic_vector(C_LENGTH_WIDTH-1 downto 0);
-        ip2bus_mst_be          : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-        ip2bus_mst_type        : out std_logic;
-        ip2bus_mst_lock        : out std_logic;
-        ip2bus_mst_reset       : out std_logic;
-        bus2ip_mst_cmdack      : in  std_logic;
-        bus2ip_mst_cmplt       : in  std_logic;
-        bus2ip_mst_error       : in  std_logic;
-        bus2ip_mst_rearbitrate : in  std_logic;
-        bus2ip_mst_cmd_timeout : in  std_logic;
-        bus2ip_mstrd_d         : in  std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0 );
-        bus2ip_mstrd_rem       : in  std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-        bus2ip_mstrd_sof_n     : in  std_logic;
-        bus2ip_mstrd_eof_n     : in  std_logic;
-        bus2ip_mstrd_src_rdy_n : in  std_logic;
-        bus2ip_mstrd_src_dsc_n : in  std_logic;
-        ip2bus_mstrd_dst_rdy_n : out std_logic;
-        ip2bus_mstrd_dst_dsc_n : out std_logic;
-        ip2bus_mstwr_d         : out std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0);
-        ip2bus_mstwr_rem       : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-        ip2bus_mstwr_sof_n     : out std_logic;
-        ip2bus_mstwr_eof_n     : out std_logic;
-        ip2bus_mstwr_src_rdy_n : out std_logic;
-        ip2bus_mstwr_src_dsc_n : out std_logic;
-        bus2ip_mstwr_dst_rdy_n : in  std_logic;
-        bus2ip_mstwr_dst_dsc_n : in  std_logic;  
 
         -- TX Memory IP Interface
         -- ---------------------------------------------------------------------
@@ -198,7 +180,8 @@ architecture structural of uft_top is
     -- -------------------------------------------------------------------------
     component uft_rx is
         generic (
-            INCOMMING_PORT : natural := 42042
+            INCOMMING_PORT : natural  := 42042;
+            FIFO_DEPTH     : positive := 366
         );
         port (
             clk                    : in  std_logic;
@@ -212,64 +195,15 @@ architecture structural of uft_top is
             udp_rx_tdata           : in  std_logic_vector (7 downto 0);
             udp_rx_tvalid          : in  std_logic;
             udp_rx_tlast           : in  std_logic;
-            is_command             : out std_logic;
-            command_code           : out std_logic_vector(6 downto 0);
-            command_data1          : out std_logic_vector(23 downto 0);
-            command_data2          : out std_logic_vector(31 downto 0);
-            command_data_valid     : out std_logic;
-            is_data                : out std_logic;
-            data_tcid              : out std_logic_vector( 6 downto 0);
-            data_seq               : out std_logic_vector(23 downto 0);
-            data_meta_valid        : out std_logic;
-            data_tvalid            : out std_logic;
-            data_tlast             : out std_logic;
-            data_tdata             : out std_logic_vector( 7 downto 0);
-            src_ip                 : out std_logic_vector (31 downto 0);
-            src_port               : out std_logic_vector (15 downto 0)
-        );
-    end component uft_rx;      
-
-    ----------------------------------------------------------------------------
-    -- rx mem controller declaration
-    -- -------------------------------------------------------------------------
-    component utf_rx_mem_ctl is
-        generic (
-            FIFO_DEPTH          : positive                := 366;
-            C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32;
-            C_M_AXI_DATA_WIDTH  : integer range 32 to 256 := 32;
-            C_MAX_BURST_LEN     : Integer range 16 to 256 := 16;
-            C_ADDR_PIPE_DEPTH   : Integer range 1 to 14   := 1;
-            C_NATIVE_DATA_WIDTH : INTEGER range 32 to 128 := 32;
-            C_LENGTH_WIDTH      : INTEGER range 12 to 20  := 12;
-            C_FAMILY            : string                  := "artix7"
-        );
-        port (
-            clk                    : in  std_logic;
-            rst_n                  : in  std_logic;
-            rx_done                : out std_logic := '0';
-            is_data                : in  std_logic;
-            data_tcid              : in  std_logic_vector( 6 downto 0);
-            data_seq               : in  std_logic_vector(23 downto 0);
-            data_meta_valid        : in  std_logic;
-            data_tvalid            : in  std_logic;
-            data_tlast             : in  std_logic;
-            data_tdata             : in  std_logic_vector( 7 downto 0);
-            is_command             : in  std_logic;
-            command_code           : in  std_logic_vector(6 downto 0);
-            command_data1          : in  std_logic_vector(23 downto 0);
-            command_data2          : in  std_logic_vector(31 downto 0);
-            command_data_valid     : in  std_logic;
-            rx_base_adr            : in  std_logic_vector (31 downto 0);
-            rx_src_ip              : in  std_logic_vector (31 downto 0);
-            rx_src_port            : in  std_logic_vector (15 downto 0);
-            ack_cmd_nseq           : out std_logic;
-            ack_cmd_ft             : out std_logic;
-            ack_cmd_nseq_done      : in  std_logic;
-            ack_cmd_ft_done        : in  std_logic;
-            ack_seqnbr             : out std_logic_vector (23 downto 0);
-            ack_tcid               : out std_logic_vector ( 6 downto 0);
-            ack_dst_port           : out std_logic_vector (15 downto 0);
-            ack_dst_ip             : out std_logic_vector (31 downto 0);
+            M_AXIS_TVALID          : out std_logic;
+            M_AXIS_TDATA           : out std_logic_vector(7 downto 0);
+            M_AXIS_TLAST           : out std_logic;
+            M_AXIS_TREADY          : in  std_logic;
+            rx_done                : out std_logic;
+            rx_row_num             : out std_logic_vector(31 downto 0);
+            rx_row_num_valid       : out std_logic;
+            rx_row_size            : out std_logic_vector(31 downto 0);
+            rx_row_size_valid      : out std_logic;
             user_reg0              : out std_logic_vector(31 downto 0);
             user_reg1              : out std_logic_vector(31 downto 0);
             user_reg2              : out std_logic_vector(31 downto 0);
@@ -278,37 +212,16 @@ architecture structural of uft_top is
             user_reg5              : out std_logic_vector(31 downto 0);
             user_reg6              : out std_logic_vector(31 downto 0);
             user_reg7              : out std_logic_vector(31 downto 0);
-            ip2bus_mstrd_req       : out std_logic;
-            ip2bus_mstwr_req       : out std_logic;
-            ip2bus_mst_addr        : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-            ip2bus_mst_length      : out std_logic_vector(C_LENGTH_WIDTH-1 downto 0);
-            ip2bus_mst_be          : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-            ip2bus_mst_type        : out std_logic;
-            ip2bus_mst_lock        : out std_logic;
-            ip2bus_mst_reset       : out std_logic;
-            bus2ip_mst_cmdack      : in  std_logic;
-            bus2ip_mst_cmplt       : in  std_logic;
-            bus2ip_mst_error       : in  std_logic;
-            bus2ip_mst_rearbitrate : in  std_logic;
-            bus2ip_mst_cmd_timeout : in  std_logic;
-            bus2ip_mstrd_d         : in  std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0 );
-            bus2ip_mstrd_rem       : in  std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-            bus2ip_mstrd_sof_n     : in  std_logic;
-            bus2ip_mstrd_eof_n     : in  std_logic;
-            bus2ip_mstrd_src_rdy_n : in  std_logic;
-            bus2ip_mstrd_src_dsc_n : in  std_logic;
-            ip2bus_mstrd_dst_rdy_n : out std_logic;
-            ip2bus_mstrd_dst_dsc_n : out std_logic;
-            ip2bus_mstwr_d         : out std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0);
-            ip2bus_mstwr_rem       : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-            ip2bus_mstwr_sof_n     : out std_logic;
-            ip2bus_mstwr_eof_n     : out std_logic;
-            ip2bus_mstwr_src_rdy_n : out std_logic;
-            ip2bus_mstwr_src_dsc_n : out std_logic;
-            bus2ip_mstwr_dst_rdy_n : in  std_logic;
-            bus2ip_mstwr_dst_dsc_n : in  std_logic
+            ack_cmd_nseq           : out std_logic;
+            ack_cmd_ft             : out std_logic;
+            ack_cmd_nseq_done      : in  std_logic;
+            ack_cmd_ft_done        : in  std_logic;
+            ack_seqnbr             : out std_logic_vector (23 downto 0);
+            ack_tcid               : out std_logic_vector ( 6 downto 0);
+            ack_dst_port           : out std_logic_vector (15 downto 0);
+            ack_dst_ip             : out std_logic_vector (31 downto 0)
         );
-    end component utf_rx_mem_ctl;
+    end component uft_rx;    
 
     ----------------------------------------------------------------------------
     -- UFT tx
@@ -471,23 +384,33 @@ architecture structural of uft_top is
     signal rx_data_transaction_ctr : std_logic_vector(31 downto 0);
 
     -- User registers connecting rx_mem_ctrl and axi_ctrl
-    signal user_reg0 : std_logic_vector(31 downto 0);
-    signal user_reg1 : std_logic_vector(31 downto 0);
-    signal user_reg2 : std_logic_vector(31 downto 0);
-    signal user_reg3 : std_logic_vector(31 downto 0);
-    signal user_reg4 : std_logic_vector(31 downto 0);
-    signal user_reg5 : std_logic_vector(31 downto 0);
-    signal user_reg6 : std_logic_vector(31 downto 0);
-    signal user_reg7 : std_logic_vector(31 downto 0);
+    signal user_reg0_i : std_logic_vector(31 downto 0);
+    signal user_reg1_i : std_logic_vector(31 downto 0);
+    signal user_reg2_i : std_logic_vector(31 downto 0);
+    signal user_reg3_i : std_logic_vector(31 downto 0);
+    signal user_reg4_i : std_logic_vector(31 downto 0);
+    signal user_reg5_i : std_logic_vector(31 downto 0);
+    signal user_reg6_i : std_logic_vector(31 downto 0);
+    signal user_reg7_i : std_logic_vector(31 downto 0);
 
 begin
         
+    user_reg0 <= user_reg0_i;
+    user_reg1 <= user_reg1_i;
+    user_reg2 <= user_reg2_i;
+    user_reg3 <= user_reg3_i;
+    user_reg4 <= user_reg4_i;
+    user_reg5 <= user_reg5_i;
+    user_reg6 <= user_reg6_i;
+    user_reg7 <= user_reg7_i;
+
     ----------------------------------------------------------------------------
     -- Rx instatiation
     -- -------------------------------------------------------------------------
     rx : uft_rx
         generic map (
-            INCOMMING_PORT => INCOMMING_PORT
+            INCOMMING_PORT => INCOMMING_PORT,
+            FIFO_DEPTH     => FIFO_DEPTH
         )
         port map (
             clk                    => clk,
@@ -501,63 +424,23 @@ begin
             udp_rx_tdata           => udp_rx_tdata,
             udp_rx_tvalid          => udp_rx_tvalid,
             udp_rx_tlast           => udp_rx_tlast,
-            is_command             => is_command,
-            command_code           => command_code,
-            command_data1          => command_data1,
-            command_data2          => command_data2,
-            command_data_valid     => command_data_valid,
-            is_data                => is_data,
-            data_tcid              => data_tcid,
-            data_seq               => data_seq,
-            data_meta_valid        => data_meta_valid,
-            data_tvalid            => data_tvalid,
-            data_tlast             => data_tlast,
-            data_tdata             => data_tdata,
-            src_ip                 => rx_src_ip,
-            src_port               => rx_src_port
-        );    
-
-    ----------------------------------------------------------------------------
-    -- Rx Mem Ctrl instance
-    -- -------------------------------------------------------------------------
-    rx_mem_ctl : utf_rx_mem_ctl
-        generic map (
-            FIFO_DEPTH          => FIFO_DEPTH,
-            C_M_AXI_ADDR_WIDTH  => C_M_AXI_ADDR_WIDTH,
-            C_M_AXI_DATA_WIDTH  => C_M_AXI_DATA_WIDTH,
-            C_MAX_BURST_LEN     => C_MAX_BURST_LEN,
-            C_ADDR_PIPE_DEPTH   => C_ADDR_PIPE_DEPTH,
-            C_NATIVE_DATA_WIDTH => C_NATIVE_DATA_WIDTH,
-            C_LENGTH_WIDTH      => C_LENGTH_WIDTH,
-            C_FAMILY            => C_FAMILY
-        )
-        port map (
-            user_reg0              => user_reg0,
-            user_reg1              => user_reg1,
-            user_reg2              => user_reg2,
-            user_reg3              => user_reg3,
-            user_reg4              => user_reg4,
-            user_reg5              => user_reg5,
-            user_reg6              => user_reg6,
-            user_reg7              => user_reg7,
-            clk                    => clk,
-            rst_n                  => rst_n,
+            M_AXIS_TVALID          => M_AXIS_TVALID,
+            M_AXIS_TDATA           => M_AXIS_TDATA,
+            M_AXIS_TLAST           => M_AXIS_TLAST,
+            M_AXIS_TREADY          => M_AXIS_TREADY,
             rx_done                => rx_done,
-            is_data                => is_data,
-            data_tcid              => data_tcid,
-            data_seq               => data_seq,
-            data_meta_valid        => data_meta_valid,
-            data_tvalid            => data_tvalid,
-            data_tlast             => data_tlast,
-            data_tdata             => data_tdata,
-            is_command             => is_command,
-            command_code           => command_code,
-            command_data1          => command_data1,
-            command_data2          => command_data2,
-            command_data_valid     => command_data_valid,
-            rx_base_adr            => rx_data_dst_addr,
-            rx_src_ip              => rx_src_ip,
-            rx_src_port            => rx_src_port,
+            rx_row_num             => rx_row_num,
+            rx_row_num_valid       => rx_row_num_valid,
+            rx_row_size            => rx_row_size,
+            rx_row_size_valid      => rx_row_size_valid,
+            user_reg0              => user_reg0_i,
+            user_reg1              => user_reg1_i,
+            user_reg2              => user_reg2_i,
+            user_reg3              => user_reg3_i,
+            user_reg4              => user_reg4_i,
+            user_reg5              => user_reg5_i,
+            user_reg6              => user_reg6_i,
+            user_reg7              => user_reg7_i,
             ack_cmd_nseq           => ack_cmd_nseq,
             ack_cmd_ft             => ack_cmd_ft,
             ack_cmd_nseq_done      => ack_cmd_nseq_done,
@@ -565,37 +448,8 @@ begin
             ack_seqnbr             => ack_seqnbr,
             ack_tcid               => ack_tcid,
             ack_dst_port           => ack_dst_port,
-            ack_dst_ip             => ack_dst_ip,
-            ip2bus_mstrd_req       => ip2bus_mstrd_req,
-            ip2bus_mstwr_req       => ip2bus_mstwr_req,
-            ip2bus_mst_addr        => ip2bus_mst_addr,
-            ip2bus_mst_length      => ip2bus_mst_length,
-            ip2bus_mst_be          => ip2bus_mst_be,
-            ip2bus_mst_type        => ip2bus_mst_type,
-            ip2bus_mst_lock        => ip2bus_mst_lock,
-            ip2bus_mst_reset       => ip2bus_mst_reset,
-            bus2ip_mst_cmdack      => bus2ip_mst_cmdack,
-            bus2ip_mst_cmplt       => bus2ip_mst_cmplt,
-            bus2ip_mst_error       => bus2ip_mst_error,
-            bus2ip_mst_rearbitrate => bus2ip_mst_rearbitrate,
-            bus2ip_mst_cmd_timeout => bus2ip_mst_cmd_timeout,
-            bus2ip_mstrd_d         => bus2ip_mstrd_d,
-            bus2ip_mstrd_rem       => bus2ip_mstrd_rem,
-            bus2ip_mstrd_sof_n     => bus2ip_mstrd_sof_n,
-            bus2ip_mstrd_eof_n     => bus2ip_mstrd_eof_n,
-            bus2ip_mstrd_src_rdy_n => bus2ip_mstrd_src_rdy_n,
-            bus2ip_mstrd_src_dsc_n => bus2ip_mstrd_src_dsc_n,
-            ip2bus_mstrd_dst_rdy_n => ip2bus_mstrd_dst_rdy_n,
-            ip2bus_mstrd_dst_dsc_n => ip2bus_mstrd_dst_dsc_n,
-            ip2bus_mstwr_d         => ip2bus_mstwr_d,
-            ip2bus_mstwr_rem       => ip2bus_mstwr_rem,
-            ip2bus_mstwr_sof_n     => ip2bus_mstwr_sof_n,
-            ip2bus_mstwr_eof_n     => ip2bus_mstwr_eof_n,
-            ip2bus_mstwr_src_rdy_n => ip2bus_mstwr_src_rdy_n,
-            ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
-            bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n
-        );  
+            ack_dst_ip             => ack_dst_ip
+        );    
 
     ----------------------------------------------------------------------------
     -- UFT Tx instance
@@ -679,14 +533,14 @@ begin
             C_S_AXI_ADDR_WIDTH => C_S_AXI_ADDR_WIDTH
         )
         port map (
-            user_reg0               => user_reg0,
-            user_reg1               => user_reg1,
-            user_reg2               => user_reg2,
-            user_reg3               => user_reg3,
-            user_reg4               => user_reg4,
-            user_reg5               => user_reg5,
-            user_reg6               => user_reg6,
-            user_reg7               => user_reg7,
+            user_reg0               => user_reg0_i,
+            user_reg1               => user_reg1_i,
+            user_reg2               => user_reg2_i,
+            user_reg3               => user_reg3_i,
+            user_reg4               => user_reg4_i,
+            user_reg5               => user_reg5_i,
+            user_reg6               => user_reg6_i,
+            user_reg7               => user_reg7_i,
             tx_data_size            => tx_data_size,
             tx_data_src_addr        => data_src_addr,
             tx_ready                => tx_ready_int,

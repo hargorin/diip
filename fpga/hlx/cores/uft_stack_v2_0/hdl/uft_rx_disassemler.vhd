@@ -2,11 +2,11 @@
 -- Title       : UDP File Transfer receiver
 -- Project     : Default Project Name
 -------------------------------------------------------------------------------
--- File        : uft_rx.vhd
+-- File        : uft_rx_disassemler.vhd
 -- Author      : Noah Huetter <noahhuetter@gmail.ocom>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 11:19:21 2017
--- Last update : Fri Apr 20 13:01:49 2018
+-- Last update : Mon Jul 16 12:55:08 2018
 -- Platform    : Default Part Number
 -- Standard    : VHDL-2008
 -------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use IEEE.NUMERIC_STD.ALL;
 
-entity uft_rx is
+entity uft_rx_disassemler is
     generic (
         -- only treat packages arriving at INCOMMING_PORT as UFT packages
         INCOMMING_PORT : natural := 42042
@@ -65,9 +65,9 @@ entity uft_rx is
         src_ip      : out std_logic_vector (31 downto 0);
         src_port    : out std_logic_vector (15 downto 0)
     );
-end entity uft_rx;
+end entity uft_rx_disassemler;
 
-architecture rtl of uft_rx is
+architecture rtl of uft_rx_disassemler is
 
     -- type defs
     type state_type is ( IDLE, RX_START,
