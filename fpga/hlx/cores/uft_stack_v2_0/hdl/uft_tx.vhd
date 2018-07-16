@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Mon Nov 27 15:32:28 2017
--- Last update : Fri Apr 20 13:26:45 2018
+-- Last update : Mon Jul 16 16:24:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,16 +27,6 @@ use IEEE.NUMERIC_STD.ALL;
 use work.uft_pkg.all;
 
 entity uft_tx is
-    generic (
-        -- AXI Master burst Configuration
-        C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32;
-        C_M_AXI_DATA_WIDTH  : integer range 32 to 256 := 32;
-        C_MAX_BURST_LEN     : Integer range 16 to 256 := 16;
-        C_ADDR_PIPE_DEPTH   : Integer range 1 to 14   := 1;
-        C_NATIVE_DATA_WIDTH : INTEGER range 32 to 128 := 32;
-        C_LENGTH_WIDTH      : INTEGER range 12 to 20  := 12;
-        C_FAMILY            : string                  := "artix7"
-    );
     port (
         -- clk and reset
         ------------------------------------------------------------------------
@@ -47,8 +37,6 @@ entity uft_tx is
         -- ---------------------------------------------------------------------
         -- number of bytes to send ( Max 4GB = 4'294'967'296 Bytes)
         data_size       : in  std_logic_vector(31 downto 0);
-        -- Data source address
-        data_src_addr   : in std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
         -- Indicates if the system is ready for a new file transfer
         tx_ready        : out std_logic;
         -- assert high to start a transmission
@@ -85,37 +73,12 @@ entity uft_tx is
         udp_tx_tdata                : out std_logic_vector (7 downto 0);
         udp_tx_tready               : in  std_logic;
 
-        -- TX Memory IP Interface
+        -- TX slave axis
         -- ---------------------------------------------------------------------
-        ip2bus_mstrd_req       : out std_logic;
-        ip2bus_mstwr_req       : out std_logic;
-        ip2bus_mst_addr        : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-        ip2bus_mst_length      : out std_logic_vector(C_LENGTH_WIDTH-1 downto 0);
-        ip2bus_mst_be          : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-        ip2bus_mst_type        : out std_logic;
-        ip2bus_mst_lock        : out std_logic;
-        ip2bus_mst_reset       : out std_logic;
-        bus2ip_mst_cmdack      : in  std_logic;
-        bus2ip_mst_cmplt       : in  std_logic;
-        bus2ip_mst_error       : in  std_logic;
-        bus2ip_mst_rearbitrate : in  std_logic;
-        bus2ip_mst_cmd_timeout : in  std_logic;
-        bus2ip_mstrd_d         : in  std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0 );
-        bus2ip_mstrd_rem       : in  std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-        bus2ip_mstrd_sof_n     : in  std_logic;
-        bus2ip_mstrd_eof_n     : in  std_logic;
-        bus2ip_mstrd_src_rdy_n : in  std_logic;
-        bus2ip_mstrd_src_dsc_n : in  std_logic;
-        ip2bus_mstrd_dst_rdy_n : out std_logic;
-        ip2bus_mstrd_dst_dsc_n : out std_logic;
-        ip2bus_mstwr_d         : out std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0);
-        ip2bus_mstwr_rem       : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-        ip2bus_mstwr_sof_n     : out std_logic;
-        ip2bus_mstwr_eof_n     : out std_logic;
-        ip2bus_mstwr_src_rdy_n : out std_logic;
-        ip2bus_mstwr_src_dsc_n : out std_logic;
-        bus2ip_mstwr_dst_rdy_n : in  std_logic;
-        bus2ip_mstwr_dst_dsc_n : in  std_logic
+        s_axis_tvalid              : in  std_logic;
+        s_axis_tlast               : in  std_logic;
+        s_axis_tdata               : in  std_logic_vector (7 downto 0);
+        s_axis_tready              : out std_logic
     );
 end entity uft_tx;
 
@@ -125,14 +88,12 @@ architecture structural of uft_tx is
     -- -------------------------------------------------------------------------
     component uft_tx_control is
         generic (
-            C_M_AXI_ADDR_WIDTH : integer range 32 to 64 := 32;
             C_PACKET_DELAY_US  : integer range 1 to 150 := 100
         );
         port (
             clk                    : in  std_logic;
             rst_n                  : in  std_logic;
             data_size              : in  std_logic_vector(31 downto 0);
-            data_src_addr          : in  std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
             tx_ready               : out std_logic;
             tx_start               : in  std_logic;
             dst_ip_addr            : in  std_logic_vector (31 downto 0);
@@ -160,7 +121,6 @@ architecture structural of uft_tx is
             cmd_done               : in  std_logic;
             cmd_nseq               : out std_logic_vector (31 downto 0);
             cmd_seqnbr             : out std_logic_vector (23 downto 0);
-            data_data_src_addr     : out std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
             data_tcid              : out std_logic_vector (6 downto 0);
             data_seq               : out std_logic_vector (23 downto 0);
             packet_data_size       : out std_logic_vector (10 downto 0);
@@ -194,59 +154,24 @@ architecture structural of uft_tx is
     -- Component declaration
     -- -------------------------------------------------------------------------
     component uft_tx_data_assembler is
-        generic (
-            C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32;
-            C_M_AXI_DATA_WIDTH  : integer range 32 to 256 := 32;
-            C_MAX_BURST_LEN     : Integer range 16 to 256 := 16;
-            C_ADDR_PIPE_DEPTH   : Integer range 1 to 14   := 1;
-            C_NATIVE_DATA_WIDTH : INTEGER range 32 to 128 := 32;
-            C_LENGTH_WIDTH      : INTEGER range 12 to 20  := 12;
-            C_FAMILY            : string                  := "artix7"
-        );
         port (
-            clk                    : in  std_logic;
-            rst_n                  : in  std_logic;
-            data_src_addr          : in  std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
-            tcid                   : in  std_logic_vector (6 downto 0);
-            seq                    : in  std_logic_vector (23 downto 0);
-            size                   : in  std_logic_vector (10 downto 0);
-            start                  : in  std_logic;
-            done                   : out std_logic;
-            ip2bus_mstrd_req       : out std_logic;
-            ip2bus_mstwr_req       : out std_logic;
-            ip2bus_mst_addr        : out std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-            ip2bus_mst_length      : out std_logic_vector(C_LENGTH_WIDTH-1 downto 0);
-            ip2bus_mst_be          : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-            ip2bus_mst_type        : out std_logic;
-            ip2bus_mst_lock        : out std_logic;
-            ip2bus_mst_reset       : out std_logic;
-            bus2ip_mst_cmdack      : in  std_logic;
-            bus2ip_mst_cmplt       : in  std_logic;
-            bus2ip_mst_error       : in  std_logic;
-            bus2ip_mst_rearbitrate : in  std_logic;
-            bus2ip_mst_cmd_timeout : in  std_logic;
-            bus2ip_mstrd_d         : in  std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0 );
-            bus2ip_mstrd_rem       : in  std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-            bus2ip_mstrd_sof_n     : in  std_logic;
-            bus2ip_mstrd_eof_n     : in  std_logic;
-            bus2ip_mstrd_src_rdy_n : in  std_logic;
-            bus2ip_mstrd_src_dsc_n : in  std_logic;
-            ip2bus_mstrd_dst_rdy_n : out std_logic;
-            ip2bus_mstrd_dst_dsc_n : out std_logic;
-            ip2bus_mstwr_d         : out std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0);
-            ip2bus_mstwr_rem       : out std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-            ip2bus_mstwr_sof_n     : out std_logic;
-            ip2bus_mstwr_eof_n     : out std_logic;
-            ip2bus_mstwr_src_rdy_n : out std_logic;
-            ip2bus_mstwr_src_dsc_n : out std_logic;
-            bus2ip_mstwr_dst_rdy_n : in  std_logic;
-            bus2ip_mstwr_dst_dsc_n : in  std_logic;
-            tx_tvalid              : out std_logic;
-            tx_tlast               : out std_logic;
-            tx_tdata               : out std_logic_vector (7 downto 0);
-            tx_tready              : in  std_logic
+            clk           : in  std_logic;
+            rst_n         : in  std_logic;
+            tcid          : in  std_logic_vector (6 downto 0);
+            seq           : in  std_logic_vector (23 downto 0);
+            size          : in  std_logic_vector (10 downto 0);
+            start         : in  std_logic;
+            done          : out std_logic;
+            s_axis_tvalid : in  std_logic;
+            s_axis_tlast  : in  std_logic;
+            s_axis_tdata  : in  std_logic_vector (7 downto 0);
+            s_axis_tready : out std_logic;
+            tx_tvalid     : out std_logic;
+            tx_tlast      : out std_logic;
+            tx_tdata      : out std_logic_vector (7 downto 0);
+            tx_tready     : in  std_logic
         );
-    end component uft_tx_data_assembler;
+    end component uft_tx_data_assembler;    
 
     ----------------------------------------------------------------------------
     -- Component declaration
@@ -282,7 +207,6 @@ architecture structural of uft_tx is
     signal cmd_done                 : std_logic; -- asserted if packet is sent
     signal cmd_nseq                 : std_logic_vector (31 downto 0);
     signal cmd_seqnbr               : std_logic_vector (23 downto 0);
-    signal data_data_src_addr       : std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
     signal data_tcid                : std_logic_vector (6 downto 0);
     signal data_seq                 : std_logic_vector (23 downto 0);
     signal packet_data_size         : std_logic_vector (10 downto 0);
@@ -309,14 +233,12 @@ begin
     -- -------------------------------------------------------------------------
     control : entity work.uft_tx_control
         generic map (
-            C_M_AXI_ADDR_WIDTH => C_M_AXI_ADDR_WIDTH,
             C_PACKET_DELAY_US  => 1
         )
         port map (
             clk                    => clk,
             rst_n                  => rst_n,
             data_size              => data_size,
-            data_src_addr          => data_src_addr,
             tx_ready               => tx_ready,
             tx_start               => tx_start,
             dst_ip_addr            => dst_ip_addr,
@@ -344,7 +266,6 @@ begin
             cmd_done               => cmd_done,
             cmd_nseq               => cmd_nseq,
             cmd_seqnbr             => cmd_seqnbr,
-            data_data_src_addr     => data_data_src_addr,
             data_tcid              => data_tcid,
             data_seq               => data_seq,
             packet_data_size       => packet_data_size,
@@ -375,58 +296,23 @@ begin
     -- Data packet instance
     -- -------------------------------------------------------------------------
     data_asm : uft_tx_data_assembler
-        generic map (
-            C_M_AXI_ADDR_WIDTH  => C_M_AXI_ADDR_WIDTH,
-            C_M_AXI_DATA_WIDTH  => C_M_AXI_DATA_WIDTH,
-            C_MAX_BURST_LEN     => C_MAX_BURST_LEN,
-            C_ADDR_PIPE_DEPTH   => C_ADDR_PIPE_DEPTH,
-            C_NATIVE_DATA_WIDTH => C_NATIVE_DATA_WIDTH,
-            C_LENGTH_WIDTH      => C_LENGTH_WIDTH,
-            C_FAMILY            => C_FAMILY
-        )
         port map (
             clk                    => clk,
             rst_n                  => rst_n,
-            data_src_addr          => data_data_src_addr,
             tcid                   => data_tcid,
             seq                    => data_seq,
             size                   => packet_data_size,
             start                  => data_start,
             done                   => data_done,
-            ip2bus_mstrd_req       => ip2bus_mstrd_req,
-            ip2bus_mstwr_req       => ip2bus_mstwr_req,
-            ip2bus_mst_addr        => ip2bus_mst_addr,
-            ip2bus_mst_length      => ip2bus_mst_length,
-            ip2bus_mst_be          => ip2bus_mst_be,
-            ip2bus_mst_type        => ip2bus_mst_type,
-            ip2bus_mst_lock        => ip2bus_mst_lock,
-            ip2bus_mst_reset       => ip2bus_mst_reset,
-            bus2ip_mst_cmdack      => bus2ip_mst_cmdack,
-            bus2ip_mst_cmplt       => bus2ip_mst_cmplt,
-            bus2ip_mst_error       => bus2ip_mst_error,
-            bus2ip_mst_rearbitrate => bus2ip_mst_rearbitrate,
-            bus2ip_mst_cmd_timeout => bus2ip_mst_cmd_timeout,
-            bus2ip_mstrd_d         => bus2ip_mstrd_d,
-            bus2ip_mstrd_rem       => bus2ip_mstrd_rem,
-            bus2ip_mstrd_sof_n     => bus2ip_mstrd_sof_n,
-            bus2ip_mstrd_eof_n     => bus2ip_mstrd_eof_n,
-            bus2ip_mstrd_src_rdy_n => bus2ip_mstrd_src_rdy_n,
-            bus2ip_mstrd_src_dsc_n => bus2ip_mstrd_src_dsc_n,
-            ip2bus_mstrd_dst_rdy_n => ip2bus_mstrd_dst_rdy_n,
-            ip2bus_mstrd_dst_dsc_n => ip2bus_mstrd_dst_dsc_n,
-            ip2bus_mstwr_d         => ip2bus_mstwr_d,
-            ip2bus_mstwr_rem       => ip2bus_mstwr_rem,
-            ip2bus_mstwr_sof_n     => ip2bus_mstwr_sof_n,
-            ip2bus_mstwr_eof_n     => ip2bus_mstwr_eof_n,
-            ip2bus_mstwr_src_rdy_n => ip2bus_mstwr_src_rdy_n,
-            ip2bus_mstwr_src_dsc_n => ip2bus_mstwr_src_dsc_n,
-            bus2ip_mstwr_dst_rdy_n => bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => bus2ip_mstwr_dst_dsc_n,
-            tx_tvalid              => data_tvalid,
-            tx_tlast               => data_tlast,
-            tx_tdata               => data_tdata,
-            tx_tready              => data_tready
-        );    
+            s_axis_tvalid => s_axis_tvalid,
+            s_axis_tlast  => s_axis_tlast,
+            s_axis_tdata  => s_axis_tdata,
+            s_axis_tready => s_axis_tready,
+            tx_tvalid     => data_tvalid,
+            tx_tlast      => data_tlast,
+            tx_tdata      => data_tdata,
+            tx_tready     => data_tready
+        );       
 
     ----------------------------------------------------------------------------
     -- Arbiter instance

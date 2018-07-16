@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Tue Jun 19 17:38:19 2018
+-- Last update : Mon Jul 16 16:24:56 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,7 +27,6 @@ use ieee.math_real.all;
 
 entity uft_tx_control is
     generic (
-        C_M_AXI_ADDR_WIDTH  : integer range 32 to  64  := 32;
         C_PACKET_DELAY_US   : integer range  1 to 150  := 100
     );
     port (
@@ -40,8 +39,6 @@ entity uft_tx_control is
         -- ---------------------------------------------------------------------
         -- number of bytes to send ( Max 4GB = 4'294'967'296 Bytes)
         data_size       : in  std_logic_vector(31 downto 0);
-        -- Data source address
-        data_src_addr   : in std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
         -- Indicates if the system is ready for a new file transfer
         tx_ready        : out std_logic;
         -- assert high to start a transmission
@@ -88,8 +85,6 @@ entity uft_tx_control is
 
         -- Connection to data assembler
         -- ---------------------------------------------------------------------
-        -- Data source address
-        data_data_src_addr      : out std_logic_vector (C_M_AXI_ADDR_WIDTH-1 downto 0);
         -- Transaction ID 
         data_tcid               : out std_logic_vector (6 downto 0);
         -- packet sequence number
@@ -475,10 +470,6 @@ begin
         std_logic_vector(shift_right(unsigned(data_size), 10));
 
     cmd_seqnbr  <= ack_seqnbr;
-    
-    -- data pointer offset by data_src_addr and number of sequence number 
-    -- times the maximum number of bytes per data packet
-    data_data_src_addr <= std_logic_vector(data_offset + unsigned(data_src_addr));
     
     -- output current sequence number
     data_seq <= std_logic_vector(nseq_ctr);

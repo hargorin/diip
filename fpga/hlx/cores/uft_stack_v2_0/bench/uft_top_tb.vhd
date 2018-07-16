@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Mon Jul 16 14:59:58 2018
+-- Last update : Mon Jul 16 16:29:07 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -46,15 +46,6 @@ entity uft_top_tb is
         INCOMMING_PORT : natural := 42042;
         -- Parameters for ip interface to Axi master burst
         FIFO_DEPTH : positive := 366; -- (1464/4)
-        
-        -- AXI Master burst Configuration
-        C_M_AXI_ADDR_WIDTH  : integer range 32 to 64  := 32;
-        C_M_AXI_DATA_WIDTH  : integer range 32 to 256 := 32;
-        C_MAX_BURST_LEN     : Integer range 16 to 256 := 16;
-        C_ADDR_PIPE_DEPTH   : Integer range 1 to 14   := 1;
-        C_NATIVE_DATA_WIDTH : INTEGER range 32 to 128 := 32;
-        C_LENGTH_WIDTH      : INTEGER range 12 to 20  := 12;
-        C_FAMILY            : string                  := "artix7";
 
         C_S_AXI_DATA_WIDTH  : integer   := 32;
         -- Width of S_AXI address bus
@@ -145,36 +136,10 @@ architecture testbench of uft_top_tb is
 
     -- TX Memory IP Interface
     -- ---------------------------------------------------------------------
-    signal tx_ip2bus_mstrd_req       : std_logic;
-    signal tx_ip2bus_mstwr_req       : std_logic;
-    signal tx_ip2bus_mst_addr        : std_logic_vector(C_M_AXI_ADDR_WIDTH-1 downto 0);
-    signal tx_ip2bus_mst_length      : std_logic_vector(C_LENGTH_WIDTH-1 downto 0);
-    signal tx_ip2bus_mst_be          : std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-    signal tx_ip2bus_mst_type        : std_logic;
-    signal tx_ip2bus_mst_lock        : std_logic;
-    signal tx_ip2bus_mst_reset       : std_logic;
-    signal tx_bus2ip_mst_cmdack      :  std_logic;
-    signal tx_bus2ip_mst_cmplt       :  std_logic;
-    signal tx_bus2ip_mst_error       :  std_logic;
-    signal tx_bus2ip_mst_rearbitrate :  std_logic;
-    signal tx_bus2ip_mst_cmd_timeout :  std_logic;
-    signal tx_bus2ip_mstrd_d         :  std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0 );
-    signal tx_bus2ip_mstrd_rem       :  std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-    signal tx_bus2ip_mstrd_sof_n     :  std_logic;
-    signal tx_bus2ip_mstrd_eof_n     :  std_logic;
-    signal tx_bus2ip_mstrd_src_rdy_n :  std_logic;
-    signal tx_bus2ip_mstrd_src_dsc_n :  std_logic;
-    signal tx_ip2bus_mstrd_dst_rdy_n : std_logic;
-    signal tx_ip2bus_mstrd_dst_dsc_n : std_logic;
-    signal tx_ip2bus_mstwr_d         : std_logic_vector(C_NATIVE_DATA_WIDTH-1 downto 0);
-    signal tx_ip2bus_mstwr_rem       : std_logic_vector((C_NATIVE_DATA_WIDTH/8)-1 downto 0);
-    signal tx_ip2bus_mstwr_sof_n     : std_logic;
-    signal tx_ip2bus_mstwr_eof_n     : std_logic;
-    signal tx_ip2bus_mstwr_src_rdy_n : std_logic;
-    signal tx_ip2bus_mstwr_src_dsc_n : std_logic;
-    signal tx_bus2ip_mstwr_dst_rdy_n :  std_logic;
-    signal tx_bus2ip_mstwr_dst_dsc_n :  std_logic;
-
+    signal S_AXIS_TVALID   :    std_logic;
+    signal S_AXIS_TDATA    :    std_logic_vector(7 downto 0);
+    signal S_AXIS_TLAST    :    std_logic;
+    signal S_AXIS_TREADY   :    std_logic := '0';
 
     -- UFT Tx
     -- -------------------------------------------------------------------------
@@ -688,6 +653,12 @@ begin
         waitfor(30);
 
         ------------
+        -- Init
+        ------------
+        s_axis_tvalid <= '1';
+        s_axis_tdata <= "10000001";
+
+        ------------
         -- IMPORTANT: t10 has to be run first because an ARP request/response
         -- is made in this test. If any other is executed first, no ack packets
         -- can be sent.
@@ -697,15 +668,15 @@ begin
         -- UFT packet send: TEST 10 and 11
         ------------
         t10; -- UFT Data Packet transmission with ARP reply
-        --t11; -- Multi Sequence UFT Data Packet transmission
-        --t12; -- Single packet 108 byte size send
+        t11; -- Multi Sequence UFT Data Packet transmission
+        t12; -- Single packet 108 byte size send
 
         ------------
         -- UFT packet receive:
         ------------
-        t1; -- UFT Command Packet reception
-        t2; -- UFT Data Packet reception
-        t3; -- NSEQ=2 UFT Data Packet reception
+        --t1; -- UFT Command Packet reception
+        --t2; -- UFT Data Packet reception
+        --t3; -- NSEQ=2 UFT Data Packet reception
         --t4; -- NSEQ=1 32byte UFT Data Packet reception
         --t5; -- NSEQ=1 31byte UFT Data Packet reception
         --t6; -- NSEQ=1 30byte UFT Data Packet reception
@@ -793,120 +764,82 @@ begin
     -- Entity Under Test
     -----------------------------------------------------------
 
-    
-
     DUV : entity work.uft_top
         generic map (
-            INCOMMING_PORT          => INCOMMING_PORT,
-            FIFO_DEPTH              => FIFO_DEPTH,
-            C_M_AXI_ADDR_WIDTH      => C_M_AXI_ADDR_WIDTH,
-            C_M_AXI_DATA_WIDTH      => C_M_AXI_DATA_WIDTH,
-            C_MAX_BURST_LEN         => C_MAX_BURST_LEN,
-            C_ADDR_PIPE_DEPTH       => C_ADDR_PIPE_DEPTH,
-            C_NATIVE_DATA_WIDTH     => C_NATIVE_DATA_WIDTH,
-            C_LENGTH_WIDTH          => C_LENGTH_WIDTH,
-            C_FAMILY                => C_FAMILY,
-            C_S_AXI_DATA_WIDTH      => C_S_AXI_DATA_WIDTH,
-            C_S_AXI_ADDR_WIDTH      => C_S_AXI_ADDR_WIDTH
+            INCOMMING_PORT     => INCOMMING_PORT,
+            FIFO_DEPTH         => FIFO_DEPTH,
+            C_S_AXI_DATA_WIDTH => C_S_AXI_DATA_WIDTH,
+            C_S_AXI_ADDR_WIDTH => C_S_AXI_ADDR_WIDTH
         )
         port map (
-            clk                       => clk,
-            rst_n                     => rst_n,
-            our_ip_address            => our_ip_address,
-            our_mac_address           => our_mac_address,
-
-            tx_ready                  => tx_ready,
-            M_AXIS_TVALID             => M_AXIS_TVALID,
-            M_AXIS_TDATA              => M_AXIS_TDATA,
-            M_AXIS_TLAST              => M_AXIS_TLAST,
-            M_AXIS_TREADY             => M_AXIS_TREADY,
-            rx_done                   => rx_done,
-            rx_row_num                => rx_row_num,
-            rx_row_num_valid          => rx_row_num_valid,
-            rx_row_size               => rx_row_size,
-            rx_row_size_valid         => rx_row_size_valid,
-            user_reg0                 => user_reg0,
-            user_reg1                 => user_reg1,
-            user_reg2                 => user_reg2,
-            user_reg3                 => user_reg3,
-            user_reg4                 => user_reg4,
-            user_reg5                 => user_reg5,
-            user_reg6                 => user_reg6,
-            user_reg7                 => user_reg7,
-
-            udp_rx_start              => udp_rx_start,
-            udp_rx_hdr_is_valid       => udp_rx_hdr_is_valid,
-            udp_rx_hdr_src_ip_addr    => udp_rx_hdr_src_ip_addr,
-            udp_rx_hdr_src_port       => udp_rx_hdr_src_port,
-            udp_rx_hdr_dst_port       => udp_rx_hdr_dst_port,
-            udp_rx_hdr_data_length    => udp_rx_hdr_data_length,
-            udp_rx_tdata              => udp_rx_tdata,
-            udp_rx_tvalid             => udp_rx_tvalid,
-            udp_rx_tlast              => udp_rx_tlast,
-            udp_tx_start              => udp_tx_start,
-            udp_tx_result             => udp_tx_result,
-            udp_tx_hdr_dst_ip_addr    => udp_tx_hdr_dst_ip_addr,
-            udp_tx_hdr_dst_port       => udp_tx_hdr_dst_port,
-            udp_tx_hdr_src_port       => udp_tx_hdr_src_port,
-            udp_tx_hdr_data_length    => udp_tx_hdr_data_length,
-            udp_tx_hdr_checksum       => udp_tx_hdr_checksum,
-            udp_tx_tvalid             => udp_tx_tvalid,
-            udp_tx_tlast              => udp_tx_tlast,
-            udp_tx_tdata              => udp_tx_tdata,
-            udp_tx_tready             => udp_tx_tready,
-            
-            tx_ip2bus_mstrd_req       => tx_ip2bus_mstrd_req,
-            tx_ip2bus_mstwr_req       => tx_ip2bus_mstwr_req,
-            tx_ip2bus_mst_addr        => tx_ip2bus_mst_addr,
-            tx_ip2bus_mst_length      => tx_ip2bus_mst_length,
-            tx_ip2bus_mst_be          => tx_ip2bus_mst_be,
-            tx_ip2bus_mst_type        => tx_ip2bus_mst_type,
-            tx_ip2bus_mst_lock        => tx_ip2bus_mst_lock,
-            tx_ip2bus_mst_reset       => tx_ip2bus_mst_reset,
-            tx_bus2ip_mst_cmdack      => tx_bus2ip_mst_cmdack,
-            tx_bus2ip_mst_cmplt       => tx_bus2ip_mst_cmplt,
-            tx_bus2ip_mst_error       => tx_bus2ip_mst_error,
-            tx_bus2ip_mst_rearbitrate => tx_bus2ip_mst_rearbitrate,
-            tx_bus2ip_mst_cmd_timeout => tx_bus2ip_mst_cmd_timeout,
-            tx_bus2ip_mstrd_d         => tx_bus2ip_mstrd_d,
-            tx_bus2ip_mstrd_rem       => tx_bus2ip_mstrd_rem,
-            tx_bus2ip_mstrd_sof_n     => tx_bus2ip_mstrd_sof_n,
-            tx_bus2ip_mstrd_eof_n     => tx_bus2ip_mstrd_eof_n,
-            tx_bus2ip_mstrd_src_rdy_n => tx_bus2ip_mstrd_src_rdy_n,
-            tx_bus2ip_mstrd_src_dsc_n => tx_bus2ip_mstrd_src_dsc_n,
-            tx_ip2bus_mstrd_dst_rdy_n => tx_ip2bus_mstrd_dst_rdy_n,
-            tx_ip2bus_mstrd_dst_dsc_n => tx_ip2bus_mstrd_dst_dsc_n,
-            tx_ip2bus_mstwr_d         => tx_ip2bus_mstwr_d,
-            tx_ip2bus_mstwr_rem       => tx_ip2bus_mstwr_rem,
-            tx_ip2bus_mstwr_sof_n     => tx_ip2bus_mstwr_sof_n,
-            tx_ip2bus_mstwr_eof_n     => tx_ip2bus_mstwr_eof_n,
-            tx_ip2bus_mstwr_src_rdy_n => tx_ip2bus_mstwr_src_rdy_n,
-            tx_ip2bus_mstwr_src_dsc_n => tx_ip2bus_mstwr_src_dsc_n,
-            tx_bus2ip_mstwr_dst_rdy_n => tx_bus2ip_mstwr_dst_rdy_n,
-            tx_bus2ip_mstwr_dst_dsc_n => tx_bus2ip_mstwr_dst_dsc_n,
-
-            s_axi_ctrl_aclk           => clk,
-            s_axi_ctrl_aresetn        => rst_n,
-            s_axi_ctrl_awaddr         => s_axi_awaddr,
-            s_axi_ctrl_awprot         => s_axi_awprot,
-            s_axi_ctrl_awvalid        => s_axi_awvalid,
-            s_axi_ctrl_awready        => s_axi_awready,
-            s_axi_ctrl_wdata          => s_axi_wdata,
-            s_axi_ctrl_wstrb          => s_axi_wstrb,
-            s_axi_ctrl_wvalid         => s_axi_wvalid,
-            s_axi_ctrl_wready         => s_axi_wready,
-            s_axi_ctrl_bresp          => s_axi_bresp,
-            s_axi_ctrl_bvalid         => s_axi_bvalid,
-            s_axi_ctrl_bready         => s_axi_bready,
-            s_axi_ctrl_araddr         => s_axi_araddr,
-            s_axi_ctrl_arprot         => s_axi_arprot,
-            s_axi_ctrl_arvalid        => s_axi_arvalid,
-            s_axi_ctrl_arready        => s_axi_arready,
-            s_axi_ctrl_rdata          => s_axi_rdata,
-            s_axi_ctrl_rresp          => s_axi_rresp,
-            s_axi_ctrl_rvalid         => s_axi_rvalid,
-            s_axi_ctrl_rready         => s_axi_rready
-        );    
+            clk                    => clk,
+            rst_n                  => rst_n,
+            our_ip_address         => our_ip_address,
+            our_mac_address        => our_mac_address,
+            tx_ready               => tx_ready,
+            M_AXIS_TVALID          => M_AXIS_TVALID,
+            M_AXIS_TDATA           => M_AXIS_TDATA,
+            M_AXIS_TLAST           => M_AXIS_TLAST,
+            M_AXIS_TREADY          => M_AXIS_TREADY,
+            rx_done                => rx_done,
+            rx_row_num             => rx_row_num,
+            rx_row_num_valid       => rx_row_num_valid,
+            rx_row_size            => rx_row_size,
+            rx_row_size_valid      => rx_row_size_valid,
+            user_reg0              => user_reg0,
+            user_reg1              => user_reg1,
+            user_reg2              => user_reg2,
+            user_reg3              => user_reg3,
+            user_reg4              => user_reg4,
+            user_reg5              => user_reg5,
+            user_reg6              => user_reg6,
+            user_reg7              => user_reg7,
+            udp_rx_start           => udp_rx_start,
+            udp_rx_hdr_is_valid    => udp_rx_hdr_is_valid,
+            udp_rx_hdr_src_ip_addr => udp_rx_hdr_src_ip_addr,
+            udp_rx_hdr_src_port    => udp_rx_hdr_src_port,
+            udp_rx_hdr_dst_port    => udp_rx_hdr_dst_port,
+            udp_rx_hdr_data_length => udp_rx_hdr_data_length,
+            udp_rx_tdata           => udp_rx_tdata,
+            udp_rx_tvalid          => udp_rx_tvalid,
+            udp_rx_tlast           => udp_rx_tlast,
+            udp_tx_start           => udp_tx_start,
+            udp_tx_result          => udp_tx_result,
+            udp_tx_hdr_dst_ip_addr => udp_tx_hdr_dst_ip_addr,
+            udp_tx_hdr_dst_port    => udp_tx_hdr_dst_port,
+            udp_tx_hdr_src_port    => udp_tx_hdr_src_port,
+            udp_tx_hdr_data_length => udp_tx_hdr_data_length,
+            udp_tx_hdr_checksum    => udp_tx_hdr_checksum,
+            udp_tx_tvalid          => udp_tx_tvalid,
+            udp_tx_tlast           => udp_tx_tlast,
+            udp_tx_tdata           => udp_tx_tdata,
+            udp_tx_tready          => udp_tx_tready,
+            s_axis_tvalid          => s_axis_tvalid,
+            s_axis_tlast           => s_axis_tlast,
+            s_axis_tdata           => s_axis_tdata,
+            s_axis_tready          => s_axis_tready,
+            s_axi_ctrl_aclk        => clk,
+            s_axi_ctrl_aresetn     => rst_n,
+            s_axi_ctrl_awaddr      => s_axi_awaddr,
+            s_axi_ctrl_awprot      => s_axi_awprot,
+            s_axi_ctrl_awvalid     => s_axi_awvalid,
+            s_axi_ctrl_awready     => s_axi_awready,
+            s_axi_ctrl_wdata       => s_axi_wdata,
+            s_axi_ctrl_wstrb       => s_axi_wstrb,
+            s_axi_ctrl_wvalid      => s_axi_wvalid,
+            s_axi_ctrl_wready      => s_axi_wready,
+            s_axi_ctrl_bresp       => s_axi_bresp,
+            s_axi_ctrl_bvalid      => s_axi_bvalid,
+            s_axi_ctrl_bready      => s_axi_bready,
+            s_axi_ctrl_araddr      => s_axi_araddr,
+            s_axi_ctrl_arprot      => s_axi_arprot,
+            s_axi_ctrl_arvalid     => s_axi_arvalid,
+            s_axi_ctrl_arready     => s_axi_arready,
+            s_axi_ctrl_rdata       => s_axi_rdata,
+            s_axi_ctrl_rresp       => s_axi_rresp,
+            s_axi_ctrl_rvalid      => s_axi_rvalid,
+            s_axi_ctrl_rready      => s_axi_rready
+        ); 
 
     UDP_Complete_nomac_1 : entity work.UDP_Complete_nomac
         generic map (
@@ -961,53 +894,4 @@ begin
             mac_rx_tready              => mac_rx_tready,
             mac_rx_tlast               => mac_rx_tlast
         );    
-
-    axi_master_burst_model_tx : entity work.axi_master_burst_model
-        generic map (
-            C_M_AXI_ADDR_WIDTH     => C_M_AXI_ADDR_WIDTH,
-            C_M_AXI_DATA_WIDTH     => C_M_AXI_DATA_WIDTH,
-            C_MAX_BURST_LEN        => C_MAX_BURST_LEN,
-            C_ADDR_PIPE_DEPTH      => C_ADDR_PIPE_DEPTH,
-            C_NATIVE_DATA_WIDTH    => C_NATIVE_DATA_WIDTH,
-            C_LENGTH_WIDTH         => C_LENGTH_WIDTH,
-            C_FAMILY               => C_FAMILY,
-            C_WRITE_INTERRUPTION   => C_WRITE_INTERRUPTION,
-            C_WRITE_INTERRUPTION_N => C_WRITE_INTERRUPTION_N,
-            C_AXI_WAIT_TIME        => C_AXI_WAIT_TIME,
-            C_WR_WAIT_TIME         => C_WR_WAIT_TIME
-        )
-        port map (
-            m_axi_aclk             => clk,
-            m_axi_aresetn          => rst_n,
-            ip2bus_mstrd_req       => tx_ip2bus_mstrd_req,
-            ip2bus_mstwr_req       => tx_ip2bus_mstwr_req,
-            ip2bus_mst_addr        => tx_ip2bus_mst_addr,
-            ip2bus_mst_length      => tx_ip2bus_mst_length,
-            ip2bus_mst_be          => tx_ip2bus_mst_be,
-            ip2bus_mst_type        => tx_ip2bus_mst_type,
-            ip2bus_mst_lock        => tx_ip2bus_mst_lock,
-            ip2bus_mst_reset       => tx_ip2bus_mst_reset,
-            bus2ip_mst_cmdack      => tx_bus2ip_mst_cmdack,
-            bus2ip_mst_cmplt       => tx_bus2ip_mst_cmplt,
-            bus2ip_mst_error       => tx_bus2ip_mst_error,
-            bus2ip_mst_rearbitrate => tx_bus2ip_mst_rearbitrate,
-            bus2ip_mst_cmd_timeout => tx_bus2ip_mst_cmd_timeout,
-            bus2ip_mstrd_d         => tx_bus2ip_mstrd_d,
-            bus2ip_mstrd_rem       => tx_bus2ip_mstrd_rem,
-            bus2ip_mstrd_sof_n     => tx_bus2ip_mstrd_sof_n,
-            bus2ip_mstrd_eof_n     => tx_bus2ip_mstrd_eof_n,
-            bus2ip_mstrd_src_rdy_n => tx_bus2ip_mstrd_src_rdy_n,
-            bus2ip_mstrd_src_dsc_n => tx_bus2ip_mstrd_src_dsc_n,
-            ip2bus_mstrd_dst_rdy_n => tx_ip2bus_mstrd_dst_rdy_n,
-            ip2bus_mstrd_dst_dsc_n => tx_ip2bus_mstrd_dst_dsc_n,
-            ip2bus_mstwr_d         => tx_ip2bus_mstwr_d,
-            ip2bus_mstwr_rem       => tx_ip2bus_mstwr_rem,
-            ip2bus_mstwr_sof_n     => tx_ip2bus_mstwr_sof_n,
-            ip2bus_mstwr_eof_n     => tx_ip2bus_mstwr_eof_n,
-            ip2bus_mstwr_src_rdy_n => tx_ip2bus_mstwr_src_rdy_n,
-            ip2bus_mstwr_src_dsc_n => tx_ip2bus_mstwr_src_dsc_n,
-            bus2ip_mstwr_dst_rdy_n => tx_bus2ip_mstwr_dst_rdy_n,
-            bus2ip_mstwr_dst_dsc_n => tx_bus2ip_mstwr_dst_dsc_n
-        );    
-
 end architecture testbench;

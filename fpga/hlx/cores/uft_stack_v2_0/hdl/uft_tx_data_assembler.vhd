@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 15:13:40 2017
--- Last update : Mon Jul 16 16:07:02 2018
+-- Last update : Mon Jul 16 16:32:00 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -153,7 +153,8 @@ begin
     end process p_next_state;
 
     -- -------------------------------------------------------------------------
-    p_in_next_state : process ( ctr, running,  din_cur_state, n_bytes, s_axis_tlast)
+    p_in_next_state : process ( ctr, running,  din_cur_state, n_bytes, 
+        s_axis_tlast, start)
     ----------------------------------------------------------------------------
     begin
         din_nex_state <= din_cur_state;
