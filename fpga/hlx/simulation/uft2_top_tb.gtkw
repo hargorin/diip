@@ -1,19 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Mon Jul 16 12:36:42 2018
+[*] Mon Jul 16 13:40:50 2018
 [*]
-[dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/uft_top_tb.ghw"
-[dumpfile_mtime] "Mon Jul 16 12:34:37 2018"
-[dumpfile_size] 436342
+[dumpfile] "(null)"
 [savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/uft2_top_tb.gtkw"
-[timestart] 13090100000
+[timestart] 0
 [size] 1727 944
 [pos] -1 -1
-*-25.222469 13133800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-33.363178 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.uft_top_tb.
-[treeopen] top.uft_top_tb.duv.
-[treeopen] top.uft_top_tb.duv.rx.
 [treeopen] top.uft_top_tb.duv.rx.rx_mem_ctl.
 [treeopen] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.
 [treeopen] top.uft_top_tb.udp_complete_nomac_1.udp_rxo.data.
@@ -28,12 +24,25 @@ top.uft_top_tb.cur_test
 @200
 -
 -User Rx
+@29
+top.uft_top_tb.rx_done
 @28
 top.uft_top_tb.duv.m_axis_tready
 top.uft_top_tb.duv.m_axis_tvalid
 top.uft_top_tb.duv.m_axis_tlast
 @22
 #{top.uft_top_tb.m_axis_tdata[7:0]} top.uft_top_tb.m_axis_tdata[7] top.uft_top_tb.m_axis_tdata[6] top.uft_top_tb.m_axis_tdata[5] top.uft_top_tb.m_axis_tdata[4] top.uft_top_tb.m_axis_tdata[3] top.uft_top_tb.m_axis_tdata[2] top.uft_top_tb.m_axis_tdata[1] top.uft_top_tb.m_axis_tdata[0]
+#{top.uft_top_tb.user_reg0[31:0]} top.uft_top_tb.user_reg0[31] top.uft_top_tb.user_reg0[30] top.uft_top_tb.user_reg0[29] top.uft_top_tb.user_reg0[28] top.uft_top_tb.user_reg0[27] top.uft_top_tb.user_reg0[26] top.uft_top_tb.user_reg0[25] top.uft_top_tb.user_reg0[24] top.uft_top_tb.user_reg0[23] top.uft_top_tb.user_reg0[22] top.uft_top_tb.user_reg0[21] top.uft_top_tb.user_reg0[20] top.uft_top_tb.user_reg0[19] top.uft_top_tb.user_reg0[18] top.uft_top_tb.user_reg0[17] top.uft_top_tb.user_reg0[16] top.uft_top_tb.user_reg0[15] top.uft_top_tb.user_reg0[14] top.uft_top_tb.user_reg0[13] top.uft_top_tb.user_reg0[12] top.uft_top_tb.user_reg0[11] top.uft_top_tb.user_reg0[10] top.uft_top_tb.user_reg0[9] top.uft_top_tb.user_reg0[8] top.uft_top_tb.user_reg0[7] top.uft_top_tb.user_reg0[6] top.uft_top_tb.user_reg0[5] top.uft_top_tb.user_reg0[4] top.uft_top_tb.user_reg0[3] top.uft_top_tb.user_reg0[2] top.uft_top_tb.user_reg0[1] top.uft_top_tb.user_reg0[0]
+@200
+-
+@28
+top.uft_top_tb.rx_row_size_valid
+@22
+#{top.uft_top_tb.rx_row_size[31:0]} top.uft_top_tb.rx_row_size[31] top.uft_top_tb.rx_row_size[30] top.uft_top_tb.rx_row_size[29] top.uft_top_tb.rx_row_size[28] top.uft_top_tb.rx_row_size[27] top.uft_top_tb.rx_row_size[26] top.uft_top_tb.rx_row_size[25] top.uft_top_tb.rx_row_size[24] top.uft_top_tb.rx_row_size[23] top.uft_top_tb.rx_row_size[22] top.uft_top_tb.rx_row_size[21] top.uft_top_tb.rx_row_size[20] top.uft_top_tb.rx_row_size[19] top.uft_top_tb.rx_row_size[18] top.uft_top_tb.rx_row_size[17] top.uft_top_tb.rx_row_size[16] top.uft_top_tb.rx_row_size[15] top.uft_top_tb.rx_row_size[14] top.uft_top_tb.rx_row_size[13] top.uft_top_tb.rx_row_size[12] top.uft_top_tb.rx_row_size[11] top.uft_top_tb.rx_row_size[10] top.uft_top_tb.rx_row_size[9] top.uft_top_tb.rx_row_size[8] top.uft_top_tb.rx_row_size[7] top.uft_top_tb.rx_row_size[6] top.uft_top_tb.rx_row_size[5] top.uft_top_tb.rx_row_size[4] top.uft_top_tb.rx_row_size[3] top.uft_top_tb.rx_row_size[2] top.uft_top_tb.rx_row_size[1] top.uft_top_tb.rx_row_size[0]
+@28
+top.uft_top_tb.rx_row_num_valid
+@22
+#{top.uft_top_tb.rx_row_num[31:0]} top.uft_top_tb.rx_row_num[31] top.uft_top_tb.rx_row_num[30] top.uft_top_tb.rx_row_num[29] top.uft_top_tb.rx_row_num[28] top.uft_top_tb.rx_row_num[27] top.uft_top_tb.rx_row_num[26] top.uft_top_tb.rx_row_num[25] top.uft_top_tb.rx_row_num[24] top.uft_top_tb.rx_row_num[23] top.uft_top_tb.rx_row_num[22] top.uft_top_tb.rx_row_num[21] top.uft_top_tb.rx_row_num[20] top.uft_top_tb.rx_row_num[19] top.uft_top_tb.rx_row_num[18] top.uft_top_tb.rx_row_num[17] top.uft_top_tb.rx_row_num[16] top.uft_top_tb.rx_row_num[15] top.uft_top_tb.rx_row_num[14] top.uft_top_tb.rx_row_num[13] top.uft_top_tb.rx_row_num[12] top.uft_top_tb.rx_row_num[11] top.uft_top_tb.rx_row_num[10] top.uft_top_tb.rx_row_num[9] top.uft_top_tb.rx_row_num[8] top.uft_top_tb.rx_row_num[7] top.uft_top_tb.rx_row_num[6] top.uft_top_tb.rx_row_num[5] top.uft_top_tb.rx_row_num[4] top.uft_top_tb.rx_row_num[3] top.uft_top_tb.rx_row_num[2] top.uft_top_tb.rx_row_num[1] top.uft_top_tb.rx_row_num[0]
 @200
 -
 -UDP Rx
@@ -72,7 +81,7 @@ top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[3]
 top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[2]
 top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[1]
 top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq[0]
-@1401204
+@1401200
 -group_end
 @24
 #{top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[23:0]} top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[23] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[22] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[21] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[20] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[19] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[18] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[17] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[16] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[15] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[14] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[13] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[12] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[11] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[10] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[9] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[8] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[7] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[6] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[5] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[4] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[3] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[2] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[1] top.uft_top_tb.duv.rx.rx_mem_ctl.ft_nseq_received[0]
