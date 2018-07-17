@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:04:30 2017
--- Last update : Mon Jul 16 14:14:58 2018
+-- Last update : Tue Jul 17 08:45:48 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -35,11 +35,13 @@ entity axis_fifo is
         M_AXIS_TVALID   : out   std_logic;
         M_AXIS_TDATA    : out   std_logic_vector(DATA_WIDTH-1 downto 0);
         M_AXIS_TREADY   : in    std_logic;
+        M_AXIS_TLAST    : out   std_logic;
 
         -- in
         S_AXIS_TVALID   : in   std_logic;
         S_AXIS_TDATA    : in   std_logic_vector(DATA_WIDTH-1 downto 0);
-        S_AXIS_TREADY   : out  std_logic
+        S_AXIS_TREADY   : out  std_logic;
+        S_AXIS_TLAST    : in   std_logic
     );
 end axis_fifo;
 
@@ -66,7 +68,8 @@ begin
 
     -- Memory Pointer Process
     fifo_proc : process (CLK)
-        type FIFO_Memory is array (0 to FIFO_DEPTH - 1) of std_logic_vector (DATA_WIDTH - 1 downto 0);
+        -- high bit stores tlast
+        type FIFO_Memory is array (0 to FIFO_DEPTH - 1) of std_logic_vector (DATA_WIDTH downto 0);
         variable Memory : FIFO_Memory;
         
         variable Head : natural range 0 to FIFO_DEPTH - 1;
@@ -88,7 +91,8 @@ begin
                 -- read process
                 if (S_AXIS_TREADY_i = '1' and S_AXIS_TVALID = '1') then
                     -- Write Data to Memory
-                    Memory(Head) := S_AXIS_TDATA;
+                    Memory(Head)(7 downto 0) := S_AXIS_TDATA;
+                    Memory(Head)(8) := S_AXIS_TLAST;
                     
                     -- Increment Head pointer as needed
                     if (Head = FIFO_DEPTH - 1) then
@@ -103,7 +107,8 @@ begin
                 if (M_AXIS_TREADY = '1') then
                     if ((Looped = true) or (Head /= Tail)) then
                         -- Update data output
-                        M_AXIS_TDATA <= Memory(Tail);
+                        M_AXIS_TDATA <= Memory(Tail)(7 downto 0);
+                        M_AXIS_TLAST <= Memory(Tail)(8);
                         M_AXIS_TVALID <= '1';
                         
                         -- Update Tail pointer as needed

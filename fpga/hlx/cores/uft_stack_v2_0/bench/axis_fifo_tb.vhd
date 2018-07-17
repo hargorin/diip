@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Mon Jul 16 14:17:38 2018
+-- Last update : Tue Jul 17 08:51:20 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -45,9 +45,11 @@ architecture testbench of axis_fifo_tb is
     signal M_AXIS_TVALID : std_logic;
     signal M_AXIS_TDATA  : std_logic_vector(DATA_WIDTH-1 downto 0);
     signal M_AXIS_TREADY : std_logic;
+    signal M_AXIS_TLAST  : std_logic;
     signal S_AXIS_TVALID : std_logic;
     signal S_AXIS_TDATA  : std_logic_vector(DATA_WIDTH-1 downto 0);
     signal S_AXIS_TREADY : std_logic;
+    signal S_AXIS_TLAST  : std_logic;
 
 	-- Other constants
     constant clk_period : time := 8 ns;
@@ -89,8 +91,9 @@ begin
             wait until rising_edge(clk);
         end procedure waitfor;
     begin
-		M_AXIS_TREADY <= '0';
-		S_AXIS_TVALID <= '0';
+        M_AXIS_TREADY <= '0';
+        S_AXIS_TVALID <= '0';
+        S_AXIS_TLAST <= '0';
 		S_AXIS_TDATA <= (others => '0');
 
         waitfor(10);
@@ -103,8 +106,10 @@ begin
         waitfor(1);
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(3,8));
         waitfor(1);
+        S_AXIS_TLAST <= '1';
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(4,8));
         waitfor(1);
+        S_AXIS_TLAST <= '0';
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(5,8));
         waitfor(1);
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(6,8));
@@ -121,8 +126,10 @@ begin
 
         -- write one
         S_AXIS_TVALID <= '1';
+        S_AXIS_TLAST <= '1';
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(1,8));
         waitfor(1);
+        S_AXIS_TLAST <= '0';
         S_AXIS_TVALID <= '0';
         -- read one
         M_AXIS_TREADY <= '1';
@@ -133,8 +140,10 @@ begin
         S_AXIS_TVALID <= '1';
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(15,8));
         waitfor(1);
+        S_AXIS_TLAST <= '1';
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(16,8));
         waitfor(1);
+        S_AXIS_TLAST <= '0';
         S_AXIS_TVALID <= '0';
         -- read two
         M_AXIS_TREADY <= '1';
@@ -145,8 +154,10 @@ begin
         S_AXIS_TVALID <= '1';
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(17,8));
         waitfor(1);
+        S_AXIS_TLAST <= '1';
         S_AXIS_TDATA <= std_logic_vector(to_unsigned(18,8));
         waitfor(1);
+        S_AXIS_TLAST <= '0';
         S_AXIS_TVALID <= '0';
         -- read two
         M_AXIS_TREADY <= '1';
@@ -155,6 +166,26 @@ begin
 
 
         waitfor(5);
+
+
+        -- write three
+        S_AXIS_TVALID <= '1';
+        S_AXIS_TDATA <= std_logic_vector(to_unsigned(5,8));
+        waitfor(1);
+        S_AXIS_TDATA <= std_logic_vector(to_unsigned(6,8));
+        waitfor(1);
+        S_AXIS_TLAST <= '1';
+        S_AXIS_TDATA <= std_logic_vector(to_unsigned(7,8));
+        waitfor(1);
+        S_AXIS_TLAST <= '0';
+        S_AXIS_TVALID <= '0';
+        -- read three
+        waitfor(3);
+        M_AXIS_TREADY <= '1';
+        waitfor(5);
+        M_AXIS_TREADY <= '0';
+
+
     	stop_sim <= '1';
     end process;
 
@@ -165,17 +196,18 @@ begin
     DUT : entity work.axis_fifo
         generic map (
             DATA_WIDTH => DATA_WIDTH,
-                FIFO_DEPTH => FIFO_DEPTH
-                    )
-                    port map (
-                        CLK           => CLK,
-                        RST_N         => RST_N,
-                        M_AXIS_TVALID => M_AXIS_TVALID,
-                        M_AXIS_TDATA  => M_AXIS_TDATA,
-                        M_AXIS_TREADY => M_AXIS_TREADY,
-                        S_AXIS_TVALID => S_AXIS_TVALID,
-                        S_AXIS_TDATA  => S_AXIS_TDATA,
-                        S_AXIS_TREADY => S_AXIS_TREADY
-                    );
-
+            FIFO_DEPTH => FIFO_DEPTH
+            )
+        port map (
+            CLK           => CLK,
+            RST_N         => RST_N,
+            M_AXIS_TVALID => M_AXIS_TVALID,
+            M_AXIS_TDATA  => M_AXIS_TDATA,
+            M_AXIS_TREADY => M_AXIS_TREADY,
+            M_AXIS_TLAST  => M_AXIS_TLAST,
+            S_AXIS_TVALID => S_AXIS_TVALID,
+            S_AXIS_TDATA  => S_AXIS_TDATA,
+            S_AXIS_TREADY => S_AXIS_TREADY,
+            S_AXIS_TLAST  => S_AXIS_TLAST
+        );
 end architecture testbench;
