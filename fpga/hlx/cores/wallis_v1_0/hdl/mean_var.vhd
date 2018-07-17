@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 17 09:21:48 2018
+-- Last update : Tue Jul 17 15:51:07 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ use ieee.numeric_std.all;
 
 entity mean_var is
     generic (
-    	delay		: positive := 4;
+    	WIN_SIZE	: positive := 21;
 		M_IN_WIDTH 	: positive := 8;
 		M_OUT_WIDTH : positive := 17;
 		V_IN_WIDTH 	: positive := 16;
@@ -53,6 +53,7 @@ entity mean_var is
 
         -- controls
         ------------------------------------------------------------------------
+        valid 	: out 	std_logic;
         en 		: in 	std_logic;
         clear	: in 	std_logic
 
@@ -115,11 +116,13 @@ architecture rtl of mean_var is
     signal diffV_Clear	: std_logic;
 
     -- signals
-	signal mean : unsigned(M_OUT_WIDTH + FIX_N'length - 1 downto 0);
-	signal mean2 : unsigned(35 downto 0);
-	signal var_tmp : unsigned(V_OUT_WIDTH + FIX_N'length - 1 downto 0);
-	signal var : unsigned(mean2'length - 1 downto 0);
+	signal mean 	: unsigned(M_OUT_WIDTH + FIX_N'length - 1 downto 0);
+	signal mean2 	: unsigned(35 downto 0);
+	signal var_tmp 	: unsigned(V_OUT_WIDTH + FIX_N'length - 1 downto 0);
+	signal var 		: unsigned(mean2'length - 1 downto 0);
 
+	signal inCtr 	: natural range 0 to 441;
+	signal init 	: boolean := false;
 
 begin
 	-- Pixel Input and Enable
@@ -164,10 +167,97 @@ begin
 		end if;	
 	end process; -- p_out_var
 
+	p_inCtr : process(clk) is
+	begin
+		if rising_edge(clk) then
+			if (rst_n = '0') then
+				inCtr <= 0;
+				init <= false;
+			else
+				if (clear = '1') then
+					inCtr <= 0;
+					init <= false;
+				else
+					if (en = '1') then
+						if init = false then
+							if inCtr = WIN_SIZE - 1 then
+								inCtr <= 0;
+								init <= true;
+							else
+								inCtr <= inCtr + 1;
+							end if;
+						else
+							if inCtr = 20 then
+								inCtr <= 0;
+							else
+								inCtr <= inCtr + 1;
+							end if;
+						end if;
+					end if;
+				end if;
+			end if;
+		end if;
+	end process; -- p_inCtr
+
+	p_valid : process(clk) is
+		variable valid_count_en : boolean := false;
+		variable counter	 : natural range 0 to 3;
+	begin
+		if rising_edge(clk) then
+			if (rst_n = '0') then
+				valid_count_en := false;
+				valid <= '0';
+			else
+				-- start counter at last input value
+				if init = false then
+					if inCtr = WIN_SIZE - 1 then
+						valid_count_en := true;
+					end if;
+				else
+					if inCtr = 20 then
+						valid_count_en := true;
+					end if;
+				end if;
+
+				-- run counter and output
+				valid <= '0';
+				if valid_count_en then
+					if counter = 2 then
+						counter := 0;
+						valid_count_en := false;
+						valid <= '1';
+					else
+						counter := counter + 1;	
+					end if;
+				end if;
+			end if;
+		end if;	
+	end process; -- p_valid
+
+	p_clear : process(clk) is
+	begin
+		if rising_edge(clk) then
+			if (rst_n = '0') then		
+			else
+				if(clear = '1') then
+					shift_Clear <= clear;
+					diffM_Clear <= clear;
+					diffV_Clear <= clear;
+				else
+					shift_Clear <= clear;
+					diffM_Clear <= clear;
+					diffV_Clear <= clear;
+				end if;				
+			end if;
+			
+		end if;
+		
+	end process; -- p_clear
+
 
     c_dir_shift_reg : dir_shift_reg
         generic map (
-            delay => delay
+            delay => WIN_SIZE
         )
         port map (
             clk      => clk,
