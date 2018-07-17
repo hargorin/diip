@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Mon Jul 16 16:14:52 2018
+-- Last update : Tue Jul 17 08:57:57 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -33,8 +33,7 @@ entity mean_var is
 		V_IN_WIDTH 	: positive := 16;
 		V_OUT_WIDTH : positive := 25;	
 
-    	FIX_M		: unsigned(24 downto 0) := "1001010010011011100100101";
-    	FIX_V		: unsigned(17 downto 0) := "100101001001101110"
+    	FIX_N		: unsigned(14 downto 0) := "100101001001101" -- "1001010010011011100100101"
     );
 
     port (
@@ -116,10 +115,10 @@ architecture rtl of mean_var is
     signal diffV_Clear	: std_logic;
 
     -- signals
-	signal mean : unsigned(41 downto 0);
+	signal mean : unsigned(M_OUT_WIDTH + FIX_N'length - 1 downto 0);
 	signal mean2 : unsigned(35 downto 0);
-	signal var_tmp : unsigned(42 downto 0);
-	signal var : unsigned(35 downto 0);
+	signal var_tmp : unsigned(V_OUT_WIDTH + FIX_N'length - 1 downto 0);
+	signal var : unsigned(mean2'length - 1 downto 0);
 
 
 begin
@@ -137,10 +136,10 @@ begin
     diffV_En <= shift_Valid;  
 
     -- Output Mean and Variance
-    mean <= unsigned(diffM_Sum) * FIX_M;
-    mean2 <= mean(40 downto 23) * mean(40 downto 23);
-    var_tmp <= unsigned(diffV_Sum) * FIX_V;
-    var <= var_tmp(41 downto 6) - mean2(35 downto 0);
+    mean <= unsigned(diffM_Sum) * FIX_N;
+    mean2 <= mean(30 downto 13) * mean(30 downto 13);
+    var_tmp <= unsigned(diffV_Sum) * FIX_N;
+    var <= var_tmp(38 downto 3) - mean2(35 downto 0);
 
     -- Output FlipFlops
 	p_out_mean : process(clk) is
@@ -149,7 +148,7 @@ begin
 			if (rst_n = '0') then
 				outMean <= (others => '0');
 			else
-				outMean <= std_logic_vector(mean(40 downto 33));
+				outMean <= std_logic_vector(mean(30 downto 23));
 			end if;
 		end if;	
 	end process; -- p_out_mean

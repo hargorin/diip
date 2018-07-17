@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Tue Jul 10 16:22:03 2018
--- Last update : Mon Jul 16 16:15:27 2018
+-- Last update : Tue Jul 17 09:00:01 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -41,8 +41,7 @@ architecture testbench of mean_var_tb is
     constant M_OUT_WIDTH : positive                  := 17;
     constant V_IN_WIDTH  : positive                  := 16;
     constant V_OUT_WIDTH : positive                  := 25;
-	constant FIX_M		 : unsigned(24 downto 0) := "1001010010011011100100101";
-	constant FIX_V	     : unsigned(17 downto 0) := "100101001001101110";
+	constant FIX_N		 : unsigned(14 downto 0) := "100101001001101";
 
 	-- Testbench DUT ports as signals
     signal clk     : std_logic;
@@ -124,7 +123,7 @@ begin
             end loop;
             en <= '0';
             --mac_rx_tlast <= '0';
-            waitfor(1);
+            waitfor(3);
         end procedure file2axistream;
 
 
@@ -159,6 +158,33 @@ begin
     	report "mean (104.2) = " & integer'image(to_integer(unsigned(outMean)));
     	report "Var (2962.7) = " & integer'image(to_integer(unsigned(outVar)));
 
+    	-- randi([255,255],441,1)
+    	-- mean: 255
+    	-- var: 0
+    	file2axistream("../../cores/wallis_v1_0/bench/randFF.txt");
+    	report "mean (255) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (0) = " & integer'image(to_integer(unsigned(outVar)));
+
+    	-- randi([30,30],441,1)
+    	-- mean: 30
+    	-- var: 0
+    	file2axistream("../../cores/wallis_v1_0/bench/rand1E.txt");
+    	report "mean (30) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (0) = " & integer'image(to_integer(unsigned(outVar)));
+
+    	-- randi([1,1],441,1)
+    	-- mean: 1
+    	-- var: 0
+    	file2axistream("../../cores/wallis_v1_0/bench/rand1.txt");
+    	report "mean (1) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (0) = " & integer'image(to_integer(unsigned(outVar)));
+
+    	-- randi([0,0],441,1)
+    	-- mean: 0
+    	-- var: 0
+    	file2axistream("../../cores/wallis_v1_0/bench/rand00.txt");
+    	report "mean (0) = " & integer'image(to_integer(unsigned(outMean)));
+    	report "Var (0) = " & integer'image(to_integer(unsigned(outVar)));
 
 		--en <= '1';
 		--inData <= x"FF";
@@ -180,8 +206,7 @@ begin
             M_OUT_WIDTH => M_OUT_WIDTH,
             V_IN_WIDTH  => V_IN_WIDTH,
             V_OUT_WIDTH => V_OUT_WIDTH,
-            FIX_M		=> FIX_M,
-            FIX_V		=> FIX_V
+            FIX_N		=> FIX_N
         )
         port map (
             clk     => clk,
