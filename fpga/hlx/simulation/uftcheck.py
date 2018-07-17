@@ -58,7 +58,7 @@ def parseArray(p, name):
 		cmd = ''
 		tcid = p[0]-128
 		seq = p[1]*pow(2,16) + p[2]*pow(2,8) + p[3]
-		uftt.add_row([name, uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
+		uftt.add_row([int(filter(str.isdigit, name)), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
 	else:
 		dc = 'C'
 		if p[0] == 0:
@@ -72,7 +72,7 @@ def parseArray(p, name):
 		if p[0] == 3:
 			cmd = 'ACK transfer'
 		tcid = p[1]*pow(2,16) + p[2]*pow(2,8) + p[3]
-		uftt.add_row([name, uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
+		uftt.add_row([int(filter(str.isdigit, name)), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
 
 # ---------------------------------------------
 # MAIN
@@ -126,7 +126,9 @@ if '-j' in sys.argv:
 					cmd = ''
 					tcid = p[0]-128
 					seq = p[1]*pow(2,16) + p[2]*pow(2,8) + p[3]
-					uftt.add_row([str(i), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
+					# uftt.add_row([str(i), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
+					uftt.add_row([int(filter(str.isdigit, str(i))), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
+
 				else:
 					dc = 'C'
 					if p[0] == 0:
@@ -140,12 +142,13 @@ if '-j' in sys.argv:
 					if p[0] == 3:
 						cmd = 'ACK transfer'
 					tcid = p[1]*pow(2,16) + p[2]*pow(2,8) + p[3]
-					uftt.add_row([str(i), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
+					# uftt.add_row([str(i), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
+					uftt.add_row([int(filter(str.isdigit, str(i))), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
 		# pprint(data[2]["_source"]["layers"]["arp"])
 	print '---- ARP Requests ----'
 	print arpt
 	print '---- UFT Packets ----'
-	print uftt
+	print uftt.get_string(sortby="File")
 	exit(0)
 
 for fname in sys.argv:
@@ -166,4 +169,4 @@ for fname in sys.argv:
 print '---- ARP Requests ----'
 print arpt
 print '---- UFT Packets ----'
-print uftt
+print uftt.get_string(sortby="File")

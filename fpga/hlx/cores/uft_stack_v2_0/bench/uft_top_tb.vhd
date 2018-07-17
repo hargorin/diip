@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Mon Jul 16 16:29:07 2018
+-- Last update : Tue Jul 17 11:16:12 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -113,10 +113,10 @@ architecture testbench of uft_top_tb is
 
     -- RX ports
     -- ---------------------------------------------------------------------
-    signal M_AXIS_TVALID   :    std_logic;
-    signal M_AXIS_TDATA    :    std_logic_vector(7 downto 0);
-    signal M_AXIS_TLAST    :    std_logic;
-    signal M_AXIS_TREADY   :    std_logic := '0';
+    signal m_axis_tvalid   :    std_logic;
+    signal m_axis_tdata    :    std_logic_vector(7 downto 0);
+    signal m_axis_tlast    :    std_logic;
+    signal m_axis_tready   :    std_logic := '0';
 
     signal rx_done            :    std_logic;
     signal rx_row_num         :  std_logic_vector(31 downto 0);
@@ -134,16 +134,15 @@ architecture testbench of uft_top_tb is
     signal user_reg6           :   std_logic_vector(31 downto 0);
     signal user_reg7           :   std_logic_vector(31 downto 0);
 
-    -- TX Memory IP Interface
-    -- ---------------------------------------------------------------------
-    signal S_AXIS_TVALID   :    std_logic;
-    signal S_AXIS_TDATA    :    std_logic_vector(7 downto 0);
-    signal S_AXIS_TLAST    :    std_logic;
-    signal S_AXIS_TREADY   :    std_logic := '0';
-
     -- UFT Tx
     -- -------------------------------------------------------------------------
+    signal s_axis_tvalid   :    std_logic;
+    signal s_axis_tdata    :    std_logic_vector(7 downto 0);
+    signal s_axis_tlast    :    std_logic := '0';
+    signal s_axis_tready   :    std_logic := '0';
+
     signal tx_data_size    : std_logic_vector(31 downto 0) := (others => '0');
+    signal tx_row_num      : std_logic_vector (31 downto 0) := (others => '0');
     signal tx_ready        : std_logic;
     signal tx_start        : std_logic := '0';
 
@@ -171,31 +170,7 @@ architecture testbench of uft_top_tb is
     signal mac_rx_tready              : std_logic;
     signal mac_rx_tlast               : std_logic;
 
-    -- AXI lite
-    -- -------------------------------------------------------------------------    
-    signal S_AXI_AWADDR    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-    signal S_AXI_AWPROT    : std_logic_vector(2 downto 0);
-    signal S_AXI_AWVALID   : std_logic;
-    signal S_AXI_AWREADY   : std_logic;
-    signal S_AXI_WDATA : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-    signal S_AXI_WSTRB : std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
-    signal S_AXI_WVALID    : std_logic;
-    signal S_AXI_WREADY    : std_logic;
-    signal S_AXI_BRESP : std_logic_vector(1 downto 0);
-    signal S_AXI_BVALID    : std_logic;
-    signal S_AXI_BREADY    : std_logic;
-    signal S_AXI_ARADDR    : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-    signal S_AXI_ARPROT    : std_logic_vector(2 downto 0);
-    signal S_AXI_ARVALID   : std_logic;
-    signal S_AXI_ARREADY   : std_logic;
-    signal S_AXI_RDATA : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-    signal S_AXI_RRESP : std_logic_vector(1 downto 0);
-    signal S_AXI_RVALID    : std_logic;
-    signal S_AXI_RREADY    : std_logic;
-
     -- debug
-    signal rx : std_logic_vector(31 downto 0) := (others => '0');
-
     constant clk_period : time := 8 ns;
     signal stop_sim  : std_logic := '0';
     signal cur_test : natural := 0;
@@ -283,72 +258,6 @@ begin
         -------------------------------------------------------------------
 
         -------------------------------------------------------------------
-        -- Initiate process which simulates a master wanting to write.
-        -------------------------------------------------------------------
-        procedure write (
-            adr : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-            dat : std_logic_vector(31 downto 0)
-        ) is
-        -------------------------------------------------------------------
-        begin
-            S_AXI_AWADDR <= adr;
-            S_AXI_WDATA <= dat;
-            S_AXI_AWVALID<='0';
-            S_AXI_WVALID<='0';
-            S_AXI_BREADY<='0';
-            S_AXI_WSTRB <= "1111";
-            
-            waitfor(1);
-
-            S_AXI_AWVALID<='1';
-            S_AXI_WVALID<='1';
-            wait until (S_AXI_AWREADY and S_AXI_WREADY) = '1';  --Client ready to read address/data        
-            
-            S_AXI_BREADY<='1';
-            wait until S_AXI_BVALID = '1';  -- Write result valid
-            
-            assert S_AXI_BRESP = "00" report "AXI data not written" severity failure;
-            S_AXI_AWVALID<='0';
-            S_AXI_WVALID<='0';
-            S_AXI_BREADY<='1';
-            
-            wait until S_AXI_BVALID = '0';  -- All finished
-            S_AXI_BREADY<='0';
-            
-            S_AXI_AWVALID<='0';
-            S_AXI_WVALID<='0';
-            S_AXI_BREADY<='0';
-        end procedure write;
-        -------------------------------------------------------------------
-
-        -------------------------------------------------------------------
-        -- Initiate process which simulates a master wanting to read.
-        -------------------------------------------------------------------
-        procedure read (
-            adr : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0)
-        ) is
-        -------------------------------------------------------------------
-        begin
-            S_AXI_ARADDR <= adr;
-            S_AXI_ARVALID<='0';
-            S_AXI_RREADY<='0';
-            
-            waitfor(1);
-            
-            S_AXI_ARVALID<='1';
-            S_AXI_RREADY<='1';
-            wait until (S_AXI_ARREADY) = '1';  --Client provided data
-            wait until (S_AXI_RVALID) = '1';  --Client provided data
-            rx <= S_AXI_RDATA;
-            
-            assert S_AXI_RRESP = "00" report "AXI data not read" severity failure;
-            S_AXI_ARVALID<='0';
-            S_AXI_RREADY<='0';
-
-        end procedure read;
-        -------------------------------------------------------------------
-
-        -------------------------------------------------------------------
         procedure t1 is
         -------------------------------------------------------------------
         begin
@@ -370,7 +279,7 @@ begin
         begin
             cur_test <= 2;
             waitfor(10);
-            M_AXIS_TREADY <= '1';
+            m_axis_tready <= '1';
 
             if mac_rx_tready = '0' then
                 wait until mac_rx_tready = '1';
@@ -380,8 +289,8 @@ begin
             mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1.txt");
             
-            waitfor(1500);
-            M_AXIS_TREADY <= '0';
+            wait until rx_done = '1';
+            m_axis_tready <= '0';
         end procedure t2;
 
         -------------------------------------------------------------------
@@ -392,7 +301,6 @@ begin
             waitfor(10);
 
             -- register 2: UFT_REG_RX_BASE
-            write("001000", x"98752222");
 
             if mac_rx_tready = '0' then
                 wait until mac_rx_tready = '1';
@@ -400,23 +308,18 @@ begin
 
             report "-- TEST 3 -- NSEQ=2 UFT Data Packet reception";
             mac_tx_tready <= '1';
-            M_AXIS_TREADY <= '1';
+            m_axis_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_09_nseq_2.txt");
             wait for 5 us;
-            --waitfor(1);
             mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_09_nseq_2_0.txt");
-            
-            --wait until ip2bus_mstwr_src_rdy_n = '0';
-            --assert (ip2bus_mst_addr = x"98752222") report "ERROR: UFT rx wrong base adr" severity error;
 
             wait for 5 us;
-            --waitfor(1);
             mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_09_nseq_2_1.txt");
             
-            waitfor(1500);
-            M_AXIS_TREADY <= '0';
+            wait until rx_done = '1';
+            m_axis_tready <= '0';
         end procedure t3;
         -------------------------------------------------------------------
         -- 32 byte packet
@@ -431,13 +334,15 @@ begin
 
             report "-- TEST 4 -- NSEQ=1 32byte UFT Data Packet reception";
             mac_tx_tready <= '1';
+            m_axis_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_v2.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_v2.txt");
 
-            waitfor(1500);
+            wait until rx_done = '1';
+            m_axis_tready <= '0';
         end procedure t4;
         -------------------------------------------------------------------
         -- 31 byte packet
@@ -452,13 +357,15 @@ begin
 
             report "-- TEST 5 -- NSEQ=1 31byte UFT Data Packet reception";
             mac_tx_tready <= '1';
+            m_axis_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_31bytes.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_31bytes.txt");
 
-            waitfor(1500);
+            wait until rx_done = '1';
+            m_axis_tready <= '0';
         end procedure t5;
         -------------------------------------------------------------------
         -- 30 byte packet
@@ -473,13 +380,15 @@ begin
 
             report "-- TEST 6 -- NSEQ=1 30byte UFT Data Packet reception";
             mac_tx_tready <= '1';
+            m_axis_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_30bytes.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_30bytes.txt");
 
-            waitfor(1500);
+            wait until rx_done = '1';
+            m_axis_tready <= '0';
         end procedure t6;
         -------------------------------------------------------------------
         -- 29 byte packet
@@ -494,13 +403,15 @@ begin
 
             report "-- TEST 7 -- NSEQ=1 29byte UFT Data Packet reception";
             mac_tx_tready <= '1';
+            m_axis_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_0c_nseq_1_29bytes.txt");
             wait for 2 us;
             --waitfor(1);
             mac_tx_tready <= '1';
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_0c_nseq_1_29bytes.txt");
 
-            waitfor(1500);
+            wait until rx_done = '1';
+            m_axis_tready <= '0';
         end procedure t7;
         -------------------------------------------------------------------
         procedure t10 is
@@ -511,86 +422,70 @@ begin
             report "-- TEST 10 -- UFT Data Packet transmission with ARP reply";
 
             -- get tx_ready
-            read("000000");
             wait until rising_edge(clk);
-            assert (rx = x"00000001") report "ERROR: tx_ready not received" severity error;
+            assert tx_ready = '1' report "ERROR: tx_ready not received" severity error;
 
-            --if tx_ready = '0' then
-            --    wait until tx_ready = '1';
-            --end if;
-            --tx_data_size <= std_logic_vector(to_unsigned(1025, tx_data_size'length));
+            tx_data_size <= std_logic_vector(to_unsigned(1025, tx_data_size'length));
 
-            -- register 5: UFT_REG_TX_SIZE
-            write("010100", std_logic_vector(to_unsigned(1025, tx_data_size'length)));
-
-            --tx_start <= '1';
-            write("000100", x"00000001");
-
+            tx_start <= '1';
             mac_tx_tready <= '1';
+            s_axis_tvalid <= '1';
             waitfor(1);
             tx_start <= '0';
 
             -- get tx_ready
-            read("000000");
             wait until rising_edge(clk);
-            assert (rx = x"00000000") report "ERROR: tx_ready not cleared" severity error;
+            assert (tx_ready = '0') report "ERROR: tx_ready not cleared" severity error;
 
             -- Reply ARP request
             wait until mac_tx_tlast = '1';
             waitfor(5);
             file2axistream("../../cores/uft_stack_v2_0/bench/arp_reply.txt");
 
-            read("000000");
-            wait until rising_edge(clk);
-            while (rx /= x"00000001") loop
-               read("000000");
-               wait until rising_edge(clk);
-            end loop;
-        
-            --wait until tx_ready = '1';
-
+            wait until tx_ready = '1';
+            s_axis_tvalid <= '0';
         end procedure t10;
         -------------------------------------------------------------------
         procedure t11 is
+            variable ctr : natural := 0;
+            variable npixels : natural := 0;
         -------------------------------------------------------------------
         begin
             cur_test <= 11;
             waitfor(10);
             report "-- TEST 11 -- Multi Sequence UFT Data Packet transmission";
             
-            --if tx_ready = '0' then
-            --    wait until tx_ready = '1';
-            --end if;
-
             -- get tx_ready
-            read("000000");
             wait until rising_edge(clk);
-            assert (rx = x"00000001") report "ERROR: tx_ready not received" severity error;
+            assert tx_ready = '1' report "ERROR: tx_ready not received" severity error;
 
-            --tx_data_size <= std_logic_vector(to_unsigned(3000, tx_data_size'length));
-
-            -- register 5: UFT_REG_TX_SIZE
-            write("010100", std_logic_vector(to_unsigned(3000, tx_data_size'length)));
-
-            --tx_start <= '1';
-            write("000100", x"00000001");
-
+            npixels:=3000;
+            tx_data_size <= std_logic_vector(to_unsigned(npixels, tx_data_size'length));
+            tx_start <= '1';
             mac_tx_tready <= '1';
             waitfor(1);
             tx_start <= '0';
 
-            -- Reply ARP request NOT required, should be in cache
-            --wait until mac_tx_tlast = '1';
-            --waitfor(5);
-            --file2axistream("../../cores/uft_stack_v2_0/bench/arp_reply.txt");
-
-            --wait until tx_ready = '1';
-            read("000000");
+            -- validate tx_ready
             wait until rising_edge(clk);
-            while (rx /= x"00000001") loop
-               read("000000");
-               wait until rising_edge(clk);
-            end loop;
+            assert (tx_ready = '0') report "ERROR: tx_ready not cleared" severity error;
+
+            -- send 971-21+1 bytes
+            s_axis_tvalid <= '1';
+            lp_send : while ctr /= (npixels-1) loop
+                waitfor(1);
+                if s_axis_tready = '1' then
+                    ctr:=ctr+1;
+                end if;
+            end loop ; -- lp_send
+
+            s_axis_tlast <= '1';
+            waitfor(1);
+            s_axis_tlast <= '0';
+            s_axis_tvalid <= '0';
+
+            wait until tx_ready = '1';
+            s_axis_tvalid <= '0';
 
         end procedure t11;
 
@@ -603,29 +498,17 @@ begin
             report "-- TEST 12 -- Single packet 108 byte size send";
 
             -- get tx_ready
-            read("000000");
             wait until rising_edge(clk);
-            assert (rx = x"00000001") report "ERROR: tx_ready not received" severity error;
+            assert tx_ready = '1' report "ERROR: tx_ready not received" severity error;
             
-            -- register : UFT_REG_TX_BASE
-            write("001100", x"00000000");
-            -- register 5: UFT_REG_TX_SIZE
-            write("010100", std_logic_vector(to_unsigned(108, tx_data_size'length)));
-
-            --tx_start <= '1';
-            write("000100", x"00000001");
-
+            tx_start <= '1';
             mac_tx_tready <= '1';
+            s_axis_tvalid <= '1';
             waitfor(1);
             tx_start <= '0';
             
-            --wait until tx_ready = '1';
-            read("000000");
-            wait until rising_edge(clk);
-            while (rx /= x"00000001") loop
-               read("000000");
-               wait until rising_edge(clk);
-            end loop;
+            wait until tx_ready = '1';
+            s_axis_tvalid <= '0';
 
         end procedure t12;
 
@@ -643,11 +526,69 @@ begin
             report "-- TEST 20 -- UFT Command Packet reception with user data";
             file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_user_0_0xeeeeeeee.txt");
 
-            read("100000");
             wait until rising_edge(clk);
-            assert (rx = x"eeeeeeee") report "ERROR: user reg 0 not written" severity error;
+            assert (user_reg0 = x"eeeeeeee") report "ERROR: user reg 0 not written" severity error;
             waitfor(10);
         end procedure t20;
+
+
+        -------------------------------------------------------------------
+        procedure t30 is
+            variable ctr : natural := 0;
+            variable npixels : natural := 0;
+        -------------------------------------------------------------------
+        begin
+            cur_test <= 30;
+            waitfor(10);
+            report "-- TEST 30 -- Wallis example data exchange with one return packet";
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+
+            -- Send image data to FPGA          
+            report "  Send image data to FPGA";  
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_cmd_tcid_09_nseq_2.txt");
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_09_nseq_2_0.txt");
+            if mac_rx_tready = '0' then
+                wait until mac_rx_tready = '1';
+            end if;
+            file2axistream("../../cores/uft_stack_v2_0/bench/uft_data_tcid_09_nseq_2_1.txt");
+
+            -- Send lower count wallis data to PC
+            report "  Send lower count wallis data to PC";  
+            wait until tx_ready = '1';
+
+            npixels:=971-21+1;
+            tx_data_size <= std_logic_vector(to_unsigned(npixels, tx_data_size'length));
+            tx_start <= '1';
+            mac_tx_tready <= '1';
+            waitfor(1);
+            tx_start <= '0';
+
+            -- validate tx_ready
+            wait until rising_edge(clk);
+            assert (tx_ready = '0') report "ERROR: tx_ready not cleared" severity error;
+
+            -- send 971-21+1 bytes
+            s_axis_tvalid <= '1';
+            lp_send : while ctr /= (npixels-1) loop
+                waitfor(1);
+                if s_axis_tready = '1' then
+                    ctr:=ctr+1;
+                end if;
+            end loop ; -- lp_send
+
+            s_axis_tlast <= '1';
+            waitfor(1);
+            s_axis_tlast <= '0';
+            s_axis_tvalid <= '0';
+
+            wait until tx_ready = '1';
+            
+        end procedure t30;
 
     begin
         waitfor(30);
@@ -674,18 +615,23 @@ begin
         ------------
         -- UFT packet receive:
         ------------
-        --t1; -- UFT Command Packet reception
-        --t2; -- UFT Data Packet reception
-        --t3; -- NSEQ=2 UFT Data Packet reception
-        --t4; -- NSEQ=1 32byte UFT Data Packet reception
-        --t5; -- NSEQ=1 31byte UFT Data Packet reception
-        --t6; -- NSEQ=1 30byte UFT Data Packet reception
-        --t7; -- NSEQ=1 29byte UFT Data Packet reception
+        t1; -- UFT Command Packet reception
+        t2; -- UFT Data Packet reception
+        t3; -- NSEQ=2 UFT Data Packet reception
+        t4; -- NSEQ=1 32byte UFT Data Packet reception
+        t5; -- NSEQ=1 31byte UFT Data Packet reception
+        t6; -- NSEQ=1 30byte UFT Data Packet reception
+        t7; -- NSEQ=1 29byte UFT Data Packet reception
         
         ------------
         -- UFT user command packet send
         ------------
         t20;
+        
+        ------------
+        -- Wallis example data exchange
+        ------------
+        t30;
 
 
         waitfor(5);
@@ -711,20 +657,22 @@ begin
         if rst_n = '0' then
             ctr := 0;
         elsif rising_edge(clk) then
-            if mac_tx_tvalid = '1' and mac_tx_tready = '1' then
-                axi_buf(ctr) := mac_tx_tdata;
-                ctr := ctr + 1;
-            end if;
-            if mac_tx_tlast = '1' then
-                file_open(file_axi_s, "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
-                report "Start writing file: " & "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log";
-                for i in 0 to (ctr-1) loop
-                    hwrite(oline, axi_buf(i), left, 8);
-                    writeline(file_axi_s, oline);
-                end loop;
-                file_close(file_axi_s);
-                ctr := 0;
-                fi := fi + 1;
+            if mac_tx_tvalid = '1' then
+                if mac_tx_tvalid = '1' and mac_tx_tready = '1' then
+                    axi_buf(ctr) := mac_tx_tdata;
+                    ctr := ctr + 1;
+                end if;
+                if mac_tx_tlast = '1' then
+                    file_open(file_axi_s, "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
+                    report "Start writing file: " & "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log";
+                    for i in 0 to (ctr-1) loop
+                        hwrite(oline, axi_buf(i), left, 8);
+                        writeline(file_axi_s, oline);
+                    end loop;
+                    file_close(file_axi_s);
+                    ctr := 0;
+                    fi := fi + 1;
+                end if;
             end if;
         end if;
     end process ; -- p_axi_stream_check
@@ -742,20 +690,22 @@ begin
         if rst_n = '0' then
             ctr := 0;
         elsif rising_edge(clk) then
-            if M_AXIS_TVALID = '1' and M_AXIS_TREADY = '1' then
-                axi_buf(ctr) := M_AXIS_TDATA;
-                ctr := ctr + 1;
-            end if;
-            if M_AXIS_TLAST = '1' then
-                file_open(file_axi_s, "axi_rx_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
-                report "Start writing file: " & "axi_rx_stream_res_" & INTEGER'IMAGE(fi) & ".log";
-                for i in 0 to (ctr-1) loop
-                    hwrite(oline, axi_buf(i), left, 8);
-                    writeline(file_axi_s, oline);
-                end loop;
-                file_close(file_axi_s);
-                ctr := 0;
-                fi := fi + 1;
+            if m_axis_tvalid = '1' then
+                if  m_axis_tready = '1' then
+                    axi_buf(ctr) := m_axis_tdata;
+                    ctr := ctr + 1;
+                end if;
+                if m_axis_tlast = '1' then
+                    file_open(file_axi_s, "axi_rx_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
+                    report "Start writing file: " & "axi_rx_stream_res_" & INTEGER'IMAGE(fi) & ".log";
+                    for i in 0 to (ctr-1) loop
+                        hwrite(oline, axi_buf(i), left, 8);
+                        writeline(file_axi_s, oline);
+                    end loop;
+                    file_close(file_axi_s);
+                    ctr := 0;
+                    fi := fi + 1;
+                end if;
             end if;
         end if;
     end process ; -- p_axi_stream_check
@@ -763,7 +713,7 @@ begin
     -----------------------------------------------------------
     -- Entity Under Test
     -----------------------------------------------------------
-
+    
     DUV : entity work.uft_top
         generic map (
             INCOMMING_PORT     => INCOMMING_PORT,
@@ -774,13 +724,10 @@ begin
         port map (
             clk                    => clk,
             rst_n                  => rst_n,
-            our_ip_address         => our_ip_address,
-            our_mac_address        => our_mac_address,
-            tx_ready               => tx_ready,
-            M_AXIS_TVALID          => M_AXIS_TVALID,
-            M_AXIS_TDATA           => M_AXIS_TDATA,
-            M_AXIS_TLAST           => M_AXIS_TLAST,
-            M_AXIS_TREADY          => M_AXIS_TREADY,
+            m_axis_tvalid          => m_axis_tvalid,
+            m_axis_tdata           => m_axis_tdata,
+            m_axis_tlast           => m_axis_tlast,
+            m_axis_tready          => m_axis_tready,
             rx_done                => rx_done,
             rx_row_num             => rx_row_num,
             rx_row_num_valid       => rx_row_num_valid,
@@ -794,6 +741,16 @@ begin
             user_reg5              => user_reg5,
             user_reg6              => user_reg6,
             user_reg7              => user_reg7,
+            s_axis_tvalid          => s_axis_tvalid,
+            s_axis_tlast           => s_axis_tlast,
+            s_axis_tdata           => s_axis_tdata,
+            s_axis_tready          => s_axis_tready,
+
+            tx_start               => tx_start,
+            tx_ready               => tx_ready,
+            tx_row_num             => tx_row_num,
+            tx_data_size           => tx_data_size,
+
             udp_rx_start           => udp_rx_start,
             udp_rx_hdr_is_valid    => udp_rx_hdr_is_valid,
             udp_rx_hdr_src_ip_addr => udp_rx_hdr_src_ip_addr,
@@ -814,31 +771,9 @@ begin
             udp_tx_tlast           => udp_tx_tlast,
             udp_tx_tdata           => udp_tx_tdata,
             udp_tx_tready          => udp_tx_tready,
-            s_axis_tvalid          => s_axis_tvalid,
-            s_axis_tlast           => s_axis_tlast,
-            s_axis_tdata           => s_axis_tdata,
-            s_axis_tready          => s_axis_tready,
-            s_axi_ctrl_aclk        => clk,
-            s_axi_ctrl_aresetn     => rst_n,
-            s_axi_ctrl_awaddr      => s_axi_awaddr,
-            s_axi_ctrl_awprot      => s_axi_awprot,
-            s_axi_ctrl_awvalid     => s_axi_awvalid,
-            s_axi_ctrl_awready     => s_axi_awready,
-            s_axi_ctrl_wdata       => s_axi_wdata,
-            s_axi_ctrl_wstrb       => s_axi_wstrb,
-            s_axi_ctrl_wvalid      => s_axi_wvalid,
-            s_axi_ctrl_wready      => s_axi_wready,
-            s_axi_ctrl_bresp       => s_axi_bresp,
-            s_axi_ctrl_bvalid      => s_axi_bvalid,
-            s_axi_ctrl_bready      => s_axi_bready,
-            s_axi_ctrl_araddr      => s_axi_araddr,
-            s_axi_ctrl_arprot      => s_axi_arprot,
-            s_axi_ctrl_arvalid     => s_axi_arvalid,
-            s_axi_ctrl_arready     => s_axi_arready,
-            s_axi_ctrl_rdata       => s_axi_rdata,
-            s_axi_ctrl_rresp       => s_axi_rresp,
-            s_axi_ctrl_rvalid      => s_axi_rvalid,
-            s_axi_ctrl_rready      => s_axi_rready
+
+            our_ip_address         => our_ip_address,
+            our_mac_address        => our_mac_address
         ); 
 
     UDP_Complete_nomac_1 : entity work.UDP_Complete_nomac

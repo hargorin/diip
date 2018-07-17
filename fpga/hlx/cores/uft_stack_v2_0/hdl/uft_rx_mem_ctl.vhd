@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:09:23 2017
--- Last update : Mon Jul 16 14:50:09 2018
+-- Last update : Tue Jul 17 09:01:03 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -72,10 +72,10 @@ entity utf_rx_mem_ctl is
 
         -- Outputs
         -- ---------------------------------------------------------------------
-        M_AXIS_TVALID   : out   std_logic;
-        M_AXIS_TDATA    : out   std_logic_vector(7 downto 0);
-        M_AXIS_TLAST    : out   std_logic;
-        M_AXIS_TREADY   : in    std_logic;
+        m_axis_tvalid   : out   std_logic;
+        m_axis_tdata    : out   std_logic_vector(7 downto 0);
+        m_axis_tlast    : out   std_logic;
+        m_axis_tready   : in    std_logic;
 
         rx_row_num         : out std_logic_vector(31 downto 0);
         rx_row_num_valid   : out std_logic;
@@ -105,11 +105,13 @@ architecture rtl of utf_rx_mem_ctl is
         port (
             CLK           : in  STD_LOGIC;
             RST_N         : in  STD_LOGIC;
-            M_AXIS_TVALID : out std_logic;
-            M_AXIS_TDATA  : out std_logic_vector(DATA_WIDTH-1 downto 0);
-            M_AXIS_TREADY : in  std_logic;
+            m_axis_tvalid : out std_logic;
+            m_axis_tdata  : out std_logic_vector(data_width-1 downto 0);
+            m_axis_tready : in  std_logic;
+            m_axis_tlast  : out  std_logic;
             S_AXIS_TVALID : in  std_logic;
             S_AXIS_TDATA  : in  std_logic_vector(DATA_WIDTH-1 downto 0);
+            S_AXIS_TLAST  : in  std_logic;
             S_AXIS_TREADY : out std_logic
         );
     end component axis_fifo;    
@@ -126,21 +128,8 @@ architecture rtl of utf_rx_mem_ctl is
     signal next_state       : state_type;
 
     -- FIFO connection
-    signal FIFO_rst_n : std_logic;
-    signal FIFO_WriteEn : std_logic;
-    signal FIFO_DataIn : std_logic_vector(7 downto 0);
-    signal FIFO_ReadEn : std_logic;
-    signal FIFO_DataOut : std_logic_vector(7 downto 0);
-    signal FIFO_Empty : std_logic;
-    signal FIFO_Full : std_logic;
-    signal M_AXIS_TVALID_i : std_logic;
-
-    -- stores the number of BYTE transactions to be executed
-    --signal mem_length : unsigned (C_LENGTH_WIDTH-1 downto 0);
-    -- stores the number of WORD transactions to be executed
-    --signal amb_word_cnt : unsigned (C_LENGTH_WIDTH-1 downto 0);
-    -- packet destination address in the memory
-    --signal axi_addr : unsigned(C_M_AXI_ADDR_WIDTH-1 downto 0);
+    signal m_axis_tvalid_i : std_logic;
+    signal axis_fifo_tlast : std_logic;
 
     -- ACK latches
     signal ack_seqnbr_int              : std_logic_vector (23 downto 0);
@@ -353,45 +342,23 @@ begin
     ----------------------------------------------------------------------------
     -- FIFO control
     ----------------------------------------------------------------------------
-    p_fifo_gauge : process( clk )
-        variable gauge : natural range 0 to 2048; 
-        variable tlastfromudp : boolean;
-    begin
-        if rising_edge(clk) then
-            if rst_n = '0' then
-                gauge := 0;
-                M_AXIS_TLAST <= '0';
-                tlastfromudp := false;
-            else
-                -- if byte from UDP received
-                if data_tvalid = '1' then
-                    gauge := gauge + 1;
-                end if;
+    --p_fifo_gauge : process( clk )
+    --begin
+    --    if rising_edge(clk) then
+    --        if rst_n = '0' then
+    --            axis_fifo_tlast <= '0';
+    --        else
+    --            if data_tlast = '1' and (to_integer(unsigned(ft_nseq)) = to_integer(ft_nseq_received)+1) then
+    --                axis_fifo_tlast <= '1';
+    --            else
+    --                axis_fifo_tlast <= '0';
+    --            end if;
+    --        end if;
+    --    end if;
+    --end process ; -- p_fifo_gauge
 
-                -- if byte read from user side
-                if (M_AXIS_TREADY = '1') and (M_AXIS_TVALID_i = '1') then
-                    gauge := gauge - 1;
-                end if;
-
-                -- latch tlast from udp
-                if data_tlast = '1' then
-                    tlastfromudp := true;
-                end if;
-
-                M_AXIS_TLAST <= '0';
-                if tlastfromudp then
-                    if gauge = 1 then
-                        if (to_integer(unsigned(ft_nseq)) = to_integer(ft_nseq_received)+1) then
-                            M_AXIS_TLAST <= '1';
-                        else
-                            tlastfromudp := false;
-                        end if;
-                    end if;
-                end if;
-
-            end if;
-        end if;
-    end process ; -- p_fifo_gauge
+    axis_fifo_tlast <= '1' when data_tlast = '1' and (to_integer(unsigned(ft_nseq)) = to_integer(ft_nseq_received)+1)
+                       else '0';
 
     c_axis_fifo : axis_fifo
         generic map (
@@ -399,16 +366,18 @@ begin
             FIFO_DEPTH => FIFO_DEPTH
             )
         port map (
-            CLK           => clk,
-            RST_N         => FIFO_rst_n,
-            M_AXIS_TVALID => M_AXIS_TVALID_i,
-            M_AXIS_TDATA  => M_AXIS_TDATA,
-            M_AXIS_TREADY => M_AXIS_TREADY,
-            S_AXIS_TVALID => data_tvalid,
-            S_AXIS_TDATA  => data_tdata,
-            S_AXIS_TREADY => open
+            clk           => clk,
+            rst_n         => rst_n,
+            m_axis_tvalid => m_axis_tvalid_i,
+            m_axis_tdata  => m_axis_tdata,
+            m_axis_tready => m_axis_tready,
+            m_axis_tlast => m_axis_tlast,
+            s_axis_tvalid => data_tvalid,
+            s_axis_tdata  => data_tdata,
+            s_axis_tready => open,
+            s_axis_tlast => axis_fifo_tlast
         );    
-    M_AXIS_TVALID <= M_AXIS_TVALID_i;
+    m_axis_tvalid <= m_axis_tvalid_i;
 
     ----------------------------------------------------------------------------
     -- File transfer control

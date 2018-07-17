@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:04:30 2017
--- Last update : Tue Jul 17 08:45:48 2018
+-- Last update : Tue Jul 17 09:05:19 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -86,6 +86,7 @@ begin
                 Looped := false;
                 M_AXIS_TDATA <= (others => '0');
                 M_AXIS_TVALID <= '0';
+                m_axis_tlast <= '0';
             else
                 
                 -- read process

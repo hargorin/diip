@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 10:45:57 2018
--- Last update : Mon Jul 16 11:18:22 2018
+-- Last update : Tue Jul 17 08:15:17 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -51,10 +51,10 @@ entity uft_rx is
 
         -- Connection to User
         ------------------------------------------------------------------------
-        M_AXIS_TVALID   : out   std_logic;
-        M_AXIS_TDATA    : out   std_logic_vector(7 downto 0);
-        M_AXIS_TLAST    : out   std_logic;
-        M_AXIS_TREADY   : in    std_logic;
+        m_axis_tvalid   : out   std_logic;
+        m_axis_tdata    : out   std_logic_vector(7 downto 0);
+        m_axis_tlast    : out   std_logic;
+        m_axis_tready   : in    std_logic;
 
         rx_done            : out   std_logic;
         rx_row_num         : out std_logic_vector(31 downto 0);
@@ -151,10 +151,10 @@ architecture structural of uft_rx is
             ack_tcid           : out std_logic_vector ( 6 downto 0);
             ack_dst_port       : out std_logic_vector (15 downto 0);
             ack_dst_ip         : out std_logic_vector (31 downto 0);
-            M_AXIS_TVALID      : out std_logic;
-            M_AXIS_TDATA       : out std_logic_vector(7 downto 0);
-            M_AXIS_TLAST       : out std_logic;
-            M_AXIS_TREADY      : in  std_logic;
+            m_axis_tvalid      : out std_logic;
+            m_axis_tdata       : out std_logic_vector(7 downto 0);
+            m_axis_tlast       : out std_logic;
+            m_axis_tready      : in  std_logic;
             rx_row_num         : out std_logic_vector(31 downto 0);
             rx_row_num_valid   : out std_logic;
             rx_row_size        : out std_logic_vector(31 downto 0);
@@ -254,10 +254,10 @@ begin
             ack_tcid           => ack_tcid,
             ack_dst_port       => ack_dst_port,
             ack_dst_ip         => ack_dst_ip,
-            M_AXIS_TVALID      => M_AXIS_TVALID,
-            M_AXIS_TDATA       => M_AXIS_TDATA,
-            M_AXIS_TLAST       => M_AXIS_TLAST,
-            M_AXIS_TREADY      => M_AXIS_TREADY,
+            m_axis_tvalid      => m_axis_tvalid,
+            m_axis_tdata       => m_axis_tdata,
+            m_axis_tlast       => m_axis_tlast,
+            m_axis_tready      => m_axis_tready,
             rx_row_num         => rx_row_num,
             rx_row_num_valid   => rx_row_num_valid,
             rx_row_size        => rx_row_size,

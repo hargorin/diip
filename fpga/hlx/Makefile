@@ -118,13 +118,15 @@ sim:
 ifeq ($(LASTTOP),$(TOP))
 	$(RM) $(BUILD)/ghdl/*.log
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-	./simulation/uftcheck.py -e $(BUILD)/ghdl/axi_stream_res*.log
 else
 	$(RM) $(BUILD)/ghdl/*
 	scripts/configure_ghdl.sh ${TOP}
 	@echo "$(TOP)" > $(BUILD)/ghdl/stamp
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-	./simulation/uftcheck.py -e build/ghdl/axi_stream_res*.log
+endif
+ifeq ($(TOP),uft_top_tb)
+	./simulation/uftcheck.py -e $(BUILD)/ghdl/axi_stream_res*.log
+	./simulation/uftvalidate.sh
 endif
 
 clean-sim:

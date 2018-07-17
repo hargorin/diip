@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Mon Jul 16 16:23:23 2018
+-- Last update : Tue Jul 17 08:14:25 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -43,26 +43,19 @@ entity uft_top is
         clk     : in    std_logic;
         rst_n   : in    std_logic;
 
-        -- Controll
-        -- ---------------------------------------------------------------------
-        our_ip_address      : out STD_LOGIC_VECTOR (31 downto 0);
-        our_mac_address         : out std_logic_vector (47 downto 0);
-
-        tx_ready        : out  std_logic;
-
         -- RX user interface
         -- ---------------------------------------------------------------------
-        M_AXIS_TVALID   : out   std_logic;
-        M_AXIS_TDATA    : out   std_logic_vector(7 downto 0);
-        M_AXIS_TLAST    : out   std_logic;
-        M_AXIS_TREADY   : in    std_logic;
+        m_axis_tvalid   : out   std_logic;
+        m_axis_tdata    : out   std_logic_vector(7 downto 0);
+        m_axis_tlast    : out   std_logic;
+        m_axis_tready   : in    std_logic;
 
-        rx_done        : out  std_logic; 
+        rx_done            : out  std_logic; 
         rx_row_num         : out std_logic_vector(31 downto 0);
         rx_row_num_valid   : out std_logic;
         rx_row_size        : out std_logic_vector(31 downto 0);
         rx_row_size_valid  : out std_logic;
-
+        
         -- User registers
         user_reg0           : out  std_logic_vector(31 downto 0);
         user_reg1           : out  std_logic_vector(31 downto 0);
@@ -72,6 +65,18 @@ entity uft_top is
         user_reg5           : out  std_logic_vector(31 downto 0);
         user_reg6           : out  std_logic_vector(31 downto 0);
         user_reg7           : out  std_logic_vector(31 downto 0);
+
+        -- TX user interface
+        -- ---------------------------------------------------------------------
+        s_axis_tvalid              : in  std_logic;
+        s_axis_tlast               : in  std_logic;
+        s_axis_tdata               : in  std_logic_vector (7 downto 0);
+        s_axis_tready              : out std_logic;
+        
+        tx_start                   : in  std_logic;
+        tx_ready                   : out std_logic;
+        tx_row_num                 : in  std_logic_vector (31 downto 0);
+        tx_data_size               : in  std_logic_vector (31 downto 0);
 
         -- To UDP Receiver
         -- ---------------------------------------------------------------------
@@ -105,36 +110,10 @@ entity uft_top is
         udp_tx_tdata                : out std_logic_vector (7 downto 0);
         udp_tx_tready               : in  std_logic;
 
-        -- TX slave axis
+        -- To UDP misc
         -- ---------------------------------------------------------------------
-        s_axis_tvalid              : in  std_logic;
-        s_axis_tlast               : in  std_logic;
-        s_axis_tdata               : in  std_logic_vector (7 downto 0);
-        s_axis_tready              : out std_logic;
-
-        -- AXI lite interface for control
-        -- ---------------------------------------------------------------------
-        s_axi_ctrl_aclk     : in std_logic;
-        s_axi_ctrl_aresetn  : in std_logic;
-        s_axi_ctrl_awaddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-        s_axi_ctrl_awprot   : in std_logic_vector(2 downto 0);
-        s_axi_ctrl_awvalid  : in std_logic;
-        s_axi_ctrl_awready  : out std_logic;
-        s_axi_ctrl_wdata    : in std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        s_axi_ctrl_wstrb    : in std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
-        s_axi_ctrl_wvalid   : in std_logic;
-        s_axi_ctrl_wready   : out std_logic;
-        s_axi_ctrl_bresp    : out std_logic_vector(1 downto 0);
-        s_axi_ctrl_bvalid   : out std_logic;
-        s_axi_ctrl_bready   : in std_logic;
-        s_axi_ctrl_araddr   : in std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-        s_axi_ctrl_arprot   : in std_logic_vector(2 downto 0);
-        s_axi_ctrl_arvalid  : in std_logic;
-        s_axi_ctrl_arready  : out std_logic;
-        s_axi_ctrl_rdata    : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-        s_axi_ctrl_rresp    : out std_logic_vector(1 downto 0);
-        s_axi_ctrl_rvalid   : out std_logic;
-        s_axi_ctrl_rready   : in std_logic
+        our_ip_address          : out STD_LOGIC_VECTOR (31 downto 0);
+        our_mac_address         : out std_logic_vector (47 downto 0)
 
     );
 end entity uft_top;
@@ -160,10 +139,10 @@ architecture structural of uft_top is
             udp_rx_tdata           : in  std_logic_vector (7 downto 0);
             udp_rx_tvalid          : in  std_logic;
             udp_rx_tlast           : in  std_logic;
-            M_AXIS_TVALID          : out std_logic;
-            M_AXIS_TDATA           : out std_logic_vector(7 downto 0);
-            M_AXIS_TLAST           : out std_logic;
-            M_AXIS_TREADY          : in  std_logic;
+            m_axis_tvalid          : out std_logic;
+            m_axis_tdata           : out std_logic_vector(7 downto 0);
+            m_axis_tlast           : out std_logic;
+            m_axis_tready          : in  std_logic;
             rx_done                : out std_logic;
             rx_row_num             : out std_logic_vector(31 downto 0);
             rx_row_num_valid       : out std_logic;
@@ -224,54 +203,7 @@ architecture structural of uft_top is
             s_axis_tdata           : in  std_logic_vector (7 downto 0);
             s_axis_tready          : out std_logic
         );
-    end component uft_tx;    
-
-    ----------------------------------------------------------------------------
-    -- AXI Lite controller
-    -- -------------------------------------------------------------------------
-    component axi_ctrl is
-        generic (
-            C_S_AXI_DATA_WIDTH : integer := 32;
-            C_S_AXI_ADDR_WIDTH : integer := 6
-        );
-        port (
-            tx_data_size            : out std_logic_vector(31 downto 0);
-            tx_data_src_addr        : out std_logic_vector(31 downto 0);
-            tx_ready                : in  std_logic;
-            tx_start                : out std_logic;
-            rx_data_dst_addr        : out std_logic_vector(31 downto 0);
-            rx_data_transaction_ctr : in  std_logic_vector(31 downto 0);
-            user_reg0               : in std_logic_vector(31 downto 0);
-            user_reg1               : in std_logic_vector(31 downto 0);
-            user_reg2               : in std_logic_vector(31 downto 0);
-            user_reg3               : in std_logic_vector(31 downto 0);
-            user_reg4               : in std_logic_vector(31 downto 0);
-            user_reg5               : in std_logic_vector(31 downto 0);
-            user_reg6               : in std_logic_vector(31 downto 0);
-            user_reg7               : in std_logic_vector(31 downto 0);
-            S_AXI_ACLK              : in  std_logic;
-            S_AXI_ARESETN           : in  std_logic;
-            S_AXI_AWADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-            S_AXI_AWPROT            : in  std_logic_vector(2 downto 0);
-            S_AXI_AWVALID           : in  std_logic;
-            S_AXI_AWREADY           : out std_logic;
-            S_AXI_WDATA             : in  std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-            S_AXI_WSTRB             : in  std_logic_vector((C_S_AXI_DATA_WIDTH/8)-1 downto 0);
-            S_AXI_WVALID            : in  std_logic;
-            S_AXI_WREADY            : out std_logic;
-            S_AXI_BRESP             : out std_logic_vector(1 downto 0);
-            S_AXI_BVALID            : out std_logic;
-            S_AXI_BREADY            : in  std_logic;
-            S_AXI_ARADDR            : in  std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
-            S_AXI_ARPROT            : in  std_logic_vector(2 downto 0);
-            S_AXI_ARVALID           : in  std_logic;
-            S_AXI_ARREADY           : out std_logic;
-            S_AXI_RDATA             : out std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
-            S_AXI_RRESP             : out std_logic_vector(1 downto 0);
-            S_AXI_RVALID            : out std_logic;
-            S_AXI_RREADY            : in  std_logic
-        );
-    end component axi_ctrl;
+    end component uft_tx;
 
     signal is_command             : std_logic;
     signal command_code           : std_logic_vector(6 downto 0);
@@ -304,34 +236,7 @@ architecture structural of uft_top is
     signal ack_tcid                : std_logic_vector ( 6 downto 0);
     signal ack_dst_port            : std_logic_vector (15 downto 0);
     signal ack_dst_ip              : std_logic_vector (31 downto 0);
-
-    -- Connecting AXI ctrl
-    signal tx_data_size       : std_logic_vector(31 downto 0);
-    signal tx_ready_int : std_logic;
-    signal tx_start : std_logic;
-    signal rx_data_dst_addr : std_logic_vector(31 downto 0);
-    signal rx_data_transaction_ctr : std_logic_vector(31 downto 0);
-
-    -- User registers connecting rx_mem_ctrl and axi_ctrl
-    signal user_reg0_i : std_logic_vector(31 downto 0);
-    signal user_reg1_i : std_logic_vector(31 downto 0);
-    signal user_reg2_i : std_logic_vector(31 downto 0);
-    signal user_reg3_i : std_logic_vector(31 downto 0);
-    signal user_reg4_i : std_logic_vector(31 downto 0);
-    signal user_reg5_i : std_logic_vector(31 downto 0);
-    signal user_reg6_i : std_logic_vector(31 downto 0);
-    signal user_reg7_i : std_logic_vector(31 downto 0);
-
 begin
-        
-    user_reg0 <= user_reg0_i;
-    user_reg1 <= user_reg1_i;
-    user_reg2 <= user_reg2_i;
-    user_reg3 <= user_reg3_i;
-    user_reg4 <= user_reg4_i;
-    user_reg5 <= user_reg5_i;
-    user_reg6 <= user_reg6_i;
-    user_reg7 <= user_reg7_i;
 
     ----------------------------------------------------------------------------
     -- Rx instatiation
@@ -353,23 +258,23 @@ begin
             udp_rx_tdata           => udp_rx_tdata,
             udp_rx_tvalid          => udp_rx_tvalid,
             udp_rx_tlast           => udp_rx_tlast,
-            M_AXIS_TVALID          => M_AXIS_TVALID,
-            M_AXIS_TDATA           => M_AXIS_TDATA,
-            M_AXIS_TLAST           => M_AXIS_TLAST,
-            M_AXIS_TREADY          => M_AXIS_TREADY,
+            m_axis_tvalid          => m_axis_tvalid,
+            m_axis_tdata           => m_axis_tdata,
+            m_axis_tlast           => m_axis_tlast,
+            m_axis_tready          => m_axis_tready,
             rx_done                => rx_done,
             rx_row_num             => rx_row_num,
             rx_row_num_valid       => rx_row_num_valid,
             rx_row_size            => rx_row_size,
             rx_row_size_valid      => rx_row_size_valid,
-            user_reg0              => user_reg0_i,
-            user_reg1              => user_reg1_i,
-            user_reg2              => user_reg2_i,
-            user_reg3              => user_reg3_i,
-            user_reg4              => user_reg4_i,
-            user_reg5              => user_reg5_i,
-            user_reg6              => user_reg6_i,
-            user_reg7              => user_reg7_i,
+            user_reg0              => user_reg0,
+            user_reg1              => user_reg1,
+            user_reg2              => user_reg2,
+            user_reg3              => user_reg3,
+            user_reg4              => user_reg4,
+            user_reg5              => user_reg5,
+            user_reg6              => user_reg6,
+            user_reg7              => user_reg7,
             ack_cmd_nseq           => ack_cmd_nseq,
             ack_cmd_ft             => ack_cmd_ft,
             ack_cmd_nseq_done      => ack_cmd_nseq_done,
@@ -388,7 +293,7 @@ begin
             clk                    => clk,
             rst_n                  => rst_n,
             data_size              => tx_data_size,
-            tx_ready               => tx_ready_int,
+            tx_ready               => tx_ready,
             tx_start               => tx_start,
             dst_ip_addr            => tx_dst_ip_addr,
             dst_port               => tx_dst_port,
@@ -419,62 +324,13 @@ begin
             s_axis_tlast           => s_axis_tlast,
             s_axis_tdata           => s_axis_tdata,
             s_axis_tready          => s_axis_tready
-        );     
-
-    ----------------------------------------------------------------------------
-    -- Instantiation of Axi Bus Interface S_AXI_CTRL
-    -- -------------------------------------------------------------------------
-    axi_ctrl_inst : axi_ctrl
-        generic map (
-            C_S_AXI_DATA_WIDTH => C_S_AXI_DATA_WIDTH,
-            C_S_AXI_ADDR_WIDTH => C_S_AXI_ADDR_WIDTH
-        )
-        port map (
-            user_reg0               => user_reg0_i,
-            user_reg1               => user_reg1_i,
-            user_reg2               => user_reg2_i,
-            user_reg3               => user_reg3_i,
-            user_reg4               => user_reg4_i,
-            user_reg5               => user_reg5_i,
-            user_reg6               => user_reg6_i,
-            user_reg7               => user_reg7_i,
-            tx_data_size            => tx_data_size,
-            tx_data_src_addr        => open,
-            tx_ready                => tx_ready_int,
-            tx_start                => tx_start,
-            rx_data_dst_addr        => rx_data_dst_addr,
-            rx_data_transaction_ctr => rx_data_transaction_ctr,
-            S_AXI_ACLK  => s_axi_ctrl_aclk,
-            S_AXI_ARESETN   => s_axi_ctrl_aresetn,
-            S_AXI_AWADDR    => s_axi_ctrl_awaddr,
-            S_AXI_AWPROT    => s_axi_ctrl_awprot,
-            S_AXI_AWVALID   => s_axi_ctrl_awvalid,
-            S_AXI_AWREADY   => s_axi_ctrl_awready,
-            S_AXI_WDATA => s_axi_ctrl_wdata,
-            S_AXI_WSTRB => s_axi_ctrl_wstrb,
-            S_AXI_WVALID    => s_axi_ctrl_wvalid,
-            S_AXI_WREADY    => s_axi_ctrl_wready,
-            S_AXI_BRESP => s_axi_ctrl_bresp,
-            S_AXI_BVALID    => s_axi_ctrl_bvalid,
-            S_AXI_BREADY    => s_axi_ctrl_bready,
-            S_AXI_ARADDR    => s_axi_ctrl_araddr,
-            S_AXI_ARPROT    => s_axi_ctrl_arprot,
-            S_AXI_ARVALID   => s_axi_ctrl_arvalid,
-            S_AXI_ARREADY   => s_axi_ctrl_arready,
-            S_AXI_RDATA => s_axi_ctrl_rdata,
-            S_AXI_RRESP => s_axi_ctrl_rresp,
-            S_AXI_RVALID    => s_axi_ctrl_rvalid,
-            S_AXI_RREADY    => s_axi_ctrl_rready
-        );    
-
-    --data_src_addr <= x"08000000";
-    tx_dst_ip_addr <= x"c0a8050a";      -- 192.168.5.10
-    tx_dst_port <= x"08AE"; -- 2222
-    tx_ready <= tx_ready_int;
+        );
     
     -- Settings
     -- -------------------------------------------------------------------------
-    our_ip_address <= x"c0a80509";      -- 192.168.5.9
-    our_mac_address <= x"002320212223";   
+    tx_dst_ip_addr      <= x"c0a8050a";      -- 192.168.5.10
+    tx_dst_port         <= x"08AE"; -- 2222
+    our_ip_address      <= x"c0a80509";      -- 192.168.5.9
+    our_mac_address     <= x"002320212223";   
 
 end architecture structural;
