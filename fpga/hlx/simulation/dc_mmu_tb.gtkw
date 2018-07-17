@@ -1,0 +1,66 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Tue Jul 17 13:40:32 2018
+[*]
+[dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/dc_mmu_tb.ghw"
+[dumpfile_mtime] "Tue Jul 17 13:38:39 2018"
+[dumpfile_size] 15701
+[savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/dc_mmu_tb.gtkw"
+[timestart] 209200000
+[size] 1959 1159
+[pos] -1 -1
+*-25.736198 381300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.dc_mmu_tb.
+[treeopen] top.dc_mmu_tb.dc_mmu_1.
+[treeopen] top.dc_mmu_tb.dc_mmu_1.cache.[1].
+[sst_width] 217
+[signals_width] 219
+[sst_expanded] 1
+[sst_vpaned_height] 432
+@28
+top.dc_mmu_tb.clk
+top.dc_mmu_tb.rst_n
+@200
+-
+-Stream Input
+@28
+top.dc_mmu_tb.i_axis_tready
+top.dc_mmu_tb.i_axis_tvalid
+top.dc_mmu_tb.i_axis_tlast
+@22
+#{top.dc_mmu_tb.i_axis_tdata[7:0]} top.dc_mmu_tb.i_axis_tdata[7] top.dc_mmu_tb.i_axis_tdata[6] top.dc_mmu_tb.i_axis_tdata[5] top.dc_mmu_tb.i_axis_tdata[4] top.dc_mmu_tb.i_axis_tdata[3] top.dc_mmu_tb.i_axis_tdata[2] top.dc_mmu_tb.i_axis_tdata[1] top.dc_mmu_tb.i_axis_tdata[0]
+@200
+-
+-Stream Output
+@28
+top.dc_mmu_tb.o_axis_tready
+top.dc_mmu_tb.o_axis_tvalid
+top.dc_mmu_tb.o_axis_tlast
+@22
+#{top.dc_mmu_tb.o_axis_tdata[7:0]} top.dc_mmu_tb.o_axis_tdata[7] top.dc_mmu_tb.o_axis_tdata[6] top.dc_mmu_tb.o_axis_tdata[5] top.dc_mmu_tb.o_axis_tdata[4] top.dc_mmu_tb.o_axis_tdata[3] top.dc_mmu_tb.o_axis_tdata[2] top.dc_mmu_tb.o_axis_tdata[1] top.dc_mmu_tb.o_axis_tdata[0]
+@200
+-
+-DBG
+@28
+top.dc_mmu_tb.dc_mmu_1.cache_w_ptr
+top.dc_mmu_tb.dc_mmu_1.row_w_ptr
+@22
+#{top.dc_mmu_tb.dc_mmu_1.cache[0][0][7:0]} top.dc_mmu_tb.dc_mmu_1.cache[0][0][7] top.dc_mmu_tb.dc_mmu_1.cache[0][0][6] top.dc_mmu_tb.dc_mmu_1.cache[0][0][5] top.dc_mmu_tb.dc_mmu_1.cache[0][0][4] top.dc_mmu_tb.dc_mmu_1.cache[0][0][3] top.dc_mmu_tb.dc_mmu_1.cache[0][0][2] top.dc_mmu_tb.dc_mmu_1.cache[0][0][1] top.dc_mmu_tb.dc_mmu_1.cache[0][0][0]
+#{top.dc_mmu_tb.dc_mmu_1.cache[0][1][7:0]} top.dc_mmu_tb.dc_mmu_1.cache[0][1][7] top.dc_mmu_tb.dc_mmu_1.cache[0][1][6] top.dc_mmu_tb.dc_mmu_1.cache[0][1][5] top.dc_mmu_tb.dc_mmu_1.cache[0][1][4] top.dc_mmu_tb.dc_mmu_1.cache[0][1][3] top.dc_mmu_tb.dc_mmu_1.cache[0][1][2] top.dc_mmu_tb.dc_mmu_1.cache[0][1][1] top.dc_mmu_tb.dc_mmu_1.cache[0][1][0]
+#{top.dc_mmu_tb.dc_mmu_1.cache[0][2][7:0]} top.dc_mmu_tb.dc_mmu_1.cache[0][2][7] top.dc_mmu_tb.dc_mmu_1.cache[0][2][6] top.dc_mmu_tb.dc_mmu_1.cache[0][2][5] top.dc_mmu_tb.dc_mmu_1.cache[0][2][4] top.dc_mmu_tb.dc_mmu_1.cache[0][2][3] top.dc_mmu_tb.dc_mmu_1.cache[0][2][2] top.dc_mmu_tb.dc_mmu_1.cache[0][2][1] top.dc_mmu_tb.dc_mmu_1.cache[0][2][0]
+#{top.dc_mmu_tb.dc_mmu_1.cache[1][0][7:0]} top.dc_mmu_tb.dc_mmu_1.cache[1][0][7] top.dc_mmu_tb.dc_mmu_1.cache[1][0][6] top.dc_mmu_tb.dc_mmu_1.cache[1][0][5] top.dc_mmu_tb.dc_mmu_1.cache[1][0][4] top.dc_mmu_tb.dc_mmu_1.cache[1][0][3] top.dc_mmu_tb.dc_mmu_1.cache[1][0][2] top.dc_mmu_tb.dc_mmu_1.cache[1][0][1] top.dc_mmu_tb.dc_mmu_1.cache[1][0][0]
+#{top.dc_mmu_tb.dc_mmu_1.cache[1][1][7:0]} top.dc_mmu_tb.dc_mmu_1.cache[1][1][7] top.dc_mmu_tb.dc_mmu_1.cache[1][1][6] top.dc_mmu_tb.dc_mmu_1.cache[1][1][5] top.dc_mmu_tb.dc_mmu_1.cache[1][1][4] top.dc_mmu_tb.dc_mmu_1.cache[1][1][3] top.dc_mmu_tb.dc_mmu_1.cache[1][1][2] top.dc_mmu_tb.dc_mmu_1.cache[1][1][1] top.dc_mmu_tb.dc_mmu_1.cache[1][1][0]
+#{top.dc_mmu_tb.dc_mmu_1.cache[1][2][7:0]} top.dc_mmu_tb.dc_mmu_1.cache[1][2][7] top.dc_mmu_tb.dc_mmu_1.cache[1][2][6] top.dc_mmu_tb.dc_mmu_1.cache[1][2][5] top.dc_mmu_tb.dc_mmu_1.cache[1][2][4] top.dc_mmu_tb.dc_mmu_1.cache[1][2][3] top.dc_mmu_tb.dc_mmu_1.cache[1][2][2] top.dc_mmu_tb.dc_mmu_1.cache[1][2][1] top.dc_mmu_tb.dc_mmu_1.cache[1][2][0]
+@200
+-
+-DBG read
+@29
+top.dc_mmu_tb.dc_mmu_1.cache_r_base
+@28
+top.dc_mmu_tb.dc_mmu_1.cache_r_ptr
+top.dc_mmu_tb.dc_mmu_1.row_r_ptr
+top.dc_mmu_tb.dc_mmu_1.out_pix_ctr
+top.dc_mmu_tb.dc_mmu_1.n_out_pix
+[pattern_trace] 1
+[pattern_trace] 0
