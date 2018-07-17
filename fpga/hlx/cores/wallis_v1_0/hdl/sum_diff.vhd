@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
--- Title       : Difference and Add
--- Project     : Default Project Name
+-- Title       : Difference
+-- Project     : Wallis Filter
 -------------------------------------------------------------------------------
 -- File        : sum_diff.vhd
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
--- Company     : User Company Name
+-- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Thu Jul 12 09:24:16 2018
+-- Last update : Tue Jul 17 09:21:50 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
--- Copyright (c) 2017 User Company Name
+-- Copyright (c) 2018 FHNW
 -------------------------------------------------------------------------------
 -- Description: Calculate the difference from two inputs and sum them up
 -------------------------------------------------------------------------------

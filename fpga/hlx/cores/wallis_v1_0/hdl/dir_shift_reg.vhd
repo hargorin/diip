@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
 -- Title       : Direct Shift Register
--- Project     : Default Project Name
+-- Project     : Wallis Filter
 -------------------------------------------------------------------------------
 -- File        : dir_shift_reg.vhd
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
--- Company     : User Company Name
+-- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed Jul 11 11:11:19 2018
+-- Last update : Tue Jul 17 09:21:49 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
--- Copyright (c) 2017 User Company Name
+-- Copyright (c) 2018 FHNW
 -------------------------------------------------------------------------------
 -- Description: A shift register output and a direct output
 -------------------------------------------------------------------------------

@@ -1,0 +1,21 @@
+-------------------------------------------------------------------------------
+-- Title       : Wallis Filter
+-- Project     : Wallis Filter
+-------------------------------------------------------------------------------
+-- File        : wallis_filter.vhd
+-- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
+-- Company     : User Company Name
+-- Created     : Tue Jul 17 09:19:14 2018
+-- Last update : Tue Jul 17 09:21:46 2018
+-- Platform    : Default Part Number
+-- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
+-------------------------------------------------------------------------------
+-- Copyright (c) 2018 FHNW
+-------------------------------------------------------------------------------
+-- Description: Wallis algorithm
+-------------------------------------------------------------------------------
+-- Revisions:  Revisions and documentation are controlled by
+-- the revision control system (RCS).  The RCS should be consulted
+-- on revision history.
+-------------------------------------------------------------------------------
+

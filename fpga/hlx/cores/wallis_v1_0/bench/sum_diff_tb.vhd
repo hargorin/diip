@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
--- Title       : <Title Block>
--- Project     : Default Project Name
+-- Title       : Difference
+-- Project     : Wallis Filter
 -------------------------------------------------------------------------------
 -- File        : sum_diff_tb.vhd
--- Author      : User Name <user.email@user.company.com>
--- Company     : User Company Name
+-- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
+-- Company     : FHNW
 -- Created     : Mon Jul  9 14:35:47 2018
--- Last update : Thu Jul 12 09:14:21 2018
+-- Last update : Tue Jul 17 09:21:50 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
--- Copyright (c) 2018 User Company Name
+-- Copyright (c) 2018 FHNW
 -------------------------------------------------------------------------------
 -- Description: 
 -------------------------------------------------------------------------------

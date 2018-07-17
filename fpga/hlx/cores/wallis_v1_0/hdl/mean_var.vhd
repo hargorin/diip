@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
 -- Title       : Mean and Varince
--- Project     : Default Project Name
+-- Project     : Wallis Filter
 -------------------------------------------------------------------------------
 -- File        : mean_var.vhd
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
--- Company     : User Company Name
+-- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 17 08:57:57 2018
+-- Last update : Tue Jul 17 09:21:48 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
--- Copyright (c) 2017 User Company Name
+-- Copyright (c) 2018 FHNW
 -------------------------------------------------------------------------------
 -- Description: Calculate the mean and variance from a neighborhood
 -------------------------------------------------------------------------------

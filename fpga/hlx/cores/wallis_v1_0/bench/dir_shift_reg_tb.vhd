@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
 -- Title       : <Title Block>
--- Project     : Default Project Name
+-- Project     : Wallis Filter
 -------------------------------------------------------------------------------
 -- File        : dir_shift_reg_tb.vhd
--- Author      : User Name <user.email@user.company.com>
--- Company     : User Company Name
+-- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
+-- Company     : FHNW
 -- Created     : Tue Jul 10 12:39:33 2018
--- Last update : Tue Jul 10 13:56:07 2018
+-- Last update : Tue Jul 17 09:21:49 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
--- Copyright (c) 2018 User Company Name
+-- Copyright (c) 2018 FHNW
 -------------------------------------------------------------------------------
 -- Description: 
 -------------------------------------------------------------------------------

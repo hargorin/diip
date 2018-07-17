@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
 -- Title       : Mean and Variance Testbench
--- Project     : Default Project Name
+-- Project     : Wallis Filter
 -------------------------------------------------------------------------------
 -- File        : mean_var_tb.vhd
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
--- Company     : User Company Name
+-- Company     : FHNW
 -- Created     : Tue Jul 10 16:22:03 2018
--- Last update : Tue Jul 17 09:00:01 2018
+-- Last update : Tue Jul 17 09:21:48 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
--- Copyright (c) 2018 User Company Name
+-- Copyright (c) 2018 FHNW
 -------------------------------------------------------------------------------
 -- Description: Testbench to calculate the mean and variance
 -------------------------------------------------------------------------------
