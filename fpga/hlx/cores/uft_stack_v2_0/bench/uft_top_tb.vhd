@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Tue Jul 17 11:16:12 2018
+-- Last update : Wed Jul 18 12:06:14 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -517,7 +517,7 @@ begin
         procedure t20 is
         -------------------------------------------------------------------
         begin
-            cur_test <= 1;
+            cur_test <= 20;
             waitfor(10);
             if mac_rx_tready = '0' then
                 wait until mac_rx_tready = '1';

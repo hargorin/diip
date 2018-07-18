@@ -1,0 +1,48 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Wed Jul 18 13:56:30 2018
+[*]
+[dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/wallis_model_tb.ghw"
+[dumpfile_mtime] "Wed Jul 18 13:55:16 2018"
+[dumpfile_size] 2035
+[savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/wallis_model_tb.gtkw"
+[timestart] 0
+[size] 2401 1119
+[pos] -1 -1
+*-25.455528 40000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.wallis_model_tb.
+[treeopen] top.wallis_model_tb.wallis_model_1.
+[sst_width] 217
+[signals_width] 258
+[sst_expanded] 1
+[sst_vpaned_height] 313
+@28
+top.wallis_model_tb.clk
+top.wallis_model_tb.rst_n
+@200
+-
+-i stream
+@28
+top.wallis_model_tb.i_axis_tvalid
+top.wallis_model_tb.i_axis_tready
+top.wallis_model_tb.i_axis_tlast
+@22
+#{top.wallis_model_tb.i_axis_tdata[7:0]} top.wallis_model_tb.i_axis_tdata[7] top.wallis_model_tb.i_axis_tdata[6] top.wallis_model_tb.i_axis_tdata[5] top.wallis_model_tb.i_axis_tdata[4] top.wallis_model_tb.i_axis_tdata[3] top.wallis_model_tb.i_axis_tdata[2] top.wallis_model_tb.i_axis_tdata[1] top.wallis_model_tb.i_axis_tdata[0]
+@200
+-
+-o stream
+@28
+top.wallis_model_tb.o_axis_tvalid
+top.wallis_model_tb.o_axis_tready
+top.wallis_model_tb.o_axis_tlast
+@24
+#{top.wallis_model_tb.o_axis_tdata[7:0]} top.wallis_model_tb.o_axis_tdata[7] top.wallis_model_tb.o_axis_tdata[6] top.wallis_model_tb.o_axis_tdata[5] top.wallis_model_tb.o_axis_tdata[4] top.wallis_model_tb.o_axis_tdata[3] top.wallis_model_tb.o_axis_tdata[2] top.wallis_model_tb.o_axis_tdata[1] top.wallis_model_tb.o_axis_tdata[0]
+@200
+-
+-DBG
+@28
+top.wallis_model_tb.wallis_model_1.first
+top.wallis_model_tb.wallis_model_1.ctr
+[pattern_trace] 1
+[pattern_trace] 0
