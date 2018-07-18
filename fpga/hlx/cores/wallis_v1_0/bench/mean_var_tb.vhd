@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Tue Jul 10 16:22:03 2018
--- Last update : Tue Jul 17 15:56:55 2018
+-- Last update : Wed Jul 18 09:19:18 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -80,17 +80,20 @@ begin
         wait;
     end process RESET_GEN;
 
-
-p_valid : process(clk) is
-begin
-	if rising_edge(clk) then
-		if valid = '1' then
-	    	report "mean = " & integer'image(to_integer(unsigned(outMean)));
-	    	report "Var  = " & integer'image(to_integer(unsigned(outVar)));
+   	-----------------------------------------------------------
+	-- Report Process
+	----------------------------------------------------------- 
+	p_valid : process(clk) is
+	begin
+		if rising_edge(clk) then
+			if valid = '1' then
+		    	report "mean = " & integer'image(to_integer(unsigned(outMean)));
+		    	report "Var  = " & integer'image(to_integer(unsigned(outVar)));
+			end if;
 		end if;
-	end if;
-		
-end process; -- p_valid
+			
+	end process; -- p_valid
+
 	-----------------------------------------------------------
 	-- Testbench Stimulus
 	-----------------------------------------------------------
