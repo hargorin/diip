@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Wed Jul 18 10:09:29 2018
+[*] Wed Jul 18 14:03:50 2018
 [*]
 [dumpfile] "/home/jan/git/diip/fpga/hlx/build/ghdl/wallis_filter_tb.ghw"
-[dumpfile_mtime] "Wed Jul 18 10:06:36 2018"
-[dumpfile_size] 2125
+[dumpfile_mtime] "Wed Jul 18 11:26:36 2018"
+[dumpfile_size] 2173
 [savefile] "/home/jan/git/diip/fpga/hlx/simulation/wallis_filter_tb.gtkw"
 [timestart] 48300000
 [size] 1876 685
 [pos] -1 -1
-*-25.333269 265500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.333269 277200000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.wallis_filter_tb.
 [treeopen] top.wallis_filter_tb.dut.
@@ -49,12 +49,12 @@ top.wallis_filter_tb.en
 #{top.wallis_filter_tb.dut.den[19:0]} top.wallis_filter_tb.dut.den[19] top.wallis_filter_tb.dut.den[18] top.wallis_filter_tb.dut.den[17] top.wallis_filter_tb.dut.den[16] top.wallis_filter_tb.dut.den[15] top.wallis_filter_tb.dut.den[14] top.wallis_filter_tb.dut.den[13] top.wallis_filter_tb.dut.den[12] top.wallis_filter_tb.dut.den[11] top.wallis_filter_tb.dut.den[10] top.wallis_filter_tb.dut.den[9] top.wallis_filter_tb.dut.den[8] top.wallis_filter_tb.dut.den[7] top.wallis_filter_tb.dut.den[6] top.wallis_filter_tb.dut.den[5] top.wallis_filter_tb.dut.den[4] top.wallis_filter_tb.dut.den[3] top.wallis_filter_tb.dut.den[2] top.wallis_filter_tb.dut.den[1] top.wallis_filter_tb.dut.den[0]
 @200
 -
-@24
+@25
 #{top.wallis_filter_tb.dut.add[13:0]} top.wallis_filter_tb.dut.add[13] top.wallis_filter_tb.dut.add[12] top.wallis_filter_tb.dut.add[11] top.wallis_filter_tb.dut.add[10] top.wallis_filter_tb.dut.add[9] top.wallis_filter_tb.dut.add[8] top.wallis_filter_tb.dut.add[7] top.wallis_filter_tb.dut.add[6] top.wallis_filter_tb.dut.add[5] top.wallis_filter_tb.dut.add[4] top.wallis_filter_tb.dut.add[3] top.wallis_filter_tb.dut.add[2] top.wallis_filter_tb.dut.add[1] top.wallis_filter_tb.dut.add[0]
 @200
 -
 -Output
-@25
+@24
 #{top.wallis_filter_tb.wallis[7:0]} top.wallis_filter_tb.wallis[7] top.wallis_filter_tb.wallis[6] top.wallis_filter_tb.wallis[5] top.wallis_filter_tb.wallis[4] top.wallis_filter_tb.wallis[3] top.wallis_filter_tb.wallis[2] top.wallis_filter_tb.wallis[1] top.wallis_filter_tb.wallis[0]
 [pattern_trace] 1
 [pattern_trace] 0
