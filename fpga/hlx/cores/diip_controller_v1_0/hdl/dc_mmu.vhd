@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Tue Jul 17 17:53:26 2018
+-- Last update : Wed Jul 18 16:54:48 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,9 +27,9 @@ USE IEEE.NUMERIC_STD.ALL;
 entity dc_mmu is
     generic (
         -- number of elements in a  line buffer
-        BRAM_SIZE : natural := 32768; -- 1024 for simulation
+        BRAM_SIZE : natural := 64; -- 1024 for simulation
         -- number of lines in cache: minimum is window size + 1
-        CACHE_N_LINES : natural := 22
+        CACHE_N_LINES : natural := 3
     );
     port (
         -- clk and reset
@@ -90,13 +90,22 @@ architecture behav of dc_mmu is
     end function distance;
     -- ---------------------------------------------------------------------
 
+    --
+    -- V1
+    -- 
     -- Declaration of type of a 32768 element BRAM
     -- with each element being 8 bit wide.
-    type bram_t is array (0 to BRAM_SIZE-1) of std_logic_vector(7 downto 0);
+    --type bram_t is array (0 to BRAM_SIZE-1) of std_logic_vector(7 downto 0);
     -- Declaration of type of cache containing of block memories
-    type cache_t is array (0 to CACHE_N_LINES-1) of bram_t;
+    --type cache_t is array (0 to CACHE_N_LINES-1) of bram_t;
     -- the cache signal with all elements set to 0
-    signal cache : cache_t := (others => (others => (others => '0')));
+    --signal cache : cache_t := (others => (others => (others => '0')));
+
+    --
+    -- V2
+    -- 
+    type cache_t is array (0 to (BRAM_SIZE)*(CACHE_N_LINES)-1) of std_logic_vector(7 downto 0);
+    signal cache : cache_t := (others => (others => '0'));
 
     -- tracks which cache is currently written
     signal cache_w_ptr : natural range 0 to CACHE_N_LINES-1 := 0;
@@ -199,7 +208,14 @@ begin
             if (rst_n = '0') then
             else
                 if i_axis_tvalid = '1' and i_axis_tready_i = '1' then
-                    cache(cache_w_ptr)(row_w_ptr) <= i_axis_tdata;
+                    --
+                    -- V1
+                    -- 
+                    --cache(cache_w_ptr)(row_w_ptr) <= i_axis_tdata;
+                    --
+                    -- V2
+                    -- 
+                    cache(BRAM_SIZE*cache_w_ptr+row_w_ptr) <= i_axis_tdata;
                 end if;
             end if;
         end if;
@@ -327,7 +343,14 @@ begin
                         o_axis_tvalid_ilatched <= '0';
                     else
                         o_axis_tvalid_ilatched <= o_axis_tvalid_i;
-                        o_axis_tdata <= cache(cache_r_ptr)(row_r_ptr);
+                        --
+                        -- V1
+                        -- 
+                        --o_axis_tdata <= cache(cache_r_ptr)(row_r_ptr);
+                        -- 
+                        -- V2
+                        -- 
+                        o_axis_tdata <= cache(BRAM_SIZE*cache_r_ptr+row_r_ptr);
                     end if;
                 end if;
             end if;
