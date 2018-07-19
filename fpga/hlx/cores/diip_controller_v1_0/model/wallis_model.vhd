@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Jul 18 15:24:07 2018
--- Last update : Wed Jul 18 15:55:14 2018
+-- Last update : Thu Jul 19 14:07:45 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ entity wallis_model is
 
         -- control
         ------------------------------------------------------------------------
-        wa_par_c_gvar 			: in std_logic_vector (21 downto 0);
+        wa_par_c_gvar 			: in std_logic_vector (19 downto 0);
         wa_par_c 				: in std_logic_vector (5  downto 0);
         wa_par_ci_gvar 			: in std_logic_vector (19 downto 0);
         wa_par_b_gmean 			: in std_logic_vector (13 downto 0);

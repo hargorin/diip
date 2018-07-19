@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Wed Jul 18 15:48:54 2018
+-- Last update : Thu Jul 19 14:07:59 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ architecture testbench of wallis_model_tb is
 
     -- control
     ------------------------------------------------------------------------
-    signal wa_par_c_gvar           :  std_logic_vector (21 downto 0);
+    signal wa_par_c_gvar           :  std_logic_vector (19 downto 0);
     signal wa_par_c                :  std_logic_vector (5  downto 0);
     signal wa_par_ci_gvar          :  std_logic_vector (19 downto 0);
     signal wa_par_b_gmean          :  std_logic_vector (13 downto 0);

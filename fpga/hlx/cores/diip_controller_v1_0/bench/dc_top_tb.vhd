@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Thu Jul 19 12:19:17 2018
+-- Last update : Thu Jul 19 14:30:08 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -52,11 +52,14 @@ architecture testbench of dc_top_tb is
 	-- Testbench DUT generics as constants
     -- Wallis output to UFT Tx Fifo size. Should hold at least one wallis
     -- output line
-    constant FIFO_DEPTH : positive := IMG_WIDTH;
+    constant FIFO_DEPTH : positive := 5*IMG_WIDTH;
     -- number of elements in a  line buffer
     constant BRAM_SIZE : natural := IMG_WIDTH; -- 1024 for simulation
     -- number of lines in cache: minimum is window size + 1
     constant CACHE_N_LINES : natural := WIN_SIZE+1;
+
+    -- Clocks to delay after txstart to accept data
+    constant UFT_TX_DELAY : natural := 42;
 
 	-- Testbench DUT ports as signals
     -- clk and reset
@@ -103,7 +106,7 @@ architecture testbench of dc_top_tb is
     -- ---------------------------------------------------------------------
     -- control
     ------------------------------------------------------------------------
-    signal wa_par_c_gvar           :  std_logic_vector (21 downto 0);
+    signal wa_par_c_gvar           :  std_logic_vector (19 downto 0);
     signal wa_par_c                :  std_logic_vector (5  downto 0);
     signal wa_par_ci_gvar          :  std_logic_vector (19 downto 0);
     signal wa_par_b_gmean          :  std_logic_vector (13 downto 0);
@@ -246,7 +249,7 @@ begin
         end loop;
 
 
-        waitfor(50);
+        waitfor(200);
     	stop_sim <= '1';
     end process;
     
@@ -254,6 +257,8 @@ begin
     p_tx_rdy : process( clk )
     -----------------------------------------------------------
         variable transmitting : boolean := false;
+        variable transmittingHeader : boolean := false;
+        variable ctr : natural range 0 to UFT_TX_DELAY := 0;
         variable init : boolean := true;
     begin
         if rising_edge(clk) then
@@ -261,12 +266,23 @@ begin
                 uft_tx_ready <= '1';
                 uft_o_axis_tready               <= '0';
                 init := false;
+                ctr := 0;
             end if;
 
             if uft_tx_start = '1' then
                 uft_tx_ready <= '0';
-                uft_o_axis_tready               <= '1';
-                transmitting := true;
+                transmitting := false;
+                transmittingHeader := true;
+            end if;
+
+            if transmittingHeader then
+                ctr := ctr + 1;
+                if ctr = UFT_TX_DELAY then
+                    transmittingHeader := false;
+                    uft_o_axis_tready               <= '1';
+                    ctr := 0;
+                    transmitting := true;
+                end if;
             end if;
 
             if transmitting and uft_o_axis_tlast = '1' then

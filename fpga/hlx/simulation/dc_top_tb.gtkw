@@ -1,17 +1,19 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Thu Jul 19 10:20:17 2018
+[*] Thu Jul 19 10:29:37 2018
 [*]
 [dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/dc_top_tb.ghw"
-[dumpfile_mtime] "Thu Jul 19 10:19:18 2018"
-[dumpfile_size] 584478
+[dumpfile_mtime] "Thu Jul 19 10:23:20 2018"
+[dumpfile_size] 584613
 [savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/dc_top_tb.gtkw"
 [timestart] 0
 [size] 2162 1348
-[pos] -1 -1
-*-27.065807 516200000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -20
+*-27.065807 212100000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.dc_top_tb.
+[treeopen] top.dc_top_tb.duv.
+[treeopen] top.dc_top_tb.duv.fifo.
 [sst_width] 414
 [signals_width] 404
 [sst_expanded] 1
@@ -62,9 +64,7 @@ top.dc_top_tb.uft_tx_ready
 -
 @28
 top.dc_top_tb.uft_o_axis_tready
-@29
 top.dc_top_tb.uft_o_axis_tlast
-@28
 top.dc_top_tb.uft_o_axis_tvalid
 @24
 #{top.dc_top_tb.uft_o_axis_tdata[7:0]} top.dc_top_tb.uft_o_axis_tdata[7] top.dc_top_tb.uft_o_axis_tdata[6] top.dc_top_tb.uft_o_axis_tdata[5] top.dc_top_tb.uft_o_axis_tdata[4] top.dc_top_tb.uft_o_axis_tdata[3] top.dc_top_tb.uft_o_axis_tdata[2] top.dc_top_tb.uft_o_axis_tdata[1] top.dc_top_tb.uft_o_axis_tdata[0]
@@ -93,5 +93,20 @@ top.dc_top_tb.wa_i_axis_tready
 top.dc_top_tb.wa_i_axis_tlast
 @24
 #{top.dc_top_tb.wa_i_axis_tdata[7:0]} top.dc_top_tb.wa_i_axis_tdata[7] top.dc_top_tb.wa_i_axis_tdata[6] top.dc_top_tb.wa_i_axis_tdata[5] top.dc_top_tb.wa_i_axis_tdata[4] top.dc_top_tb.wa_i_axis_tdata[3] top.dc_top_tb.wa_i_axis_tdata[2] top.dc_top_tb.wa_i_axis_tdata[1] top.dc_top_tb.wa_i_axis_tdata[0]
+@200
+-
+-AXIs FIFO
+@28
+top.dc_top_tb.duv.fifo.s_axis_tlast
+top.dc_top_tb.duv.fifo.s_axis_tready
+top.dc_top_tb.duv.fifo.s_axis_tvalid
+@23
+#{top.dc_top_tb.duv.fifo.s_axis_tdata[7:0]} top.dc_top_tb.duv.fifo.s_axis_tdata[7] top.dc_top_tb.duv.fifo.s_axis_tdata[6] top.dc_top_tb.duv.fifo.s_axis_tdata[5] top.dc_top_tb.duv.fifo.s_axis_tdata[4] top.dc_top_tb.duv.fifo.s_axis_tdata[3] top.dc_top_tb.duv.fifo.s_axis_tdata[2] top.dc_top_tb.duv.fifo.s_axis_tdata[1] top.dc_top_tb.duv.fifo.s_axis_tdata[0]
+@28
+top.dc_top_tb.duv.fifo.m_axis_tlast
+top.dc_top_tb.duv.fifo.m_axis_tready
+top.dc_top_tb.duv.fifo.m_axis_tvalid
+@22
+#{top.dc_top_tb.duv.fifo.m_axis_tdata[7:0]} top.dc_top_tb.duv.fifo.m_axis_tdata[7] top.dc_top_tb.duv.fifo.m_axis_tdata[6] top.dc_top_tb.duv.fifo.m_axis_tdata[5] top.dc_top_tb.duv.fifo.m_axis_tdata[4] top.dc_top_tb.duv.fifo.m_axis_tdata[3] top.dc_top_tb.duv.fifo.m_axis_tdata[2] top.dc_top_tb.duv.fifo.m_axis_tdata[1] top.dc_top_tb.duv.fifo.m_axis_tdata[0]
 [pattern_trace] 1
 [pattern_trace] 0

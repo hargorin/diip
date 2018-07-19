@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 09:27:06 2018
--- Last update : Thu Jul 19 11:50:00 2018
+-- Last update : Thu Jul 19 14:08:40 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ entity dc_top is
         -- ---------------------------------------------------------------------
         -- control
         ------------------------------------------------------------------------
-        wa_par_c_gvar           : out std_logic_vector (21 downto 0);
+        wa_par_c_gvar           : out std_logic_vector (19 downto 0);
         wa_par_c                : out std_logic_vector (5  downto 0);
         wa_par_ci_gvar          : out std_logic_vector (19 downto 0);
         wa_par_b_gmean          : out std_logic_vector (13 downto 0);
@@ -132,7 +132,7 @@ architecture structural of dc_top is
             uft_tx_row_num        : out std_logic_vector (31 downto 0);
             uft_tx_data_size      : out std_logic_vector (31 downto 0);
             wa_tlast              : in  std_logic;
-            wa_par_c_gvar         : out std_logic_vector (21 downto 0);
+            wa_par_c_gvar         : out std_logic_vector (19 downto 0);
             wa_par_c              : out std_logic_vector (5 downto 0);
             wa_par_ci_gvar        : out std_logic_vector (19 downto 0);
             wa_par_b_gmean        : out std_logic_vector (13 downto 0);

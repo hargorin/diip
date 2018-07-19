@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Jul 18 11:44:02 2018
--- Last update : Thu Jul 19 14:24:09 2018
+-- Last update : Thu Jul 19 14:38:52 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ entity dc_control is
         -- control wallis
         ------------------------------------------------------------------------
         wa_tlast 				: in std_logic; -- used for end of line detect
-        wa_par_c_gvar 			: out std_logic_vector (21 downto 0);
+        wa_par_c_gvar 			: out std_logic_vector (19 downto 0);
         wa_par_c 				: out std_logic_vector (5  downto 0);
         wa_par_ci_gvar 			: out std_logic_vector (19 downto 0);
         wa_par_b_gmean 			: out std_logic_vector (13 downto 0);
@@ -92,6 +92,7 @@ architecture behav of dc_control is
 
 	signal img_width : std_logic_vector(24 downto 0);
 	signal win_size : std_logic_vector(17 downto 0);
+    signal uft_tx_start_i : std_logic;
 
     -- Fifo connections
     signal WriteEn : std_logic;
@@ -127,7 +128,7 @@ begin
 			        win_size 		<= uft_user_reg1(17 downto 0);
 			        img_width 		<= uft_user_reg2(24 downto 0);
 			        mmu_restart 		<= '1';
-					wa_par_c_gvar 		<= uft_user_reg3(21 downto 0);
+					wa_par_c_gvar 		<= uft_user_reg3(19 downto 0);
 			        wa_par_c 			<= uft_user_reg4(5 downto 0);
 			        wa_par_ci_gvar 		<= uft_user_reg5(19 downto 0);
 			        wa_par_b_gmean 		<= uft_user_reg6(13 downto 0);
@@ -152,18 +153,47 @@ begin
 		if rising_edge(clk) then
 			if rst_n = '0' then
     			tx_req := false;
-		        uft_tx_start <= '0';
+		        uft_tx_start_i <= '0';
 		        uft_tx_row_num <= (others => '0');
     		else
-                uft_tx_start <= '0';
+                uft_tx_start_i <= '0';
     			if Empty = '0' and uft_tx_ready = '1' then
-                    uft_tx_start <= '1';
+                    uft_tx_start_i <= '1';
     			end if;
 			end if;
 		end if;
     end process ; -- p_init_tx
     -- ---------------------------------------------------------------------
+    uft_tx_start <= uft_tx_start_i;
 
+    -- ---------------------------------------------------------------------
+    -- read if fifo is not empty and uft is read
+    -- ---------------------------------------------------------------------
+    p_fifo_read_en : process( clk )
+    -- ---------------------------------------------------------------------
+        variable waitForComplete : boolean := false;
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                waitForComplete := false;
+                ReadEn <= '0';
+
+            else
+                ReadEn <= '0';
+
+                if uft_tx_ready = '1' and not waitForComplete and Empty = '0' then
+                    ReadEn <= '1';
+                    waitForComplete := true;
+                end if;
+
+                if uft_tx_ready = '0' and uft_tx_start_i = '0' then
+                    waitForComplete := false;
+                end if;
+
+            end if;
+        end if;
+    end process ; -- p_fifo_read_en
+    -- ---------------------------------------------------------------------
 
     -- always write tx size into fifo
     DataIn <= std_logic_vector(resize(unsigned(img_width) - resize(unsigned(win_size),25) + 1,32));
@@ -171,8 +201,6 @@ begin
     WriteEn <= wa_tlast when Full = '0' else '0';
     -- Read data goes to uft tx data size
     uft_tx_data_size <= DataOut;
-    -- read if fifo is not empty and uft is read
-    ReadEn <= '1' when Empty = '0' and uft_tx_ready = '1' else '0';
 
     -- could insert custom tcid here if UFT was implemented
     uft_tx_row_num <= (others => '0'); 
