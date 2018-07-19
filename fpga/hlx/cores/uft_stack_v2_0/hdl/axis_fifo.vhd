@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 15:04:30 2017
--- Last update : Tue Jul 17 09:05:19 2018
+-- Last update : Thu Jul 19 12:24:02 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -105,6 +105,11 @@ begin
                 end if;
 
                 -- Output
+                -- make sure output tlast is reset if new data is written
+                -- without M_AXIS_TREADY to be '1' 
+                if ((Looped = true) or (Head /= Tail)) then
+                    M_AXIS_TLAST <= '0';
+                end if;
                 if (M_AXIS_TREADY = '1') then
                     if ((Looped = true) or (Head /= Tail)) then
                         -- Update data output
