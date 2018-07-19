@@ -4,6 +4,7 @@ function wallis_filter()
     %I = imread('room.jpg');
     O=imread('mountain_small.tif');
     W=imread('mountain_small.tif');
+    E=imread('mountain_small.tif');
     
     %[O,map1]=imread('room.jpg');
     %O = rgb2gray( [O,map1]);
@@ -119,6 +120,24 @@ function wallis_filter()
                 end
             end
         end
+        
+        % Accuracy
+        for x = 1:rows
+            for y = 1:cols
+                dbg = floor(((double(O(x,y)) - n_mean(x,y)) * c*g_std^2)) / floor(c*n_std(x,y)^2+(1-c)*g_std^2);
+                pix = dbg + (b*g_mean + ((1-b)*n_mean(x,y)));
+                
+                if pix >= 255
+                    E(x,y) = 255;
+                elseif pix <= 0
+                    E(x,y) = 0;
+                else
+                    E(x,y) = round(pix);
+                end
+            end
+        end
+        
+        err = immse(W, E)
         
         % Refresh Plots
         subplot(2,2,3);
