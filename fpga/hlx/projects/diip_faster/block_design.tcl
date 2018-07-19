@@ -5,7 +5,7 @@
     CONFIG.FIFO_DEPTH {2048} \
     CONFIG.BRAM_SIZE {16384} \
     CONFIG.CACHE_N_LINES {22} \
-  ] diip_controller_0
+  ] $diip_controller_0
 
   # Create instance: rst_temac_support, and set properties
   set rst_temac_support [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_temac_support ]
