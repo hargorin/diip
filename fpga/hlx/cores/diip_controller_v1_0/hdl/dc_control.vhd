@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Jul 18 11:44:02 2018
--- Last update : Wed Jul 18 14:51:21 2018
+-- Last update : Thu Jul 19 14:24:09 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -73,8 +73,33 @@ entity dc_control is
 end entity ; -- dc_control
 
 architecture behav of dc_control is
+    component simple_fifo is
+        generic (
+            constant DATA_WIDTH : positive := 8;
+            constant FIFO_DEPTH : positive := 256
+            );
+        port (
+            CLK     : in  STD_LOGIC;
+            RST_N   : in  STD_LOGIC;
+            WriteEn : in  STD_LOGIC;
+            DataIn  : in  STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
+            ReadEn  : in  STD_LOGIC;
+            DataOut : out STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
+            Empty   : out STD_LOGIC;
+            Full    : out STD_LOGIC
+        );
+    end component simple_fifo;    
+
 	signal img_width : std_logic_vector(24 downto 0);
 	signal win_size : std_logic_vector(17 downto 0);
+
+    -- Fifo connections
+    signal WriteEn : std_logic;
+    signal DataIn : std_logic_vector(31 downto 0);
+    signal ReadEn : std_logic;
+    signal DataOut : std_logic_vector(31 downto 0);
+    signal Empty : std_logic;
+    signal Full : std_logic;
 begin
 
 	-- ---------------------------------------------------------------------
@@ -129,27 +154,48 @@ begin
     			tx_req := false;
 		        uft_tx_start <= '0';
 		        uft_tx_row_num <= (others => '0');
-		        uft_tx_data_size <= (others => '0');
     		else
-    			-- check if wallis end line
-    			if wa_tlast = '1' then
-    				tx_req := true;
+                uft_tx_start <= '0';
+    			if Empty = '0' and uft_tx_ready = '1' then
+                    uft_tx_start <= '1';
     			end if;
-
-    			-- start transmission if requested and ready
-    			if tx_req and uft_tx_ready = '1' then
-    				tx_req := false;
-    				-- could insert custom tcid here if UFT was implemented
-    				uft_tx_row_num <= (others => '0'); 
-    				uft_tx_data_size <= std_logic_vector(resize(unsigned(img_width) - resize(unsigned(win_size),25) + 1,32));
-    				uft_tx_start <= '1';
-    			else
-    				uft_tx_start <= '0';
-    			end if;
-
 			end if;
 		end if;
     end process ; -- p_init_tx
+    -- ---------------------------------------------------------------------
+
+
+    -- always write tx size into fifo
+    DataIn <= std_logic_vector(resize(unsigned(img_width) - resize(unsigned(win_size),25) + 1,32));
+    -- write if wallis tlast
+    WriteEn <= wa_tlast when Full = '0' else '0';
+    -- Read data goes to uft tx data size
+    uft_tx_data_size <= DataOut;
+    -- read if fifo is not empty and uft is read
+    ReadEn <= '1' when Empty = '0' and uft_tx_ready = '1' else '0';
+
+    -- could insert custom tcid here if UFT was implemented
+    uft_tx_row_num <= (others => '0'); 
+
+    -- ---------------------------------------------------------------------
+    -- Stores the UFT tx transactions to be made
+    -- ---------------------------------------------------------------------
+    tx_transaction_fifo : simple_fifo
+    -- ---------------------------------------------------------------------
+        generic map (
+            DATA_WIDTH => 32,
+            FIFO_DEPTH => 32
+            )
+        port map (
+            CLK     => clk,
+            RST_N   => rst_n,
+            WriteEn => WriteEn,
+            DataIn  => DataIn,
+            ReadEn  => ReadEn,
+            DataOut => DataOut,
+            Empty   => Empty,
+            Full    => Full
+        );    
     -- ---------------------------------------------------------------------
 
 

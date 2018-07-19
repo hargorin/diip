@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Wed Jul 18 15:22:03 2018
+-- Last update : Thu Jul 19 14:25:35 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -184,6 +184,54 @@ begin
         wa_tlast <= '0';
 
         -- indicate tx_ready
+        waitfor(3);
+        uft_tx_ready <= '1';
+        waitfor(1);
+        uft_tx_ready <= '0';
+        waitfor(1);
+        assert (uft_tx_start='1') report "UFT tx not started" severity error;
+        assert (uft_tx_data_size=std_logic_vector(to_unsigned(128-21+1,32))) report "Wrong UFT tx data size" severity error;
+        waitfor(1);
+        assert (uft_tx_start='0') report "UFT tx not deasserted" severity error;
+
+
+        -----------------------------------------------------------
+        -- indicate multiple end of line from wallis
+        -----------------------------------------------------------
+        waitfor(10);
+        wa_tlast <= '1';
+        waitfor(1);
+        wa_tlast <= '0';
+        waitfor(1);
+        wa_tlast <= '1';
+        waitfor(1);
+        wa_tlast <= '0';
+        waitfor(1);
+        wa_tlast <= '1';
+        waitfor(1);
+        wa_tlast <= '0';
+
+        -- indicate tx_ready
+        waitfor(3);
+        uft_tx_ready <= '1';
+        waitfor(1);
+        uft_tx_ready <= '0';
+        waitfor(1);
+        assert (uft_tx_start='1') report "UFT tx not started" severity error;
+        assert (uft_tx_data_size=std_logic_vector(to_unsigned(128-21+1,32))) report "Wrong UFT tx data size" severity error;
+        waitfor(1);
+        assert (uft_tx_start='0') report "UFT tx not deasserted" severity error;
+
+        waitfor(3);
+        uft_tx_ready <= '1';
+        waitfor(1);
+        uft_tx_ready <= '0';
+        waitfor(1);
+        assert (uft_tx_start='1') report "UFT tx not started" severity error;
+        assert (uft_tx_data_size=std_logic_vector(to_unsigned(128-21+1,32))) report "Wrong UFT tx data size" severity error;
+        waitfor(1);
+        assert (uft_tx_start='0') report "UFT tx not deasserted" severity error;
+
         waitfor(3);
         uft_tx_ready <= '1';
         waitfor(1);
