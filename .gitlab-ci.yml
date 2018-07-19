@@ -38,18 +38,13 @@ fpga:
     - pwd
     - echo $PATH
     - id
-    - cd fpga/hls/
-    - make NAME=controller export
-    - make NAME=wallis export
-    - cd ../hlx/
-    # - make NAME=sobel impl
-    - time make NAME=diip impl
+    - cd fpga/hlx/
+    - time make NAME=diip_faster impl
   artifacts:
     paths:
     - "fpga/hlx/build/projects/*/*/*.dcp"
     - "fpga/hlx/build/*.bit"
     - "fpga/hlx/build/*.ltx"
-    - "fpga/hls/build/*/*/impl/ip/*"
 
 sw:
   stage: build

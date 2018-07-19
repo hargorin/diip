@@ -8,20 +8,43 @@ use ieee.std_logic_textio.all;
 -----------------------------------------------------------
 
 entity dc_mmu_tb is
+generic (
+    
+    -- number of elements in a  line buffer
+    BRAM_SIZE : positive := 128;
+    -- Testbench DUT generics as constants
+    CACHE_N_LINES : positive := 4;
+
+    IMAGE_WIDTH : positive := 5;
+    WINDOW_SIZE : positive := 3
+);
 
 end entity dc_mmu_tb;
 
 -----------------------------------------------------------
 
 architecture testbench of dc_mmu_tb is
-
-    -- number of elements in a  line buffer
-    constant BRAM_SIZE : positive := 128;
-	-- Testbench DUT generics as constants
-    constant CACHE_N_LINES : positive := 4;
-
-    constant IMAGE_WIDTH : positive := 5;
-    constant WINDOW_SIZE : positive := 3;
+    component dc_mmu is
+        generic (
+            BRAM_SIZE     : natural := 2304;
+            CACHE_N_LINES : natural := 2
+        );
+        port (
+            clk           : in  std_logic;
+            rst_n         : in  std_logic;
+            restart       : in  std_logic;
+            win_size      : in  std_logic_vector(17 downto 0);
+            img_width     : in  std_logic_vector(24 downto 0);
+            o_axis_tvalid : out std_logic;
+            o_axis_tdata  : out std_logic_vector(7 downto 0);
+            o_axis_tready : in  std_logic;
+            o_axis_tlast  : out std_logic;
+            i_axis_tvalid : in  std_logic;
+            i_axis_tdata  : in  std_logic_vector(7 downto 0);
+            i_axis_tready : out std_logic;
+            i_axis_tlast  : in  std_logic
+        );
+    end component dc_mmu;
 
 	-- Testbench DUT ports as signals
     signal clk           : std_logic;
@@ -214,11 +237,7 @@ begin
 	-----------------------------------------------------------
 	-- Entity Under Test
 	-----------------------------------------------------------
-    dc_mmu_1 : entity work.dc_mmu
-        generic map (
-            BRAM_SIZE => BRAM_SIZE,
-            CACHE_N_LINES => CACHE_N_LINES
-        )
+    dc_mmu_1 : dc_mmu
         port map (
             clk           => clk,
             rst_n         => rst_n,

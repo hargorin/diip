@@ -10,7 +10,7 @@
 
 
 # Project name
-NAME = diip
+NAME = diip_faster
 # FPGA Part number
 PART = xc7a200tfbg676-2
 
@@ -21,6 +21,8 @@ BUILD = build
 # Cores to build in the ./cores directory
 CORES = axi_master_burst_v2_0		\
 		temac_support_v1_0 			\
+		wallis_model_v1_0 			\
+		diip_controller_v1_0    	\
 		udp_ip_stack_v1_0			\
 		uft_stack_v2_0				\
 		debounce_v1_0				\

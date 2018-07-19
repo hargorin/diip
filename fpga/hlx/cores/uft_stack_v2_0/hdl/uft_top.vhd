@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Wed Jul 18 14:07:48 2018
+-- Last update : Thu Jul 19 16:11:32 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -31,11 +31,7 @@ entity uft_top is
         -- only treat packages arriving at INCOMMING_PORT as UFT packages
         INCOMMING_PORT : natural := 42042;
         -- Parameters for ip interface to Axi master burst
-        FIFO_DEPTH : positive := 366; -- (1464/4)
-
-        -- Parameters of Axi Slave Bus Interface S_AXI_CTRL
-        C_S_AXI_DATA_WIDTH  : integer   := 32;
-        C_S_AXI_ADDR_WIDTH  : integer   := 6
+        FIFO_DEPTH : positive := 366 -- (1464/4)
     );
     port (
         -- clk and reset

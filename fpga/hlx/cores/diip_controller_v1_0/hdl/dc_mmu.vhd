@@ -27,7 +27,7 @@ USE IEEE.NUMERIC_STD.ALL;
 entity dc_mmu is
     generic (
         -- number of elements in a  line buffer
-        BRAM_SIZE : natural := 4608; -- 1024 for simulation
+        BRAM_SIZE : natural := 2304; -- 1024 for simulation
         -- number of lines in cache: minimum is window size + 1
         CACHE_N_LINES : natural := 2
     );
