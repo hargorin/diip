@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 09:27:06 2018
--- Last update : Thu Jul 19 14:08:40 2018
+-- Last update : Fri Jul 20 17:56:12 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -132,6 +132,7 @@ architecture structural of dc_top is
             uft_tx_row_num        : out std_logic_vector (31 downto 0);
             uft_tx_data_size      : out std_logic_vector (31 downto 0);
             wa_tlast              : in  std_logic;
+            wa_tvalid             : in  std_logic;
             wa_par_c_gvar         : out std_logic_vector (19 downto 0);
             wa_par_c              : out std_logic_vector (5 downto 0);
             wa_par_ci_gvar        : out std_logic_vector (19 downto 0);
@@ -188,9 +189,11 @@ architecture structural of dc_top is
     -- connection between control and wallis
     ------------------------------------------------------------------------
     signal wa_tlast                : std_logic;
+    signal wa_tvalid               : std_logic;
 
 begin
     wa_tlast <= wa_i_axis_tlast;
+    wa_tvalid <= wa_i_axis_tvalid;
 
     ------------------------------------------------------------------------
     control : dc_control
@@ -219,6 +222,7 @@ begin
             uft_tx_row_num        => uft_tx_row_num,
             uft_tx_data_size      => uft_tx_data_size,
             wa_tlast              => wa_tlast,
+            wa_tvalid             => wa_tvalid,
             wa_par_c_gvar         => wa_par_c_gvar,
             wa_par_c              => wa_par_c,
             wa_par_ci_gvar        => wa_par_ci_gvar,
@@ -265,7 +269,7 @@ begin
             m_axis_tdata  => uft_o_axis_tdata,
             m_axis_tready => uft_o_axis_tready,
             m_axis_tlast  => uft_o_axis_tlast,
-            s_axis_tvalid => wa_i_axis_tvalid,
+            s_axis_tvalid => wa_tvalid,
             s_axis_tdata  => wa_i_axis_tdata,
             s_axis_tready => wa_i_axis_tready,
             s_axis_tlast  => wa_tlast

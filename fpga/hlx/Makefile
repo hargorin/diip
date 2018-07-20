@@ -21,6 +21,7 @@ BUILD = build
 # Cores to build in the ./cores directory
 CORES = axi_master_burst_v2_0		\
 		temac_support_v1_0 			\
+		wallis_v1_0 				\
 		wallis_model_v1_0 			\
 		diip_controller_v1_0    	\
 		udp_ip_stack_v1_0			\
