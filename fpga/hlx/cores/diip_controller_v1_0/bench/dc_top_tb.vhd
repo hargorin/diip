@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Thu Jul 19 14:30:08 2018
+-- Last update : Fri Jul 20 16:19:53 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -308,6 +308,24 @@ begin
 
         file file_axi_s     : text;
         variable oline      : line;
+
+        function format(
+                value   : natural;    --- the numeric value
+                width   : positive;   -- number of characters
+                leading : character := ' ')
+            return string --- guarantees to return "width" chars
+        is
+            constant img: string := integer'image(value);
+            variable str: string(1 to width) := (others => leading);
+        begin
+            if img'length > width then
+                report "Format width " & integer'image(width) & " is too narrow for value " & img severity warning;
+                str := (others => '*');
+            else
+                str(width+1-img'length to width) := img;
+            end if;
+            return str;
+        end;
     begin
         if rst_n = '0' then
             ctr := 0;
@@ -318,8 +336,8 @@ begin
                     ctr := ctr + 1;
                 end if;
                 if uft_o_axis_tlast = '1' then
-                    file_open(file_axi_s, "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log", write_mode);
-                    report "Start writing file: " & "axi_stream_res_" & INTEGER'IMAGE(fi) & ".log";
+                    file_open(file_axi_s, "axi_stream_res_" & format(fi, 4, '0') & ".log", write_mode);
+                    report "Start writing file: " & "axi_stream_res_" & format(fi, 4, '0') & ".log";
                     for i in 0 to (ctr-1) loop
                         hwrite(oline, axi_buf(i), left, 8);
                         writeline(file_axi_s, oline);
