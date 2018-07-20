@@ -78,8 +78,22 @@ int main(int argc, char const *argv[])
     // Send image width
     com->writeUserReg(1, WINDOW_SIZE); // win size
     com->writeUserReg(2, ih->getWidth());
+
+    com->writeUserReg(3, 0b00101101101101000000); // wa_par_c_gvar
+    com->writeUserReg(4, 0b110100); // wa_par_c
+    com->writeUserReg(5, 0b00001010100011000000); // wa_par_ci_gvar
+    com->writeUserReg(6, 0b00111101100001); // wa_par_b_gmean
+    com->writeUserReg(7, 0b100001); // wa_par_bi
+    
     com->writeUserReg(0, 1); // new image start
     com->writeUserReg(0, 0);
+
+
+// signal wa_par_c_gvar  "00101101101101000000"; --2925
+// signal wa_par_c       "110100"; --0.8125
+// signal wa_par_ci_gvar "00001010100011000000"; --675
+// signal wa_par_b_gmean "00111101100001"; --61.515625
+// signal wa_par_bi      "100001"; --0.515625
 
 
     // Loop through all lines
@@ -158,11 +172,11 @@ int main(int argc, char const *argv[])
     // printf("Output pixels: %.0f\n", outsize);
 
     // ih->hexDumpOutputImage();
-    // ih->storeOutputImage();
-    // if(showImage)
-    // {
-    //     ih->showOutputImage();
-    // }
+    ih->storeOutputImage();
+    if(showImage)
+    {
+        ih->showOutputImage();
+    }
  
     return 0;
 }
