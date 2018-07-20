@@ -2,13 +2,14 @@ function wallis_filter()
     %*******************************************************************************************************
     %# read image
     %I = imread('room.jpg');
-    %O=imread('landscape.jpg');
-    %W=imread('landscape.jpg');
+    O=imread('mountain_small.tif');
+    W=imread('mountain_small.tif');
+    E=imread('mountain_small.tif');
     
-    [O,map1]=imread('room.jpg');
-    O = rgb2gray( [O,map1]);
-    [W,map2]=imread('room.jpg');
-    W = rgb2gray( [W,map2]);
+    %[O,map1]=imread('room.jpg');
+    %O = rgb2gray( [O,map1]);
+    %[W,map2]=imread('room.jpg');
+    %W = rgb2gray( [W,map2]);
 
     
     %*******************************************************************************************************
@@ -94,26 +95,49 @@ function wallis_filter()
              [n_mean, n_std] = cal_mean_std(O);
              cal_wallis(n_mean, n_std);
          end
-         
     end
 
     %# Wallis Filter calculation
     function cal_wallis(n_mean, n_std)
         g_mean = str2num(get(tb_mean,'String'));
         g_std = str2num(get(tb_std,'String'));
-        %b = str2num(get(txt_b,'String'));
-        %c = str2num(get(txt_c,'String'));
-        b = 0.49;
-        c = 0.82;
+        b = str2num(get(txt_b,'String'));
+        c = str2num(get(txt_c,'String'));
         
         [rows cols]=size(O);
         
         for x = 1:rows
             for y = 1:cols
-                dbg = (((double(O(x,y)) - n_mean(x,y)) * c*g_std^2) / (c*n_std(x,y)^2+(1-c)*g_std^2))
-                W(x,y) = dbg + (b*g_mean + ((1-b)*n_mean(x,y)));
+                dbg = (((double(O(x,y)) - n_mean(x,y)) * c*g_std^2) / (c*n_std(x,y)^2+(1-c)*g_std^2));
+                pix = dbg + (b*g_mean + ((1-b)*n_mean(x,y)));
+                
+                if pix >= 255
+                    W(x,y) = 255;
+                elseif pix <= 0
+                    W(x,y) = 0;
+                else
+                    W(x,y) = pix;
+                end
             end
         end
+        
+        % Accuracy
+        for x = 1:rows
+            for y = 1:cols
+                dbg = floor(((double(O(x,y)) - n_mean(x,y)) * c*g_std^2)) / floor(c*n_std(x,y)^2+(1-c)*g_std^2);
+                pix = dbg + (b*g_mean + ((1-b)*n_mean(x,y)));
+                
+                if pix >= 255
+                    E(x,y) = 255;
+                elseif pix <= 0
+                    E(x,y) = 0;
+                else
+                    E(x,y) = round(pix);
+                end
+            end
+        end
+        
+        err = immse(W, E)
         
         % Refresh Plots
         subplot(2,2,3);

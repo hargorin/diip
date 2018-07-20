@@ -19,7 +19,7 @@ apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
 						ap_ufixed<5,1> brightness);
 
 
-void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
+void wallis(AXI_STREAM_IN &inData, AXI_STREAM_OUT &outData,
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
 			ap_ufixed<5,1> brightness) {
 
@@ -30,16 +30,16 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	
 	// ************************************************************************
 	// Variables
-	AXI_VALUE inPixel;
-	AXI_VALUE outPixel;
+	AXI_VALUE_IN inPixel;
+	AXI_VALUE_OUT outPixel;
 
 	static apuint19_t sum_Pixel;
 	static apuint27_t sum_Pixel2;
 	static apuint8_t n_Mean;
 	static apuint14_t n_Var;
-	static apuint8_t pixel[WIN_SIZE];
+	static apuint168_t pixel[WIN_SIZE];
 
-	static apuint10_t pos_Pixel = (WIN_SIZE - 1) / 2;
+	static apuint8_t u_pixel;
 
 	// ************************************************************************
 	// Initialization
@@ -47,27 +47,32 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 	// Read data and calculate mean
 	sum_Pixel = 0;
 	sum_Pixel2 = 0;
-	loop_rdata:for(uint16_t i = 0; i < WIN_SIZE; i++) {
-		static apuint16_t tmp_pow;
+	loop_rdata:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
 		inPixel = inData.read();
 		pixel[i] = inPixel.data;
 
-		sum_Pixel += pixel[i];				// sum of the Pixels
-		tmp_pow = pixel[i] * pixel[i];
-		sum_Pixel2 += tmp_pow;
+		loop_sum:for(uint8_t k = 0; k < WIN_LENGTH; k++) {
+			static apuint16_t tmp_pow;
+			u_pixel = ((pixel[i] >> (8 * k)) & 0xFF);
+			sum_Pixel += u_pixel;				// sum of the Pixels
+			tmp_pow = u_pixel * u_pixel;
+			sum_Pixel2 += tmp_pow;
+		}
+
 	}
 
 	// ************************************************************************
 	// Mean
 	n_Mean = Cal_Mean(sum_Pixel);
-
+	//printf("HW: %d\n", (uint8_t)n_Mean);
 	// ************************************************************************
 	// Variance
 	n_Var = Cal_Variance(n_Mean * n_Mean, sum_Pixel2);
 
 	// ************************************************************************
 	// Wallis Filter
-	outPixel.data = Wallis_Filter(pixel[pos_Pixel], n_Mean, n_Var, g_Mean, g_Var,
+	u_pixel = ((pixel[WIN_CENTER] >> WIN_SHIFT) & 0xFF);
+	outPixel.data = Wallis_Filter(u_pixel, n_Mean, n_Var, g_Mean, g_Var,
 									contrast, brightness);
 
 	// ************************************************************************
@@ -84,24 +89,26 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		// Subtract old pixel data from sum_Pixel
 		loop_subData:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
 			static apuint16_t tmp_pow;
-			sum_Pixel -= pixel[i];
-			tmp_pow = pixel[i] * pixel[i];
+			u_pixel = ((pixel[0] >> (8 * i)) & 0xFF);
+			sum_Pixel -= u_pixel;				// sum of the Pixels
+			tmp_pow = u_pixel * u_pixel;
 			sum_Pixel2 -= tmp_pow;
 		}
 
 		// Copy data
-		loop_strData:for(uint16_t i = 0; i < (WIN_SIZE - WIN_LENGTH); i++) {
-			pixel[i] = pixel[i+WIN_LENGTH];
+		loop_strData:for(uint16_t i = 0; i < (WIN_LENGTH - 1); i++) {
+			pixel[i] = pixel[i+1];
 		}
 
 		// Add new data and calculate new sub_Pixel
+		inPixel = inData.read();
+		pixel[WIN_LENGTH - 1] = inPixel.data;
+
 		loop_addData:for(uint16_t i = 0; i < WIN_LENGTH; i++) {
 			static apuint16_t tmp_pow;
-			inPixel = inData.read();
-			pixel[i + (WIN_SIZE - WIN_LENGTH)] = inPixel.data;
-
-			sum_Pixel += pixel[i + (WIN_SIZE - WIN_LENGTH)];
-			tmp_pow = pixel[i + (WIN_SIZE - WIN_LENGTH)] * pixel[i + (WIN_SIZE - WIN_LENGTH)];
+			u_pixel = ((pixel[WIN_LENGTH - 1] >> (8 * i)) & 0xFF);
+			sum_Pixel += u_pixel;				// sum of the Pixels
+			tmp_pow = u_pixel * u_pixel;
 			sum_Pixel2 += tmp_pow;
 		}
 
@@ -109,14 +116,15 @@ void wallis(AXI_STREAM &inData, AXI_STREAM &outData,
 		// ********************************************************************
 		// Mean
 		n_Mean = Cal_Mean(sum_Pixel);
-
+		//printf("HW: %d\n", (uint8_t)n_Mean);
 		// ********************************************************************
 		// Variance
 		n_Var = Cal_Variance(n_Mean * n_Mean, sum_Pixel2);
 
 		// ********************************************************************
 		// Wallis Filter
-		outPixel.data = Wallis_Filter(pixel[pos_Pixel], n_Mean, n_Var, g_Mean, g_Var,
+		u_pixel = ((pixel[WIN_CENTER] >> WIN_SHIFT) & 0xFF);
+		outPixel.data = Wallis_Filter(u_pixel, n_Mean, n_Var, g_Mean, g_Var,
 										contrast, brightness);
 
 		// ********************************************************************
@@ -203,8 +211,8 @@ apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
 
 	//fp_Var = 2;
 	// <20,5> = 1/ <19,15>
-	ap_ufixed<18,1> noah = 1.0;
-	fp_Den = noah/fp_Var;
+	ap_ufixed<18,1> rec = 1.0;
+	fp_Den = rec/fp_Var;
 	//printf("%.15f\n", (float)fp_Den);
 
 	// <35,29> = <27,23> * <20,5>

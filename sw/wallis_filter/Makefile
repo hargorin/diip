@@ -1,7 +1,7 @@
 CC = g++
 RM = rm -rf
 
-CFLAGS = -Wall
+CFLAGS = -Wall -O3
 
 SRCS = main.cpp
 PROG = wallis_filter

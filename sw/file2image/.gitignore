@@ -1,2 +1,5 @@
+# ignore the output directory
+out/
+
 file2image
-*.tiff
+

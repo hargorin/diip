@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  file2image
+//  wallis_filter
 //
 //  Created by Jan Stocker on 30/11/17.
 //  Copyright © 2017 Jan Stocker. All rights reserved.
@@ -9,34 +9,53 @@
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include <cv.h>
 #include <opencv2/highgui/highgui.hpp>
 
 using namespace cv;
 using namespace std;
 
-void printUsage () {
-    printf("wallis_filter: Image content enhancement\n");
-    printf("    usage: ./wallis_filter input_image output_image [-s]\n");
-    printf("        input_image    	Input image for content enhancement\n");
-    printf("        output_image   	Image file to write. Extension can be tiff, png, ...\n");
-    printf("        -s          	Show image\n");
-    printf("                              \n");
-    printf("    example: ./wallis_filter input_files/landscape.jpg wallis.jpg -s\n");
-}
 
+// ****************************************************************************
+// defines
+#define G_MEAN      127       // Mean of the input image
+#define G_VAR       3600      // Standard Deviation for the input image
+#define CONTRAST    0.8125    // Contrast expansion factor 0.82
+#define BRIGHTNESS  0.484375  // Brightness forcing factor 0.49
+
+#define WIN_LENGTH  21  // Between 11 and 41 (depends on camera resolution)
+#define WIN_SIZE    (WIN_LENGTH * WIN_LENGTH)
+#define WIN_LENGTH2 (WIN_LENGTH - 1) / 2
+
+typedef struct tictocstruct
+{
+    struct timeval tv;
+    double start;
+    double end;
+    FILE* fp;
+    size_t bytes;
+    float throughput;
+} tictoc_t;
+
+
+// ****************************************************************************
+// Declerations
+void printUsage ();
+uint8_t Cal_Mean(uint32_t sum_Pixel);
+uint16_t Cal_Variance(uint16_t mean2, uint32_t sum_pixel2);
+uint8_t Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var);
+void tic(tictoc_t *tt);
+void toc(tictoc_t *tt);
+
+
+// ****************************************************************************
+// Main
+// ****************************************************************************
 int main(int argc, const char * argv[]) {
 
-	// Declerations
-    const int MEAN = 127;			// Mean of the input image
-    const int STD = 60;				// Standard Deviation for the input image
-    const float CONTRAST = 1.6;		// Contrast expansion factor
-    const float BRIGHTNESS = 0.6;		// Brightness forcing factor
-
-    const int LOC_LENGTH = 25;
-    const int LOC_WIDTH = 25;
-
-
+    // ************************************************************************
+    // Read input arguments
     if(argc < 3)
     {
         printf("ERROR: not enough arguments\n");
@@ -51,112 +70,180 @@ int main(int argc, const char * argv[]) {
         return 2;
     }
 
-
-
-    // ************************************************************
-    // Read input arguments
     const char * infile = argv[1];
     const char * outfile = argv[2];
+    tictoc_t tt;
 
-
+    // ************************************************************************
 	// Read input image
-    Mat img = imread(infile, IMREAD_GRAYSCALE);
-    Mat w_img(img.rows, img.cols, CV_8UC1, Scalar(0));
-    int img_size = img.rows * img.cols;
-  
-
-    int loc_mean = 0;
-    int loc_std = 0;
-
-    int mean_y = 0;
-    int std_y = 0;
-    int wal_y = 0;
-    int loop_y = 0;
-    int loop_x = 0;
-    int mean_x = 0;
-
-    for(int i = 0; i < img.rows; ) {
-    	loop_x = 0;
-
-		if((i + LOC_WIDTH) >= img.rows) {
-			loop_y += img.rows - i; 
-		}
-		else {
-			loop_y += LOC_WIDTH;
-		}
-
-    	for (int j = 0; j < img.cols; ) {
-    		mean_y = i;
-    		std_y = i;
-    		wal_y = i;
-
-    		if((j + LOC_LENGTH) >= img.cols) {
-    			loop_x += img.cols - j; 
-    		}
-    		else {
-    			loop_x += LOC_LENGTH;
-    		}
-
-
-		    // ************************************************************
-		    // Calculate local mean
-		    for (; mean_y < loop_y; mean_y++) {
-		        for (mean_x = j; mean_x < loop_x; mean_x++) {
-		           	loc_mean += img.at<uchar>(Point(mean_x, mean_y));
-		        }
-		    }
-		    loc_mean = loc_mean / img_size;
-
-
-
-		    // ************************************************************
-		    // Calculate local standard deviation
-		    float tmp = 0;
-		    double var = 0;
-		    
-		    for (; std_y < loop_y; std_y++) {
-		        for (int std_x = j; std_x < loop_x; std_x++) {
-		           	tmp = img.at<uchar>(Point(std_x, std_y));
-		           	var += pow((tmp - loc_mean), 2);
-		        }
-		    }
-		    var = var / (img_size - 1);
-		    loc_std = sqrt(var);
-
-
-
-		    // ************************************************************
-		    // Wallis filtering
-		    tmp = 0;
-
-		    for (; wal_y < loop_y; wal_y++) {
-		        for (int wal_x = j; wal_x < loop_x; wal_x++) {
-		        	tmp = STD * (img.at<uchar>(Point(wal_x, wal_y)) - loc_mean);
-		        	tmp = tmp / (loc_std + CONTRAST);
-		        	tmp = tmp + (MEAN * BRIGHTNESS);
-		        	tmp = tmp + (loc_mean * (1 - BRIGHTNESS));
-		        	w_img.at<uchar>(Point(wal_x, wal_y)) = tmp;
-		        }
-		    }
-    		
-
-
-
-    		j += LOC_LENGTH;
-    	}
-    	i += LOC_WIDTH;
+    Mat src_img = imread(infile, IMREAD_GRAYSCALE);
+    if (!src_img.data) {
+        printf("***********************************************************\n");
+        printf("    ERROR: could not open or find the input image!\n");
+        printf("***********************************************************\n");
+        return 1;
     }
 
+    uint16_t img_width = src_img.cols;
+    uint16_t img_height = src_img.rows;
+    //uint16_t img_width = 30;
+    //uint16_t img_height = 30;
+    uint16_t g_height = (img_height - WIN_LENGTH + 1);
+    uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
 
+    // ************************************************************************
+    // Initialization
+    // ************************************************************************
+    uint8_t n_Mean;
+    uint16_t n_Var;
+    uint32_t sum_Pixel = 0;
+    uint32_t sum_Pixel2 = 0;
+    uint8_t w_pixel;
+    uint8_t *wallis = (uint8_t*)malloc((g_width * g_height) * sizeof(uint8_t));
+    uint32_t index = 0;
 
 
-    // Output
+    tic(&tt);
+    //for (int i = 0; i < 10000; i++) {
+        index = 0;
+        for(uint16_t y = 0; y < g_height; y++) {
+            sum_Pixel = 0;
+            sum_Pixel2 = 0;
+
+            // ********************************************************************
+            // Initialization WIN
+            for(uint16_t x_win = 0; x_win < WIN_LENGTH; x_win++) {
+                for(uint16_t y_win = 0; y_win < WIN_LENGTH; y_win++) {
+                    sum_Pixel += src_img.at<uint8_t>(Point(x_win, (y + y_win)));
+                    sum_Pixel2 += (src_img.at<uint8_t>(Point(x_win, (y + y_win))) * src_img.at<uint8_t>(Point(x_win, (y + y_win))));
+                }
+            }
+
+            w_pixel = src_img.at<uint8_t>(Point(WIN_LENGTH2, (y + WIN_LENGTH2)));
+
+            n_Mean = Cal_Mean(sum_Pixel);
+            n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
+            wallis[index++] = Wallis(w_pixel, n_Mean, n_Var);
+
+
+            // ********************************************************************
+            // Calculate the whole width of the image
+            for(uint16_t x = 0; x < (g_width - 1); x++) {
+
+                // Substract old data, add new data
+                for(uint16_t y_win = 0; y_win < WIN_LENGTH; y_win++) {
+                    sum_Pixel -= src_img.at<uint8_t>(Point(x, (y + y_win)));
+                    sum_Pixel2 -= (src_img.at<uint8_t>(Point(x, (y + y_win))) * src_img.at<uint8_t>(Point(x, (y + y_win))));
+
+                    sum_Pixel += src_img.at<uint8_t>(Point((x + WIN_LENGTH), (y + y_win)));
+                    sum_Pixel2 += (src_img.at<uint8_t>(Point((x + WIN_LENGTH), (y + y_win))) * src_img.at<uint8_t>(Point((x + WIN_LENGTH), (y + y_win))));
+                }
+
+                w_pixel = src_img.at<uint8_t>(Point((x + WIN_LENGTH2 + 1), (y + WIN_LENGTH2)));
+
+                n_Mean = Cal_Mean(sum_Pixel);
+                n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
+                wallis[index++] = Wallis(w_pixel, n_Mean, n_Var);
+            }
+        }
+    //}
+    toc(&tt);
+
+    Mat w_img = Mat(g_height, g_width, CV_8UC1, wallis);
+    imwrite(outfile, w_img);
+
+    // ************************************************************************
+    // Show Image
     if (argc == 4 && strcmp(argv[3], "-s") == 0)
     {
-        //imshow( "Original", img ); 
-        imshow( "Wallis Filter", w_img );                   
+        imshow("Original", src_img);
+        imshow("Wallis Filter", w_img);                   
         waitKey(0);  
     }
+
+    free(wallis);
     return 0;
+}
+
+/*
+ * Print Usage
+ */
+void printUsage () {
+    printf("wallis_filter: Image content enhancement\n");
+    printf("    usage: ./wallis_filter input_image output_image [-s]\n");
+    printf("        input_image     Input image for content enhancement\n");
+    printf("        output_image    Image file to write. Extension can be tiff, png, ...\n");
+    printf("        -s              Show image\n");
+    printf("                              \n");
+    printf("    example: ./wallis_filter input_files/landscape.jpg wallis.jpg -s\n");
+}
+
+
+/*
+ * Calculate the mean
+ */
+uint8_t Cal_Mean(uint32_t sum_Pixel) {
+    uint32_t mean;
+
+    mean = sum_Pixel / WIN_SIZE;
+
+    return (uint8_t)mean;
+}
+
+/*
+ * Calculate the variance
+ */
+uint16_t Cal_Variance(uint16_t mean2, uint32_t sum_pixel2) {
+    uint32_t var;
+    
+    var = (sum_pixel2 / WIN_SIZE) - mean2;
+
+    return (uint16_t)var;
+}
+
+/*
+ * Calculate the Wallis Pixel
+ */
+uint8_t Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var) {
+    float w_Pixel;
+
+    float dgb = ((v_pixel - n_mean) * CONTRAST * G_VAR) / (CONTRAST * n_var + (1 - CONTRAST) * G_VAR);
+    w_Pixel = dgb + BRIGHTNESS * G_MEAN + (1 - BRIGHTNESS) * n_mean;
+
+    if(w_Pixel > 255) w_Pixel = 255;
+    if(w_Pixel < 0) w_Pixel = 0;
+
+    return (uint8_t)w_Pixel;
+}
+
+/**
+ * @brief      Start time measurement
+ *
+ * @param      tt    tictoc_t structure
+ */
+void tic(tictoc_t *tt)
+{
+    gettimeofday(&tt->tv,NULL);
+    tt->start = 1000000 * tt->tv.tv_sec + tt->tv.tv_usec;
+}
+
+/**
+ * @brief      Stop time measurement and report elapsed, speed and filesize
+ *
+ * @param      tt    tictoc_t structure
+ */
+void toc(tictoc_t *tt)
+{
+    gettimeofday(&tt->tv,NULL);
+    tt->end = 1000000 * tt->tv.tv_sec + tt->tv.tv_usec;
+    if(tt->fp)
+    {
+        // tt->bytes = get_filesize_bytes(tt->fp);
+    }
+    tt->throughput = 1.0*(tt->bytes) / ((tt->end-tt->start) / 1000000.0);
+    printf( "time elapsed: %.0fus Speed: %.3f MB/s Size: %.3f MB\n", 
+        (tt->end-tt->start),  
+        tt->throughput / 1024.0 / 1024.0,
+        tt->bytes/1024.0/1024.0);
 }

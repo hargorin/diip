@@ -1,0 +1,99 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Fri Jul 20 12:29:15 2018
+[*]
+[dumpfile] "/home/jan/git/diip/fpga/hlx/build/ghdl/wallis_top_tb.ghw"
+[dumpfile_mtime] "Fri Jul 20 12:20:46 2018"
+[dumpfile_size] 4737197
+[savefile] "/home/jan/git/diip/fpga/hlx/simulation/wallis_top_tb.gtkw"
+[timestart] 620800000
+[size] 2026 1042
+[pos] -1 -1
+*-26.292046 2455700000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.wallis_top_tb.
+[treeopen] top.wallis_top_tb.dut.
+[treeopen] top.wallis_top_tb.dut.c_simple_fifo.
+[sst_width] 272
+[signals_width] 272
+[sst_expanded] 1
+[sst_vpaned_height] 535
+@28
+top.wallis_top_tb.clk
+top.wallis_top_tb.rst_n
+@200
+-
+-fifo
+@28
+top.wallis_top_tb.dut.init
+@24
+top.wallis_top_tb.dut.ctr
+@28
+top.wallis_top_tb.dut.fifo_writeen
+@25
+#{top.wallis_top_tb.dut.c_simple_fifo.datain[7:0]} top.wallis_top_tb.dut.c_simple_fifo.datain[7] top.wallis_top_tb.dut.c_simple_fifo.datain[6] top.wallis_top_tb.dut.c_simple_fifo.datain[5] top.wallis_top_tb.dut.c_simple_fifo.datain[4] top.wallis_top_tb.dut.c_simple_fifo.datain[3] top.wallis_top_tb.dut.c_simple_fifo.datain[2] top.wallis_top_tb.dut.c_simple_fifo.datain[1] top.wallis_top_tb.dut.c_simple_fifo.datain[0]
+@28
+top.wallis_top_tb.dut.c_mean_var.valid
+top.wallis_top_tb.dut.fifo_readen
+@24
+#{top.wallis_top_tb.dut.fifo_dataout[7:0]} top.wallis_top_tb.dut.fifo_dataout[7] top.wallis_top_tb.dut.fifo_dataout[6] top.wallis_top_tb.dut.fifo_dataout[5] top.wallis_top_tb.dut.fifo_dataout[4] top.wallis_top_tb.dut.fifo_dataout[3] top.wallis_top_tb.dut.fifo_dataout[2] top.wallis_top_tb.dut.fifo_dataout[1] top.wallis_top_tb.dut.fifo_dataout[0]
+#{top.wallis_top_tb.dut.m_pixel[7:0]} top.wallis_top_tb.dut.m_pixel[7] top.wallis_top_tb.dut.m_pixel[6] top.wallis_top_tb.dut.m_pixel[5] top.wallis_top_tb.dut.m_pixel[4] top.wallis_top_tb.dut.m_pixel[3] top.wallis_top_tb.dut.m_pixel[2] top.wallis_top_tb.dut.m_pixel[1] top.wallis_top_tb.dut.m_pixel[0]
+@200
+-
+-Input
+@28
+top.wallis_top_tb.i_axis_tready
+top.wallis_top_tb.i_axis_tvalid
+top.wallis_top_tb.i_axis_tlast
+@24
+#{top.wallis_top_tb.i_axis_tdata[7:0]} top.wallis_top_tb.i_axis_tdata[7] top.wallis_top_tb.i_axis_tdata[6] top.wallis_top_tb.i_axis_tdata[5] top.wallis_top_tb.i_axis_tdata[4] top.wallis_top_tb.i_axis_tdata[3] top.wallis_top_tb.i_axis_tdata[2] top.wallis_top_tb.i_axis_tdata[1] top.wallis_top_tb.i_axis_tdata[0]
+@200
+-
+-Output
+@28
+top.wallis_top_tb.o_axis_tready
+top.wallis_top_tb.o_axis_tvalid
+top.wallis_top_tb.o_axis_tlast
+@22
+#{top.wallis_top_tb.o_axis_tdata[7:0]} top.wallis_top_tb.o_axis_tdata[7] top.wallis_top_tb.o_axis_tdata[6] top.wallis_top_tb.o_axis_tdata[5] top.wallis_top_tb.o_axis_tdata[4] top.wallis_top_tb.o_axis_tdata[3] top.wallis_top_tb.o_axis_tdata[2] top.wallis_top_tb.o_axis_tdata[1] top.wallis_top_tb.o_axis_tdata[0]
+@200
+-
+-mean_var
+@28
+top.wallis_top_tb.dut.valid_mean_var
+@200
+-
+-Wallis Filter
+@28
+top.wallis_top_tb.dut.c_wallis_filter.clk
+top.wallis_top_tb.dut.c_wallis_filter.rst_n
+top.wallis_top_tb.dut.c_wallis_filter.en
+top.wallis_top_tb.dut.c_wallis_filter.valid
+top.wallis_top_tb.dut.c_wallis_filter.clear
+top.wallis_top_tb.dut.c_wallis_filter.m_axis_divisor_tready
+top.wallis_top_tb.dut.c_wallis_filter.m_axis_divisor_tvalid
+top.wallis_top_tb.dut.c_wallis_filter.m_axis_dividend_tready
+top.wallis_top_tb.dut.c_wallis_filter.m_axis_dividend_tvalid
+top.wallis_top_tb.dut.c_wallis_filter.s_axis_dout_tready
+top.wallis_top_tb.dut.c_wallis_filter.s_axis_dout_tvalid
+@24
+#{top.wallis_top_tb.dut.c_wallis_filter.wallis[7:0]} top.wallis_top_tb.dut.c_wallis_filter.wallis[7] top.wallis_top_tb.dut.c_wallis_filter.wallis[6] top.wallis_top_tb.dut.c_wallis_filter.wallis[5] top.wallis_top_tb.dut.c_wallis_filter.wallis[4] top.wallis_top_tb.dut.c_wallis_filter.wallis[3] top.wallis_top_tb.dut.c_wallis_filter.wallis[2] top.wallis_top_tb.dut.c_wallis_filter.wallis[1] top.wallis_top_tb.dut.c_wallis_filter.wallis[0]
+@200
+-
+-Divider
+@28
+top.wallis_top_tb.div_model.i1_axis_tvalid
+top.wallis_top_tb.div_model.i1_axis_tready
+@22
+#{top.wallis_top_tb.div_model.i1_axis_tdata[23:0]} top.wallis_top_tb.div_model.i1_axis_tdata[23] top.wallis_top_tb.div_model.i1_axis_tdata[22] top.wallis_top_tb.div_model.i1_axis_tdata[21] top.wallis_top_tb.div_model.i1_axis_tdata[20] top.wallis_top_tb.div_model.i1_axis_tdata[19] top.wallis_top_tb.div_model.i1_axis_tdata[18] top.wallis_top_tb.div_model.i1_axis_tdata[17] top.wallis_top_tb.div_model.i1_axis_tdata[16] top.wallis_top_tb.div_model.i1_axis_tdata[15] top.wallis_top_tb.div_model.i1_axis_tdata[14] top.wallis_top_tb.div_model.i1_axis_tdata[13] top.wallis_top_tb.div_model.i1_axis_tdata[12] top.wallis_top_tb.div_model.i1_axis_tdata[11] top.wallis_top_tb.div_model.i1_axis_tdata[10] top.wallis_top_tb.div_model.i1_axis_tdata[9] top.wallis_top_tb.div_model.i1_axis_tdata[8] top.wallis_top_tb.div_model.i1_axis_tdata[7] top.wallis_top_tb.div_model.i1_axis_tdata[6] top.wallis_top_tb.div_model.i1_axis_tdata[5] top.wallis_top_tb.div_model.i1_axis_tdata[4] top.wallis_top_tb.div_model.i1_axis_tdata[3] top.wallis_top_tb.div_model.i1_axis_tdata[2] top.wallis_top_tb.div_model.i1_axis_tdata[1] top.wallis_top_tb.div_model.i1_axis_tdata[0]
+@28
+top.wallis_top_tb.div_model.i2_axis_tvalid
+top.wallis_top_tb.div_model.i2_axis_tready
+@22
+#{top.wallis_top_tb.div_model.i2_axis_tdata[15:0]} top.wallis_top_tb.div_model.i2_axis_tdata[15] top.wallis_top_tb.div_model.i2_axis_tdata[14] top.wallis_top_tb.div_model.i2_axis_tdata[13] top.wallis_top_tb.div_model.i2_axis_tdata[12] top.wallis_top_tb.div_model.i2_axis_tdata[11] top.wallis_top_tb.div_model.i2_axis_tdata[10] top.wallis_top_tb.div_model.i2_axis_tdata[9] top.wallis_top_tb.div_model.i2_axis_tdata[8] top.wallis_top_tb.div_model.i2_axis_tdata[7] top.wallis_top_tb.div_model.i2_axis_tdata[6] top.wallis_top_tb.div_model.i2_axis_tdata[5] top.wallis_top_tb.div_model.i2_axis_tdata[4] top.wallis_top_tb.div_model.i2_axis_tdata[3] top.wallis_top_tb.div_model.i2_axis_tdata[2] top.wallis_top_tb.div_model.i2_axis_tdata[1] top.wallis_top_tb.div_model.i2_axis_tdata[0]
+@24
+#{top.wallis_top_tb.div_model.o_axis_tdata[31:0]} top.wallis_top_tb.div_model.o_axis_tdata[31] top.wallis_top_tb.div_model.o_axis_tdata[30] top.wallis_top_tb.div_model.o_axis_tdata[29] top.wallis_top_tb.div_model.o_axis_tdata[28] top.wallis_top_tb.div_model.o_axis_tdata[27] top.wallis_top_tb.div_model.o_axis_tdata[26] top.wallis_top_tb.div_model.o_axis_tdata[25] top.wallis_top_tb.div_model.o_axis_tdata[24] top.wallis_top_tb.div_model.o_axis_tdata[23] top.wallis_top_tb.div_model.o_axis_tdata[22] top.wallis_top_tb.div_model.o_axis_tdata[21] top.wallis_top_tb.div_model.o_axis_tdata[20] top.wallis_top_tb.div_model.o_axis_tdata[19] top.wallis_top_tb.div_model.o_axis_tdata[18] top.wallis_top_tb.div_model.o_axis_tdata[17] top.wallis_top_tb.div_model.o_axis_tdata[16] top.wallis_top_tb.div_model.o_axis_tdata[15] top.wallis_top_tb.div_model.o_axis_tdata[14] top.wallis_top_tb.div_model.o_axis_tdata[13] top.wallis_top_tb.div_model.o_axis_tdata[12] top.wallis_top_tb.div_model.o_axis_tdata[11] top.wallis_top_tb.div_model.o_axis_tdata[10] top.wallis_top_tb.div_model.o_axis_tdata[9] top.wallis_top_tb.div_model.o_axis_tdata[8] top.wallis_top_tb.div_model.o_axis_tdata[7] top.wallis_top_tb.div_model.o_axis_tdata[6] top.wallis_top_tb.div_model.o_axis_tdata[5] top.wallis_top_tb.div_model.o_axis_tdata[4] top.wallis_top_tb.div_model.o_axis_tdata[3] top.wallis_top_tb.div_model.o_axis_tdata[2] top.wallis_top_tb.div_model.o_axis_tdata[1] top.wallis_top_tb.div_model.o_axis_tdata[0]
+@22
+#{top.wallis_top_tb.div_model.quo[23:0]} top.wallis_top_tb.div_model.quo[23] top.wallis_top_tb.div_model.quo[22] top.wallis_top_tb.div_model.quo[21] top.wallis_top_tb.div_model.quo[20] top.wallis_top_tb.div_model.quo[19] top.wallis_top_tb.div_model.quo[18] top.wallis_top_tb.div_model.quo[17] top.wallis_top_tb.div_model.quo[16] top.wallis_top_tb.div_model.quo[15] top.wallis_top_tb.div_model.quo[14] top.wallis_top_tb.div_model.quo[13] top.wallis_top_tb.div_model.quo[12] top.wallis_top_tb.div_model.quo[11] top.wallis_top_tb.div_model.quo[10] top.wallis_top_tb.div_model.quo[9] top.wallis_top_tb.div_model.quo[8] top.wallis_top_tb.div_model.quo[7] top.wallis_top_tb.div_model.quo[6] top.wallis_top_tb.div_model.quo[5] top.wallis_top_tb.div_model.quo[4] top.wallis_top_tb.div_model.quo[3] top.wallis_top_tb.div_model.quo[2] top.wallis_top_tb.div_model.quo[1] top.wallis_top_tb.div_model.quo[0]
+[pattern_trace] 1
+[pattern_trace] 0
