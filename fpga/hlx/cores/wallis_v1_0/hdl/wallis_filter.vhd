@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 09:19:14 2018
--- Last update : Thu Jul 19 15:03:58 2018
+-- Last update : Fri Jul 20 11:57:27 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -110,6 +110,9 @@ begin
 					m_axis_dividend_tvalid <= '0';
 					m_axis_divisor_tvalid <= '0';
 				else
+					m_axis_dividend_tvalid <= '0';
+					m_axis_divisor_tvalid <= '0';
+
 					if (en = '1') then
  						if (m_axis_dividend_tready = '1') and  (m_axis_divisor_tready = '1') then
  							m_axis_dividend_tvalid <= '1';
@@ -117,10 +120,7 @@ begin
  							
  							m_axis_divisor_tvalid <= '1';
  							m_axis_divisor_tdata <= std_logic_vector((15 downto 15 => '0') & den(20 downto 6));
-						else	
-							m_axis_dividend_tvalid <= '0';
-							m_axis_divisor_tvalid <= '0';
- 						end if;
+						end if;
 					end if;
 				end if;
 			end if;

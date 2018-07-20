@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 13:57:22 2018
--- Last update : Thu Jul 19 16:12:30 2018
+-- Last update : Fri Jul 20 14:56:20 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,12 +27,15 @@ USE IEEE.NUMERIC_STD.ALL;
 
 entity wallis_top is
     generic (
+    	WIN_LENGTH	  : positive 			  := 21;
     	WIN_SIZE 	  : positive 			  := 21*21;
         M_IN_WIDTH    : positive              := 8;
         M_OUT_WIDTH   : positive              := 17;
         V_IN_WIDTH    : positive              := 16;
         V_OUT_WIDTH   : positive              := 25;
-        REC_WIN_SIZE  : unsigned(14 downto 0) := "100101001001101"
+        REC_WIN_SIZE  : unsigned(14 downto 0) := "100101001001101";
+        DATA_WIDTH 	  : positive := 8;
+		FIFO_DEPTH    : positive := 16
     );
     port (
         -- clk and reset
@@ -125,15 +128,37 @@ architecture structural of wallis_top is
             en                     : in  std_logic;
             clear                  : in  std_logic
         );
-    end component wallis_filter;    
+    end component wallis_filter;   
+
+    component simple_fifo is
+		generic (
+		    constant DATA_WIDTH : positive := 8;
+		    constant FIFO_DEPTH : positive := 16
+        );
+	    port (
+	        CLK     : in  STD_LOGIC;
+	        RST_N   : in  STD_LOGIC;
+	        WriteEn : in  STD_LOGIC;
+	        DataIn  : in  STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
+	        ReadEn  : in  STD_LOGIC;
+	        DataOut : out STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
+	        Empty   : out STD_LOGIC;
+	        Full    : out STD_LOGIC
+	    );
+    end component simple_fifo;     
 
     -- Signal Components
     signal n_mean 			: std_logic_vector(7 downto 0);
     signal n_var  			: std_logic_vector(13 downto 0);
     signal valid_mean_var 	: std_logic;
     signal clear  			: std_logic;
-    signal pi_latch 		: std_logic_vector(7 downto 0);
+    signal m_pixel			: std_logic_vector(7 downto 0);
     signal o_axis_tvalid_i 	: std_logic;
+    signal fifo_writeEn		: std_logic;
+    signal fifo_dataIn      : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal fifo_readEn      : std_logic;
+    signal fifo_dataOut      : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal wallis_en : std_logic;
 
     -- Other Signals
     signal init 			: boolean := true;
@@ -145,11 +170,15 @@ begin
 	o_axis_tvalid <= o_axis_tvalid_i;
 	o_axis_tlast <= o_axis_tlast_i;
 
+	fifo_dataIn <= i_axis_tdata;
+	fifo_readEn <= valid_mean_var;
+	m_pixel <= fifo_dataOut;
+
 	-----------------------------------------------------------
 	-- Counter to catch the pixel in the middle of the 
 	-- neighborhood
 	-----------------------------------------------------------
-	p_pi_latch : process(clk) is
+	p_fifo_ctr : process(clk) is
 	-----------------------------------------------------------
 	begin
 		if rising_edge(clk) then
@@ -161,23 +190,48 @@ begin
 					init <= true;
 					ctr <= 0;
 				else
+					fifo_writeEn <= '0';
 					if (i_axis_tvalid = '1') then
-						if (ctr = 440) then
-							init <= false;
-							ctr <= 0;
-						elsif (ctr = 220) and init then
-							pi_latch <= i_axis_tdata;
-						elsif (ctr = 10) and not init then
-							pi_latch <= i_axis_tdata;
-							ctr <= 0;
-						else		
-							ctr <= ctr + 1;	
-						end if;
+						if (init) then
+							if (ctr = ((WIN_SIZE - 1)/2) - 1) then
+								init <= false;
+								ctr <= 0;
+								fifo_writeEn <= '1';
+							else 	
+								ctr <= ctr + 1;
+							end if;
+						else
+							if (ctr = (WIN_LENGTH - 1)) then
+								fifo_writeEn <= '1';
+								ctr <= 0;
+							else
+								ctr <= ctr + 1;
+							end if;	
+						end if;	
 					end if;
 				end if;
 			end if;
 		end if;
-	end process; -- p_pi_latch
+	end process; -- p_fifo_ctr
+	-----------------------------------------------------------
+
+	-----------------------------------------------------------
+	-- delay of wallis_en for 1 clock
+	-----------------------------------------------------------
+	p_wallis_en : process(clk) is
+	-----------------------------------------------------------
+	begin
+		if rising_edge(clk) then
+     		if rst_n = '0' then
+     			wallis_en <= '0';
+     		else
+     			wallis_en <= '0';
+     			if valid_mean_var = '1' then
+     				wallis_en <= '1';
+     			end if;
+     		end if;
+		end if;
+	end process; -- p_wallis_en
 	-----------------------------------------------------------
 
 	-----------------------------------------------------------
@@ -189,16 +243,16 @@ begin
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
-				o_axis_tlast <= '0';
+				o_axis_tlast_i <= '0';
 			else
 				-- sets tlast
 				if (i_axis_tlast = '1') and (i_axis_tvalid = '1') then
-					o_axis_tlast <= '1';
+					o_axis_tlast_i <= '1';
 				end if;
 
 				-- clear tlast
-				if (o_axis_tvalid_i <= '1') and (o_axis_tready = '1') then
-					o_axis_tlast <= '0';
+				if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') then
+					o_axis_tlast_i <= '0';
 				end if;
 			end if;
 		end if;
@@ -217,7 +271,7 @@ begin
 				clear <= '0';
 			else
 				-- sets clear
-				if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') and (o_axis_tlast <= '1') then
+				if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') and (o_axis_tlast_i = '1') then
 					clear <= '1';
 				else
 					clear <= '0';
@@ -228,7 +282,7 @@ begin
 	-----------------------------------------------------------
 
 	
-    mean_var : mean_var
+    c_mean_var : mean_var
         generic map (
             WIN_SIZE    => WIN_SIZE,
             M_IN_WIDTH  => M_IN_WIDTH,
@@ -248,11 +302,11 @@ begin
             clear   => clear
         );
 
-    wallis_filter : wallis_filter
+    c_wallis_filter : wallis_filter
         port map (
             clk                    => clk,
             rst_n                  => rst_n,
-            pixel                  => pi_latch,
+            pixel                  => m_pixel,
             n_mean                 => n_mean,
             n_var                  => n_var,
             par_c_gvar             => wa_par_c_gvar,
@@ -271,7 +325,23 @@ begin
             s_axis_dout_tready     => s_axis_dout_tready,
             s_axis_dout_tdata      => s_axis_dout_tdata,
             valid                  => o_axis_tvalid_i,
-            en                     => valid_mean_var,
+            en                     => wallis_en,
             clear                  => clear
         );  
+
+    c_simple_fifo : simple_fifo
+        generic map (
+            DATA_WIDTH => DATA_WIDTH,
+            FIFO_DEPTH => FIFO_DEPTH
+        )
+        port map (
+            CLK     => clk,
+            RST_N   => rst_n,
+            WriteEn => fifo_WriteEn,
+            DataIn  => fifo_dataIn,
+            ReadEn  => fifo_readEn,
+            DataOut => fifo_dataOut,
+            Empty   => open,
+            Full    => open
+        );        
 end architecture structural;
