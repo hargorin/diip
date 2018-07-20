@@ -653,7 +653,6 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                 recv_state++;
                 tcid = get_tcid(buf);
                 nseq = get_nseq(buf);
-                printf("nseq=%d\n",nseq );
                 seqctr = 0;
                 data_ctr = 0;
                 obuf_ptr = 0;
@@ -681,6 +680,7 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                     // copy valid data to large buffer
                     // this assumes that the payload is constant until the last packet
                     if(payload_size == 0) payload_size = recv_len - 4;
+                    // printf("seq=%d payload_size=%d recv_len=%d\n",get_seq(buf),payload_size,recv_len);
                     memcpy(&outbuf[ get_seq(buf) * payload_size ], &buf[4], recv_len - 4);
                     data_ctr += recv_len - 4;
 

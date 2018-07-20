@@ -116,6 +116,7 @@ ImageHandler::allocateOutputImage(const char* fname, size_t w, size_t h)
     else
         allocSize = (w*h) + 1500 - remainder;
 
+    // printf("alloc size=%d\n",allocSize );
     outBuf = new uint8_t[allocSize];
     
     // store size

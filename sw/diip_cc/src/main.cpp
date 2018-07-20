@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <thread>
+#include <unistd.h>
 
 #include"ImageHandler.h"
 #include "Com.h"
@@ -82,7 +83,7 @@ int main(int argc, char const *argv[])
 
 
     // Loop through all lines
-    // printf("Start processing file %s on ip %s\n", infilename, ip);
+    printf("Start processing file %s on ip %s\n", infilename, ip);
     tic(&tt);
     // for(int currline = 0; currline < (ih->getHeight()-WINDOW_SIZE+1); currline++)
     // {
@@ -109,23 +110,29 @@ int main(int argc, char const *argv[])
     int currline = 0;
     
     // First send 20 lines to fill buffers
-    for (currline = 0; currline < 20; currline++)
+    for (currline = 0; currline < (WINDOW_SIZE-1); currline++)
     {
         // printProgress(currline, ih->getHeight());
 
         // start transmitter
+        printf("Start  line %4d/%d..", currline+1,ih->getHeight());
         com->setTransmitPayload(&ih->imBuf[currline*ih->getWidth()], ih->getWidth());
         std::thread txth(& Com::transmit, com);
         txth.join();        
+        printf("Done\n", currline);
+        usleep(50000);
     }
 
     // send the rest while receiving
     for( ;currline < ih->getHeight(); currline++)
     {
+        usleep(50000);
         // printProgress(currline, ih->getHeight());
+        printf("Start  line %4d/%d..", currline+1,ih->getHeight());
         
         // Start receiver
-        com->setupReceive(2222, &ih->outBuf[currline*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
+        // printf("start rx idx=%d, size=%d\n", (currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1), (ih->getWidth()-WINDOW_SIZE+1));
+        com->setupReceive(2222, &ih->outBuf[(currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
         std::thread rxth(& Com::receive, com);
         
         // start transmitter
@@ -137,6 +144,7 @@ int main(int argc, char const *argv[])
         // tic(&dt);
         rxth.join();
         // toc(&dt);
+        printf("Done\n", currline);
 
         mean += (dt.end-dt.start);
     }
@@ -149,7 +157,7 @@ int main(int argc, char const *argv[])
     // printf("Pixels per second (output): %.2f\n", (outsize) / (tt.end-tt.start) * 1000000.0);
     // printf("Output pixels: %.0f\n", outsize);
 
-    ih->hexDumpOutputImage();
+    // ih->hexDumpOutputImage();
     // ih->storeOutputImage();
     // if(showImage)
     // {
