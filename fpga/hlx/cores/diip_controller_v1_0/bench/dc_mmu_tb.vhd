@@ -238,6 +238,10 @@ begin
 	-- Entity Under Test
 	-----------------------------------------------------------
     dc_mmu_1 : dc_mmu
+        generic map (
+            BRAM_SIZE    => BRAM_SIZE,
+            CACHE_N_LINES => CACHE_N_LINES
+        )
         port map (
             clk           => clk,
             rst_n         => rst_n,

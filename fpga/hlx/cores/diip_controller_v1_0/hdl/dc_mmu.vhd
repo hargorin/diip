@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Wed Jul 18 16:54:48 2018
+-- Last update : Fri Jul 20 09:19:15 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -224,7 +224,30 @@ begin
 
     cache_rw_distance <= distance(cache_r_base, cache_w_ptr, CACHE_N_LINES);
     cache_r_distance <= distance(cache_r_base, cache_r_ptr, CACHE_N_LINES);
-    cache_r_tip <= (integer(cache_r_base) + to_integer(unsigned(win_size))-1) mod CACHE_N_LINES;
+
+    -- ---------------------------------------------------------------------
+    -- Calculates the following operation without modulus
+    -- cache_r_tip <= (integer(cache_r_base) + to_integer(unsigned(win_size))-1) mod CACHE_N_LINES;
+    -- ---------------------------------------------------------------------
+    p_cache_r_tip : process( cache_r_base, win_size )
+    -- ---------------------------------------------------------------------
+        variable sum : integer range -2 to 2**(win_size'length+1);
+    begin
+        --report "cache_r_base =" & natural'image(cache_r_base);
+        --report "win_size =" & integer'image(to_integer(unsigned(win_size)));
+        sum := (integer(cache_r_base) + to_integer(unsigned(win_size))-1);
+        --report "sum = " & integer'image(sum);
+        --report "CACHE_N_LINES = " & integer'image(CACHE_N_LINES);
+        if sum >= CACHE_N_LINES then
+            cache_r_tip <= sum - CACHE_N_LINES;
+        elsif sum < 0 then
+            cache_r_tip <= sum + CACHE_N_LINES;
+        else
+            cache_r_tip <= sum;
+        end if;
+    end process ; -- p_cache_r_tip
+    -- ---------------------------------------------------------------------
+
     -- write data as long as write pointer is ahead of read pointer
     o_axis_tvalid_i <= '1' when looped or cache_w_ptr > cache_r_tip
                         else '0';
