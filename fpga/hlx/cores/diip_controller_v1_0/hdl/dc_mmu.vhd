@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Fri Jul 20 09:19:15 2018
+-- Last update : Fri Jul 20 13:45:24 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -126,6 +126,7 @@ architecture behav of dc_mmu is
     signal out_pix_ctr : natural range 0 to (CACHE_N_LINES-1)*BRAM_SIZE := 0;
     -- countes number of pixels to be sent to the output
     signal n_out_pix : natural range 0 to (CACHE_N_LINES-1)*BRAM_SIZE := 0;
+    signal n_out_pix_m1 : signed (47 downto 0) := (others => '0');
 
     -- set if cache_w_ptr wrapped to 0 and cleared if cache_r_ptr wrapped to 0
     signal looped : boolean := false;
@@ -252,7 +253,11 @@ begin
     o_axis_tvalid_i <= '1' when looped or cache_w_ptr > cache_r_tip
                         else '0';
 
-    n_out_pix <= to_integer(unsigned(img_width)*unsigned(win_size));
+    --n_out_pix <= to_integer(unsigned(img_width)*unsigned(win_size));
+
+    n_out_pix_m1 <= resize(signed(img_width)*signed(win_size),48) - 1;
+
+    --n_out_pix_m1 <= to_unsigned(n_out_pix, n_out_pix_m1'length) - 1;
 
     -- ---------------------------------------------------------------------
     -- Count the number of pixels sent
@@ -265,7 +270,7 @@ begin
                 out_pix_ctr <= 0;
             else
                 if o_axis_tready = '1' and o_axis_tvalid_ilatched = '1' then
-                    if out_pix_ctr = n_out_pix-1 then
+                    if out_pix_ctr = n_out_pix_m1 then
                         out_pix_ctr <= 0;
                     else
                         out_pix_ctr <= out_pix_ctr + 1;
@@ -276,7 +281,7 @@ begin
     end process ; -- p_out_pix_ctr
     -- ---------------------------------------------------------------------
 
-    o_axis_tlast_i <= '1' when out_pix_ctr = (n_out_pix-1) else '0';
+    o_axis_tlast_i <= '1' when out_pix_ctr = (n_out_pix_m1) else '0';
 
 
     -- ---------------------------------------------------------------------
