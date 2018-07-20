@@ -143,6 +143,18 @@ ImageHandler::storeOutputImage()
 }
 
 /**
+ * @brief      Dumps the output image in hex format to the console
+ */
+void 
+ImageHandler::hexDumpOutputImage()
+{
+    for (int i = 0; i < (out_height*out_width); i++)
+    {
+        printf("%02x\n", outBuf[i]);
+    }
+}
+
+/**
  * @brief      Displays the output image
  *
  * @return     status, 0 if ok

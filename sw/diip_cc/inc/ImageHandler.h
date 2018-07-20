@@ -14,6 +14,7 @@ public:
 	int load();
 	int allocateOutputImage(const char* fname, size_t w, size_t h);
 	int storeOutputImage();
+	void hexDumpOutputImage();
 	int showOutputImage();
 
 

@@ -107,7 +107,7 @@ int uft_send_file( FILE *fp,  const char* ip, uint16_t port)
     uint8_t buf[1500];
 
     uint8_t *ack_buf;
-
+ 
     tictoc_t tt;
     tt.fp = fp;
 
@@ -650,11 +650,10 @@ int uft_receive_data( uint8_t* data, uint16_t port)
             {
                 if(verbosity) tic(&tt);
                 // start of data transmission
-
-                toc(&td);
                 recv_state++;
                 tcid = get_tcid(buf);
                 nseq = get_nseq(buf);
+                printf("nseq=%d\n",nseq );
                 seqctr = 0;
                 data_ctr = 0;
                 obuf_ptr = 0;
@@ -662,7 +661,7 @@ int uft_receive_data( uint8_t* data, uint16_t port)
                 // allocate enough space to hold the data
                 // outbuf = (uint8_t*)malloc( nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t) );
                 outbuf = data;
-                memset(outbuf, 0x0, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t));
+                // memset(outbuf, 0x0, nseq * UFT_DATA_PAYLOAD * sizeof(uint8_t));
                 // make room for ack array and set all to 0
                 ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
                 memset(ack_buf, 0, nseq * sizeof(uint8_t));

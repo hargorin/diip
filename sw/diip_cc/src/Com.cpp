@@ -26,6 +26,8 @@ Com::Com(const char* ip, int port)
 	// Init some stuff
 	tx_tcid = 0;
 
+	// set verbosity
+	uft_set_verbosity(0);
 }
 
 /**
