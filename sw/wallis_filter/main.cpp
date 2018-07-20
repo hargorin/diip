@@ -1,6 +1,6 @@
 //
 //  main.cpp
-//  file2image
+//  wallis_filter
 //
 //  Created by Jan Stocker on 30/11/17.
 //  Copyright © 2017 Jan Stocker. All rights reserved.
@@ -19,10 +19,10 @@ using namespace std;
 
 // ****************************************************************************
 // defines
-#define G_MEAN      127     // Mean of the input image
-#define G_VAR       3600    // Standard Deviation for the input image
-#define CONTRAST    0.82    // Contrast expansion factor
-#define BRIGHTNESS  0.49    // Brightness forcing factor
+#define G_MEAN      127       // Mean of the input image
+#define G_VAR       3600      // Standard Deviation for the input image
+#define CONTRAST    0.8125    // Contrast expansion factor 0.82
+#define BRIGHTNESS  0.484375  // Brightness forcing factor 0.49
 
 #define WIN_LENGTH  21  // Between 11 and 41 (depends on camera resolution)
 #define WIN_SIZE    (WIN_LENGTH * WIN_LENGTH)
