@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 16:06:12 2018
--- Last update : Mon Jul 23 08:55:16 2018
+-- Last update : Mon Jul 23 15:53:13 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -167,8 +167,8 @@ begin
 
     	o_axis_tready <= '1';
 
-        for i in 0 to 1 loop 
-        --for i in 0 to IMG_HEIGHT-WIN_LENGTH loop 
+        --for i in 224 to 264 loop 
+        for i in 0 to IMG_HEIGHT-WIN_LENGTH loop 
             file2axistream("../../cores/wallis_v1_0/bench/in_pixel.txt", i*IMG_WIDTH * WIN_LENGTH, IMG_WIDTH * WIN_LENGTH);
             waitfor(50);
         end loop;

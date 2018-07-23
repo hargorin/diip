@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 13:57:22 2018
--- Last update : Fri Jul 20 14:56:20 2018
+-- Last update : Mon Jul 23 15:15:25 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -157,7 +157,8 @@ architecture structural of wallis_top is
     signal fifo_writeEn		: std_logic;
     signal fifo_dataIn      : std_logic_vector (DATA_WIDTH - 1 downto 0);
     signal fifo_readEn      : std_logic;
-    signal fifo_dataOut      : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal fifo_dataOut     : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal fifo_rst_n       : std_logic;
     signal wallis_en : std_logic;
 
     -- Other Signals
@@ -269,12 +270,15 @@ begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
 				clear <= '0';
+                fifo_rst_n <= '0';
 			else
 				-- sets clear
 				if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') and (o_axis_tlast_i = '1') then
 					clear <= '1';
+                    fifo_rst_n <= '0';
 				else
 					clear <= '0';
+                    fifo_rst_n <= '1';
 				end if;
 			end if;
 		end if;
@@ -336,7 +340,7 @@ begin
         )
         port map (
             CLK     => clk,
-            RST_N   => rst_n,
+            RST_N   => fifo_rst_n,
             WriteEn => fifo_WriteEn,
             DataIn  => fifo_dataIn,
             ReadEn  => fifo_readEn,

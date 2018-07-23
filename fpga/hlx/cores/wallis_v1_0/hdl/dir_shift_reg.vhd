@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Mon Jul 23 11:17:36 2018
+-- Last update : Mon Jul 23 15:47:58 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -98,10 +98,12 @@ begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
 				ctr <= 0;	
+                fifo_init <= true;
 				fifo_rst_n <= '0';	
 			else
 				if (clear = '1') then
 					ctr <= 0;
+                    fifo_init <= true;
 					fifo_rst_n <= '0';
 				else
 					fifo_rst_n <= '1';

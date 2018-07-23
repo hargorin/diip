@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Mon Jul 23 13:16:33 2018
+-- Last update : Mon Jul 23 15:39:14 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ use ieee.numeric_std.all;
 
 entity mean_var is
     generic (
-    	WIN_SIZE	: positive := 21;
+    	WIN_SIZE	: positive := 21*21;
 		M_IN_WIDTH 	: positive := 8;
 		M_OUT_WIDTH : positive := 17;
 		V_IN_WIDTH 	: positive := 16;
@@ -64,7 +64,7 @@ architecture rtl of mean_var is
 
     component dir_shift_reg is
         generic (
-            constant WIN_SIZE : positive := 4
+            constant WIN_SIZE : positive := 21*21
         );
         port (
             clk      : in  std_logic;
