@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 17 09:21:49 2018
+-- Last update : Mon Jul 23 11:17:36 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,7 +27,9 @@ USE IEEE.NUMERIC_STD.ALL;
 
 entity dir_shift_reg is
     generic (
-    	constant delay	: positive := 4
+    	WIN_SIZE	: positive := 21*21;
+    	DATA_WIDTH  : positive := 8;
+    	FIFO_DEPTH  : positive := 21*21 + 3
     );
 
     port (
@@ -55,64 +57,82 @@ entity dir_shift_reg is
 end entity dir_shift_reg;
 
 architecture rtl of dir_shift_reg is
-	type shift_reg is array (0 to delay) of std_logic_vector(7 downto 0);
+    component simple_fifo is
+		generic (
+		    constant DATA_WIDTH : positive := 8;
+		    constant FIFO_DEPTH : positive := WIN_SIZE + 3
+        );
+	    port (
+	        CLK     : in  STD_LOGIC;
+	        RST_N   : in  STD_LOGIC;
+	        WriteEn : in  STD_LOGIC;
+	        DataIn  : in  STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
+	        ReadEn  : in  STD_LOGIC;
+	        DataOut : out STD_LOGIC_VECTOR (DATA_WIDTH - 1 downto 0);
+	        Empty   : out STD_LOGIC;
+	        Full    : out STD_LOGIC
+	    );
+    end component simple_fifo;  
 
+    signal fifo_writeEn		: std_logic;
+    signal fifo_dataIn      : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal fifo_readEn      : std_logic;
+    signal fifo_dataOut     : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal fifo_rst_n		: std_logic;
+    signal ctr				: natural range 0 to WIN_SIZE;
+    signal fifo_init		: boolean := true;
 begin
 
-	p_in : process(clk) is	
-		variable byte_shift_reg : shift_reg;
+	fifo_WriteEn <= en;
+	fifo_dataIn <= datain;
 
+	fifo_readEn <=	en when (not fifo_init) else 
+				   '1' when (ctr = WIN_SIZE - 1) else
+				   '0';
+	dataoutp <= datain;
+	dataoutm <= fifo_dataOut;
+	valid  <= en;
+
+	p_fifo_ctr : process(clk) is
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
-				byte_shift_reg := (others => (others => '0'));
-				dataoutm <= (others => '0');
+				ctr <= 0;	
+				fifo_rst_n <= '0';	
 			else
 				if (clear = '1') then
-					byte_shift_reg := (others => (others => '0'));
+					ctr <= 0;
+					fifo_rst_n <= '0';
 				else
+					fifo_rst_n <= '1';
 					if (en = '1') then
-						byte_shift_reg(1 to delay) := byte_shift_reg(0 to delay - 1);
-						byte_shift_reg(0) := datain;
-						dataoutm <= byte_shift_reg(delay);
+						if (ctr = WIN_SIZE - 1) then
+							fifo_init <= false;
+						elsif (fifo_init) then
+							ctr <= ctr + 1;
+						end if;	
 					else
-						byte_shift_reg := byte_shift_reg;
-					end if;
-				end if;
+						ctr <= ctr;	
+						fifo_init <= fifo_init;
+				    end if;
+				end if;	
 			end if;
-		end if;		
-	end process; -- p_in
+		end if;
+	end process; -- p_fifo_ctr
 
-
-	p_out : process(clk) is
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then
-				dataoutp <= (others => '0');
-			else
-				if (en = '1') then
-					dataoutp <= datain;
-				else 
-					--dataoutp  <= dataoutp;
-				end if;
-			end if;
-		end if;			
-	end process; -- p_out
-
-
-	p_valid : process(clk) is
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then
-				valid  <= '0';
-			else
-				if (en = '1') then
-					valid  <= '1';
-				else
-					valid  <= '0';
-				end if;
-			end if;
-		end if;	
-	end process; -- p_valid
-
+    c_simple_fifo : simple_fifo
+        generic map (
+            DATA_WIDTH => DATA_WIDTH,
+            FIFO_DEPTH => FIFO_DEPTH
+        )
+        port map (
+            CLK     => clk,
+            RST_N   => fifo_rst_n,
+            WriteEn => fifo_WriteEn,
+            DataIn  => fifo_dataIn,
+            ReadEn  => fifo_readEn,
+            DataOut => fifo_dataOut,
+            Empty   => open,
+            Full    => open
+        ); 
 end architecture rtl;

@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Tue Jul 10 12:39:33 2018
--- Last update : Tue Jul 17 09:21:49 2018
+-- Last update : Mon Jul 23 11:13:23 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -36,7 +36,9 @@ end entity dir_shift_reg_tb;
 architecture testbench of dir_shift_reg_tb is
 
 	-- Testbench DUT generics as constants
-    constant delay : positive := 4;
+    constant WIN_SIZE    : positive := 4;
+	constant DATA_WIDTH  : positive := 8;
+    constant FIFO_DEPTH  : positive := WIN_SIZE + 3;
 
 	-- Testbench DUT ports as signals
     signal clk      : std_logic;
@@ -86,7 +88,9 @@ begin
         end procedure waitfor;
 
 	begin
+		datain <= x"00";
 		waitfor(25);
+
 
 		-------------------
 		-- Shift Register Test
@@ -117,9 +121,9 @@ begin
 		-- Clear
 		-------------------
     	clear <= '1';
-    	waitfor(5);
+    	waitfor(1);
     	clear <= '0';
-    	waitfor(5);
+    	waitfor(1);
 
 		-------------------
 		-- Shift Register Test
@@ -154,7 +158,7 @@ begin
 	-----------------------------------------------------------
     DUT : entity work.dir_shift_reg
         generic map (
-            delay => delay
+            WIN_SIZE => WIN_SIZE
         )
         port map (
             clk      => clk,

@@ -1,17 +1,18 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Thu Jul 12 07:09:25 2018
+[*] Mon Jul 23 10:49:22 2018
 [*]
 [dumpfile] "/home/jan/git/diip/fpga/hlx/build/ghdl/sum_diff_tb.ghw"
-[dumpfile_mtime] "Thu Jul 12 07:08:28 2018"
-[dumpfile_size] 15155
+[dumpfile_mtime] "Mon Jul 23 10:47:30 2018"
+[dumpfile_size] 15383
 [savefile] "/home/jan/git/diip/fpga/hlx/simulation/sum_diff_tb.gtkw"
-[timestart] 4532800000
-[size] 1992 600
+[timestart] 4718700000
+[size] 1752 600
 [pos] -1 -1
-*-25.891378 4858900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.891378 4856500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.sum_diff_tb.
+[treeopen] top.sum_diff_tb.dut.
 [sst_width] 225
 [signals_width] 264
 [sst_expanded] 1
@@ -24,6 +25,7 @@ top.sum_diff_tb.rst_n
 @24
 #{top.sum_diff_tb.inp[7:0]} top.sum_diff_tb.inp[7] top.sum_diff_tb.inp[6] top.sum_diff_tb.inp[5] top.sum_diff_tb.inp[4] top.sum_diff_tb.inp[3] top.sum_diff_tb.inp[2] top.sum_diff_tb.inp[1] top.sum_diff_tb.inp[0]
 #{top.sum_diff_tb.inm[7:0]} top.sum_diff_tb.inm[7] top.sum_diff_tb.inm[6] top.sum_diff_tb.inm[5] top.sum_diff_tb.inm[4] top.sum_diff_tb.inm[3] top.sum_diff_tb.inm[2] top.sum_diff_tb.inm[1] top.sum_diff_tb.inm[0]
+#{top.sum_diff_tb.dut.difference[8:0]} top.sum_diff_tb.dut.difference[8] top.sum_diff_tb.dut.difference[7] top.sum_diff_tb.dut.difference[6] top.sum_diff_tb.dut.difference[5] top.sum_diff_tb.dut.difference[4] top.sum_diff_tb.dut.difference[3] top.sum_diff_tb.dut.difference[2] top.sum_diff_tb.dut.difference[1] top.sum_diff_tb.dut.difference[0]
 @200
 -
 @28
