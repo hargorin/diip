@@ -140,27 +140,31 @@ int main(int argc, char const *argv[])
     // send the rest while receiving
     for( ;currline < ih->getHeight(); currline++)
     {
+        printf("wait\n");
         usleep(50000);
+        printf("wait done\n");
         // printProgress(currline, ih->getHeight());
         printf("Start  line %4d/%d..", currline+1,ih->getHeight());
         
         // Start receiver
         // printf("start rx idx=%d, size=%d\n", (currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1), (ih->getWidth()-WINDOW_SIZE+1));
-        com->setupReceive(2222, &ih->outBuf[(currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
-        std::thread rxth(& Com::receive, com);
-        
+        // com->setupReceive(2222, &ih->outBuf[(currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
+        // std::thread rxth(& Com::receive, com);
+        // printf("rx start, ");
         // start transmitter
         com->setTransmitPayload(&ih->imBuf[currline*ih->getWidth()], ih->getWidth());
         std::thread txth(& Com::transmit, com);
+        printf("tx start, ");
 
         // wait for both to finish
         txth.join();
+        printf("tx joined, ");
         // tic(&dt);
-        rxth.join();
+        // rxth.join();
         // toc(&dt);
         printf("Done\n", currline);
 
-        mean += (dt.end-dt.start);
+        // mean += (dt.end-dt.start);
     }
 
     // printf("Mean time %.2fus\n", mean / (ih->getHeight()-WINDOW_SIZE+1));
