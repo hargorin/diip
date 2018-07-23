@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Fri Jul 20 18:02:55 2018
+-- Last update : Mon Jul 23 10:18:23 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ architecture testbench of diip_main_tb is
     -- wallis filter window size
     constant WIN_LENGTH : natural := 21;
     -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 100;
+    constant IMG_WIDTH : natural := 128;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 100;
+    constant IMG_HEIGHT : natural := 128;
 
     constant WAL_C_GVAR : std_logic_vector (19 downto 0) := "00101101101101000000";--2925
     constant WAL_C : std_logic_vector (5 downto 0) := "110100";--0.8125
@@ -264,8 +264,8 @@ begin
         uft_user_reg0(0) <= '0';
 
         -- send line after line and be ready for result
-
         for i in 0 to IMG_HEIGHT-1 loop 
+            report "i=" & integer'image(i);
             file2axistream("../../cores/diip_controller_v1_0/bench/inputimg.txt", i*IMG_WIDTH, IMG_WIDTH);
         end loop;
 
@@ -370,6 +370,118 @@ begin
             end if;
         end if;
     end process ; -- p_axi_stream_check
+
+    -----------------------------------------------------------
+    -- Testbench Validation
+    -- 
+    -- Stores the axi stream data into an output file
+    -----------------------------------------------------------
+    p_axi_stream_count : process( clk, rst_n )
+        type buf is array (0 to 1800) of std_logic_vector (7 downto 0);
+        variable axi_buf : buf;
+        variable ctr : natural range 0 to 1800 := 0;
+        variable i : natural range 0 to 1800 := 0;
+        variable fi : natural range 0 to 1800 := 0;
+
+        file file_axi_s     : text;
+        variable oline      : line;
+
+        function format(
+                value   : natural;    --- the numeric value
+                width   : positive;   -- number of characters
+                leading : character := ' ')
+            return string --- guarantees to return "width" chars
+        is
+            constant img: string := integer'image(value);
+            variable str: string(1 to width) := (others => leading);
+        begin
+            if img'length > width then
+                report "Format width " & integer'image(width) & " is too narrow for value " & img severity warning;
+                str := (others => '*');
+            else
+                str(width+1-img'length to width) := img;
+            end if;
+            return str;
+        end;
+    begin
+        if rst_n = '0' then
+            ctr := 0;
+        elsif rising_edge(clk) then
+            if wa_i_axis_tvalid = '1' then
+                if wa_i_axis_tvalid = '1' and wa_i_axis_tready = '1' then
+                    axi_buf(ctr) := wa_i_axis_tdata;
+                    ctr := ctr + 1;
+                end if;
+                if wa_i_axis_tlast = '1' then
+                    report "Wallis out axis: " & integer'image(ctr) & " bytes";
+                    --file_open(file_axi_s, "axi_stream_res_" & format(fi, 4, '0') & ".log", write_mode);
+                    --for i in 0 to (ctr-1) loop
+                    --    hwrite(oline, axi_buf(i), left, 8);
+                    --    writeline(file_axi_s, oline);
+                    --end loop;
+                    --file_close(file_axi_s);
+                    ctr := 0;
+                    fi := fi + 1;
+                end if;
+            end if;
+        end if;
+    end process ; -- p_axi_stream_count
+
+    -----------------------------------------------------------
+    -- Testbench Validation
+    -- 
+    -- Stores the axi stream data into an output file
+    -----------------------------------------------------------
+    p_axi_stream_count2 : process( clk, rst_n )
+        type buf is array (0 to 32000) of std_logic_vector (7 downto 0);
+        variable axi_buf : buf;
+        variable ctr : natural range 0 to 32000 := 0;
+        variable i : natural range 0 to 32000 := 0;
+        variable fi : natural range 0 to 32000 := 0;
+
+        file file_axi_s     : text;
+        variable oline      : line;
+
+        function format(
+                value   : natural;    --- the numeric value
+                width   : positive;   -- number of characters
+                leading : character := ' ')
+            return string --- guarantees to return "width" chars
+        is
+            constant img: string := integer'image(value);
+            variable str: string(1 to width) := (others => leading);
+        begin
+            if img'length > width then
+                report "Format width " & integer'image(width) & " is too narrow for value " & img severity warning;
+                str := (others => '*');
+            else
+                str(width+1-img'length to width) := img;
+            end if;
+            return str;
+        end;
+    begin
+        if rst_n = '0' then
+            ctr := 0;
+        elsif rising_edge(clk) then
+            if wa_o_axis_tvalid = '1' then
+                if wa_o_axis_tvalid = '1' and wa_o_axis_tready = '1' then
+                    axi_buf(ctr) := wa_o_axis_tdata;
+                    ctr := ctr + 1;
+                end if;
+                if wa_o_axis_tlast = '1' then
+                    report "Wallis in axis: " & integer'image(ctr) & " bytes";
+                    --file_open(file_axi_s, "axi_stream_res_" & format(fi, 4, '0') & ".log", write_mode);
+                    --for i in 0 to (ctr-1) loop
+                    --    hwrite(oline, axi_buf(i), left, 8);
+                    --    writeline(file_axi_s, oline);
+                    --end loop;
+                    --file_close(file_axi_s);
+                    ctr := 0;
+                    fi := fi + 1;
+                end if;
+            end if;
+        end if;
+    end process ; -- p_axi_stream_count2
 
 	-----------------------------------------------------------
 	-- Entity Under Test

@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Jul 18 11:44:02 2018
--- Last update : Fri Jul 20 17:58:40 2018
+-- Last update : Mon Jul 23 12:54:50 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -149,13 +149,10 @@ begin
     -- ---------------------------------------------------------------------
     p_init_tx : process( clk )
     -- ---------------------------------------------------------------------
-    	variable tx_req : boolean := false;
     begin
 		if rising_edge(clk) then
 			if rst_n = '0' then
-    			tx_req := false;
 		        uft_tx_start_i <= '0';
-		        uft_tx_row_num <= (others => '0');
     		else
                 uft_tx_start_i <= '0';
     			if Empty = '0' and uft_tx_ready = '1' then

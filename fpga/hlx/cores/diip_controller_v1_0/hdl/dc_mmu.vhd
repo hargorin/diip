@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Fri Jul 20 13:45:24 2018
+-- Last update : Mon Jul 23 16:05:21 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -126,10 +126,10 @@ architecture behav of dc_mmu is
     signal out_pix_ctr : natural range 0 to (CACHE_N_LINES-1)*BRAM_SIZE := 0;
     -- countes number of pixels to be sent to the output
     signal n_out_pix : natural range 0 to (CACHE_N_LINES-1)*BRAM_SIZE := 0;
-    signal n_out_pix_m1 : signed (47 downto 0) := (others => '0');
+    signal n_out_pix_m1 : signed (19 downto 0) := (others => '0');
 
     -- set if cache_w_ptr wrapped to 0 and cleared if cache_r_ptr wrapped to 0
-    signal looped : boolean := false;
+    signal looped : std_logic := '0';
     -- distance between read base and write pointer
     signal cache_rw_distance : natural range 0 to CACHE_N_LINES-1 := 0;
 
@@ -141,7 +141,7 @@ architecture behav of dc_mmu is
 begin
     
     -- accept data as long as write pointer is ahead of read pointer
-    i_axis_tready_i <= '0' when looped and cache_w_ptr = cache_r_base
+    i_axis_tready_i <= '0' when looped = '1' and cache_w_ptr = cache_r_base
                         else '1';
     i_axis_tready <= i_axis_tready_i;
 
@@ -176,22 +176,25 @@ begin
         if (rising_edge(clk)) then
             if (rst_n = '0') or (restart = '1') then
                 cache_w_ptr <= 0;
-                looped <= false;
+                looped <= '0';
             else
                 if i_axis_tvalid = '1' and i_axis_tready_i = '1' and i_axis_tlast = '1' then
                     if cache_w_ptr = CACHE_N_LINES-1  then
                         cache_w_ptr <= 0;
-                        looped <= true;
+                        looped <= '1';
                     else
                         cache_w_ptr <= cache_w_ptr + 1;
                     end if;
                 end if;
                 if o_axis_tready = '1' and o_axis_tvalid_i = '1' and o_axis_tlast_i = '1' then
-                    if cache_r_base /= CACHE_N_LINES-1 then
-                        if cache_r_base + unsigned(win_size) >= CACHE_N_LINES then
-                            looped <= false;
-                        end if;
+                    if cache_r_base = CACHE_N_LINES-1 then
+                        looped <= '0';
                     end if;
+                    --if cache_r_base /= CACHE_N_LINES-1 then
+                    --    if cache_r_base + unsigned(win_size) >= CACHE_N_LINES then
+                    --        looped <= '0';
+                    --    end if;
+                    --end if;
                 end if;
             end if;
         end if;
@@ -250,14 +253,28 @@ begin
     -- ---------------------------------------------------------------------
 
     -- write data as long as write pointer is ahead of read pointer
-    o_axis_tvalid_i <= '1' when looped or cache_w_ptr > cache_r_tip
+    o_axis_tvalid_i <= '1' when looped = '1' or cache_w_ptr > cache_r_tip
                         else '0';
 
     --n_out_pix <= to_integer(unsigned(img_width)*unsigned(win_size));
-
-    n_out_pix_m1 <= resize(signed(img_width)*signed(win_size),48) - 1;
-
     --n_out_pix_m1 <= to_unsigned(n_out_pix, n_out_pix_m1'length) - 1;
+
+    -- ---------------------------------------------------------------------
+    -- Clocked calculation of out pixels minus one
+    -- ---------------------------------------------------------------------
+    p_out_pix_m1 : process( clk )
+    -- ---------------------------------------------------------------------
+    begin
+        if rst_n = '0' then
+            n_out_pix_m1 <= (others => '0');
+        else
+            if rising_edge(clk) then
+                n_out_pix_m1 <= resize(signed(img_width)*signed(win_size) - 1,n_out_pix_m1'length);
+            end if;
+        end if;
+    end process ; -- p_out_pix_m1
+    -- ---------------------------------------------------------------------
+
 
     -- ---------------------------------------------------------------------
     -- Count the number of pixels sent

@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 13:57:22 2018
--- Last update : Fri Jul 20 14:56:20 2018
+-- Last update : Mon Jul 23 09:33:10 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ architecture structural of wallis_top is
     signal o_axis_tlast_i 	: std_logic;
 
 begin
-	i_axis_tready <= '1';
+	--i_axis_tready <= '1';
 	o_axis_tvalid <= o_axis_tvalid_i;
 	o_axis_tlast <= o_axis_tlast_i;
 
@@ -265,17 +265,32 @@ begin
 	-----------------------------------------------------------
 	p_clear : process(clk) is
 	-----------------------------------------------------------
+        variable clearDone : boolean := false;
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
 				clear <= '0';
+                clearDone := false;
+                i_axis_tready <= '1';
 			else
-				-- sets clear
+                -- if input last, disable input ready
+                if i_axis_tvalid = '1' and i_axis_tlast = '1' then
+                    i_axis_tready <= '0';
+                end if;
+                -- if clear process is done, re enable inpu
+                if clearDone then
+                    clearDone := false;
+                    i_axis_tready <= '1';
+                end if;
+				
+                -- sets clear after complete computation
 				if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') and (o_axis_tlast_i = '1') then
 					clear <= '1';
+                    clearDone := true;
 				else
 					clear <= '0';
 				end if;
+
 			end if;
 		end if;
 	end process; -- p_clear

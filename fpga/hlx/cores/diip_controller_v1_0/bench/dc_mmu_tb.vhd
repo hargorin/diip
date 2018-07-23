@@ -99,6 +99,8 @@ begin
             wait for t*clk_period;
             wait until rising_edge(clk);
         end procedure waitfor;
+
+        variable nbytes     : integer := 0;
     begin
         o_axis_tready <= '1';
         i_axis_tvalid <= '0';
@@ -123,8 +125,8 @@ begin
         waitfor(1);
         assert (i_axis_tready = '0') report "tready high even tough cache is full" severity error;
 
-        -- empty two lines
-        for i in 1 to 2 loop
+        -- empty one lines
+        for i in 1 to 1 loop
             --o_axis_tready <= '1';
             if o_axis_tvalid = '0' then
                 wait until o_axis_tvalid = '1';
@@ -191,6 +193,48 @@ begin
         end loop ; -- lp_empty
         waitfor(1);
         assert (o_axis_tvalid = '0') report "1 tvalid high even tough cache has not enough data" severity error;
+
+
+        -- restart by sending a new line
+        waitfor(5);
+        restart <= '1';
+        waitfor(1);
+        restart <= '0';
+        waitfor(5);
+
+        -- start continuous input stream of 20 lines
+        for k in 1 to 20 loop
+            nbytes := IMAGE_WIDTH;
+            for i in 0 to nbytes-1 loop
+                if i_axis_tready = '0' then
+                    wait until i_axis_tready = '1';
+                end if;
+                i_axis_tvalid <= '1';
+                if nbytes = 1 then i_axis_tlast <= '1'; end if;
+                i_axis_tdata <= std_logic_vector(to_unsigned(i+k,8));
+                nbytes := nbytes - 1;
+                waitfor(1);
+            end loop;
+            i_axis_tvalid <= '0';
+            i_axis_tlast <= '0';
+            waitfor(1);
+        end loop;
+
+        waitfor(20);
+
+        ---- empty five lines
+        --for i in 1 to 5 loop
+        --    --o_axis_tready <= '1';
+        --    if o_axis_tvalid = '0' then
+        --        wait until o_axis_tvalid = '1';
+        --    end if;
+        --    if o_axis_tlast = '0' then
+        --        wait until o_axis_tlast = '1';
+        --    end if;
+        --    wait until o_axis_tlast = '0';
+        --end loop ; -- lp_empty
+        --waitfor(1);
+
 
         waitfor(10);
     	stop_sim <= '1';

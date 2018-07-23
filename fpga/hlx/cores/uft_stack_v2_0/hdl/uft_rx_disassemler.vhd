@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.ocom>
 -- Company     : User Company Name
 -- Created     : Wed Nov  8 11:19:21 2017
--- Last update : Mon Jul 16 12:55:08 2018
+-- Last update : Mon Jul 23 12:58:29 2018
 -- Platform    : Default Part Number
 -- Standard    : VHDL-2008
 -------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ begin
 
     ----------------------------------------------------------------------------
     p_next_state : process ( udp_rx_start, udp_rx_hdr_is_valid, clk, data_in, 
-        current_state, udp_rx_hdr_dst_port, udp_rx_tvalid )
+        current_state, udp_rx_hdr_dst_port, udp_rx_tvalid, udp_rx_tlast )
     ----------------------------------------------------------------------------
     begin
         case (current_state) is

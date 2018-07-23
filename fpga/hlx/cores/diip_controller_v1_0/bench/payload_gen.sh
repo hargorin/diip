@@ -20,6 +20,6 @@ echo "Run testbench now. Sleeping for 10 seconds..."
 sleep 10
 
 # Convert hex to binary 
-cat axi_stream_res_*.txt | tr -d '\n' | xxd -r -p > outputimg.bin
+cat ../../../build/ghdl/axi_stream_res_*.txt | tr -d '\n' | xxd -r -p > outputimg.bin
 # Convert binary to image
 $FILE2IMAGE outputimg.bin outputimg.jpg `expr $HEIGHT - $WIN_SIZE + 1` `expr $WIDTH - $WIN_SIZE + 1` -s
