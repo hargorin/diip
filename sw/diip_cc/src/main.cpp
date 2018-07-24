@@ -85,6 +85,7 @@ int main(int argc, char const *argv[])
     com->writeUserReg(6, 0b00111101100001); // wa_par_b_gmean
     com->writeUserReg(7, 0b100001); // wa_par_bi
     
+    com->writeUserReg(0, 0);
     com->writeUserReg(0, 1); // new image start
     com->writeUserReg(0, 0);
 
