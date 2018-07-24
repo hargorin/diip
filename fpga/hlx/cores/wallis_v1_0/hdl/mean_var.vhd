@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Fri Jul 20 17:16:41 2018
+-- Last update : Tue Jul 24 08:26:11 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ use ieee.numeric_std.all;
 
 entity mean_var is
     generic (
-    	WIN_SIZE	: positive := 21;
+    	WIN_SIZE	: positive := 21*21;
 		M_IN_WIDTH 	: positive := 8;
 		M_OUT_WIDTH : positive := 17;
 		V_IN_WIDTH 	: positive := 16;
@@ -64,7 +64,7 @@ architecture rtl of mean_var is
 
     component dir_shift_reg is
         generic (
-            constant delay : positive := 4
+            constant WIN_SIZE : positive := 21*21
         );
         port (
             clk      : in  std_logic;
@@ -117,13 +117,17 @@ architecture rtl of mean_var is
 
     -- signals
 	signal mean 	: unsigned(M_OUT_WIDTH + FIX_N'length - 1 downto 0);
-	signal mean2 	: unsigned(35 downto 0);
+	signal mean2 	: unsigned(23 downto 0);
 	signal var_tmp 	: unsigned(V_OUT_WIDTH + FIX_N'length - 1 downto 0);
-	signal var 		: unsigned(mean2'length - 1 downto 0);
+	signal var 		: unsigned(15 downto 0);
 
 	signal inCtr 	: natural range 0 to 441;
 	signal init 	: boolean := false;
 
+    attribute use_dsp : string;
+    attribute use_dsp of var_tmp : signal is "yes";
+    attribute use_dsp of diffV_Inp : signal is "yes";
+    attribute use_dsp of diffV_Inm : signal is "yes";
 begin
 	-- Pixel Input and Enable
 	shift_DataIn  <= inData;
@@ -134,15 +138,15 @@ begin
     diffM_Inm <= shift_DataOutm;
     diffM_En <= shift_Valid;
 
-	diffV_Inp <= std_logic_vector(unsigned(shift_DataOutp) * unsigned(shift_DataOutp));
+    diffV_Inp <= std_logic_vector(unsigned(shift_DataOutp) * unsigned(shift_DataOutp));
     diffV_Inm <= std_logic_vector(unsigned(shift_DataOutm) * unsigned(shift_DataOutm)); 
-    diffV_En <= shift_Valid;  
+    diffV_En <= shift_Valid;
 
     -- Output Mean and Variance
     mean <= unsigned(diffM_Sum) * FIX_N;
-    mean2 <= mean(30 downto 13) * mean(30 downto 13);
+    mean2 <= mean(30 downto 19) * mean(30 downto 19);
     var_tmp <= unsigned(diffV_Sum) * FIX_N;
-    var <= var_tmp(38 downto 3) - mean2(35 downto 0);
+    var <= var_tmp(38 downto 23) - mean2(23 downto 8);
 
     -- Output FlipFlops
 	p_out_mean : process(clk) is
@@ -162,7 +166,7 @@ begin
 			if (rst_n = '0') then
 				outVar <= (others => '0');
 			else
-				outVar <= std_logic_vector(var(33 downto 20));
+				outVar <= std_logic_vector(var(13 downto 0));
 			end if;
 		end if;	
 	end process; -- p_out_var
@@ -214,6 +218,7 @@ begin
 						valid_count_en := true;
 					end if;
 				else
+                    
 					if inCtr = 20 then
 						valid_count_en := true;
 					end if;
@@ -257,7 +262,7 @@ begin
 
     c_dir_shift_reg : dir_shift_reg
         generic map (
-            delay => WIN_SIZE
+            WIN_SIZE => WIN_SIZE
         )
         port map (
             clk      => clk,

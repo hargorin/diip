@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 13:57:22 2018
--- Last update : Mon Jul 23 09:33:10 2018
+-- Last update : Tue Jul 24 08:25:55 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -157,7 +157,8 @@ architecture structural of wallis_top is
     signal fifo_writeEn		: std_logic;
     signal fifo_dataIn      : std_logic_vector (DATA_WIDTH - 1 downto 0);
     signal fifo_readEn      : std_logic;
-    signal fifo_dataOut      : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal fifo_dataOut     : std_logic_vector (DATA_WIDTH - 1 downto 0);
+    signal fifo_rst_n       : std_logic;
     signal wallis_en : std_logic;
 
     -- Other Signals
@@ -259,20 +260,21 @@ begin
 	end process; -- p_tlast
 	-----------------------------------------------------------
 
-	-----------------------------------------------------------
-	-- Sets clear if tvalid from output and tlast and tready
-	-- are set
-	-----------------------------------------------------------
-	p_clear : process(clk) is
-	-----------------------------------------------------------
+    -----------------------------------------------------------
+    -- Sets clear if tvalid from output and tlast and tready
+    -- are set
+    -----------------------------------------------------------
+    p_clear : process(clk) is
+    -----------------------------------------------------------
         variable clearDone : boolean := false;
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then
-				clear <= '0';
+    begin
+        if rising_edge(clk) then
+            if (rst_n = '0') then
+                clear <= '0';
                 clearDone := false;
                 i_axis_tready <= '1';
-			else
+                fifo_rst_n <= '0';
+            else
                 -- if input last, disable input ready
                 if i_axis_tvalid = '1' and i_axis_tlast = '1' then
                     i_axis_tready <= '0';
@@ -282,19 +284,21 @@ begin
                     clearDone := false;
                     i_axis_tready <= '1';
                 end if;
-				
+                
                 -- sets clear after complete computation
-				if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') and (o_axis_tlast_i = '1') then
-					clear <= '1';
+                if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') and (o_axis_tlast_i = '1') then
+                    clear <= '1';
                     clearDone := true;
-				else
-					clear <= '0';
-				end if;
+                    fifo_rst_n <= '0';
+                else
+                    clear <= '0';
+                    fifo_rst_n <= '1';
+                end if;
 
-			end if;
-		end if;
-	end process; -- p_clear
-	-----------------------------------------------------------
+            end if;
+        end if;
+    end process; -- p_clear
+    -----------------------------------------------------------
 
 	
     c_mean_var : mean_var
@@ -351,7 +355,7 @@ begin
         )
         port map (
             CLK     => clk,
-            RST_N   => rst_n,
+            RST_N   => fifo_rst_n,
             WriteEn => fifo_WriteEn,
             DataIn  => fifo_dataIn,
             ReadEn  => fifo_readEn,

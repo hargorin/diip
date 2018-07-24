@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 17 09:21:50 2018
+-- Last update : Mon Jul 23 12:49:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -57,17 +57,10 @@ architecture rtl of sum_diff is
 
 	signal difference : signed(IN_WIDTH downto 0);
 	signal sumi : signed(OUT_WIDTH downto 0);
-
-	signal inpi : signed(IN_WIDTH downto 0);
-	signal inmi : signed(IN_WIDTH downto 0);
+	
 begin
 
-	inpi(IN_WIDTH - 1 downto 0) <= signed(inp);
-	inpi(IN_WIDTH downto IN_WIDTH) <= (others => '0');
-	inmi(IN_WIDTH - 1 downto 0) <= signed(inm);
-	inmi(IN_WIDTH downto IN_WIDTH) <= (others => '0');
-
-	difference <= inpi - inmi;
+	difference <= signed(resize(unsigned(inp), difference'length)) - signed(resize(unsigned(inm), difference'length));
 	sum <= std_logic_vector(sumi(OUT_WIDTH - 1 downto 0));
 
 	p_add : process(clk) is
