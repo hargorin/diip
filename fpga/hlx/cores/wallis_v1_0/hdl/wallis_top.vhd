@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 13:57:22 2018
--- Last update : Tue Jul 24 08:25:55 2018
+-- Last update : Tue Jul 24 15:48:25 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -240,19 +240,21 @@ begin
 	-- and clears tlast if tlast was read
 	-----------------------------------------------------------
 	p_tlast : process(clk) is
+        variable waitForWallis : std_logic := '0';
 	-----------------------------------------------------------
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
 				o_axis_tlast_i <= '0';
+                waitForWallis := '0';
 			else
 				-- sets tlast
 				if (i_axis_tlast = '1') and (i_axis_tvalid = '1') then
-					o_axis_tlast_i <= '1';
-				end if;
-
-				-- clear tlast
-				if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') then
+                    waitForWallis := '1';
+                elsif waitForWallis = '1' and wallis_en = '1' then
+                    o_axis_tlast_i <= '1';
+                elsif waitForWallis = '1' and (o_axis_tvalid_i = '1') and (o_axis_tready = '1') then
+                    waitForWallis := '0';
 					o_axis_tlast_i <= '0';
 				end if;
 			end if;

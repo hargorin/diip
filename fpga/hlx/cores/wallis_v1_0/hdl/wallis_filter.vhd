@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 09:19:14 2018
--- Last update : Mon Jul 23 15:31:09 2018
+-- Last update : Tue Jul 24 14:41:52 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -91,7 +91,22 @@ begin
 	pi_nmean <= signed(resize(unsigned(pixel), pi_nmean'length)) - signed(resize(unsigned(n_mean), pi_nmean'length));
 	den <= signed(resize((unsigned(n_var) * unsigned(par_c)) + unsigned(par_ci_gvar), den'length)); 
 	num <= pi_nmean * signed(resize(unsigned(par_c_gvar), par_c_gvar'length+1));
-	add <= unsigned(n_mean) * unsigned(par_bi) + unsigned(par_b_gmean);
+
+    -----------------------------------------------------------
+    -- Clocked addition and multiplication for relaxed timing
+    -----------------------------------------------------------
+	p_add : process(clk) is
+    -----------------------------------------------------------
+	begin
+		if rising_edge(clk) then
+			if (rst_n = '0') then
+				add <= (others => '0');
+			else
+				add <= unsigned(n_mean) * unsigned(par_bi) + unsigned(par_b_gmean);
+			end if;
+		end if;
+	end process; -- p_add
+    -----------------------------------------------------------
 
 	s_axis_dout_tready <= '1';
 	quo <= signed(s_axis_dout_tdata);
@@ -99,37 +114,41 @@ begin
 	wal <= quo(31 downto 2) + signed(resize(add, wal'length));
 
 
+	m_axis_dividend_tdata <= std_logic_vector(num(29 downto 6));
+	m_axis_divisor_tdata <= std_logic_vector((15 downto 15 => '0') & den(20 downto 6));
+
+    -----------------------------------------------------------
+    -- Set valid on input enable and clear valid on divider
+    -- ready to start a single division
+    -----------------------------------------------------------
 	p_division : process(clk) is
+    -----------------------------------------------------------
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
 				m_axis_dividend_tvalid <= '0';
 				m_axis_divisor_tvalid <= '0';
-				m_axis_dividend_tdata <= (others => '0');
-				m_axis_divisor_tdata <= (others => '0');
 			else
 				if (clear = '1') then
 					m_axis_dividend_tvalid <= '0';
 					m_axis_divisor_tvalid <= '0';
-					m_axis_dividend_tdata <= (others => '0');
-					m_axis_divisor_tdata <= (others => '0');
 				else
-					m_axis_dividend_tvalid <= '0';
-					m_axis_divisor_tvalid <= '0';
-
-					if (en = '1') then
- 						if (m_axis_dividend_tready = '1') and  (m_axis_divisor_tready = '1') then
- 							m_axis_dividend_tvalid <= '1';
- 							m_axis_dividend_tdata <= std_logic_vector(num(29 downto 6));
- 							
- 							m_axis_divisor_tvalid <= '1';
- 							m_axis_divisor_tdata <= std_logic_vector((15 downto 15 => '0') & den(20 downto 6));
+					if en = '1' then
+						m_axis_dividend_tvalid <= '1';
+						m_axis_divisor_tvalid <= '1';
+					else
+						if m_axis_dividend_tready = '1' then
+							m_axis_dividend_tvalid <= '0';
+						end if;
+						if m_axis_divisor_tready = '1' then
+							m_axis_divisor_tvalid <= '0';
 						end if;
 					end if;
 				end if;
 			end if;
 		end if;
 	end process; -- p_division
+    -----------------------------------------------------------
 
 	p_wallis_out : process(clk) is
 	begin
