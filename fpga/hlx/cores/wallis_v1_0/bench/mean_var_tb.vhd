@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Tue Jul 10 16:22:03 2018
--- Last update : Wed Jul 18 09:19:18 2018
+-- Last update : Tue Jul 24 11:18:05 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -148,6 +148,7 @@ begin
     	-- randi([0,255],441,1)
 
     	file2axistream("../../cores/wallis_v1_0/bench/rand.txt");
+        waitfor(3);
 
     	-- Output:
     	-- mean: 134.0
@@ -170,6 +171,7 @@ begin
 
 
     	file2axistream("../../cores/wallis_v1_0/bench/rand.txt");
+        waitfor(3);
 
 
 		--en <= '1';

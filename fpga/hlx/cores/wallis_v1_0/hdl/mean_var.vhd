@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Tue Jul 24 08:26:11 2018
+-- Last update : Tue Jul 24 11:21:35 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -142,36 +142,54 @@ begin
     diffV_Inm <= std_logic_vector(unsigned(shift_DataOutm) * unsigned(shift_DataOutm)); 
     diffV_En <= shift_Valid;
 
+    -----------------------------------------------------------
+    -- Clocked multiplication of sum output with 1/N. For timing
+    -- purposes
+    -----------------------------------------------------------
+    p_1N_mul : process( clk )
+    -----------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            if (rst_n = '0') then
+                mean <= (others => '0');
+                var_tmp <= (others => '0');
+            else
+                mean <= unsigned(diffM_Sum) * FIX_N;
+                var_tmp <= unsigned(diffV_Sum) * FIX_N;
+            end if;
+        end if; 
+    end process ; -- p_1N_mul
+    -----------------------------------------------------------
+
     -- Output Mean and Variance
-    mean <= unsigned(diffM_Sum) * FIX_N;
     mean2 <= mean(30 downto 19) * mean(30 downto 19);
-    var_tmp <= unsigned(diffV_Sum) * FIX_N;
     var <= var_tmp(38 downto 23) - mean2(23 downto 8);
 
+    -----------------------------------------------------------
     -- Output FlipFlops
-	p_out_mean : process(clk) is
+    -----------------------------------------------------------
+	p_out : process(clk) is
+    -----------------------------------------------------------
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
 				outMean <= (others => '0');
+                outVar <= (others => '0');
 			else
 				outMean <= std_logic_vector(mean(30 downto 23));
+                outVar <= std_logic_vector(var(13 downto 0));
 			end if;
 		end if;	
-	end process; -- p_out_mean
+	end process; -- p_out
+    -----------------------------------------------------------
 
-	p_out_var : process(clk) is
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then
-				outVar <= (others => '0');
-			else
-				outVar <= std_logic_vector(var(13 downto 0));
-			end if;
-		end if;	
-	end process; -- p_out_var
-
+    -----------------------------------------------------------
+    -- Counts input pixels. After init counts to WIN_SIZE-1
+    -- and after that counts to WIN_LEN
+    -- Is used to determine if a col is processed
+    -----------------------------------------------------------
 	p_inCtr : process(clk) is
+    -----------------------------------------------------------
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
@@ -202,8 +220,18 @@ begin
 			end if;
 		end if;
 	end process; -- p_inCtr
+    -----------------------------------------------------------
 
+    -----------------------------------------------------------
+    -- generates a delayed valid signal the col pixels
+    -- are processed steps are
+    -- - SUM 1 clock
+    -- - 1/N multiply 1 clock
+    -- - OUTPUT LATCH 1 clock
+    -- --> 3 clocks delay
+    -----------------------------------------------------------
 	p_valid : process(clk) is
+    -----------------------------------------------------------
 		variable valid_count_en : boolean := false;
 		variable counter	 : natural range 0 to 3;
 	begin
@@ -227,7 +255,7 @@ begin
 				-- run counter and output
 				valid <= '0';
 				if valid_count_en then
-					if counter = 2 then
+					if counter = 3 then
 						counter := 0;
 						valid_count_en := false;
 						valid <= '1';
@@ -238,28 +266,12 @@ begin
 			end if;
 		end if;	
 	end process; -- p_valid
+    -----------------------------------------------------------
 
-	p_clear : process(clk) is
-	begin
-		if rising_edge(clk) then
-			if (rst_n = '0') then		
-			else
-				if(clear = '1') then
-					shift_Clear <= clear;
-					diffM_Clear <= clear;
-					diffV_Clear <= clear;
-				else
-					shift_Clear <= clear;
-					diffM_Clear <= clear;
-					diffV_Clear <= clear;
-				end if;				
-			end if;
-			
-		end if;
-		
-	end process; -- p_clear
-
-
+    shift_Clear <= clear;
+    diffM_Clear <= clear;
+    diffV_Clear <= clear;
+    
     c_dir_shift_reg : dir_shift_reg
         generic map (
             WIN_SIZE => WIN_SIZE

@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : FHNW
 -- Created     : Wed Nov 22 15:53:25 2017
--- Last update : Mon Jul 23 15:47:58 2018
+-- Last update : Tue Jul 24 10:23:25 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -86,12 +86,40 @@ begin
 	fifo_WriteEn <= en;
 	fifo_dataIn <= datain;
 
-	fifo_readEn <=	en when (not fifo_init) else 
-				   '1' when (ctr = WIN_SIZE - 1) else
-				   '0';
-	dataoutp <= datain;
-	dataoutm <= fifo_dataOut;
-	valid  <= en;
+
+    fifo_readEn <=  en when (not fifo_init) else 
+                   '1' when (ctr = WIN_SIZE - 1) else
+                   '0';
+
+    -- ---------------------------------------------------------------------
+    -- Force a latch on all outputs to minimize critical path from
+    -- diip controller BRAM to next DSP in sum block
+    -- ---------------------------------------------------------------------
+    p_out : process( clk )
+    -- ---------------------------------------------------------------------
+    begin
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                dataoutp <= (others => '0');
+                dataoutm <= (others => '0');
+                valid <= '0';
+                --fifo_readEn <= '0';
+            else
+                --if (not fifo_init) then
+                --    fifo_readEn <=  en;
+                --elsif (ctr = WIN_SIZE - 1)  then
+                --    fifo_readEn <=  '1';
+                --else
+                --    fifo_readEn <=  '0';
+                --end if;
+                    
+                dataoutp <= datain;
+                dataoutm <= fifo_dataOut;
+                valid  <= en;
+            end if;
+        end if;
+    end process ; -- p_out
+    -- ---------------------------------------------------------------------
 
 	p_fifo_ctr : process(clk) is
 	begin
@@ -108,7 +136,7 @@ begin
 				else
 					fifo_rst_n <= '1';
 					if (en = '1') then
-						if (ctr = WIN_SIZE - 1) then
+						if (ctr = WIN_SIZE - 2) then
 							fifo_init <= false;
 						elsif (fifo_init) then
 							ctr <= ctr + 1;
