@@ -714,6 +714,147 @@ int uft_receive_data( uint8_t* data, uint16_t port)
 }
 
 /**
+ * @brief      Runs a continuous receive operation. Call periodically and
+ * control using control bits
+ *
+ * @param      data  The data
+ * @param      size  Maximum number of bytes to receive
+ * @param[in]  port  The port
+ * @param[in]  control  Control bits
+ *
+ * @return     status
+ */
+
+
+/**
+ * @brief      Runs a continuous receive operation. Call periodically and
+ * control using control bits
+ *
+ * @param      data     The data
+ * @param[in]  size     The maximum size in data
+ * @param[in]  port     The port
+ * @param[in]  control  The control
+ * @param      status   The status
+ *
+ * @return     bytes received or negative if error
+ */
+int uft_continuous_receive( uint8_t* data, uint32_t size, uint16_t port, 
+    uint32_t control, uint32_t* status)
+{
+    // All data must be static
+    static struct sockaddr_in si_other;
+    static int sockfd, dataoff = 0;
+    static int ctr = 0;
+
+    // state: 
+    // 0: init
+    // 1: wait for FTS
+    // 2: receiving -> wait for FTP
+    // 3: FTP received
+    // 4: Mem full
+    static int state = UFT_CONT_SINIT;
+
+    // some non statics
+    int slen = sizeof(si_other), recv_len;
+    struct timeval rd_timeout;
+    uint8_t buf[1500];
+
+    // Check for a control signal
+    if(control == UFT_CONT_CRESTART)
+    {
+        if(sockfd > 0)
+        {
+            close(sockfd);
+        }
+        state = UFT_CONT_SINIT;
+        ctr = 0;
+        return dataoff;
+    }
+
+    // if first call, create and bind socket
+    if (state == UFT_CONT_SINIT)
+    {
+        // create UDP receive socket
+        sockfd = create_recv_socket(port, &si_other);
+        if(sockfd < 0) 
+        {
+            *status = state;
+            return -1;
+        }
+        // set socket options to 10us receive timeout
+        rd_timeout.tv_sec = 0;
+        rd_timeout.tv_usec = 10;
+        Setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &rd_timeout, sizeof(rd_timeout));
+        // state change
+        state = UFT_CONT_SWAITFTS;
+        // reset statics
+        dataoff = 0;
+    }
+
+    // if file transfer is complete, get ready for next
+    if (state == UFT_CONT_SFTP)
+    {
+        state = UFT_CONT_SWAITFTS;
+    }
+
+    // try to receive data
+    recv_len = recvfrom(sockfd, buf, 1500, 0, (struct sockaddr *) &si_other, (socklen_t *) &slen);
+    if(recv_len == -1)
+    {
+        if(errno == EAGAIN)
+        {
+            // this means timeout
+            // exit if no receive
+            {
+                *status = state;
+                return dataoff;
+            }
+        }
+        else
+        {
+            printf("%s:%d \nrcvfrom error: %s\n", __FILE__, __LINE__, strerror(errno));
+            *status = state;
+            return -1;
+        }
+    }
+
+    // check for command
+    if( is_command_packet(buf) )
+    {
+        if( get_command(buf) == CONTROLL_FTS )
+        {
+            state = UFT_CONT_SRX;
+        }
+        if( get_command(buf) == CONTROLL_FTP )
+        {
+            state = UFT_CONT_SFTP;
+        }
+    }
+    // check for data
+    else
+    {
+        // store data if space
+        if (dataoff <= size - (recv_len - 4))
+        {
+            // printf("Offset = %d\n", dataoff);
+            // printf("buf: \n");
+            // hexDump(buf, recv_len, 8);
+            printf("rx %d\n",++ctr);
+            memcpy(&data[dataoff], &buf[4], recv_len - 4);
+            dataoff += recv_len - 4;
+        }
+        else
+        {
+            state = UFT_CONT_SMEMFULL;
+        }
+    }
+
+    // return current state and bytes written
+    *status = state;
+    return dataoff;
+}
+
+/**
  * @brief      Set verbosity level, default 0
  *
  * @param[in]  v     verbosity level

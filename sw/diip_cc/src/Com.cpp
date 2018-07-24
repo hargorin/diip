@@ -78,6 +78,45 @@ Com::receive(void)
 	this->rx_size = uft_receive_data(this->rx_data, this->rx_port);
 }
 
+void
+Com::contReceive(void)
+{	
+    int ret = 0, oldret = 42;
+    uint32_t stat, oldstat = 42;
+
+    int ctr = 0;
+    int ctr2 = 0;
+    do
+    {
+        ret = uft_continuous_receive(this->rx_data, this->rx_size, this->rx_port, UFT_CONT_CNONE, &stat);
+
+        if(stat != oldstat)
+        {
+        	oldstat = stat;
+            ctr2 = 0;
+            switch(stat) {
+                case UFT_CONT_SINIT: printf("Rx: SINIT\n"); break;
+                case UFT_CONT_SWAITFTS: printf("Rx: SWAITFTS\n"); break;
+                case UFT_CONT_SRX: printf("Rx: SRX\n"); break;
+                case UFT_CONT_SFTP: printf("Rx: SFTP\n"); break;
+                case UFT_CONT_SMEMFULL: printf("Rx: SMEMFULL\n"); break;
+                default: printf("Rx: stat = %d\n",stat);
+            }
+        }
+        // oldstat = stat;
+        // if (oldret != ret | ctr++ == 1000000)
+        // {
+        //     ctr = 0;
+        //     printf("\nret = %d size = %d\n",ret, rx_size);
+        //     hexDump(rx_data, 216, 8);
+        //     oldret = ret;
+        // }
+        
+    } while(ret < rx_size);
+    // printf("Hurray! %d of requested %d bytes received\n", ret, rx_size );
+}
+
+
 /**
  * @brief      Set data to be transmitted
  *

@@ -52,3 +52,30 @@ uint32_t get_filesize_bytes (FILE *fp)
     int rc = fstat(fileno(fp), &stat_buf);
     return rc == 0 ? stat_buf.st_size : -1;
 }
+
+/**
+ * @brief      Dumps the memory as hez
+ *
+ * @param      data   The data
+ * @param[in]  size   The size
+ * @param[in]  width  The width of the dump in two byes
+ */
+void hexDump(uint8_t* data, uint32_t size, uint8_t width)
+{
+    int byteCnt = 0;
+    int byteCnt2 = 0;
+    printf("%08x: ", 0);  
+    for (int i = 0; i < size; i++)
+    {
+        printf("%02x", data[i]);
+        if(++byteCnt2 == 2) {
+            byteCnt2 = 0;
+            printf(" ");  
+        } 
+        if(++byteCnt == 32) {
+            byteCnt = 0;
+            printf("\n");  
+            printf("%08x: ", i+1);  
+        } 
+    }
+}

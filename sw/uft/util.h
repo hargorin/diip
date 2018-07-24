@@ -25,6 +25,7 @@ typedef struct tictocstruct
 void tic(tictoc_t *tt);
 void toc(tictoc_t *tt);
 uint32_t get_filesize_bytes (FILE *fp);
+void hexDump(uint8_t* data, uint32_t size, uint8_t width);
 
 #ifdef __cplusplus
 }

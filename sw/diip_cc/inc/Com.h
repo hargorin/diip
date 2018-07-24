@@ -20,6 +20,8 @@ public:
 	setupReceive(int port, uint8_t* ptr, size_t size);
 	void
 	receive(void );
+	void
+	contReceive(void);
 
 	// Transmitting
 	int

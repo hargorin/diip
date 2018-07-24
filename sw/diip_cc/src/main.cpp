@@ -7,10 +7,10 @@
 #include"ImageHandler.h"
 #include "Com.h"
 #include "util.h"
+#include "uft.h"
+#include <mutex>
 
 #define WINDOW_SIZE 21
-
-typedef void * (*THREADFUNCPTR)(void *);
 
 void printProgress(int current, int max)
 {
@@ -122,7 +122,12 @@ int main(int argc, char const *argv[])
     // }
     // For VHDL controller
     int currline = 0;
-    
+
+    int outsize = (ih->getWidth()-WINDOW_SIZE+1)*(ih->getHeight()-WINDOW_SIZE+1);
+    com->setupReceive(2222, ih->outBuf, outsize);
+    std::thread rxth(& Com::contReceive, com);
+
+    // printf("Rx base %08x\n", ih->imBuf);
     // First send 20 lines to fill buffers
     for (currline = 0; currline < (WINDOW_SIZE-1); currline++)
     {
@@ -140,9 +145,7 @@ int main(int argc, char const *argv[])
     // send the rest while receiving
     for( ;currline < ih->getHeight(); currline++)
     {
-        printf("wait\n");
         usleep(50000);
-        printf("wait done\n");
         // printProgress(currline, ih->getHeight());
         printf("Start  line %4d/%d..", currline+1,ih->getHeight());
         
@@ -154,11 +157,11 @@ int main(int argc, char const *argv[])
         // start transmitter
         com->setTransmitPayload(&ih->imBuf[currline*ih->getWidth()], ih->getWidth());
         std::thread txth(& Com::transmit, com);
-        printf("tx start, ");
+        // printf("tx start, ");
 
         // wait for both to finish
         txth.join();
-        printf("tx joined, ");
+        // printf("tx joined, ");
         // tic(&dt);
         // rxth.join();
         // toc(&dt);
@@ -167,11 +170,12 @@ int main(int argc, char const *argv[])
         // mean += (dt.end-dt.start);
     }
 
+    rxth.join();
     // printf("Mean time %.2fus\n", mean / (ih->getHeight()-WINDOW_SIZE+1));
 
-    // printf("\nDone\n");
-    // toc(&tt);
-    double outsize = (ih->getWidth()-WINDOW_SIZE+1)*(ih->getHeight()-WINDOW_SIZE+1);
+    printf("\nDone\n");
+    toc(&tt);
+    // double outsize = (ih->getWidth()-WINDOW_SIZE+1)*(ih->getHeight()-WINDOW_SIZE+1);
     // printf("Pixels per second (output): %.2f\n", (outsize) / (tt.end-tt.start) * 1000000.0);
     // printf("Output pixels: %.0f\n", outsize);
 

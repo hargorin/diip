@@ -149,9 +149,21 @@ ImageHandler::storeOutputImage()
 void 
 ImageHandler::hexDumpOutputImage()
 {
+    int byteCnt = 0;
+    int byteCnt2 = 0;
+    printf("%08x: ", 0);  
     for (int i = 0; i < (out_height*out_width); i++)
     {
-        printf("%02x\n", outBuf[i]);
+        printf("%02x", outBuf[i]);
+        if(++byteCnt2 == 2) {
+            byteCnt2 = 0;
+            printf(" ");  
+        } 
+        if(++byteCnt == 32) {
+            byteCnt = 0;
+            printf("\n");  
+            printf("%08x: ", i+1);  
+        } 
     }
 }
 
