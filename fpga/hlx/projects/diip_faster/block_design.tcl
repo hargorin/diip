@@ -11,11 +11,14 @@
   set div_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:div_gen:5.1 div_gen_0 ]
   set_property -dict [ list \
    CONFIG.FlowControl {NonBlocking} \
-   CONFIG.algorithm_type {Radix2} \
+   CONFIG.algorithm_type {High_Radix} \
    CONFIG.clocks_per_division {8} \
    CONFIG.divide_by_zero_detect {false} \
+   CONFIG.dividend_and_quotient_width {24} \
+   CONFIG.divisor_width {16} \
    CONFIG.fractional_width {8} \
-   CONFIG.latency {29} \
+   CONFIG.latency {18} \
+   CONFIG.latency_configuration {Manual} \
    CONFIG.operand_sign {Signed} \
    CONFIG.remainder_type {Fractional} \
  ] $div_gen_0
@@ -30,7 +33,7 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {2.5} \
+   CONFIG.C_BRAM_CNT {6} \
    CONFIG.C_DATA_DEPTH {1024} \
    CONFIG.C_MON_TYPE {MIX} \
    CONFIG.C_NUM_MONITOR_SLOTS {7} \

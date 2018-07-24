@@ -17,11 +17,11 @@
   # Create instance: system_ila_0, and set properties
   set system_ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:system_ila:1.1 system_ila_0 ]
   set_property -dict [ list \
-   CONFIG.C_BRAM_CNT {2.5} \
+   CONFIG.C_BRAM_CNT {1.5} \
    CONFIG.C_DATA_DEPTH {1024} \
    CONFIG.C_MON_TYPE {MIX} \
    CONFIG.C_NUM_MONITOR_SLOTS {4} \
-   CONFIG.C_NUM_OF_PROBES {8} \
+   CONFIG.C_NUM_OF_PROBES {9} \
    CONFIG.C_PROBE0_TYPE {0} \
    CONFIG.C_PROBE0_WIDTH {1} \
    CONFIG.C_PROBE1_TYPE {0} \
@@ -31,6 +31,7 @@
    CONFIG.C_PROBE5_TYPE {0} \
    CONFIG.C_PROBE6_TYPE {0} \
    CONFIG.C_PROBE7_TYPE {0} \
+   CONFIG.C_PROBE8_TYPE {0} \
    CONFIG.C_PROBE_WIDTH_PROPAGATION {AUTO} \
    CONFIG.C_SLOT {3} \
    CONFIG.C_SLOT_0_APC_EN {0} \
@@ -129,7 +130,10 @@ HDL_ATTRIBUTE.DEBUG {true} \
   connect_bd_net -net Net1 [get_bd_pins udp_ip_stack/our_mac_address] [get_bd_pins uft_stack/our_mac_address]
   connect_bd_net -net clk_in_n_1 [get_bd_ports clk_in_n] [get_bd_pins temac_support/clk_in_n]
   connect_bd_net -net clk_in_p_1 [get_bd_ports clk_in_p] [get_bd_pins temac_support/clk_in_p]
-  connect_bd_net -net diip_controller_0_uft_tx_data_size [get_bd_pins diip_controller_0/uft_tx_data_size] [get_bd_pins uft_stack/tx_data_size]
+  connect_bd_net -net diip_controller_0_uft_tx_data_size [get_bd_pins diip_controller_0/uft_tx_data_size] [get_bd_pins system_ila_0/probe8] [get_bd_pins uft_stack/tx_data_size]
+  set_property -dict [ list \
+HDL_ATTRIBUTE.DEBUG {true} \
+ ] [get_bd_nets diip_controller_0_uft_tx_data_size]
   connect_bd_net -net diip_controller_0_uft_tx_row_num [get_bd_pins diip_controller_0/uft_tx_row_num] [get_bd_pins uft_stack/tx_row_num]
   connect_bd_net -net diip_controller_0_uft_tx_start [get_bd_pins diip_controller_0/uft_tx_start] [get_bd_pins system_ila_0/probe6] [get_bd_pins uft_stack/tx_start]
   set_property -dict [ list \
