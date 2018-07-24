@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE="room128x128.jpg"
+IMAGE="mountain.tif"
 WIN_SIZE=21
 
 # Get information

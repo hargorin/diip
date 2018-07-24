@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Mon Jul 23 10:18:23 2018
+-- Last update : Tue Jul 24 13:22:42 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ architecture testbench of diip_main_tb is
     -- wallis filter window size
     constant WIN_LENGTH : natural := 21;
     -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 128;
+    constant IMG_WIDTH : natural := 1920;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 128;
+    constant IMG_HEIGHT : natural := 23;
 
     constant WAL_C_GVAR : std_logic_vector (19 downto 0) := "00101101101101000000";--2925
     constant WAL_C : std_logic_vector (5 downto 0) := "110100";--0.8125
@@ -48,7 +48,7 @@ architecture testbench of diip_main_tb is
     constant WAL_B_GMEAN : std_logic_vector (13 downto 0) := "00111101100001";--61.515625
     constant WAL_BI : std_logic_vector (5 downto 0) := "100001"; --0.515625
 
-    constant WIN_SIZE     : positive              := 21*21;
+    constant WIN_SIZE     : positive              := WIN_LENGTH*WIN_LENGTH;
     constant M_IN_WIDTH   : positive              := 8;
     constant M_OUT_WIDTH  : positive              := 17;
     constant V_IN_WIDTH   : positive              := 16;
@@ -60,9 +60,9 @@ architecture testbench of diip_main_tb is
 	-- Testbench DUT generics as constants
     -- Wallis output to UFT Tx Fifo size. Should hold at least one wallis
     -- output line
-    constant FIFO_DEPTH : positive := 5*IMG_WIDTH;
+    constant FIFO_DEPTH : positive := 2*IMG_WIDTH;
     -- number of elements in a  line buffer
-    constant BRAM_SIZE : natural := IMG_WIDTH; -- 1024 for simulation
+    constant BRAM_SIZE : natural := 2*IMG_WIDTH; -- 1024 for simulation
     -- number of lines in cache: minimum is window size + 1
     constant CACHE_N_LINES : natural := WIN_LENGTH+1;
 

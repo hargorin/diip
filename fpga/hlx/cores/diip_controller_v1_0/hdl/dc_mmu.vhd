@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Mon Jul 23 16:05:21 2018
+-- Last update : Tue Jul 24 14:04:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -265,10 +265,10 @@ begin
     p_out_pix_m1 : process( clk )
     -- ---------------------------------------------------------------------
     begin
-        if rst_n = '0' then
-            n_out_pix_m1 <= (others => '0');
-        else
-            if rising_edge(clk) then
+        if rising_edge(clk) then
+            if rst_n = '0' then
+                n_out_pix_m1 <= (others => '0');
+            else
                 n_out_pix_m1 <= resize(signed(img_width)*signed(win_size) - 1,n_out_pix_m1'length);
             end if;
         end if;
