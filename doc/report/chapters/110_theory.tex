@@ -6,7 +6,7 @@
 % -----------------------------------------------------------------------------
 \chapter{Theoretical Background} \label{chapt:theoreticalback}
 % -----------------------------------------------------------------------------
-This chapter provides the baiscs of the project. On the one hand, it is about image processing and filtering as well as communication via Ethernet. What kind of image operations are possible and the Wallis filter are explained in the chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via Ethernet is in the chapter \ref{chapt:theory:ethernet}.
+This chapter provides the basics of the project. On the one hand, it is about image processing and filtering as well as communication via Ethernet. What kind of image operations are possible and the Wallis filter are explained in the chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via Ethernet is in the chapter \ref{chapt:theory:ethernet}.
 
 
 % =============================================================================
@@ -38,7 +38,7 @@ Neighborhood operations use a certain amount of neighboring pixels as input (fig
 They calculate the result and stored it at the reference point in the target
 image. Neighborhood operations are often used in convolution filters. These
 filters can be used, for instance, to implement smoothing filters such as the
-Gauss filter. Convolution filters can also be used to detect edges in an image. This is possible, for example, with the Sobel filter.
+Gauss filter. Convolution filters can also be used to detect edges in an image. For example, this is possible with the Sobel filter.
 
 Example to calculate the x-derivative and y-derivative with the Sobel matrix \cite{sobel_matrix}:
 
@@ -72,8 +72,8 @@ With the application of filters, the so-called border handling problem occurs in
 
 There are several possible solutions to this issue:
 \begin{itemize}
-\item The border pixels are not considered. However, the output image is two
-pixels smaller in its height and width than the original image in the example image \ref{fig:image_handling}
+\item The border pixels are not considered. In the example image, the original image 
+is two pixels smaller in height and width than the original image. \ref{fig:image_handling}
 \item If the filter exceeds the original image, the filter coefficients
 at the outside of the image are set to zero
 \item The pixels required outside the image are extrapolated according to the closest pixels
@@ -100,9 +100,29 @@ Image analysis often employs global image operations that uses the entire image 
 \end{figure}
 
 % -----------------------------------------------------------------------------
-\subsection{Wallis Filter}
+\subsection{Wallis Filter}\label{ch:th_wallis_filter}
 % -----------------------------------------------------------------------------
+The main goal of the Wallis filter is to adjust the mean and variance of an image and to map it into a given mean and variance to the destination image. This is mainly used for local contrast enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
+The Wallis filter equation is \cite{wallis_filter}:
+\begin{equation}
+    I'(x,y) = \frac{( I(x,y) - \mu_{n})\cdot c \cdot \sigma_{g}^{2}}{c \cdot \sigma_{n}^{2} + (1 - c) \cdot \sigma_{g}^{2}} + b \cdot \mu_{g} + (1 - b) \cdot \mu_{n}
+    \label{eq:wallis_filter}
+\end{equation} 
 
+\begin{tabular}{rl}
+    $I(x,y)         =$ & gray value pixel of the original image \\
+    $I'(x,y)        =$ & calculated pixel with the Wallis algorithm \\
+    $\mu_{n}        =$ & mean from the neighborhood of the pixel I(x,y) \\
+    $\sigma_{n}^{2} =$ & variance from the neighborhood of the pixel I(x,y) \\
+    $\mu_{g}        =$ & mean from the destination image \\
+    $\sigma_{g}^{2} =$ & variance from the destination image \\
+    $b              =$ & brightness factor \\
+    $c              =$ & contrast factor \\
+\end{tabular} \\
+
+The two facotrs b and c can have the range from 0 to 1. The larger b is selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
+The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
+The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
 
 
 % =============================================================================

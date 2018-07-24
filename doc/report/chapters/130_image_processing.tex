@@ -6,6 +6,10 @@
 \chapter{Image Processing}  \label{chapt:image_processing}
 
 \section{Concept}
+The figure ?????? shows the concept of the C code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters. \\
+The sequence of the code is explained in the figure ????. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the mean pixel is calculated. To calculate the next pixels, only one new column is read in. This step is the so called iteration.\\
+The code is row based. This means that each new row of an image have the initialization procedure.
+
 
 \section{Implementation}
 
