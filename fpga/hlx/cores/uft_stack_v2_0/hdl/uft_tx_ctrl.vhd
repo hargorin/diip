@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Mon Jul 16 16:24:56 2018
+-- Last update : Tue Jul 24 14:05:39 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -245,7 +245,7 @@ begin
         end case;
     end process ; -- p_next_state
     ----------------------------------------------------------------------------
-    p_out : process( current_state )
+    p_out : process( current_state, tcid, ack_tcid )
     ----------------------------------------------------------------------------
     begin
         tx_ready <= '0';
@@ -256,26 +256,38 @@ begin
         arb_sel <= '0';
         udp_tx_start <= '0';
 
-        -- output transaction id
-        cmd_tcid <= std_logic_vector(tcid);
-        data_tcid <= std_logic_vector(tcid);
-
         case (current_state) is
             when IDLE =>
                 tx_ready <= '1';
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when CMD => 
                 udp_tx_start <= '1';
                 cmd_en_start <= '1';
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when CMD_WAIT => 
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when DATA => 
                 udp_tx_start <= '1';
                 arb_sel <= '1';
                 data_start <= '1';
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when DATA_WAIT => 
                 arb_sel <= '1';
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when DATA_WAIT_DONE => 
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when DELAY => 
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when CPLT => 
+                cmd_tcid <= std_logic_vector(tcid);
+                data_tcid <= std_logic_vector(tcid);
             when ACK_SEQ => 
                 cmd_tcid <= ack_tcid;
                 udp_tx_start <= '1';

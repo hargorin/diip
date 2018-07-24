@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 15:13:40 2017
--- Last update : Mon Jul 16 16:32:00 2018
+-- Last update : Tue Jul 24 13:57:32 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -195,7 +195,8 @@ begin
     ----------------------------------------------------------------------------
     -- Controls the AXI stream output
     -- -------------------------------------------------------------------------
-    p_out : process (ctr, running, n_bytes, seq, tcid, size)
+    p_out : process (ctr, running, n_bytes, seq, tcid, size, s_axis_tlast, 
+        s_axis_tvalid, s_axis_tdata)
     ----------------------------------------------------------------------------
     begin
         tx_tvalid <= '0';

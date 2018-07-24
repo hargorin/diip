@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 09:21:20 2017
--- Last update : Wed Jul 18 12:06:14 2018
+-- Last update : Tue Jul 24 13:51:50 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -45,11 +45,7 @@ entity uft_top_tb is
         -- only treat packages arriving at INCOMMING_PORT as UFT packages
         INCOMMING_PORT : natural := 42042;
         -- Parameters for ip interface to Axi master burst
-        FIFO_DEPTH : positive := 366; -- (1464/4)
-
-        C_S_AXI_DATA_WIDTH  : integer   := 32;
-        -- Width of S_AXI address bus
-        C_S_AXI_ADDR_WIDTH  : integer   := 6
+        FIFO_DEPTH : positive := 366 -- (1464/4)
     );
 end entity uft_top_tb;
 
@@ -717,9 +713,7 @@ begin
     DUV : entity work.uft_top
         generic map (
             INCOMMING_PORT     => INCOMMING_PORT,
-            FIFO_DEPTH         => FIFO_DEPTH,
-            C_S_AXI_DATA_WIDTH => C_S_AXI_DATA_WIDTH,
-            C_S_AXI_ADDR_WIDTH => C_S_AXI_ADDR_WIDTH
+            FIFO_DEPTH         => FIFO_DEPTH
         )
         port map (
             clk                    => clk,

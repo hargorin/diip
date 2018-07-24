@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Tue Nov 28 13:20:19 2017
--- Last update : Wed Apr 18 08:54:07 2018
+-- Last update : Tue Jul 24 13:56:46 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -74,9 +74,6 @@ begin
     p_comd : process( clk )
     ----------------------------------------------------------------------------
     begin
-        command <= command;
-        command_d1 <= command_d1;
-        command_d2 <= command_d2;
         if rising_edge(clk) then
             if rst_n = '0' then
                 command  <= (others => '0');
@@ -99,6 +96,10 @@ begin
                     command_d1(6 downto 0) <= tcid;
                     command_d1(23 downto 7) <= (others => '0');
                     command_d2 <= (others => '0');
+                else
+                    command <= command;
+                    command_d1 <= command_d1;
+                    command_d2 <= command_d2;
                 end if;
             end if;
         end if;        
@@ -154,7 +155,7 @@ begin
     ----------------------------------------------------------------------------
     -- Controls the AXI stream output
     -- -------------------------------------------------------------------------
-    p_out : process (ctr, running)
+    p_out : process (ctr, running, command, command_d1, command_d2)
     ----------------------------------------------------------------------------
     begin
         tx_tvalid <= '0';
