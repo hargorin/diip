@@ -1,49 +1,30 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Thu Jul 19 10:29:37 2018
+[*] Wed Jul 25 14:22:54 2018
 [*]
 [dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/dc_top_tb.ghw"
-[dumpfile_mtime] "Thu Jul 19 10:23:20 2018"
-[dumpfile_size] 584613
+[dumpfile_mtime] "Wed Jul 25 14:21:56 2018"
+[dumpfile_size] 3740519
 [savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/dc_top_tb.gtkw"
 [timestart] 0
-[size] 2162 1348
-[pos] -1 -20
-*-27.065807 212100000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 2174 1369
+[pos] -1 -1
+*-35.192539 245400000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.dc_top_tb.
 [treeopen] top.dc_top_tb.duv.
-[treeopen] top.dc_top_tb.duv.fifo.
+[treeopen] top.dc_top_tb.duv.control.
 [sst_width] 414
 [signals_width] 404
 [sst_expanded] 1
-[sst_vpaned_height] 393
+[sst_vpaned_height] 422
 @28
+top.dc_top_tb.clk
 top.dc_top_tb.clk
 top.dc_top_tb.rst_n
 @200
 -
 -UFT Rx
-@28
-top.dc_top_tb.uft_rx_done
-top.dc_top_tb.uft_rx_row_num_valid
-top.dc_top_tb.uft_rx_row_size_valid
-@22
-#{top.dc_top_tb.uft_rx_row_num[31:0]} top.dc_top_tb.uft_rx_row_num[31] top.dc_top_tb.uft_rx_row_num[30] top.dc_top_tb.uft_rx_row_num[29] top.dc_top_tb.uft_rx_row_num[28] top.dc_top_tb.uft_rx_row_num[27] top.dc_top_tb.uft_rx_row_num[26] top.dc_top_tb.uft_rx_row_num[25] top.dc_top_tb.uft_rx_row_num[24] top.dc_top_tb.uft_rx_row_num[23] top.dc_top_tb.uft_rx_row_num[22] top.dc_top_tb.uft_rx_row_num[21] top.dc_top_tb.uft_rx_row_num[20] top.dc_top_tb.uft_rx_row_num[19] top.dc_top_tb.uft_rx_row_num[18] top.dc_top_tb.uft_rx_row_num[17] top.dc_top_tb.uft_rx_row_num[16] top.dc_top_tb.uft_rx_row_num[15] top.dc_top_tb.uft_rx_row_num[14] top.dc_top_tb.uft_rx_row_num[13] top.dc_top_tb.uft_rx_row_num[12] top.dc_top_tb.uft_rx_row_num[11] top.dc_top_tb.uft_rx_row_num[10] top.dc_top_tb.uft_rx_row_num[9] top.dc_top_tb.uft_rx_row_num[8] top.dc_top_tb.uft_rx_row_num[7] top.dc_top_tb.uft_rx_row_num[6] top.dc_top_tb.uft_rx_row_num[5] top.dc_top_tb.uft_rx_row_num[4] top.dc_top_tb.uft_rx_row_num[3] top.dc_top_tb.uft_rx_row_num[2] top.dc_top_tb.uft_rx_row_num[1] top.dc_top_tb.uft_rx_row_num[0]
-#{top.dc_top_tb.uft_rx_row_size[31:0]} top.dc_top_tb.uft_rx_row_size[31] top.dc_top_tb.uft_rx_row_size[30] top.dc_top_tb.uft_rx_row_size[29] top.dc_top_tb.uft_rx_row_size[28] top.dc_top_tb.uft_rx_row_size[27] top.dc_top_tb.uft_rx_row_size[26] top.dc_top_tb.uft_rx_row_size[25] top.dc_top_tb.uft_rx_row_size[24] top.dc_top_tb.uft_rx_row_size[23] top.dc_top_tb.uft_rx_row_size[22] top.dc_top_tb.uft_rx_row_size[21] top.dc_top_tb.uft_rx_row_size[20] top.dc_top_tb.uft_rx_row_size[19] top.dc_top_tb.uft_rx_row_size[18] top.dc_top_tb.uft_rx_row_size[17] top.dc_top_tb.uft_rx_row_size[16] top.dc_top_tb.uft_rx_row_size[15] top.dc_top_tb.uft_rx_row_size[14] top.dc_top_tb.uft_rx_row_size[13] top.dc_top_tb.uft_rx_row_size[12] top.dc_top_tb.uft_rx_row_size[11] top.dc_top_tb.uft_rx_row_size[10] top.dc_top_tb.uft_rx_row_size[9] top.dc_top_tb.uft_rx_row_size[8] top.dc_top_tb.uft_rx_row_size[7] top.dc_top_tb.uft_rx_row_size[6] top.dc_top_tb.uft_rx_row_size[5] top.dc_top_tb.uft_rx_row_size[4] top.dc_top_tb.uft_rx_row_size[3] top.dc_top_tb.uft_rx_row_size[2] top.dc_top_tb.uft_rx_row_size[1] top.dc_top_tb.uft_rx_row_size[0]
-@200
--
-@22
-#{top.dc_top_tb.uft_user_reg0[31:0]} top.dc_top_tb.uft_user_reg0[31] top.dc_top_tb.uft_user_reg0[30] top.dc_top_tb.uft_user_reg0[29] top.dc_top_tb.uft_user_reg0[28] top.dc_top_tb.uft_user_reg0[27] top.dc_top_tb.uft_user_reg0[26] top.dc_top_tb.uft_user_reg0[25] top.dc_top_tb.uft_user_reg0[24] top.dc_top_tb.uft_user_reg0[23] top.dc_top_tb.uft_user_reg0[22] top.dc_top_tb.uft_user_reg0[21] top.dc_top_tb.uft_user_reg0[20] top.dc_top_tb.uft_user_reg0[19] top.dc_top_tb.uft_user_reg0[18] top.dc_top_tb.uft_user_reg0[17] top.dc_top_tb.uft_user_reg0[16] top.dc_top_tb.uft_user_reg0[15] top.dc_top_tb.uft_user_reg0[14] top.dc_top_tb.uft_user_reg0[13] top.dc_top_tb.uft_user_reg0[12] top.dc_top_tb.uft_user_reg0[11] top.dc_top_tb.uft_user_reg0[10] top.dc_top_tb.uft_user_reg0[9] top.dc_top_tb.uft_user_reg0[8] top.dc_top_tb.uft_user_reg0[7] top.dc_top_tb.uft_user_reg0[6] top.dc_top_tb.uft_user_reg0[5] top.dc_top_tb.uft_user_reg0[4] top.dc_top_tb.uft_user_reg0[3] top.dc_top_tb.uft_user_reg0[2] top.dc_top_tb.uft_user_reg0[1] top.dc_top_tb.uft_user_reg0[0]
-#{top.dc_top_tb.uft_user_reg1[31:0]} top.dc_top_tb.uft_user_reg1[31] top.dc_top_tb.uft_user_reg1[30] top.dc_top_tb.uft_user_reg1[29] top.dc_top_tb.uft_user_reg1[28] top.dc_top_tb.uft_user_reg1[27] top.dc_top_tb.uft_user_reg1[26] top.dc_top_tb.uft_user_reg1[25] top.dc_top_tb.uft_user_reg1[24] top.dc_top_tb.uft_user_reg1[23] top.dc_top_tb.uft_user_reg1[22] top.dc_top_tb.uft_user_reg1[21] top.dc_top_tb.uft_user_reg1[20] top.dc_top_tb.uft_user_reg1[19] top.dc_top_tb.uft_user_reg1[18] top.dc_top_tb.uft_user_reg1[17] top.dc_top_tb.uft_user_reg1[16] top.dc_top_tb.uft_user_reg1[15] top.dc_top_tb.uft_user_reg1[14] top.dc_top_tb.uft_user_reg1[13] top.dc_top_tb.uft_user_reg1[12] top.dc_top_tb.uft_user_reg1[11] top.dc_top_tb.uft_user_reg1[10] top.dc_top_tb.uft_user_reg1[9] top.dc_top_tb.uft_user_reg1[8] top.dc_top_tb.uft_user_reg1[7] top.dc_top_tb.uft_user_reg1[6] top.dc_top_tb.uft_user_reg1[5] top.dc_top_tb.uft_user_reg1[4] top.dc_top_tb.uft_user_reg1[3] top.dc_top_tb.uft_user_reg1[2] top.dc_top_tb.uft_user_reg1[1] top.dc_top_tb.uft_user_reg1[0]
-#{top.dc_top_tb.uft_user_reg2[31:0]} top.dc_top_tb.uft_user_reg2[31] top.dc_top_tb.uft_user_reg2[30] top.dc_top_tb.uft_user_reg2[29] top.dc_top_tb.uft_user_reg2[28] top.dc_top_tb.uft_user_reg2[27] top.dc_top_tb.uft_user_reg2[26] top.dc_top_tb.uft_user_reg2[25] top.dc_top_tb.uft_user_reg2[24] top.dc_top_tb.uft_user_reg2[23] top.dc_top_tb.uft_user_reg2[22] top.dc_top_tb.uft_user_reg2[21] top.dc_top_tb.uft_user_reg2[20] top.dc_top_tb.uft_user_reg2[19] top.dc_top_tb.uft_user_reg2[18] top.dc_top_tb.uft_user_reg2[17] top.dc_top_tb.uft_user_reg2[16] top.dc_top_tb.uft_user_reg2[15] top.dc_top_tb.uft_user_reg2[14] top.dc_top_tb.uft_user_reg2[13] top.dc_top_tb.uft_user_reg2[12] top.dc_top_tb.uft_user_reg2[11] top.dc_top_tb.uft_user_reg2[10] top.dc_top_tb.uft_user_reg2[9] top.dc_top_tb.uft_user_reg2[8] top.dc_top_tb.uft_user_reg2[7] top.dc_top_tb.uft_user_reg2[6] top.dc_top_tb.uft_user_reg2[5] top.dc_top_tb.uft_user_reg2[4] top.dc_top_tb.uft_user_reg2[3] top.dc_top_tb.uft_user_reg2[2] top.dc_top_tb.uft_user_reg2[1] top.dc_top_tb.uft_user_reg2[0]
-#{top.dc_top_tb.uft_user_reg3[31:0]} top.dc_top_tb.uft_user_reg3[31] top.dc_top_tb.uft_user_reg3[30] top.dc_top_tb.uft_user_reg3[29] top.dc_top_tb.uft_user_reg3[28] top.dc_top_tb.uft_user_reg3[27] top.dc_top_tb.uft_user_reg3[26] top.dc_top_tb.uft_user_reg3[25] top.dc_top_tb.uft_user_reg3[24] top.dc_top_tb.uft_user_reg3[23] top.dc_top_tb.uft_user_reg3[22] top.dc_top_tb.uft_user_reg3[21] top.dc_top_tb.uft_user_reg3[20] top.dc_top_tb.uft_user_reg3[19] top.dc_top_tb.uft_user_reg3[18] top.dc_top_tb.uft_user_reg3[17] top.dc_top_tb.uft_user_reg3[16] top.dc_top_tb.uft_user_reg3[15] top.dc_top_tb.uft_user_reg3[14] top.dc_top_tb.uft_user_reg3[13] top.dc_top_tb.uft_user_reg3[12] top.dc_top_tb.uft_user_reg3[11] top.dc_top_tb.uft_user_reg3[10] top.dc_top_tb.uft_user_reg3[9] top.dc_top_tb.uft_user_reg3[8] top.dc_top_tb.uft_user_reg3[7] top.dc_top_tb.uft_user_reg3[6] top.dc_top_tb.uft_user_reg3[5] top.dc_top_tb.uft_user_reg3[4] top.dc_top_tb.uft_user_reg3[3] top.dc_top_tb.uft_user_reg3[2] top.dc_top_tb.uft_user_reg3[1] top.dc_top_tb.uft_user_reg3[0]
-#{top.dc_top_tb.uft_user_reg4[31:0]} top.dc_top_tb.uft_user_reg4[31] top.dc_top_tb.uft_user_reg4[30] top.dc_top_tb.uft_user_reg4[29] top.dc_top_tb.uft_user_reg4[28] top.dc_top_tb.uft_user_reg4[27] top.dc_top_tb.uft_user_reg4[26] top.dc_top_tb.uft_user_reg4[25] top.dc_top_tb.uft_user_reg4[24] top.dc_top_tb.uft_user_reg4[23] top.dc_top_tb.uft_user_reg4[22] top.dc_top_tb.uft_user_reg4[21] top.dc_top_tb.uft_user_reg4[20] top.dc_top_tb.uft_user_reg4[19] top.dc_top_tb.uft_user_reg4[18] top.dc_top_tb.uft_user_reg4[17] top.dc_top_tb.uft_user_reg4[16] top.dc_top_tb.uft_user_reg4[15] top.dc_top_tb.uft_user_reg4[14] top.dc_top_tb.uft_user_reg4[13] top.dc_top_tb.uft_user_reg4[12] top.dc_top_tb.uft_user_reg4[11] top.dc_top_tb.uft_user_reg4[10] top.dc_top_tb.uft_user_reg4[9] top.dc_top_tb.uft_user_reg4[8] top.dc_top_tb.uft_user_reg4[7] top.dc_top_tb.uft_user_reg4[6] top.dc_top_tb.uft_user_reg4[5] top.dc_top_tb.uft_user_reg4[4] top.dc_top_tb.uft_user_reg4[3] top.dc_top_tb.uft_user_reg4[2] top.dc_top_tb.uft_user_reg4[1] top.dc_top_tb.uft_user_reg4[0]
-#{top.dc_top_tb.uft_user_reg5[31:0]} top.dc_top_tb.uft_user_reg5[31] top.dc_top_tb.uft_user_reg5[30] top.dc_top_tb.uft_user_reg5[29] top.dc_top_tb.uft_user_reg5[28] top.dc_top_tb.uft_user_reg5[27] top.dc_top_tb.uft_user_reg5[26] top.dc_top_tb.uft_user_reg5[25] top.dc_top_tb.uft_user_reg5[24] top.dc_top_tb.uft_user_reg5[23] top.dc_top_tb.uft_user_reg5[22] top.dc_top_tb.uft_user_reg5[21] top.dc_top_tb.uft_user_reg5[20] top.dc_top_tb.uft_user_reg5[19] top.dc_top_tb.uft_user_reg5[18] top.dc_top_tb.uft_user_reg5[17] top.dc_top_tb.uft_user_reg5[16] top.dc_top_tb.uft_user_reg5[15] top.dc_top_tb.uft_user_reg5[14] top.dc_top_tb.uft_user_reg5[13] top.dc_top_tb.uft_user_reg5[12] top.dc_top_tb.uft_user_reg5[11] top.dc_top_tb.uft_user_reg5[10] top.dc_top_tb.uft_user_reg5[9] top.dc_top_tb.uft_user_reg5[8] top.dc_top_tb.uft_user_reg5[7] top.dc_top_tb.uft_user_reg5[6] top.dc_top_tb.uft_user_reg5[5] top.dc_top_tb.uft_user_reg5[4] top.dc_top_tb.uft_user_reg5[3] top.dc_top_tb.uft_user_reg5[2] top.dc_top_tb.uft_user_reg5[1] top.dc_top_tb.uft_user_reg5[0]
-#{top.dc_top_tb.uft_user_reg6[31:0]} top.dc_top_tb.uft_user_reg6[31] top.dc_top_tb.uft_user_reg6[30] top.dc_top_tb.uft_user_reg6[29] top.dc_top_tb.uft_user_reg6[28] top.dc_top_tb.uft_user_reg6[27] top.dc_top_tb.uft_user_reg6[26] top.dc_top_tb.uft_user_reg6[25] top.dc_top_tb.uft_user_reg6[24] top.dc_top_tb.uft_user_reg6[23] top.dc_top_tb.uft_user_reg6[22] top.dc_top_tb.uft_user_reg6[21] top.dc_top_tb.uft_user_reg6[20] top.dc_top_tb.uft_user_reg6[19] top.dc_top_tb.uft_user_reg6[18] top.dc_top_tb.uft_user_reg6[17] top.dc_top_tb.uft_user_reg6[16] top.dc_top_tb.uft_user_reg6[15] top.dc_top_tb.uft_user_reg6[14] top.dc_top_tb.uft_user_reg6[13] top.dc_top_tb.uft_user_reg6[12] top.dc_top_tb.uft_user_reg6[11] top.dc_top_tb.uft_user_reg6[10] top.dc_top_tb.uft_user_reg6[9] top.dc_top_tb.uft_user_reg6[8] top.dc_top_tb.uft_user_reg6[7] top.dc_top_tb.uft_user_reg6[6] top.dc_top_tb.uft_user_reg6[5] top.dc_top_tb.uft_user_reg6[4] top.dc_top_tb.uft_user_reg6[3] top.dc_top_tb.uft_user_reg6[2] top.dc_top_tb.uft_user_reg6[1] top.dc_top_tb.uft_user_reg6[0]
-#{top.dc_top_tb.uft_user_reg7[31:0]} top.dc_top_tb.uft_user_reg7[31] top.dc_top_tb.uft_user_reg7[30] top.dc_top_tb.uft_user_reg7[29] top.dc_top_tb.uft_user_reg7[28] top.dc_top_tb.uft_user_reg7[27] top.dc_top_tb.uft_user_reg7[26] top.dc_top_tb.uft_user_reg7[25] top.dc_top_tb.uft_user_reg7[24] top.dc_top_tb.uft_user_reg7[23] top.dc_top_tb.uft_user_reg7[22] top.dc_top_tb.uft_user_reg7[21] top.dc_top_tb.uft_user_reg7[20] top.dc_top_tb.uft_user_reg7[19] top.dc_top_tb.uft_user_reg7[18] top.dc_top_tb.uft_user_reg7[17] top.dc_top_tb.uft_user_reg7[16] top.dc_top_tb.uft_user_reg7[15] top.dc_top_tb.uft_user_reg7[14] top.dc_top_tb.uft_user_reg7[13] top.dc_top_tb.uft_user_reg7[12] top.dc_top_tb.uft_user_reg7[11] top.dc_top_tb.uft_user_reg7[10] top.dc_top_tb.uft_user_reg7[9] top.dc_top_tb.uft_user_reg7[8] top.dc_top_tb.uft_user_reg7[7] top.dc_top_tb.uft_user_reg7[6] top.dc_top_tb.uft_user_reg7[5] top.dc_top_tb.uft_user_reg7[4] top.dc_top_tb.uft_user_reg7[3] top.dc_top_tb.uft_user_reg7[2] top.dc_top_tb.uft_user_reg7[1] top.dc_top_tb.uft_user_reg7[0]
-@200
--
 @28
 top.dc_top_tb.uft_i_axis_tready
 top.dc_top_tb.uft_i_axis_tlast
@@ -76,7 +57,7 @@ top.dc_top_tb.uft_o_axis_tvalid
 #{top.dc_top_tb.wa_par_b_gmean[13:0]} top.dc_top_tb.wa_par_b_gmean[13] top.dc_top_tb.wa_par_b_gmean[12] top.dc_top_tb.wa_par_b_gmean[11] top.dc_top_tb.wa_par_b_gmean[10] top.dc_top_tb.wa_par_b_gmean[9] top.dc_top_tb.wa_par_b_gmean[8] top.dc_top_tb.wa_par_b_gmean[7] top.dc_top_tb.wa_par_b_gmean[6] top.dc_top_tb.wa_par_b_gmean[5] top.dc_top_tb.wa_par_b_gmean[4] top.dc_top_tb.wa_par_b_gmean[3] top.dc_top_tb.wa_par_b_gmean[2] top.dc_top_tb.wa_par_b_gmean[1] top.dc_top_tb.wa_par_b_gmean[0]
 #{top.dc_top_tb.wa_par_ci_gvar[19:0]} top.dc_top_tb.wa_par_ci_gvar[19] top.dc_top_tb.wa_par_ci_gvar[18] top.dc_top_tb.wa_par_ci_gvar[17] top.dc_top_tb.wa_par_ci_gvar[16] top.dc_top_tb.wa_par_ci_gvar[15] top.dc_top_tb.wa_par_ci_gvar[14] top.dc_top_tb.wa_par_ci_gvar[13] top.dc_top_tb.wa_par_ci_gvar[12] top.dc_top_tb.wa_par_ci_gvar[11] top.dc_top_tb.wa_par_ci_gvar[10] top.dc_top_tb.wa_par_ci_gvar[9] top.dc_top_tb.wa_par_ci_gvar[8] top.dc_top_tb.wa_par_ci_gvar[7] top.dc_top_tb.wa_par_ci_gvar[6] top.dc_top_tb.wa_par_ci_gvar[5] top.dc_top_tb.wa_par_ci_gvar[4] top.dc_top_tb.wa_par_ci_gvar[3] top.dc_top_tb.wa_par_ci_gvar[2] top.dc_top_tb.wa_par_ci_gvar[1] top.dc_top_tb.wa_par_ci_gvar[0]
 #{top.dc_top_tb.wa_par_c[5:0]} top.dc_top_tb.wa_par_c[5] top.dc_top_tb.wa_par_c[4] top.dc_top_tb.wa_par_c[3] top.dc_top_tb.wa_par_c[2] top.dc_top_tb.wa_par_c[1] top.dc_top_tb.wa_par_c[0]
-#{top.dc_top_tb.wa_par_c_gvar[21:0]} top.dc_top_tb.wa_par_c_gvar[21] top.dc_top_tb.wa_par_c_gvar[20] top.dc_top_tb.wa_par_c_gvar[19] top.dc_top_tb.wa_par_c_gvar[18] top.dc_top_tb.wa_par_c_gvar[17] top.dc_top_tb.wa_par_c_gvar[16] top.dc_top_tb.wa_par_c_gvar[15] top.dc_top_tb.wa_par_c_gvar[14] top.dc_top_tb.wa_par_c_gvar[13] top.dc_top_tb.wa_par_c_gvar[12] top.dc_top_tb.wa_par_c_gvar[11] top.dc_top_tb.wa_par_c_gvar[10] top.dc_top_tb.wa_par_c_gvar[9] top.dc_top_tb.wa_par_c_gvar[8] top.dc_top_tb.wa_par_c_gvar[7] top.dc_top_tb.wa_par_c_gvar[6] top.dc_top_tb.wa_par_c_gvar[5] top.dc_top_tb.wa_par_c_gvar[4] top.dc_top_tb.wa_par_c_gvar[3] top.dc_top_tb.wa_par_c_gvar[2] top.dc_top_tb.wa_par_c_gvar[1] top.dc_top_tb.wa_par_c_gvar[0]
+#{top.dc_top_tb.wa_par_c_gvar[21:0]} top.dc_top_tb.wa_par_c_gvar[19] top.dc_top_tb.wa_par_c_gvar[18] top.dc_top_tb.wa_par_c_gvar[17] top.dc_top_tb.wa_par_c_gvar[16] top.dc_top_tb.wa_par_c_gvar[15] top.dc_top_tb.wa_par_c_gvar[14] top.dc_top_tb.wa_par_c_gvar[13] top.dc_top_tb.wa_par_c_gvar[12] top.dc_top_tb.wa_par_c_gvar[11] top.dc_top_tb.wa_par_c_gvar[10] top.dc_top_tb.wa_par_c_gvar[9] top.dc_top_tb.wa_par_c_gvar[8] top.dc_top_tb.wa_par_c_gvar[7] top.dc_top_tb.wa_par_c_gvar[6] top.dc_top_tb.wa_par_c_gvar[5] top.dc_top_tb.wa_par_c_gvar[4] top.dc_top_tb.wa_par_c_gvar[3] top.dc_top_tb.wa_par_c_gvar[2] top.dc_top_tb.wa_par_c_gvar[1] top.dc_top_tb.wa_par_c_gvar[0]
 @200
 -
 @28
@@ -100,7 +81,7 @@ top.dc_top_tb.wa_i_axis_tlast
 top.dc_top_tb.duv.fifo.s_axis_tlast
 top.dc_top_tb.duv.fifo.s_axis_tready
 top.dc_top_tb.duv.fifo.s_axis_tvalid
-@23
+@22
 #{top.dc_top_tb.duv.fifo.s_axis_tdata[7:0]} top.dc_top_tb.duv.fifo.s_axis_tdata[7] top.dc_top_tb.duv.fifo.s_axis_tdata[6] top.dc_top_tb.duv.fifo.s_axis_tdata[5] top.dc_top_tb.duv.fifo.s_axis_tdata[4] top.dc_top_tb.duv.fifo.s_axis_tdata[3] top.dc_top_tb.duv.fifo.s_axis_tdata[2] top.dc_top_tb.duv.fifo.s_axis_tdata[1] top.dc_top_tb.duv.fifo.s_axis_tdata[0]
 @28
 top.dc_top_tb.duv.fifo.m_axis_tlast
@@ -108,5 +89,24 @@ top.dc_top_tb.duv.fifo.m_axis_tready
 top.dc_top_tb.duv.fifo.m_axis_tvalid
 @22
 #{top.dc_top_tb.duv.fifo.m_axis_tdata[7:0]} top.dc_top_tb.duv.fifo.m_axis_tdata[7] top.dc_top_tb.duv.fifo.m_axis_tdata[6] top.dc_top_tb.duv.fifo.m_axis_tdata[5] top.dc_top_tb.duv.fifo.m_axis_tdata[4] top.dc_top_tb.duv.fifo.m_axis_tdata[3] top.dc_top_tb.duv.fifo.m_axis_tdata[2] top.dc_top_tb.duv.fifo.m_axis_tdata[1] top.dc_top_tb.duv.fifo.m_axis_tdata[0]
+@200
+-
+-Tx Transaction Fifo
+@28
+top.dc_top_tb.duv.control.tx_transaction_fifo.writeen
+top.dc_top_tb.duv.control.tx_transaction_fifo.readen
+@200
+-DDBBGG
+@28
+top.dc_top_tb.duv.mmu.o_axis_tvalid_i
+top.dc_top_tb.duv.mmu.o_axis_tvalid_ilatched
+@200
+-
+@29
+top.dc_top_tb.duv.mmu.looped
+@28
+top.dc_top_tb.duv.mmu.cache_w_ptr
+top.dc_top_tb.duv.mmu.cache_r_base
+top.dc_top_tb.duv.mmu.cache_r_tip
 [pattern_trace] 1
 [pattern_trace] 0

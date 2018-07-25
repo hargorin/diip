@@ -1,15 +1,13 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Mon Jul 23 12:43:04 2018
+[*] Wed Jul 25 14:21:32 2018
 [*]
-[dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/dc_mmu_tb.ghw"
-[dumpfile_mtime] "Mon Jul 23 12:42:36 2018"
-[dumpfile_size] 26102
+[dumpfile] "(null)"
 [savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/dc_mmu_tb.gtkw"
-[timestart] 140000000
-[size] 2212 1328
-[pos] -1 -1
-*-28.530243 984000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 659900000
+[size] 2174 1369
+[pos] -2 -1
+*-25.537508 806000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.dc_mmu_tb.
 [treeopen] top.dc_mmu_tb.dc_mmu_1.
@@ -17,7 +15,7 @@
 [sst_width] 217
 [signals_width] 219
 [sst_expanded] 1
-[sst_vpaned_height] 432
+[sst_vpaned_height] 452
 @28
 top.dc_mmu_tb.clk
 top.dc_mmu_tb.rst_n
@@ -60,8 +58,15 @@ top.dc_mmu_tb.dc_mmu_1.looped
 @28
 top.dc_mmu_tb.dc_mmu_1.cache_r_base
 top.dc_mmu_tb.dc_mmu_1.cache_r_ptr
+@29
 top.dc_mmu_tb.dc_mmu_1.row_r_ptr
+@28
+top.dc_mmu_tb.dc_mmu_1.cache_r_distance
+@200
+-
+@28
 top.dc_mmu_tb.dc_mmu_1.out_pix_ctr
-top.dc_mmu_tb.dc_mmu_1.n_out_pix
+@24
+#{top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[19:0]} top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[19] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[18] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[17] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[16] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[15] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[14] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[13] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[12] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[11] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[10] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[9] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[8] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[7] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[6] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[5] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[4] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[3] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[2] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[1] top.dc_mmu_tb.dc_mmu_1.n_out_pix_m1[0]
 [pattern_trace] 1
 [pattern_trace] 0
