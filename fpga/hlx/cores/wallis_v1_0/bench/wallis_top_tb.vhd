@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 16:06:12 2018
--- Last update : Tue Jul 24 15:28:03 2018
+-- Last update : Wed Jul 25 08:39:16 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ architecture testbench of wallis_top_tb is
     constant V_OUT_WIDTH  : positive              := 25;
     constant REC_WIN_SIZE : unsigned(14 downto 0) := "100101001001101";
 
-    constant DELAYTIME    : natural 			  := 18;
+    constant DELAYTIME    : natural 			  := 17;
 
     constant DATA_WIDTH : positive := 8;
     constant FIFO_DEPTH : positive := 16;
@@ -227,7 +227,7 @@ begin
                 end if;
                 if o_axis_tlast = '1' then
                     file_open(file_axi_s, "axi_stream_res_" & format(fi, 4, '0') & ".log", write_mode);
-                    report "Start writing file: " & "axi_stream_res_" & format(fi, 4, '0') & ".log";
+                    report "Start writing " & integer'image(ctr) & " bytes into file: " & "axi_stream_res_" & format(fi, 4, '0') & ".log";
                     for i in 0 to (ctr-1) loop
                         hwrite(oline, axi_buf(i), left, 8);
                         writeline(file_axi_s, oline);

@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 13:57:22 2018
--- Last update : Tue Jul 24 15:48:25 2018
+-- Last update : Wed Jul 25 08:39:26 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -153,7 +153,6 @@ architecture structural of wallis_top is
     signal valid_mean_var 	: std_logic;
     signal clear  			: std_logic;
     signal m_pixel			: std_logic_vector(7 downto 0);
-    signal o_axis_tvalid_i 	: std_logic;
     signal fifo_writeEn		: std_logic;
     signal fifo_dataIn      : std_logic_vector (DATA_WIDTH - 1 downto 0);
     signal fifo_readEn      : std_logic;
@@ -165,11 +164,12 @@ architecture structural of wallis_top is
     signal init 			: boolean := true;
     signal ctr				: natural range 0 to WIN_SIZE;
     signal o_axis_tlast_i 	: std_logic;
+    signal i_axis_tready_i  : std_logic;
+    signal wa_out_data      : std_logic_vector(7 downto 0);
+    signal wa_out_valid     : std_logic;
 
 begin
 	--i_axis_tready <= '1';
-	o_axis_tvalid <= o_axis_tvalid_i;
-	o_axis_tlast <= o_axis_tlast_i;
 
 	fifo_dataIn <= i_axis_tdata;
 	fifo_readEn <= valid_mean_var;
@@ -235,33 +235,34 @@ begin
 	end process; -- p_wallis_en
 	-----------------------------------------------------------
 
+    o_axis_tlast  <= o_axis_tlast_i;
+    o_axis_tvalid <= wa_out_valid;
+    o_axis_tdata  <= wa_out_data;
 	-----------------------------------------------------------
 	-- Sets tlast on output if last pixel on input was read
 	-- and clears tlast if tlast was read
 	-----------------------------------------------------------
 	p_tlast : process(clk) is
-        variable waitForWallis : std_logic := '0';
+        variable i_tlast_latch : std_logic := '0';
 	-----------------------------------------------------------
 	begin
 		if rising_edge(clk) then
 			if (rst_n = '0') then
-				o_axis_tlast_i <= '0';
-                waitForWallis := '0';
+                i_tlast_latch := '0';
 			else
-				-- sets tlast
-				if (i_axis_tlast = '1') and (i_axis_tvalid = '1') then
-                    waitForWallis := '1';
-                elsif waitForWallis = '1' and wallis_en = '1' then
-                    o_axis_tlast_i <= '1';
-                elsif waitForWallis = '1' and (o_axis_tvalid_i = '1') and (o_axis_tready = '1') then
-                    waitForWallis := '0';
-					o_axis_tlast_i <= '0';
-				end if;
+                if i_axis_tready_i = '1' and i_axis_tvalid = '1' then
+                    i_tlast_latch := i_axis_tlast;
+                end if;
+
+                if wallis_en = '1' then
+                    o_axis_tlast_i <= i_tlast_latch;
+                end if;
 			end if;
 		end if;
 	end process; -- p_tlast
 	-----------------------------------------------------------
 
+    i_axis_tready <= i_axis_tready_i;
     -----------------------------------------------------------
     -- Sets clear if tvalid from output and tlast and tready
     -- are set
@@ -274,21 +275,21 @@ begin
             if (rst_n = '0') then
                 clear <= '0';
                 clearDone := false;
-                i_axis_tready <= '1';
+                i_axis_tready_i <= '1';
                 fifo_rst_n <= '0';
             else
                 -- if input last, disable input ready
                 if i_axis_tvalid = '1' and i_axis_tlast = '1' then
-                    i_axis_tready <= '0';
+                    i_axis_tready_i <= '0';
                 end if;
                 -- if clear process is done, re enable inpu
                 if clearDone then
                     clearDone := false;
-                    i_axis_tready <= '1';
+                    i_axis_tready_i <= '1';
                 end if;
                 
                 -- sets clear after complete computation
-                if (o_axis_tvalid_i = '1') and (o_axis_tready = '1') and (o_axis_tlast_i = '1') then
+                if (wa_out_valid = '1') and (o_axis_tready = '1') and (o_axis_tlast_i = '1') then
                     clear <= '1';
                     clearDone := true;
                     fifo_rst_n <= '0';
@@ -301,7 +302,6 @@ begin
         end if;
     end process; -- p_clear
     -----------------------------------------------------------
-
 	
     c_mean_var : mean_var
         generic map (
@@ -335,7 +335,7 @@ begin
             par_c                  => wa_par_c,
             par_b_gmean            => wa_par_b_gmean,
             par_bi                 => wa_par_bi,
-            wallis                 => o_axis_tdata,
+            wallis                 => wa_out_data,
             m_axis_dividend_tvalid => m_axis_dividend_tvalid,
             m_axis_dividend_tready => m_axis_dividend_tready,
             m_axis_dividend_tdata  => m_axis_dividend_tdata,
@@ -345,7 +345,7 @@ begin
             s_axis_dout_tvalid     => s_axis_dout_tvalid,
             s_axis_dout_tready     => s_axis_dout_tready,
             s_axis_dout_tdata      => s_axis_dout_tdata,
-            valid                  => o_axis_tvalid_i,
+            valid                  => wa_out_valid,
             en                     => wallis_en,
             clear                  => clear
         );  
