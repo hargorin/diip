@@ -90,7 +90,7 @@ The data types are arbitrary precision integer or arbitrary precision fixed poin
 	ap_uint<15> fp_Var;
 	ap_ufixed<18,1> fp_Den;
 	ap_int<23> fp_Num;
-	ap_fixed<31,31> fp_Div;
+	ap_int<31> fp_Div;
 
 	fp_Den = rec/fp_Var;
 	fp_Div = fp_Num * fp_Den;
@@ -100,13 +100,13 @@ The data types are arbitrary precision integer or arbitrary precision fixed poin
 The divisions in the FPGA generally require some time. Two different versions of the division were implemented and compared with Viviado HLS. On the one hand $\frac{fp\_Num}{fp\_Var}$ was calculated and on the other hand reciprocal $\frac{1}{fp\_Var}$ and then multiplied with $fp\_Num$. The latency of these two divisions is shown in Table \ref{tab:c_div}. 
 \begin{table}[tb!]
     \centering
-    \begin{tabular}{l l}
+    \begin{tabular}{l c}
         \toprule
         Division & Latency [clocks]  \\
         \midrule
-        $\frac{fp\_Num}{fp\_Var}$ & ??? 
+        $\frac{fp\_Num}{fp\_Var}$ & 28 
         \\
-        $\frac{1}{fp\_Var}$ & ??? 
+        $\frac{1}{fp\_Var}$ & 23 
         \\
         \bottomrule
     \end{tabular}
