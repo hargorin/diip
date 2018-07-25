@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Wed Jul 25 11:59:39 2018
+-- Last update : Wed Jul 25 15:57:01 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -175,10 +175,11 @@ begin
                         cache_w_ptr <= cache_w_ptr + 1;
                     end if;
                 end if;
-                if o_axis_tready = '1' and o_axis_tvalid_i = '1' and o_axis_tlast_i = '1' then
-                    if cache_r_base = CACHE_N_LINES-1 then
+                    if cache_r_tip = 0 then
                         looped <= '0';
                     end if;
+                if o_axis_tready = '1' and o_axis_tvalid_i = '1' and o_axis_tlast_i = '1' then
+                    --if cache_r_base = CACHE_N_LINES-1 then
                     --if cache_r_base /= CACHE_N_LINES-1 then
                     --    if cache_r_base + unsigned(win_size) >= CACHE_N_LINES then
                     --        looped <= '0';
