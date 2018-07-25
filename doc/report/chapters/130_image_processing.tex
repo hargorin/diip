@@ -4,17 +4,39 @@
 %
 % ==============================================================================
 \chapter{Image Processing}  \label{chapt:image_processing}
+The Wallis Fitler is implemented as an image processing algorithm. First follows the concept of the algorithm and following the implementation of the filter in the Vivado HLS using C code. The simplifications and optimizations of the algorithm with Vivado HLS are also explained in this chapter. In the chapter \ref{ch:ip:imp_vhdl} is the implementation using VHDL. Here again a concept is shown how the code is implemented.
 
 \section{Concept}
 The figure ?????? shows the concept of the C code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters. \\
-The sequence of the code is explained in the figure ????. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the mean pixel is calculated. To calculate the next pixels, only one new column is read in. This step is the so called iteration.\\
+The sequence of the code is shown in the figure ????. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the cebtral pixel of the neighborhood is calculated. To calculate the next pixel, only one new column is read in. This step is the so called iteration.\\
 The code is row based. This means that each new row of an image have the initialization procedure.
 
 
-\section{Implementation}
+\section{Implementation (HLS)}
+The following three chapters explain the implementation of the Wallis filter in C code. First, the simplification of the mean and the variance. Then the Fixed Point calculation of the Wallis equation and in the third chapter the optimizations using pragmas in Viviado HLS.
 
 \subsection{Mean \& Variance}
+
+\begin{equation}
+    \mu = \frac{1}{N} \sum_{i = 0}^{N - 1} x_{i}
+    \label{eq:mean}
+\end{equation}
+
+
+
+\begin{align}
+    \sigma^{2} & = \frac{1}{N} \sum_{i = 0}^{N - 1} (x_{i} - u)^{2} \\
+    		& = \frac{1}{N} \sum_{i = 0}^{N - 1} (x_{i} - u)^{2} \\
+    \label{eq:var}
+\end{align}
+
+
+
 
 \subsection{Fixed Point}
 
 \subsection{Throughput Optimization}
+
+\section{Implementation (VHDL)} \label{ch:ip:imp_vhdl}
+
+\subsection{Concept}
