@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Tue Jul 24 13:22:42 2018
+-- Last update : Wed Jul 25 12:02:24 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ architecture testbench of diip_main_tb is
     -- wallis filter window size
     constant WIN_LENGTH : natural := 21;
     -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 1920;
+    constant IMG_WIDTH : natural := 128;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 23;
+    constant IMG_HEIGHT : natural := 128;
 
     constant WAL_C_GVAR : std_logic_vector (19 downto 0) := "00101101101101000000";--2925
     constant WAL_C : std_logic_vector (5 downto 0) := "110100";--0.8125
@@ -55,14 +55,14 @@ architecture testbench of diip_main_tb is
     constant V_OUT_WIDTH  : positive              := 25;
     constant REC_WIN_SIZE : unsigned(14 downto 0) := "100101001001101";
 
-    constant DELAYTIME    : natural               := 10;
+    constant DELAYTIME    : natural               := 17;
 
 	-- Testbench DUT generics as constants
     -- Wallis output to UFT Tx Fifo size. Should hold at least one wallis
     -- output line
-    constant FIFO_DEPTH : positive := 2*IMG_WIDTH;
+    constant FIFO_DEPTH : positive := IMG_WIDTH+30;
     -- number of elements in a  line buffer
-    constant BRAM_SIZE : natural := 2*IMG_WIDTH; -- 1024 for simulation
+    constant BRAM_SIZE : natural := IMG_WIDTH+30; -- 1024 for simulation
     -- number of lines in cache: minimum is window size + 1
     constant CACHE_N_LINES : natural := WIN_LENGTH+1;
 
@@ -252,21 +252,22 @@ begin
         uft_user_reg1 <= std_logic_vector(to_unsigned(WIN_LENGTH,32)); -- win size
         uft_user_reg2 <= std_logic_vector(to_unsigned(IMG_WIDTH,32)); -- img width
         uft_user_reg3 <= std_logic_vector(resize(unsigned(WAL_C_GVAR),32)); -- c*gvar
-        uft_user_reg3 <= std_logic_vector(resize(unsigned(WAL_C),32)); -- c
-        uft_user_reg4 <= std_logic_vector(resize(unsigned(WAL_CI_GVAR),32)); -- (1-c)*gvar
-        uft_user_reg5 <= std_logic_vector(resize(unsigned(WAL_B_GMEAN),32)); -- b*g_mean
-        uft_user_reg6 <= std_logic_vector(resize(unsigned(WAL_BI),32)); -- (1-b)
+        uft_user_reg4 <= std_logic_vector(resize(unsigned(WAL_C),32)); -- c
+        uft_user_reg5 <= std_logic_vector(resize(unsigned(WAL_CI_GVAR),32)); -- (1-c)*gvar
+        uft_user_reg6 <= std_logic_vector(resize(unsigned(WAL_B_GMEAN),32)); -- b*g_mean
+        uft_user_reg7 <= std_logic_vector(resize(unsigned(WAL_BI),32)); -- (1-b)
         waitfor(3);
         
         -- Signal new image
         uft_user_reg0(0) <= '1';
         waitfor(1);
         uft_user_reg0(0) <= '0';
+        waitfor(5);
 
         -- send line after line and be ready for result
         for i in 0 to IMG_HEIGHT-1 loop 
             report "i=" & integer'image(i);
-            file2axistream("../../cores/diip_controller_v1_0/bench/inputimg.txt", i*IMG_WIDTH, IMG_WIDTH);
+            file2axistream("../../cores/diip_controller_v1_0/bench/room128x128.jpg.txt", i*IMG_WIDTH, IMG_WIDTH);
         end loop;
 
 

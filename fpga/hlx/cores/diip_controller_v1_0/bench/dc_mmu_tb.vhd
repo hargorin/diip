@@ -11,11 +11,11 @@ entity dc_mmu_tb is
 generic (
     
     -- number of elements in a  line buffer
-    BRAM_SIZE : positive := 128;
+    BRAM_SIZE : positive := 8;
     -- Testbench DUT generics as constants
     CACHE_N_LINES : positive := 4;
 
-    IMAGE_WIDTH : positive := 5;
+    IMAGE_WIDTH : positive := 8;
     WINDOW_SIZE : positive := 3
 );
 
@@ -149,7 +149,53 @@ begin
         i_axis_tvalid <= '0';
 
         -- empty one line
-        lp_empty : for i in 1 to 1 loop
+        for i in 1 to 1 loop
+            --o_axis_tready <= '1';
+            if o_axis_tvalid = '0' then
+                wait until o_axis_tvalid = '1';
+            end if;
+            if o_axis_tlast = '0' then
+                wait until o_axis_tlast = '1';
+            end if;
+            wait until o_axis_tlast = '0';
+        end loop ; -- lp_empty
+        waitfor(1);
+        assert (o_axis_tvalid = '0') report "2 tvalid high even tough cache has not enough data" severity error;
+
+        -- fill one buffer line
+        i_axis_tdata <= std_logic_vector(to_unsigned(5,8));
+        i_axis_tvalid <= '1';
+        waitfor(IMAGE_WIDTH-1);
+        i_axis_tlast <= '1';
+        waitfor(1);
+        i_axis_tlast <= '0';
+        i_axis_tvalid <= '0';
+
+        -- empty one line
+        for i in 1 to 1 loop
+            --o_axis_tready <= '1';
+            if o_axis_tvalid = '0' then
+                wait until o_axis_tvalid = '1';
+            end if;
+            if o_axis_tlast = '0' then
+                wait until o_axis_tlast = '1';
+            end if;
+            wait until o_axis_tlast = '0';
+        end loop ; -- lp_empty
+        waitfor(1);
+        assert (o_axis_tvalid = '0') report "2 tvalid high even tough cache has not enough data" severity error;
+
+        -- fill one buffer line
+        i_axis_tdata <= std_logic_vector(to_unsigned(5,8));
+        i_axis_tvalid <= '1';
+        waitfor(IMAGE_WIDTH-1);
+        i_axis_tlast <= '1';
+        waitfor(1);
+        i_axis_tlast <= '0';
+        i_axis_tvalid <= '0';
+
+        -- empty one line
+        for i in 1 to 1 loop
             --o_axis_tready <= '1';
             if o_axis_tvalid = '0' then
                 wait until o_axis_tvalid = '1';
@@ -246,11 +292,11 @@ begin
     -- Stores the axi stream data into an output file
     -----------------------------------------------------------
     p_axi_stream_check : process( clk, rst_n )
-        type buf is array (0 to 1800) of std_logic_vector (7 downto 0);
+        type buf is array (0 to 21*128) of std_logic_vector (7 downto 0);
         variable axi_buf : buf;
-        variable ctr : natural range 0 to 1800 := 0;
-        variable i : natural range 0 to 1800 := 0;
-        variable fi : natural range 0 to 1800 := 0;
+        variable ctr : natural range 0 to 21*128 := 0;
+        variable i : natural range 0 to 21*128 := 0;
+        variable fi : natural range 0 to 21*128 := 0;
 
         file file_axi_s     : text;
         variable oline      : line;

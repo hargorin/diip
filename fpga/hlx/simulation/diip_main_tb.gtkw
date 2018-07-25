@@ -1,25 +1,27 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Fri Jul 20 15:57:32 2018
+[*] Wed Jul 25 08:45:06 2018
 [*]
 [dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/diip_main_tb.ghw"
-[dumpfile_mtime] "Fri Jul 20 15:57:17 2018"
-[dumpfile_size] 3482787
+[dumpfile_mtime] "Wed Jul 25 08:45:05 2018"
+[dumpfile_size] 3249164
 [savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/diip_main_tb.gtkw"
-[timestart] 33507000000
-[size] 2053 988
-[pos] 4 25
-*-26.624882 33880000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 84400000
+[size] 2163 1319
+[pos] -1 -1
+*-24.617653 109000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.diip_main_tb.
 [treeopen] top.diip_main_tb.duv.
-[treeopen] top.diip_main_tb.duv.control.
 [treeopen] top.diip_main_tb.duv.control.tx_transaction_fifo.
-[treeopen] top.diip_main_tb.wallis.
+[treeopen] top.diip_main_tb.duv.mmu.
 [sst_width] 375
 [signals_width] 226
 [sst_expanded] 1
-[sst_vpaned_height] 393
+[sst_vpaned_height] 838
+@28
+top.diip_main_tb.clk
+top.diip_main_tb.rst_n
 @200
 -Wallis
 @28
@@ -33,7 +35,6 @@ top.diip_main_tb.wallis.i_axis_tlast
 @28
 top.diip_main_tb.wallis.o_axis_tvalid
 top.diip_main_tb.wallis.o_axis_tready
-@29
 top.diip_main_tb.wallis.o_axis_tlast
 @22
 #{top.diip_main_tb.wallis.o_axis_tdata[7:0]} top.diip_main_tb.wallis.o_axis_tdata[7] top.diip_main_tb.wallis.o_axis_tdata[6] top.diip_main_tb.wallis.o_axis_tdata[5] top.diip_main_tb.wallis.o_axis_tdata[4] top.diip_main_tb.wallis.o_axis_tdata[3] top.diip_main_tb.wallis.o_axis_tdata[2] top.diip_main_tb.wallis.o_axis_tdata[1] top.diip_main_tb.wallis.o_axis_tdata[0]
@@ -79,5 +80,55 @@ top.diip_main_tb.duv.control.tx_transaction_fifo.readen
 top.diip_main_tb.duv.control.tx_transaction_fifo.writeen
 @22
 #{top.diip_main_tb.duv.control.tx_transaction_fifo.datain[31:0]} top.diip_main_tb.duv.control.tx_transaction_fifo.datain[31] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[30] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[29] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[28] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[27] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[26] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[25] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[24] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[23] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[22] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[21] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[20] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[19] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[18] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[17] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[16] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[15] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[14] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[13] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[12] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[11] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[10] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[9] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[8] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[7] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[6] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[5] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[4] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[3] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[2] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[1] top.diip_main_tb.duv.control.tx_transaction_fifo.datain[0]
+@200
+-
+-Divider
+@28
+top.diip_main_tb.div_model.i1_axis_tvalid
+@22
+#{top.diip_main_tb.div_model.i1_axis_tdata[23:0]} top.diip_main_tb.div_model.i1_axis_tdata[23] top.diip_main_tb.div_model.i1_axis_tdata[22] top.diip_main_tb.div_model.i1_axis_tdata[21] top.diip_main_tb.div_model.i1_axis_tdata[20] top.diip_main_tb.div_model.i1_axis_tdata[19] top.diip_main_tb.div_model.i1_axis_tdata[18] top.diip_main_tb.div_model.i1_axis_tdata[17] top.diip_main_tb.div_model.i1_axis_tdata[16] top.diip_main_tb.div_model.i1_axis_tdata[15] top.diip_main_tb.div_model.i1_axis_tdata[14] top.diip_main_tb.div_model.i1_axis_tdata[13] top.diip_main_tb.div_model.i1_axis_tdata[12] top.diip_main_tb.div_model.i1_axis_tdata[11] top.diip_main_tb.div_model.i1_axis_tdata[10] top.diip_main_tb.div_model.i1_axis_tdata[9] top.diip_main_tb.div_model.i1_axis_tdata[8] top.diip_main_tb.div_model.i1_axis_tdata[7] top.diip_main_tb.div_model.i1_axis_tdata[6] top.diip_main_tb.div_model.i1_axis_tdata[5] top.diip_main_tb.div_model.i1_axis_tdata[4] top.diip_main_tb.div_model.i1_axis_tdata[3] top.diip_main_tb.div_model.i1_axis_tdata[2] top.diip_main_tb.div_model.i1_axis_tdata[1] top.diip_main_tb.div_model.i1_axis_tdata[0]
+@28
+top.diip_main_tb.div_model.i2_axis_tvalid
+@22
+#{top.diip_main_tb.div_model.i2_axis_tdata[15:0]} top.diip_main_tb.div_model.i2_axis_tdata[15] top.diip_main_tb.div_model.i2_axis_tdata[14] top.diip_main_tb.div_model.i2_axis_tdata[13] top.diip_main_tb.div_model.i2_axis_tdata[12] top.diip_main_tb.div_model.i2_axis_tdata[11] top.diip_main_tb.div_model.i2_axis_tdata[10] top.diip_main_tb.div_model.i2_axis_tdata[9] top.diip_main_tb.div_model.i2_axis_tdata[8] top.diip_main_tb.div_model.i2_axis_tdata[7] top.diip_main_tb.div_model.i2_axis_tdata[6] top.diip_main_tb.div_model.i2_axis_tdata[5] top.diip_main_tb.div_model.i2_axis_tdata[4] top.diip_main_tb.div_model.i2_axis_tdata[3] top.diip_main_tb.div_model.i2_axis_tdata[2] top.diip_main_tb.div_model.i2_axis_tdata[1] top.diip_main_tb.div_model.i2_axis_tdata[0]
+@28
+top.diip_main_tb.div_model.o_axis_tvalid
+@22
+#{top.diip_main_tb.div_model.o_axis_tdata[31:0]} top.diip_main_tb.div_model.o_axis_tdata[31] top.diip_main_tb.div_model.o_axis_tdata[30] top.diip_main_tb.div_model.o_axis_tdata[29] top.diip_main_tb.div_model.o_axis_tdata[28] top.diip_main_tb.div_model.o_axis_tdata[27] top.diip_main_tb.div_model.o_axis_tdata[26] top.diip_main_tb.div_model.o_axis_tdata[25] top.diip_main_tb.div_model.o_axis_tdata[24] top.diip_main_tb.div_model.o_axis_tdata[23] top.diip_main_tb.div_model.o_axis_tdata[22] top.diip_main_tb.div_model.o_axis_tdata[21] top.diip_main_tb.div_model.o_axis_tdata[20] top.diip_main_tb.div_model.o_axis_tdata[19] top.diip_main_tb.div_model.o_axis_tdata[18] top.diip_main_tb.div_model.o_axis_tdata[17] top.diip_main_tb.div_model.o_axis_tdata[16] top.diip_main_tb.div_model.o_axis_tdata[15] top.diip_main_tb.div_model.o_axis_tdata[14] top.diip_main_tb.div_model.o_axis_tdata[13] top.diip_main_tb.div_model.o_axis_tdata[12] top.diip_main_tb.div_model.o_axis_tdata[11] top.diip_main_tb.div_model.o_axis_tdata[10] top.diip_main_tb.div_model.o_axis_tdata[9] top.diip_main_tb.div_model.o_axis_tdata[8] top.diip_main_tb.div_model.o_axis_tdata[7] top.diip_main_tb.div_model.o_axis_tdata[6] top.diip_main_tb.div_model.o_axis_tdata[5] top.diip_main_tb.div_model.o_axis_tdata[4] top.diip_main_tb.div_model.o_axis_tdata[3] top.diip_main_tb.div_model.o_axis_tdata[2] top.diip_main_tb.div_model.o_axis_tdata[1] top.diip_main_tb.div_model.o_axis_tdata[0]
+@200
+-
+-Mean Var
+@28
+top.diip_main_tb.wallis.c_mean_var.valid
+@22
+#{top.diip_main_tb.wallis.c_mean_var.outmean[7:0]} top.diip_main_tb.wallis.c_mean_var.outmean[7] top.diip_main_tb.wallis.c_mean_var.outmean[6] top.diip_main_tb.wallis.c_mean_var.outmean[5] top.diip_main_tb.wallis.c_mean_var.outmean[4] top.diip_main_tb.wallis.c_mean_var.outmean[3] top.diip_main_tb.wallis.c_mean_var.outmean[2] top.diip_main_tb.wallis.c_mean_var.outmean[1] top.diip_main_tb.wallis.c_mean_var.outmean[0]
+#{top.diip_main_tb.wallis.c_mean_var.outvar[13:0]} top.diip_main_tb.wallis.c_mean_var.outvar[13] top.diip_main_tb.wallis.c_mean_var.outvar[12] top.diip_main_tb.wallis.c_mean_var.outvar[11] top.diip_main_tb.wallis.c_mean_var.outvar[10] top.diip_main_tb.wallis.c_mean_var.outvar[9] top.diip_main_tb.wallis.c_mean_var.outvar[8] top.diip_main_tb.wallis.c_mean_var.outvar[7] top.diip_main_tb.wallis.c_mean_var.outvar[6] top.diip_main_tb.wallis.c_mean_var.outvar[5] top.diip_main_tb.wallis.c_mean_var.outvar[4] top.diip_main_tb.wallis.c_mean_var.outvar[3] top.diip_main_tb.wallis.c_mean_var.outvar[2] top.diip_main_tb.wallis.c_mean_var.outvar[1] top.diip_main_tb.wallis.c_mean_var.outvar[0]
+@200
+-
+-Wallis
+@28
+top.diip_main_tb.wallis.c_wallis_filter.en
+@22
+#{top.diip_main_tb.wallis.m_pixel[7:0]} top.diip_main_tb.wallis.m_pixel[7] top.diip_main_tb.wallis.m_pixel[6] top.diip_main_tb.wallis.m_pixel[5] top.diip_main_tb.wallis.m_pixel[4] top.diip_main_tb.wallis.m_pixel[3] top.diip_main_tb.wallis.m_pixel[2] top.diip_main_tb.wallis.m_pixel[1] top.diip_main_tb.wallis.m_pixel[0]
+@200
+-mmu
+@29
+top.diip_main_tb.duv.mmu.restart
+@28
+top.diip_main_tb.duv.mmu.i_axis_tready
+top.diip_main_tb.duv.mmu.i_axis_tvalid
+top.diip_main_tb.duv.mmu.i_axis_tlast
+@22
+#{top.diip_main_tb.duv.mmu.i_axis_tdata[7:0]} top.diip_main_tb.duv.mmu.i_axis_tdata[7] top.diip_main_tb.duv.mmu.i_axis_tdata[6] top.diip_main_tb.duv.mmu.i_axis_tdata[5] top.diip_main_tb.duv.mmu.i_axis_tdata[4] top.diip_main_tb.duv.mmu.i_axis_tdata[3] top.diip_main_tb.duv.mmu.i_axis_tdata[2] top.diip_main_tb.duv.mmu.i_axis_tdata[1] top.diip_main_tb.duv.mmu.i_axis_tdata[0]
+@28
+top.diip_main_tb.duv.mmu.cache_w_ptr
+top.diip_main_tb.duv.mmu.row_w_ptr
+top.diip_main_tb.duv.mmu.o_axis_tready
+top.diip_main_tb.duv.mmu.o_axis_tvalid
+@22
+#{top.diip_main_tb.duv.mmu.o_axis_tdata[7:0]} top.diip_main_tb.duv.mmu.o_axis_tdata[7] top.diip_main_tb.duv.mmu.o_axis_tdata[6] top.diip_main_tb.duv.mmu.o_axis_tdata[5] top.diip_main_tb.duv.mmu.o_axis_tdata[4] top.diip_main_tb.duv.mmu.o_axis_tdata[3] top.diip_main_tb.duv.mmu.o_axis_tdata[2] top.diip_main_tb.duv.mmu.o_axis_tdata[1] top.diip_main_tb.duv.mmu.o_axis_tdata[0]
+@28
+top.diip_main_tb.duv.mmu.cache_r_ptr
+top.diip_main_tb.duv.mmu.row_r_ptr
 [pattern_trace] 1
 [pattern_trace] 0
