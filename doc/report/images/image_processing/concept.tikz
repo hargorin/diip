@@ -3,14 +3,6 @@
     rounded corners=0mm,
 ]
     %coordinates
-    \coordinate (mean_var)      at (0,0);
-    \coordinate (wallis)   at (0,0);
-    \coordinate (sum_mean)       at (5,0);
-    \coordinate (sum_var)       at (5,0);
-    \coordinate (cip)        at (10,0);
-
-
-    %coordinates
     \coordinate (orig)      at (0,0);
     \coordinate (test)      at (-3,0);
     \coordinate (alg)       at (3,0);

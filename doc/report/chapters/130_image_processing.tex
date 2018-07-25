@@ -7,33 +7,112 @@
 The Wallis Fitler is implemented as an image processing algorithm. First follows the concept of the algorithm and following the implementation of the filter in the Vivado HLS using C code. The simplifications and optimizations of the algorithm with Vivado HLS are also explained in this chapter. In the chapter \ref{ch:ip:imp_vhdl} is the implementation using VHDL. Here again a concept is shown how the code is implemented.
 
 \section{Concept}
-The figure ?????? shows the concept of the C code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters. \\
-The sequence of the code is shown in the figure ????. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the cebtral pixel of the neighborhood is calculated. To calculate the next pixel, only one new column is read in. This step is the so called iteration.\\
+The figure \ref{fig:concept} shows the concept of the C code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters. \\
+The sequence of the code is shown in the figure \ref{fig:sequence}. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the central pixel of the neighborhood is calculated. To calculate the next pixel, only one new column is read in. This step is the so called iteration.\\
 The code is row based. This means that each new row of an image have the initialization procedure.
+
+\todo[inline]{tikz mit dem Konzept und der Sequenz (Init and Iter)}
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+        %\input{images/theory/concept.tikz}
+    \end{adjustbox}
+    \caption{Concept of the Wallis filter implementation}
+    \label{fig:concept}
+\end{figure}
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+        %\input{images/theory/concept.tikz}
+    \end{adjustbox}
+    \caption{Sequence of the code with initialization and iteration}
+    \label{fig:sequence}
+\end{figure}
 
 
 \section{Implementation (HLS)}
 The following three chapters explain the implementation of the Wallis filter in C code. First, the simplification of the mean and the variance. Then the Fixed Point calculation of the Wallis equation and in the third chapter the optimizations using pragmas in Viviado HLS.
 
 \subsection{Mean \& Variance}
-
+In this section we will go in detail on the mean and the variance, so that it can be calculated more efficiently with the FPGA. \\
+No adjustment is necessary for the equation for the mean. This can be used as usual. The following equation	 is used to calculate the mean value:
 \begin{equation}
     \mu = \frac{1}{N} \sum_{i = 0}^{N - 1} x_{i}
     \label{eq:mean}
-\end{equation}
+\end{equation} 
 
-
-
+The most common standard deviation equation \ref{eq:var1} is adjusted for the calculation. So that this can be implemented more effectively in the FPGA. \\
+The equation \ref{eq:var1} is multiplied and is given the equation \ref{eq:var2}. If this is still represented a little differently one gets the equation \ref{eq:var3}. In this case it is to be recognized that in the second term the mean results $\mu = \frac{1}{N} \sum_{i = 0}^{N - 1} x_{i}$. In the third term, the sum $\sum_{i = 0}^{N - 1} 1$ is $N$. \\
+This adjustment leads to the equation \ref{eq:var} implemented in the FPGA. The implementation of the equation is shown in the concept in the figure \ref{fig:concept} in the mean and variance block.
 \begin{align}
-    \sigma^{2} & = \frac{1}{N} \sum_{i = 0}^{N - 1} (x_{i} - u)^{2} \\
-    		& = \frac{1}{N} \sum_{i = 0}^{N - 1} (x_{i} - u)^{2} \\
+    \sigma^{2} & = \frac{1}{N} \sum_{i = 0}^{N - 1} (x_{i} - u)^{2} \label{eq:var1}\\ 
+    		& = \frac{1}{N} \sum_{i = 0}^{N - 1} (x_{i}^{2} - 2 \mu x_{i} + \mu^{2})  \label{eq:var2}\\
+    		& = \frac{1}{N} \sum_{i = 0}^{N - 1} x_{i}^{2} - 2\mu \frac{\sum_{i = 0}^{N - 1} x_{i}}{N} + \frac{1}{N} \mu^{2} \sum_{i = 0}^{N - 1} 1 \label{eq:var3}\\
+    		& = \frac{\sum_{i = 0}^{N - 1} x_{i}^{2}}{N}  - 2\mu^{2} + \mu^{2} \label{eq:var4}\\
+    		& = \frac{\sum_{i = 0}^{N - 1} x_{i}^{2}}{N}  - \mu^{2}
     \label{eq:var}
 \end{align}
 
+\subsubsection*{Code}
+The following listening \ref{lst:sum} shows the summing of the pixels. The pixels are summed for the mean and squared for the variance. Furthermore, the pixels are temporarily stored in an array so that they can be used again at a later time. \\
+Cause this is the initialization, the entire neighborhood (WIN\_SIZE) is read in. During the iteration sequence only one pixel column (sqrt(WIN\_SIZE)) is read in. \\
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Calculation of the sum, label=lst:sum]
+loop_rdata:for(uint16_t i = 0; i < WIN_SIZE; i++) {
+	inPixel = inData.read();
+	pixel[i] = inPixel.data;
 
+	sum_Pixel += pixel[i];				// sum of the pixels
+	tmp_pow = pixel[i] * pixel[i];
+	sum_Pixel2 += tmp_pow;				// sum of the pixels^2
+}
+\end{lstlisting}
+\end{minipage}
+
+In a function the sums of the pixels are passed and the mean and the variance are calculated. \\
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Calculation of the mean and variance, label=lst:mean_var]
+mean = (sum_Pixel / WIN_SIZE);
+var = sum_Pixel2 / WIN_SIZE - (mean * mean);
+\end{lstlisting}
+\end{minipage}
 
 
 \subsection{Fixed Point}
+This section explains how the division of the equation \ref{eq:wallis_filter} for the Wallis filter is implemented. Because the resources on the FPGA are limited, it is not smart to calculate with floating point. For this reason, it is set to fixed point. \\
+All first terms of the equation are calculated except the division. In the listening \ref{lst:division} the data type sizes are defined first. These have been determined by Matlab and the simulation in Viviado HLS. 
+The data types are arbitrary precision integer or arbitrary precision fixed point. This means that the variables can be defined in any bit width. For example, an arbitrary precision integer with the bit width off 11 can be defined like this \texttt{ap\_[u]int<11>}. An arbitrary precision fixed point can be defined in this way \texttt{ap\_[u]fixed<18,6>}. Where the first number is the size of the whole data type (18 bit) and the second number representing the numbers above the binary point (6 bit). So there are 12 bits left for the value below the decimal point \cite{ug902}. \\   
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
+	ap_ufixed<18,1> rec = 1.0;
+	ap_uint<15> fp_Var;
+	ap_ufixed<18,1> fp_Den;
+	ap_int<23> fp_Num;
+	ap_fixed<31,31> fp_Div;
+
+	fp_Den = rec/fp_Var;
+	fp_Div = fp_Num * fp_Den;
+\end{lstlisting}
+\end{minipage}
+
+The divisions in the FPGA generally require some time. Two different versions of the division were implemented and compared with Viviado HLS. On the one hand $\frac{fp\_Num}{fp\_Var}$ was calculated and on the other hand reciprocal $\frac{1}{fp\_Var}$ and then multiplied with $fp\_Num$. The latency of these two divisions is shown in Table \ref{tab:c_div}. 
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l l}
+        \toprule
+        Division & Latency [clocks]  \\
+        \midrule
+        $\frac{fp\_Num}{fp\_Var}$ & ??? 
+        \\
+        $\frac{1}{fp\_Var}$ & ??? 
+        \\
+        \bottomrule
+    \end{tabular}
+    \caption{Comparision of division methods}
+    \label{tab:c_div}
+\end{table}
 
 \subsection{Throughput Optimization}
 
