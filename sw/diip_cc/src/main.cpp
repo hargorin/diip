@@ -35,6 +35,7 @@ int main(int argc, char const *argv[])
 {
     const char* infilename;
     const char* ip = "192.168.5.9";
+    // const char* ip = "127.0.0.1";
     bool showImage = false;
 
     pthread_t rx_thd; // receive thread
@@ -99,7 +100,6 @@ int main(int argc, char const *argv[])
 
     // Loop through all lines
     printf("Start processing file %s on ip %s\n", infilename, ip);
-    tic(&tt);
     // for(int currline = 0; currline < (ih->getHeight()-WINDOW_SIZE+1); currline++)
     // {
     //     printProgress(currline, ih->getHeight()-WINDOW_SIZE+1);
@@ -128,6 +128,7 @@ int main(int argc, char const *argv[])
     com->setupReceive(2222, ih->outBuf, outsize);
     std::thread rxth(& Com::contReceive, com);
 
+    tic(&tt);
     // printf("Rx base %08x\n", ih->imBuf);
     // First send 20 lines to fill buffers
     for (currline = 0; currline < (WINDOW_SIZE-1); currline++)
@@ -140,13 +141,13 @@ int main(int argc, char const *argv[])
         std::thread txth(& Com::transmit, com);
         txth.join();        
         printf("Done\n", currline);
-        usleep(50000);
+        usleep(1000000);
     }
 
     // send the rest while receiving
     for( ;currline < ih->getHeight(); currline++)
     {
-        usleep(50000);
+        usleep(1000000);
         // printProgress(currline, ih->getHeight());
         printf("Start  line %4d/%d..", currline+1,ih->getHeight());
         
