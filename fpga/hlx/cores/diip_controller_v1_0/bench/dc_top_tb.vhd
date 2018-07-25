@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Fri Jul 20 16:19:53 2018
+-- Last update : Wed Jul 25 16:10:53 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -36,11 +36,11 @@ end entity dc_top_tb;
 architecture testbench of dc_top_tb is
 
     -- wallis filter window size
-    constant WIN_SIZE : natural := 3;
+    constant WIN_SIZE : natural := 21;
     -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 5;
+    constant IMG_WIDTH : natural := 25;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 5;
+    constant IMG_HEIGHT : natural := 25;
     
 
     constant WAL_C_GVAR : natural := 10;
@@ -245,7 +245,10 @@ begin
         -- send line after line and be ready for result
 
         for i in 0 to IMG_HEIGHT-1 loop 
-            file2axistream("../../cores/diip_controller_v1_0/bench/inputimg.txt", i*IMG_WIDTH, IMG_WIDTH);
+            report "i=" & integer'image(i);
+            file2axistream("../../cores/diip_controller_v1_0/bench/room128x128.jpg.txt", i*IMG_WIDTH, IMG_WIDTH);
+            report "i=" & integer'image(i) & " done";
+            wait for 10 us;
         end loop;
 
 
@@ -337,7 +340,7 @@ begin
                 end if;
                 if uft_o_axis_tlast = '1' then
                     file_open(file_axi_s, "axi_stream_res_" & format(fi, 4, '0') & ".log", write_mode);
-                    report "Start writing file: " & "axi_stream_res_" & format(fi, 4, '0') & ".log";
+                    report "writing file: " & "axi_stream_res_" & format(fi, 4, '0') & ".log";
                     for i in 0 to (ctr-1) loop
                         hwrite(oline, axi_buf(i), left, 8);
                         writeline(file_axi_s, oline);

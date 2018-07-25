@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Wed Jul 25 12:02:24 2018
+-- Last update : Wed Jul 25 15:44:11 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ architecture testbench of diip_main_tb is
     -- wallis filter window size
     constant WIN_LENGTH : natural := 21;
     -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 128;
+    constant IMG_WIDTH : natural := 25;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 128;
+    constant IMG_HEIGHT : natural := 25;
 
     constant WAL_C_GVAR : std_logic_vector (19 downto 0) := "00101101101101000000";--2925
     constant WAL_C : std_logic_vector (5 downto 0) := "110100";--0.8125
@@ -212,10 +212,10 @@ begin
             uft_i_axis_tlast <= '0';
             -- output the bytes to the axi stream
             for i in 0 to (num-1) loop
+                uft_i_axis_tvalid <= '1';
                 if uft_i_axis_tready = '0' then
                     wait until uft_i_axis_tready = '1';
                 end if;
-                uft_i_axis_tvalid <= '1';
                 if nbytes = 1 then uft_i_axis_tlast <= '1'; end if;
                 readline (fd, iline);
                 hread(iline,byte);
@@ -268,6 +268,8 @@ begin
         for i in 0 to IMG_HEIGHT-1 loop 
             report "i=" & integer'image(i);
             file2axistream("../../cores/diip_controller_v1_0/bench/room128x128.jpg.txt", i*IMG_WIDTH, IMG_WIDTH);
+            report "i=" & integer'image(i) & "done";
+            wait for 40 us;
         end loop;
 
 
