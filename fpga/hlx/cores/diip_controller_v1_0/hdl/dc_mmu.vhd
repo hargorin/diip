@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Tue Jul 24 14:04:51 2018
+-- Last update : Wed Jul 25 11:59:39 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -74,17 +74,9 @@ architecture behav of dc_mmu is
         if a = b then 
             diff := 0;
         elsif a < b then
-            if b < modulus then
-                diff := b - a;
-            else
-                diff := b + modulus - a;
-            end if;
-        else
-            if a < modulus then
-                diff := a - b;
-            else
-                diff := a + modulus - b;
-            end if;
+            diff := b - a;
+        else -- a > b
+            diff := modulus - a + b;
         end if;
         return diff;    
     end function distance;
@@ -125,13 +117,10 @@ architecture behav of dc_mmu is
     -- countes number of pixels sent to the output
     signal out_pix_ctr : natural range 0 to (CACHE_N_LINES-1)*BRAM_SIZE := 0;
     -- countes number of pixels to be sent to the output
-    signal n_out_pix : natural range 0 to (CACHE_N_LINES-1)*BRAM_SIZE := 0;
     signal n_out_pix_m1 : signed (19 downto 0) := (others => '0');
 
     -- set if cache_w_ptr wrapped to 0 and cleared if cache_r_ptr wrapped to 0
     signal looped : std_logic := '0';
-    -- distance between read base and write pointer
-    signal cache_rw_distance : natural range 0 to CACHE_N_LINES-1 := 0;
 
     signal i_axis_tready_i : std_logic;
     signal o_axis_tvalid_i : std_logic;
@@ -226,7 +215,6 @@ begin
     end process ; -- p_cache_write
     -- ---------------------------------------------------------------------
 
-    cache_rw_distance <= distance(cache_r_base, cache_w_ptr, CACHE_N_LINES);
     cache_r_distance <= distance(cache_r_base, cache_r_ptr, CACHE_N_LINES);
 
     -- ---------------------------------------------------------------------
@@ -360,7 +348,7 @@ begin
                 row_r_ptr <= 0;
             else
                 if o_axis_tready = '1' and o_axis_tvalid_i = '1' then
-                    if cache_r_distance =  to_integer(unsigned(win_size)) then
+                    if cache_r_distance =  to_integer(unsigned(win_size) - 1) and row_r_ptr /= BRAM_SIZE-1 then
                         row_r_ptr <= row_r_ptr + 1;
                     elsif o_axis_tlast_i = '1' then
                         row_r_ptr <= 0;

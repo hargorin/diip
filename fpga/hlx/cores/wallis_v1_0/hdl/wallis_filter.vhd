@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 09:19:14 2018
--- Last update : Tue Jul 24 14:41:52 2018
+-- Last update : Wed Jul 25 13:40:58 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -159,6 +159,7 @@ begin
 			else
 				if (clear = '1') then
 					wallis <= (others => '0');
+					valid <= '0';
 				else
 					valid <= '0';
 					if (s_axis_dout_tvalid = '1') then
