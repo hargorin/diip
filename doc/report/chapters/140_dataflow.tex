@@ -17,5 +17,43 @@
 
 \subsection{Concept}
 
-\subsection{Implementation}
+\subsection{Implementation (HLS)}
+
+
+\subsubsection*{IF-Statement} \label{ch:data:if}
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Buffer switching reloading without else statement, label=lst:buf_false]
+if( (outPpBuf == ppBufA) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) ) {
+    if(!ppBufBrdy) {
+        ...
+    }
+}
+if( (outPpBuf == ppBufB) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) ) {
+    if(!ppBufArdy) {
+        ...
+    }
+}
+\end{lstlisting}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Buffer switching reloading with else statement, label=lst:buf_right]
+if (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) {
+	if( (outPpBuf == ppBufA)  ) {
+		if(!ppBufBrdy) {
+			...
+		}
+	}
+	else {
+		if(!ppBufArdy) {
+			...
+		}
+	}
+}
+\end{lstlisting}
+\end{minipage}
+
+\subsection{Implementation (VHDL)}
+
 

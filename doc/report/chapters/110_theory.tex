@@ -249,3 +249,48 @@ guarantee that the message has been received by the client.
     \caption{TCP vs. UDP}
     \label{tab:tcpudp}
 \end{table}
+
+\section{Vivado HLS} \label{ch:th:hls}
+Vivado HLS is a development environment that synthesizes C/C++ code in VHDL. The C/C++ language is intended for sequential programming where the VHDL language describes the hardware. This chapter deals with the design flow (\ref{ch:design_flow})of Vivado HLS. The directives (\ref{ch:directives}) that are for the compiler to synthesize the C/C++ code in VHDL and finally arbritary data types (\ref{ch:ap}). Which can be used in the Vivado HLS for C/C++ code.
+
+\subsection{Design Flow} \label{ch:design_flow}
+In Vivado HLS it is possible to translate the C/C++ code into VHDL and generate an IP core for Vivado HLx. To ensure that the algorithm is correct, it can be validated in various steps. These steps are the design flow of Vivado HLS and are shown in figure \ref{fig:hls_design_flow}.
+First of all, the C/C++ algorithm can be tested in a simulation. This requires a testbench in addition to the C/C++ algorithm. As soon as the algorithm works satisfyingly the design can be run through synthesis and generating a RTL design in VHDL. VHDL design can be verified in an RTL simulation. The RTL simulation must match the C/C++ simulation. If this is the case, an IP core can be generated from the VHDL code and used in the Vivado HLx \cite{vivado_hls}.
+
+\begin{figure}[tb!]
+    \centering
+    \input{images/theory/hls_design_flow.tikz}
+    \caption{Vivado HLS design flow}
+    \label{fig:hls_design_flow}
+\end{figure}
+
+\subsection{Directives} \label{ch:directives}
+If the FPGA is programmed using C/C++ language, there is no way to get around the directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The following three chapters explain some important directives to reduce the latency and increase the throughput. 
+
+\subsubsection*{Interface}
+\subsubsection*{Array Partition}
+\subsubsection*{Loop Pipeline / Unroll}
+
+\subsection{Arbitrary Precision} \label{ch:ap}
+Resources are limited in the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point in the FPGA. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
+
+\textbf{Arbitrary Precision Integer:}
+Arbitrary Precision Integers are data types where it is possible to define any bit width. This has the advantage that resources can be reduced. Because it is not necessary to select the data types provided in C/C++ (8, 16, 32 bit or char, short, int etc.) \\
+To use these data types only the header file \texttt{ap\_int.h} must be included. The following example shows how a 11 bit signed integer and a 5 bit unsigned integer be defined \cite{ug902}.
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle]
+ap_int<11> var1;
+ap_uint<5> var2;
+\end{lstlisting}
+\end{minipage} \\
+
+\textbf{Arbitrary Precision Fixed-Point:}
+Floating Point can be used on the FPGA, but this usually requires a lot of resources. Viviado HLS has a library for Arbitrary Precision Fixed Point data types, which can be used to calculate sufficiently accurate. With these fixed point data types many resources can be saved. \\
+For this purpose there is the library \texttt{ap\_fixed.h} and must be included. The data types are defined so that the first number represents the whole data type width and the second number represents the above number of the binary point. The following example shows an unsigned 11 bit varibale with 3 bits representing the integer value and 8 bits representing the fractional value \cite{ug902}. 
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle]
+ap_ufixed<11,3> fp_var;
+\end{lstlisting}
+\end{minipage}

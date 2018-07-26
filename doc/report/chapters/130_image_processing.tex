@@ -114,10 +114,40 @@ The divisions in the FPGA generally require some time. Two different versions of
     \label{tab:c_div}
 \end{table}
 
-\subsection{Throughput Optimization}
+\subsection{Throughput Optimization} \label{ch:ip:throughput}
+If the FPGA is programmed using C/C++ language, then the C/C++ code is synthesized by Viviado HLS to VHDL. The C/C++ language is designed for sequential programming while on the other hand VHDL is designed for hardware description. This brings up two problems that have to be considered when programming in C/C++. First, the hiearchy of the C/C++ code should be as flat as possible. This means to be aware of how for-loops and if-statements are used. On the other hand, directives can be added to the C/C++ code. These directives instruct the tool how to synthesise the code.\\
+The directives and how to handle for-loops are explained in this chapter. The if-statements are explained in chapter \ref{ch:data:if}. \\
 
-\subsubsection*{AXI4 Interfaces}
-\subsubsection*{Ressources}
+\textbf{Directives:} If the FPGA is programmed using C/C++ language, there is no way to get around the directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The Wallis Code has been optimized for throughput.
+Below are some directives used in the code to achieve optimal throughput.
+
+
+\subsubsection*{Interface}
+Each IP core has interfaces to receive or send data or control signals. The interface directive specifies the ports as they should be implemented during synthesis. \\
+The IP core can be controlled by the control signals. This means the IP core can be started or stopped. The IP core also has output control signals to indicate, for example, that it is ready for new data. \\
+For each IP core, Vivado's AXI4 interfaces can also be implemented to send data to the core. \\
+Among other things, block rams or fifos can also be connected directly to the IP core. \\
+\\
+
+In the Wallis filter, the pixels are transmitted to the IP core via AXI4-Stream. In the first implementation, the stream had a throughput of 8 bits per clock. In a further step to increase throughput, the AXI4-Stream has been extended to 256 bits. This has the advantage that 21 pixels per clock could be sent to the IP core. \\
+The parameters for the Wallis filter are sent to the IP core via AXI4-Lite. \\
+The used directives are listed in the listening below.
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=TextStyle, label=lst:interface]
+set_directive_interface -mode axis -register -register_mode reverse "wallis" inData
+set_directive_interface -mode axis -register -register_mode forward "wallis" outData
+set_directive_interface -mode s_axilite -bundle ctrl "wallis" g_Mean
+set_directive_interface -mode s_axilite -bundle ctrl "wallis" g_Var
+set_directive_interface -mode s_axilite -bundle ctrl "wallis" contrast
+set_directive_interface -mode s_axilite -bundle ctrl "wallis" brightness
+
+\end{lstlisting}
+\end{minipage}
+
+
+
+\subsubsection*{Ressource}
 \subsubsection*{Array Partition}
 \subsubsection*{Loop Pipeline / Unroll}
 
