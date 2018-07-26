@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Wed Jul 25 16:10:53 2018
+-- Last update : Thu Jul 26 11:44:31 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -36,11 +36,11 @@ end entity dc_top_tb;
 architecture testbench of dc_top_tb is
 
     -- wallis filter window size
-    constant WIN_SIZE : natural := 21;
+    constant WIN_SIZE : natural := 3;
     -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 25;
+    constant IMG_WIDTH : natural := 5;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 25;
+    constant IMG_HEIGHT : natural := 5;
     
 
     constant WAL_C_GVAR : natural := 10;
@@ -52,7 +52,7 @@ architecture testbench of dc_top_tb is
 	-- Testbench DUT generics as constants
     -- Wallis output to UFT Tx Fifo size. Should hold at least one wallis
     -- output line
-    constant FIFO_DEPTH : positive := 5*IMG_WIDTH;
+    constant FIFO_DEPTH : positive := IMG_WIDTH;
     -- number of elements in a  line buffer
     constant BRAM_SIZE : natural := IMG_WIDTH; -- 1024 for simulation
     -- number of lines in cache: minimum is window size + 1
@@ -201,6 +201,10 @@ begin
                 uft_i_axis_tdata <= byte;
                 nbytes := nbytes - 1;
                 waitfor(1);
+                if i = 1024-1 then
+                    uft_i_axis_tvalid <= '0';
+                    waitfor(10);
+                end if;
             end loop;
             uft_i_axis_tvalid <= '0';
             uft_i_axis_tlast <= '0';
@@ -231,10 +235,10 @@ begin
         uft_user_reg1 <= std_logic_vector(to_unsigned(WIN_SIZE,32)); -- win size
         uft_user_reg2 <= std_logic_vector(to_unsigned(IMG_WIDTH,32)); -- img width
         uft_user_reg3 <= std_logic_vector(to_unsigned(WAL_C_GVAR,32)); -- c*gvar
-        uft_user_reg3 <= std_logic_vector(to_unsigned(WAL_C,32)); -- c
-        uft_user_reg4 <= std_logic_vector(to_unsigned(WAL_CI_GVAR,32)); -- (1-c)*gvar
-        uft_user_reg5 <= std_logic_vector(to_unsigned(WAL_B_GMEAN,32)); -- b*g_mean
-        uft_user_reg6 <= std_logic_vector(to_unsigned(WAL_BI,32)); -- (1-b)
+        uft_user_reg4 <= std_logic_vector(to_unsigned(WAL_C,32)); -- c
+        uft_user_reg5 <= std_logic_vector(to_unsigned(WAL_CI_GVAR,32)); -- (1-c)*gvar
+        uft_user_reg6 <= std_logic_vector(to_unsigned(WAL_B_GMEAN,32)); -- b*g_mean
+        uft_user_reg7 <= std_logic_vector(to_unsigned(WAL_BI,32)); -- (1-b)
         waitfor(3);
         
         -- Signal new image
@@ -243,12 +247,79 @@ begin
         uft_user_reg0(0) <= '0';
 
         -- send line after line and be ready for result
-
         for i in 0 to IMG_HEIGHT-1 loop 
             report "i=" & integer'image(i);
-            file2axistream("../../cores/diip_controller_v1_0/bench/room128x128.jpg.txt", i*IMG_WIDTH, IMG_WIDTH);
+            file2axistream("../../cores/diip_controller_v1_0/bench/mountain.tif.txt", i*IMG_WIDTH, IMG_WIDTH);
             report "i=" & integer'image(i) & " done";
-            wait for 10 us;
+            waitfor(100);
+        end loop;
+
+        waitfor(500);
+
+        -- Signal new image
+        uft_user_reg0(0) <= '1';
+        waitfor(1);
+        uft_user_reg0(0) <= '0';
+
+        -- send line after line and be ready for result
+        for i in 0 to IMG_HEIGHT-1 loop 
+            report "i=" & integer'image(i);
+            file2axistream("../../cores/diip_controller_v1_0/bench/mountain.tif.txt", i*IMG_WIDTH, IMG_WIDTH);
+            report "i=" & integer'image(i) & " done";
+            waitfor(100);
+        end loop;
+
+        waitfor(500);
+
+
+        -- Change img width
+        uft_user_reg2 <= std_logic_vector(to_unsigned(IMG_WIDTH-1,32)); -- img width
+        -- Signal new image
+        uft_user_reg0(0) <= '1';
+        waitfor(1);
+        uft_user_reg0(0) <= '0';
+
+        -- send line after line and be ready for result
+        for i in 0 to IMG_HEIGHT-1 loop 
+            report "i=" & integer'image(i);
+            file2axistream("../../cores/diip_controller_v1_0/bench/mountain.tif.txt", i*IMG_WIDTH, IMG_WIDTH);
+            report "i=" & integer'image(i) & " done";
+            waitfor(100);
+        end loop;
+
+        waitfor(500);
+
+
+        -- Change img width
+        uft_user_reg2 <= std_logic_vector(to_unsigned(IMG_WIDTH+1,32)); -- img width
+        -- Signal new image
+        uft_user_reg0(0) <= '1';
+        waitfor(1);
+        uft_user_reg0(0) <= '0';
+
+        -- send line after line and be ready for result
+        for i in 0 to IMG_HEIGHT-1 loop 
+            report "i=" & integer'image(i);
+            file2axistream("../../cores/diip_controller_v1_0/bench/mountain.tif.txt", i*IMG_WIDTH, IMG_WIDTH);
+            report "i=" & integer'image(i) & " done";
+            waitfor(100);
+        end loop;
+
+        waitfor(500);
+
+        -- Change img width
+        uft_user_reg2 <= std_logic_vector(to_unsigned(IMG_WIDTH,32)); -- img width
+        -- Signal new image
+        uft_user_reg0(0) <= '1';
+        waitfor(1);
+        uft_user_reg0(0) <= '0';
+
+        -- send line after line and be ready for result
+        for i in 0 to IMG_HEIGHT-1 loop 
+            report "i=" & integer'image(i);
+            file2axistream("../../cores/diip_controller_v1_0/bench/mountain.tif.txt", i*IMG_WIDTH, IMG_WIDTH);
+            report "i=" & integer'image(i) & " done";
+            waitfor(100);
         end loop;
 
 
@@ -303,11 +374,11 @@ begin
     -- Stores the axi stream data into an output file
     -----------------------------------------------------------
     p_axi_stream_check : process( clk, rst_n )
-        type buf is array (0 to 1800) of std_logic_vector (7 downto 0);
+        type buf is array (0 to 32000) of std_logic_vector (7 downto 0);
         variable axi_buf : buf;
-        variable ctr : natural range 0 to 1800 := 0;
-        variable i : natural range 0 to 1800 := 0;
-        variable fi : natural range 0 to 1800 := 0;
+        variable ctr : natural range 0 to 32000 := 0;
+        variable i : natural range 0 to 32000 := 0;
+        variable fi : natural range 0 to 32000 := 0;
 
         file file_axi_s     : text;
         variable oline      : line;
@@ -340,7 +411,7 @@ begin
                 end if;
                 if uft_o_axis_tlast = '1' then
                     file_open(file_axi_s, "axi_stream_res_" & format(fi, 4, '0') & ".log", write_mode);
-                    report "writing file: " & "axi_stream_res_" & format(fi, 4, '0') & ".log";
+                    report "writing " & integer'image(ctr) & "bytes axi_stream_res_" & format(fi, 4, '0') & ".log";
                     for i in 0 to (ctr-1) loop
                         hwrite(oline, axi_buf(i), left, 8);
                         writeline(file_axi_s, oline);
@@ -352,6 +423,15 @@ begin
             end if;
         end if;
     end process ; -- p_axi_stream_check
+
+    p_tx_size_valid : process( clk )
+    begin
+        if rising_edge(clk) then
+            if uft_tx_start = '1' and uft_tx_ready = '1' then
+                report "Starting " & integer'image(to_integer(unsigned(uft_tx_data_size))) & " byte tx";
+            end if;
+        end if;
+    end process ; -- p_tx_size_valid
 
 	-----------------------------------------------------------
 	-- Entity Under Test

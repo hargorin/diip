@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Jul 18 11:44:02 2018
--- Last update : Mon Jul 23 12:54:50 2018
+-- Last update : Thu Jul 26 11:46:24 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -144,48 +144,50 @@ begin
     mmu_img_width <= img_width;
     mmu_win_size <= win_size;
 
+    uft_tx_start <= uft_tx_start_i;
     -- ---------------------------------------------------------------------
     -- Inits a UFT tx if wallis end line is complete
-    -- ---------------------------------------------------------------------
-    p_init_tx : process( clk )
-    -- ---------------------------------------------------------------------
-    begin
-		if rising_edge(clk) then
-			if rst_n = '0' then
-		        uft_tx_start_i <= '0';
-    		else
-                uft_tx_start_i <= '0';
-    			if Empty = '0' and uft_tx_ready = '1' then
-                    uft_tx_start_i <= '1';
-    			end if;
-			end if;
-		end if;
-    end process ; -- p_init_tx
-    -- ---------------------------------------------------------------------
-    uft_tx_start <= uft_tx_start_i;
-
-    -- ---------------------------------------------------------------------
     -- read if fifo is not empty and uft is read
     -- ---------------------------------------------------------------------
     p_fifo_read_en : process( clk )
     -- ---------------------------------------------------------------------
-        variable waitForComplete : boolean := false;
+    -- state 0: wait for tx transaction req and tx ready
+    -- state 1: wait for ready and enable tx_start
+    -- state 2: wait for tx_ready to start over
+        variable state : natural := 0;
     begin
         if rising_edge(clk) then
             if rst_n = '0' then
-                waitForComplete := false;
+                state := 0;
+                uft_tx_start_i <= '0';
                 ReadEn <= '0';
-
             else
+
+                uft_tx_start_i <= '0';
                 ReadEn <= '0';
 
-                if uft_tx_ready = '1' and not waitForComplete and Empty = '0' then
-                    ReadEn <= '1';
-                    waitForComplete := true;
-                end if;
-
-                if uft_tx_ready = '0' and uft_tx_start_i = '0' then
-                    waitForComplete := false;
+                if state = 0 then
+                    if Empty = '0' and uft_tx_ready = '1' then
+                        ReadEn <= '1';
+                        state := 1;
+                    else
+                        ReadEn <= '0';
+                    end if;
+                elsif state = 1 then
+                    if uft_tx_ready = '1'  then
+                        uft_tx_start_i <= '1';
+                        state := 2;
+                    else
+                        uft_tx_start_i <= '0';
+                        state := 1;
+                    end if;
+                else -- state = 2
+                    -- clear if started and ready
+                    if uft_tx_ready = '1'  then
+                        state := 0;
+                    else
+                        state := 2;
+                    end if;
                 end if;
 
             end if;

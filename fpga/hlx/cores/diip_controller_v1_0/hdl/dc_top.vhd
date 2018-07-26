@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 09:27:06 2018
--- Last update : Fri Jul 20 17:56:12 2018
+-- Last update : Thu Jul 26 10:38:59 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -186,6 +186,9 @@ architecture structural of dc_top is
     signal mmu_win_size : std_logic_vector(17 downto 0);
     signal mmu_img_width : std_logic_vector(24 downto 0);
 
+    -- used to reset stuff
+    signal restartn : std_logic;
+
     -- connection between control and wallis
     ------------------------------------------------------------------------
     signal wa_tlast                : std_logic;
@@ -194,6 +197,8 @@ architecture structural of dc_top is
 begin
     wa_tlast <= wa_i_axis_tlast;
     wa_tvalid <= wa_i_axis_tvalid;
+    -- reset if rst_n or mmu_restart active
+    restartn <= '0' when mmu_restart = '1' or rst_n = '0' else '1';
 
     ------------------------------------------------------------------------
     control : dc_control
@@ -264,7 +269,7 @@ begin
             )
         port map (
             clk           => clk,
-            rst_n         => rst_n,
+            rst_n         => restartn,
             m_axis_tvalid => uft_o_axis_tvalid,
             m_axis_tdata  => uft_o_axis_tdata,
             m_axis_tready => uft_o_axis_tready,

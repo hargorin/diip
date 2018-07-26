@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Tue Jul 17 13:27:54 2018
--- Last update : Wed Jul 25 15:57:01 2018
+-- Last update : Thu Jul 26 10:30:45 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ begin
     -- ---------------------------------------------------------------------
     begin
         if (rising_edge(clk)) then
-            if (rst_n = '0') then
+            if (rst_n = '0') or (restart = '1') then
                 o_axis_tdata <= (others => '0');
                 o_axis_tvalid_ilatched <= '0';
             else
