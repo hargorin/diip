@@ -746,6 +746,7 @@ int uft_continuous_receive( uint8_t* data, uint32_t size, uint16_t port,
     static struct sockaddr_in si_other;
     static int sockfd, dataoff = 0;
     static int ctr = 0;
+    static int eintrCtr = 0;
 
     // state: 
     // 0: init
@@ -769,6 +770,7 @@ int uft_continuous_receive( uint8_t* data, uint32_t size, uint16_t port,
         }
         state = UFT_CONT_SINIT;
         ctr = 0;
+        eintrCtr = 0;
         return dataoff;
     }
 
@@ -811,6 +813,22 @@ int uft_continuous_receive( uint8_t* data, uint32_t size, uint16_t port,
                 return dataoff;
             }
         }
+        // interupted sys call -> try again
+        else if (errno == EINTR)
+        {
+            if(++eintrCtr == 10)
+            {
+                printf("%s:%d \nrcvfrom error: %s\n", __FILE__, __LINE__, strerror(errno));
+                *status = state;
+                return -1;
+            }
+            else
+            {
+                // ignore and continue
+                *status = state;
+                return dataoff;
+            }
+        }
         else
         {
             printf("%s:%d \nrcvfrom error: %s\n", __FILE__, __LINE__, strerror(errno));
@@ -840,7 +858,7 @@ int uft_continuous_receive( uint8_t* data, uint32_t size, uint16_t port,
             // printf("Offset = %d\n", dataoff);
             // printf("buf: \n");
             // hexDump(buf, recv_len, 8);
-            printf("rx %d\n",++ctr);
+            // printf("rx %d\n",++ctr);
             memcpy(&data[dataoff], &buf[4], recv_len - 4);
             dataoff += recv_len - 4;
         }

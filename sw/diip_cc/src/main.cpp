@@ -136,20 +136,20 @@ int main(int argc, char const *argv[])
         // printProgress(currline, ih->getHeight());
 
         // start transmitter
-        printf("Start  line %4d/%d..", currline+1,ih->getHeight());
+        // printf("Start  line %4d/%d..", currline+1,ih->getHeight());
         com->setTransmitPayload(&ih->imBuf[currline*ih->getWidth()], ih->getWidth());
         std::thread txth(& Com::transmit, com);
         txth.join();        
-        printf("Done\n", currline);
-        usleep(1000000);
+        // printf("Done\n", currline);
+        usleep(500);
     }
 
     // send the rest while receiving
     for( ;currline < ih->getHeight(); currline++)
     {
-        usleep(1000000);
+        usleep(500);
         // printProgress(currline, ih->getHeight());
-        printf("Start  line %4d/%d..", currline+1,ih->getHeight());
+        // printf("Start  line %4d/%d..", currline+1,ih->getHeight());
         
         // Start receiver
         // printf("start rx idx=%d, size=%d\n", (currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1), (ih->getWidth()-WINDOW_SIZE+1));
@@ -167,15 +167,15 @@ int main(int argc, char const *argv[])
         // tic(&dt);
         // rxth.join();
         // toc(&dt);
-        printf("Done\n", currline);
+        // printf("Done\n", currline);
 
         // mean += (dt.end-dt.start);
     }
 
+    printf("\nTx Done\n");
     rxth.join();
     // printf("Mean time %.2fus\n", mean / (ih->getHeight()-WINDOW_SIZE+1));
 
-    printf("\nDone\n");
     toc(&tt);
     // double outsize = (ih->getWidth()-WINDOW_SIZE+1)*(ih->getHeight()-WINDOW_SIZE+1);
     // printf("Pixels per second (output): %.2f\n", (outsize) / (tt.end-tt.start) * 1000000.0);
