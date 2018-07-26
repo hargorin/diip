@@ -83,7 +83,7 @@ var = sum_Pixel2 / WIN_SIZE - (mean * mean);
 This section explains how the division of the equation \ref{eq:wallis_filter} for the Wallis filter is implemented. Because the resources on the FPGA are limited, it is not smart to calculate with floating point. For this reason, it is set to fixed point. \\
 All first terms of the equation are calculated except the division. In the listening \ref{lst:division} the data type sizes are defined first. These have been determined by Matlab and the simulation in Viviado HLS. 
 The data types are arbitrary precision integer or arbitrary precision fixed point. This means that the variables can be defined in any bit width. For example, an arbitrary precision integer with the bit width off 11 can be defined like this \texttt{ap\_[u]int<11>}. An arbitrary precision fixed point can be defined in this way \texttt{ap\_[u]fixed<18,6>}. Where the first number is the size of the whole data type (18 bit) and the second number representing the numbers above the binary point (6 bit). So there are 12 bits left for the value below the decimal point \cite{ug902}. \\   
-\todo[inline]{grösse der Datentypen überprüfen!!!}
+\todo[inline]{groesse der Datentypen ueberpruefen!!!}
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
 	ap_ufixed<18,1> rec = 1.0;
@@ -115,6 +115,11 @@ The divisions in the FPGA generally require some time. Two different versions of
 \end{table}
 
 \subsection{Throughput Optimization}
+
+\subsubsection*{AXI4 Interfaces}
+\subsubsection*{Ressources}
+\subsubsection*{Array Partition}
+\subsubsection*{Loop Pipeline / Unroll}
 
 \section{Implementation (VHDL)} \label{ch:ip:imp_vhdl}
 
