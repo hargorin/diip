@@ -273,6 +273,7 @@ If the FPGA is programmed using C/C++ language, there is no way to get around th
 
 \subsection{Arbitrary Precision} \label{ch:ap}
 Resources are limited in the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point in the FPGA. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
+\todo[inline]{Ressourcen von floating point vs ap\_fixed}
 
 \textbf{Arbitrary Precision Integer:}
 Arbitrary Precision Integers are data types where it is possible to define any bit width. This has the advantage that resources can be reduced. Because it is not necessary to select the data types provided in C/C++ (8, 16, 32 bit or char, short, int etc.) \\
