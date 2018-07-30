@@ -6,7 +6,7 @@
 % -----------------------------------------------------------------------------
 \chapter{Theoretical Background} \label{chapt:theoreticalback}
 % -----------------------------------------------------------------------------
-This chapter provides the baiscs of the project. On the one hand, it is about image processing and filtering as well as communication via Ethernet. What kind of image operations are possible and the Wallis filter are explained in the chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via Ethernet is in the chapter \ref{chapt:theory:ethernet}.
+This chapter provides the basics of the project. On the one hand, it is about image processing and filtering as well as communication via Ethernet. What kind of image operations are possible and the Wallis filter are explained in the chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via Ethernet is in the chapter \ref{chapt:theory:ethernet}.
 
 
 % =============================================================================
@@ -38,7 +38,7 @@ Neighborhood operations use a certain amount of neighboring pixels as input (fig
 They calculate the result and stored it at the reference point in the target
 image. Neighborhood operations are often used in convolution filters. These
 filters can be used, for instance, to implement smoothing filters such as the
-Gauss filter. Convolution filters can also be used to detect edges in an image. This is possible, for example, with the Sobel filter.
+Gauss filter. Convolution filters can also be used to detect edges in an image. For example, this is possible with the Sobel filter.
 
 Example to calculate the x-derivative and y-derivative with the Sobel matrix \cite{sobel_matrix}:
 
@@ -72,8 +72,8 @@ With the application of filters, the so-called border handling problem occurs in
 
 There are several possible solutions to this issue:
 \begin{itemize}
-\item The border pixels are not considered. However, the output image is two
-pixels smaller in its height and width than the original image in the example image \ref{fig:image_handling}
+\item The border pixels are not considered. In the example image, the original image 
+is two pixels smaller in height and width than the original image. \ref{fig:image_handling}
 \item If the filter exceeds the original image, the filter coefficients
 at the outside of the image are set to zero
 \item The pixels required outside the image are extrapolated according to the closest pixels
@@ -100,9 +100,29 @@ Image analysis often employs global image operations that uses the entire image 
 \end{figure}
 
 % -----------------------------------------------------------------------------
-\subsection{Wallis Filter}
+\subsection{Wallis Filter}\label{ch:th_wallis_filter}
 % -----------------------------------------------------------------------------
+The main goal of the Wallis filter is to adjust the mean and variance of an image and to map it into a given mean and variance to the destination image. This is mainly used for local contrast enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
+The Wallis filter equation is \cite{wallis_filter}:
+\begin{equation}
+    I'(x,y) = \frac{( I(x,y) - \mu_{n})\cdot c \cdot \sigma_{g}^{2}}{c \cdot \sigma_{n}^{2} + (1 - c) \cdot \sigma_{g}^{2}} + b \cdot \mu_{g} + (1 - b) \cdot \mu_{n}
+    \label{eq:wallis_filter}
+\end{equation} 
 
+\begin{tabular}{rl}
+    $I(x,y)         =$ & gray value pixel of the original image \\
+    $I'(x,y)        =$ & calculated pixel with the Wallis algorithm \\
+    $\mu_{n}        =$ & mean from the neighborhood of the pixel I(x,y) \\
+    $\sigma_{n}^{2} =$ & variance from the neighborhood of the pixel I(x,y) \\
+    $\mu_{g}        =$ & mean from the destination image \\
+    $\sigma_{g}^{2} =$ & variance from the destination image \\
+    $b              =$ & brightness factor \\
+    $c              =$ & contrast factor \\
+\end{tabular} \\
+
+The two facotrs b and c can have the range from 0 to 1. The larger b is selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
+The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
+The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
 
 
 % =============================================================================
@@ -229,3 +249,49 @@ guarantee that the message has been received by the client.
     \caption{TCP vs. UDP}
     \label{tab:tcpudp}
 \end{table}
+
+\section{Vivado HLS} \label{ch:th:hls}
+Vivado HLS is a development environment that synthesizes C/C++ code in VHDL. The C/C++ language is intended for sequential programming where the VHDL language describes the hardware. This chapter deals with the design flow (\ref{ch:design_flow})of Vivado HLS. The directives (\ref{ch:directives}) that are for the compiler to synthesize the C/C++ code in VHDL and finally arbritary data types (\ref{ch:ap}). Which can be used in the Vivado HLS for C/C++ code.
+
+\subsection{Design Flow} \label{ch:design_flow}
+In Vivado HLS it is possible to translate the C/C++ code into VHDL and generate an IP core for Vivado HLx. To ensure that the algorithm is correct, it can be validated in various steps. These steps are the design flow of Vivado HLS and are shown in figure \ref{fig:hls_design_flow}.
+First of all, the C/C++ algorithm can be tested in a simulation. This requires a testbench in addition to the C/C++ algorithm. As soon as the algorithm works satisfyingly the design can be run through synthesis and generating a RTL design in VHDL. VHDL design can be verified in an RTL simulation. The RTL simulation must match the C/C++ simulation. If this is the case, an IP core can be generated from the VHDL code and used in the Vivado HLx \cite{vivado_hls}.
+
+\begin{figure}[tb!]
+    \centering
+    \input{images/theory/hls_design_flow.tikz}
+    \caption{Vivado HLS design flow}
+    \label{fig:hls_design_flow}
+\end{figure}
+
+\subsection{Directives} \label{ch:directives}
+If the FPGA is programmed using C/C++ language, there is no way to get around the directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The following three chapters explain some important directives to reduce the latency and increase the throughput. 
+
+\subsubsection*{Interface}
+\subsubsection*{Array Partition}
+\subsubsection*{Loop Pipeline / Unroll}
+
+\subsection{Arbitrary Precision} \label{ch:ap}
+Resources are limited in the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point in the FPGA. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
+\todo[inline]{Ressourcen von floating point vs ap\_fixed}
+
+\textbf{Arbitrary Precision Integer:}
+Arbitrary Precision Integers are data types where it is possible to define any bit width. This has the advantage that resources can be reduced. Because it is not necessary to select the data types provided in C/C++ (8, 16, 32 bit or char, short, int etc.) \\
+To use these data types only the header file \texttt{ap\_int.h} must be included. The following example shows how a 11 bit signed integer and a 5 bit unsigned integer be defined \cite{ug902}.
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle]
+ap_int<11> var1;
+ap_uint<5> var2;
+\end{lstlisting}
+\end{minipage} \\
+
+\textbf{Arbitrary Precision Fixed-Point:}
+Floating Point can be used on the FPGA, but this usually requires a lot of resources. Viviado HLS has a library for Arbitrary Precision Fixed Point data types, which can be used to calculate sufficiently accurate. With these fixed point data types many resources can be saved. \\
+For this purpose there is the library \texttt{ap\_fixed.h} and must be included. The data types are defined so that the first number represents the whole data type width and the second number represents the above number of the binary point. The following example shows an unsigned 11 bit varibale with 3 bits representing the integer value and 8 bits representing the fractional value \cite{ug902}. 
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle]
+ap_ufixed<11,3> fp_var;
+\end{lstlisting}
+\end{minipage}
