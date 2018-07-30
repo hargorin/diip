@@ -1,0 +1,86 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}
+        
+        % Write arrows
+        % \draw[draw=blue,line width=1.5mm] (8,4.5) .. controls (8,4) and (-1,4) .. (-1,3.5);
+        % \path[draw=blue,line width=1.5mm] ($(-1,3.5)$) -- ($(8,3.5)$) node[anchor=east] {};
+
+        % Write path
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm] ($(-2,4.5)$)  -- ($(9,4.5)$);
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm]  (-1,3.5) -- ($(9,3.5)$) ;
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm]  (-1,2.5) -- ($(9,2.5)$) ;
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm]  (-1,1.5) -- ($(9,1.5)$) ;
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm]  (-1,0.5) -- ($(9,0.5)$);
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm,dashed] ($(9,4.5)$)  .. controls (9,4) and (-1,4) .. (-1,3.5);
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm,dashed] ($(9,3.5)$)  .. controls (9,3) and (-1,3) .. (-1,2.5);
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm,dashed] ($(9,2.5)$)  .. controls (9,2) and (-1,2) .. (-1,1.5);
+        % \path[draw={rgb:red,1;green,2;blue,3},line width=1.0mm,dashed] ($(9,1.5)$)  .. controls (9,1) and (-1,1) .. (-1,0.5);
+        % % Write triangles
+        % \node[triangle,shape border rotate=270, fill={rgb:red,1;green,2;blue,3},minimum size=0.1cm] at (-1,0.5) {};
+        % \node[triangle,shape border rotate=270, fill={rgb:red,1;green,2;blue,3},minimum size=0.1cm] at (-1,1.5) {};
+        % \node[triangle,shape border rotate=270, fill={rgb:red,1;green,2;blue,3},minimum size=0.1cm] at (-1,2.5) {};
+        % \node[triangle,shape border rotate=270, fill={rgb:red,1;green,2;blue,3},minimum size=0.1cm] at (-1,3.5) {};
+        % \node[triangle,shape border rotate=270, fill={rgb:red,1;green,2;blue,3},minimum size=0.1cm] at (-1,4.5) {};
+        
+        % Read path
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm]  (0.5,6)  -- (0.5,-0.5);
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm]  (1.5,5.5)  -- (1.5,-0.5);
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm]  (2.5,5.5)  -- (2.5,-0.5);
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm]  (3.5,5.5)  -- (3.5,-0.5);
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm]  (4.5,5.5)  -- (4.5,-0.5);
+
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm,dashed] (0.5,-0.5)  .. controls (1,-0.5) and (1,5.5) .. (1.5,5.5);
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm,dashed] (1.5,-0.5)  .. controls (2,-0.5) and (2,5.5) .. (2.5,5.5);
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm,dashed] (2.5,-0.5)  .. controls (3,-0.5) and (3,5.5) .. (3.5,5.5);
+        \path[draw={rgb:red,3;green,1;blue,2},line width=1.0mm,dashed] (3.5,-0.5)  .. controls (4,-0.5) and (4,5.5) .. (4.5,5.5);
+        % Read triangles
+        \node[triangle, border rotated, fill={rgb:red,3;green,1;blue,2},minimum size=0.1cm] at (0.5,5.5) {};
+        \node[triangle, border rotated, fill={rgb:red,3;green,1;blue,2},minimum size=0.1cm] at (1.5,5.5) {};
+        \node[triangle, border rotated, fill={rgb:red,3;green,1;blue,2},minimum size=0.1cm] at (2.5,5.5) {};
+        \node[triangle, border rotated, fill={rgb:red,3;green,1;blue,2},minimum size=0.1cm] at (3.5,5.5) {};
+        \node[triangle, border rotated, fill={rgb:red,3;green,1;blue,2},minimum size=0.1cm] at (4.5,5.5) {};
+
+        % Text
+        % \node[] (write) at (-2,5) {Write};
+        \node[] (read) at (0,6.2) {Read};
+
+        % Braces
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (9.5,5) -- (9.5,0) node [black,midway,xshift=0.5cm,anchor=west] {Window size};
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-0pt,yshift=0pt] (8,-0.5) -- (0,-0.5) node [black,midway,yshift=-0.5cm,anchor=north] {Image width};
+        
+        % Center pixel
+        \draw[black,line width=0.5mm] (3,2) rectangle (4,3);
+        % Window size
+        \draw[black,line width=0.5mm] (1,0) rectangle (6,5);
+
+        % Growth X
+        \path[draw={rgb:red,1;green,3;blue,1},line width=1.0mm]  (5.5,5.5)  -- (5.5,-0.5);
+        \path[draw={rgb:red,1;green,3;blue,1},line width=1.0mm,dashed] (4.5,-0.5)  .. controls (5,-0.5) and (5,5.5) .. (5.5,5.5);
+        \node[triangle, border rotated, fill={rgb:red,1;green,3;blue,1},minimum size=0.1cm] at (5.5,5.5) {};
+
+        % Axis
+        \foreach \x in {0,1,2,3,4}
+            \node[anchor=north] at ($(-0.5,5)-(0,\x)$)  {$\x$};
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % Grid
+        \draw[step=1cm,gray,very thin] (0,0) grid (8,5);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}
