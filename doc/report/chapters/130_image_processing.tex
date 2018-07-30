@@ -6,8 +6,8 @@
 \chapter{Image Processing}  \label{chapt:image_processing}
 The Wallis Fitler is implemented as an image processing algorithm. First follows the concept of the algorithm and following the implementation of the filter in the Vivado HLS using C code. The simplifications and optimizations of the algorithm with Vivado HLS are also explained in this chapter. In the chapter \ref{ch:ip:imp_vhdl} is the implementation using VHDL. Here again a concept is shown how the code is implemented.
 
-\section{Concept}
-The figure \ref{fig:concept} shows the concept of the C code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters. \\
+\section{Concept} \label{ch:ip:concept}
+The figure \ref{fig:concept} shows the concept of the C/C++ code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters and the pixel $I(x,y)$ that is to be calculated. The calculated pixel is $I'(x,y)$ \\
 The sequence of the code is shown in the figure \ref{fig:sequence}. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the central pixel of the neighborhood is calculated. To calculate the next pixel, only one new column is read in. This step is the so called iteration.\\
 The code is row based. This means that each new row of an image have the initialization procedure.
 
@@ -15,7 +15,7 @@ The code is row based. This means that each new row of an image have the initial
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-        %\input{images/theory/concept.tikz}
+        \input{images/image_processing/concept.tikz}
     \end{adjustbox}
     \caption{Concept of the Wallis filter implementation}
     \label{fig:concept}
@@ -24,7 +24,7 @@ The code is row based. This means that each new row of an image have the initial
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-        %\input{images/theory/concept.tikz}
+        %\input{images/image_processing/concept.tikz}
     \end{adjustbox}
     \caption{Sequence of the code with initialization and iteration}
     \label{fig:sequence}
@@ -138,9 +138,8 @@ fp_Div = fp_Num * fp_Den;
 
 \subsection{AXI4-Stream}
 The calculation of the Wallis filter requires at least 21 pixels. Due of the limited AXI4-Stream (8 bits) as input stream, 21 clock cycles have to be waited until the calculation can be started. Since only 1 pixel was received per clock. This also prevents the for loops from unrolling, as not all data is available at the input (\ref{ch:directives}). \\
-The advantage of Vivado HLS is that interfaces, for example, can be adapted relatively easily and quickly. The AXI4-Stream has therefore been enlarged to receive one column per clock. This means that the AXI4-Stream has been extended to a data width of 256 bits. This also made it possible to add the directive \texttt{unroll} to the for loops. The latency of both versions is shown in Table \ref{tab:axi4}.
-\todo[inline]{latency korrekt???}
-\todo[inline]{latenz in tabelle enfuegen}
+The advantage of Vivado HLS is that interfaces, for example, can be adapted relatively easily and quickly. The AXI4-Stream has therefore been enlarged to receive one column per clock. This means that the AXI4-Stream has been extended to a data width of 256 bits (\cite{axi_stream}). This also made it possible to add the directive \texttt{unroll} to the for loops. Throughput has increased by a factor of 21.
+\todo[inline]{Fakotr 21 korrekt (throughput von 8bits auf 256bits)}
 
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
@@ -154,61 +153,29 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 \end{lstlisting}
 \end{minipage}
 
-\begin{table}[tb!]
-    \centering
-    \begin{tabular}{l c}
-        \toprule
-        AXI4-Stream & Latency [clocks]  \\
-        \midrule
-        8 bits & 
-        \\
-        256 bits &  
-        \\
-        \bottomrule
-    \end{tabular}
-    \caption{Comparision of AXI4-Stream data width}
-    \label{tab:axi4}
-\end{table}
-
 \subsection{Array Partition}
+The pixels are sent to the Wallis IP core via AXI4-Stream. An AXI4-Stream can be imagined as a FIFO. When the data is read, it is no longer available at the input of the AXI4-Stream. This means the pixels have to be temporarily stored, because the pixels are used again with every iteration (\ref{ch:ip:concept}). \\
+The pixels are temporarily stored in a block RAM (BRAM). But this brings another problem. With a BRAM only 1 pixel per clock can be read. 21 pixels must be processed per iteration. The latency would be at least 21 clock cycles if it were stored in a BRAM. \\
+With the directive \texttt{array\_partition} (\ref{ch:directives}) an array can be divided into multiple smaller arrays. The array is divided into 21 smaller arrays. So it is possible to read 21 pixels per clock and there is no problem with the latency. \\
+In the listening \ref{lst:array_partition} the array pixel is partitioned into 21 arrays with the directive \texttt{array\_partition}, so that 21 pixels per clock can be read. 
 
-
-
-
-
-% \subsection{Throughput Optimization} \label{ch:ip:throughput}
-% If the FPGA is programmed using C/C++ language, then the C/C++ code is synthesized by Viviado HLS to VHDL. The C/C++ language is designed for sequential programming while on the other hand VHDL is designed for hardware description. This brings up two problems that have to be considered when programming in C/C++. First, the hiearchy of the C/C++ code should be as flat as possible. This means to be aware of how for-loops and if-statements are used. On the other hand, directives can be added to the C/C++ code. These directives instruct the tool how to synthesise the code.\\
-% The directives and how to handle for-loops are explained in this chapter. The if-statements are explained in chapter \ref{ch:data:if}. \\
-
-% \textbf{Directives:} If the FPGA is programmed using C/C++ language, there is no way to get around the directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The Wallis Code has been optimized for throughput.
-% Below are some directives used in the code to achieve optimal throughput.
-
-
-% \subsubsection*{Interface}
-% Each IP core has interfaces to receive or send data or control signals. The interface directive specifies the ports as they should be implemented during synthesis. \\
-% The IP core can be controlled by the control signals. This means the IP core can be started or stopped. The IP core also has output control signals to indicate, for example, that it is ready for new data. \\
-% For each IP core, Vivado's AXI4 interfaces can also be implemented to send data to the core. \\
-% Among other things, block rams or fifos can also be connected directly to the IP core. \\
-% \\
-
-% In the Wallis filter, the pixels are transmitted to the IP core via AXI4-Stream. In the first implementation, the stream had a throughput of 8 bits per clock. In a further step to increase throughput, the AXI4-Stream has been extended to 256 bits. This has the advantage that 21 pixels per clock could be sent to the IP core. \\
-% The parameters for the Wallis filter are sent to the IP core via AXI4-Lite. \\
-% The used directives are listed in the listening below.
-
-% \begin{minipage}{\textwidth}
-% \begin{lstlisting}[style=TextStyle, label=lst:interface]
-% set_directive_interface -mode axis -register -register_mode reverse "wallis" inData
-% set_directive_interface -mode axis -register -register_mode forward "wallis" outData
-% set_directive_interface -mode s_axilite -bundle ctrl "wallis" g_Mean
-% set_directive_interface -mode s_axilite -bundle ctrl "wallis" g_Var
-% set_directive_interface -mode s_axilite -bundle ctrl "wallis" contrast
-% set_directive_interface -mode s_axilite -bundle ctrl "wallis" brightness
-
-% \end{lstlisting}
-% \end{minipage}
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=TextStyle, caption=Set directive array\_partition, label=lst:array_partition]
+set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
+\end{lstlisting}
+\end{minipage}
 
 
 
 \section{Implementation (VHDL)} \label{ch:ip:imp_vhdl}
 
 \subsection{Concept}
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+        \input{images/image_processing/mean_var_vhdl.tikz}
+    \end{adjustbox}
+    \caption{Concept of the mean and variance implementation in VHDL}
+    \label{fig:mean_var_vhdl}
+\end{figure}
