@@ -1,37 +1,86 @@
 % \tikzsetnextfilename{system-overview}
+
+\tikzset{%
+  do path picture/.style={%
+    path picture={%
+      \pgfpointdiff{\pgfpointanchor{path picture bounding box}{south west}}%
+        {\pgfpointanchor{path picture bounding box}{north east}}%
+      \pgfgetlastxy\x\y%
+      \tikzset{x=\x/2,y=\y/2}%
+      #1
+    }
+  },
+  sin wave/.style={do path picture={    
+    \draw [line cap=round] (-3/4,0)
+      sin (-3/8,1/2) cos (0,0) sin (3/8,-1/2) cos (3/4,0);
+  }},
+  cross/.style={do path picture={    
+    \draw [line cap=round] (-1,-1) -- (1,1) (-1,1) -- (1,-1);
+  }},
+  plus/.style={do path picture={    
+    \draw [line cap=round] (-3/4,0) -- (3/4,0) (0,-3/4) -- (0,3/4);
+  }}
+}
+
 \begin{tikzpicture}[
-    rounded corners=0mm,
+    rounded corners=0mm, 
 ]
     %coordinates
-    \coordinate (orig)      at (0,0);
-    \coordinate (test)      at (-3,0);
-    \coordinate (alg)       at (3,0);
-    \coordinate (c_sim)     at (0,-1);
-    \coordinate (c_synth)   at (0,-2);
-    \coordinate (VHDL)      at (0,-3);
-    \coordinate (rtl_sim)   at (0,-4);
-    \coordinate (ip)        at (0,-5);
-    \coordinate (hlx)       at (0,-6);
+    \coordinate (wallis)    at (13,-4.135);
+    \coordinate (sum0)      at (3,-1.5);
+    \coordinate (sum1)      at (3,-4);
+    \coordinate (plus0)     at (1.5,-1.25);
+    \coordinate (plus1)     at (1.5,-3.75);
+    \coordinate (plus2)     at (6.5,-3.75);
+    \coordinate (square0)   at (0,-3.95);
+    \coordinate (square1)   at (6.5,-2.75);
+    \coordinate (divide0)   at (5,-1.5);
+    \coordinate (divide1)   at (5,-4);
 
     %nodes
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center, rounded corners=3mm] (A) at (test) {C/C++ Testbench};
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center, rounded corners=3mm] (B) at (alg) {C/C++ Algorithm};
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (C) at (c_sim) {C/C++ Simulation};
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (D) at (c_synth) {C/C++ Synthesis};
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center, rounded corners=3mm] (E) at (VHDL) {VHDL};
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (F) at (rtl_sim) {RTL Simulation};
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (G) at (ip) {Package IP};
-    \node[draw, fill=white, minimum width=4cm, minimum height=0.6cm, anchor=south, text width=3.8cm, align=center] (H) at (hlx) {Vivado HLx};
+    \node[draw, fill=white, minimum width=4.04cm, minimum height=4.04cm, anchor=south, align=center, label={[xshift=-1cm, yshift=0cm]Wallis Filter}] (wallis) at (wallis) {$I'(x,y)$};
+    \node[draw, fill=white, minimum width=1cm, minimum height=1cm, anchor=south, align=center] (sum0) at (sum0) {\huge $\Sigma$};
+    \node[draw, fill=white, minimum width=1cm, minimum height=1cm, anchor=south, align=center] (sum1) at (sum1) {\huge $\Sigma$};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center, plus] (plus0) at (plus0) {};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center, plus] (plus1) at (plus1) {};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center, plus] (plus2) at (plus2) {};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (divide0) at (divide0) {$\frac{1}{441}$};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (divide1) at (divide1) {$\frac{1}{441}$};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (square0) at (square0) {$()^2$};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (square1) at (square1) {$()^2$};
+
+
+    \node[draw,fit={($(sum0.north)+(0,8pt)$) (sum1) (plus0) (plus1) (plus2) (square0) (square1) (divide0) (divide1)}] {}; 
+    \node[above,xshift=0.85cm,yshift=0cm] {Mean \& Variance};
 
     %path
-    \path [draw,-] (A) -- (B);
-    \path[draw,-{Latex[length=2.5mm]}] (A) -| (C);
-    \path[draw,-{Latex[length=2.5mm]}] (C.east) -- ++(3.5,0) |- (B.east);
-    \path[draw,-{Latex[length=2.5mm]}] (C) -- (D);
-    \path[draw,-{Latex[length=2.5mm]}] (D) -- (E);
-    \path[draw,-{Latex[length=2.5mm]}] (E) -- (F);
-    \path[draw,-{Latex[length=2.5mm]}] (E.west) -- ++(-0.5,0) |- (G.west);
-    \path[draw,-{Latex[length=2.5mm]}] (F.east) -- ++(3.5,0) |- (B.east);
-    \path[draw,-{Latex[length=2.5mm]}] (G) -- (H);
+    \path[draw,-{Latex[length=2.5mm]}] (-1.75,-2) node[above,xshift=0.4cm,yshift=0cm]{pixel} -- ++(1.75,0) |- (plus0.west);
+    \path[draw,-{Latex[length=2.5mm]}] (-1.75,-2) -- ++(1.75,0) -- (square0);
+
+    %mean
+    \path[draw,-{Latex[length=2.5mm]}] (plus0) -- (sum0);
+    \path[draw,-{Latex[length=2.5mm]}] (sum0) -- (divide0);
+    \path[draw,-{Latex[length=2.5mm]}] (divide0) -| (square1);
+    \path[draw,-{Latex[length=2.5mm]}] (sum0.north) |- ++(-0.75,0.25) -| node[above,xshift=-0.25cm,yshift=-0.65cm] {$-$} (plus0.north);
+
+    %variance
+    \path[draw,-{Latex[length=2.5mm]}] (square0) -- (plus1);
+    \path[draw,-{Latex[length=2.5mm]}] (plus1) -- (sum1);
+    \path[draw,-{Latex[length=2.5mm]}] (sum1.north) |- ++(-0.75,0.25) -| node[above,xshift=-0.25cm,yshift=-0.65cm] {$-$} (plus1.north);
+    %\path[draw,-{Latex[length=2.5mm]}] (sum1.north) |- node[above,xshift=0cm,yshift=0cm] {$-$} (plus1.east);
+    %\path[draw,-{Latex[length=2.5mm]}] (plus1.south) |- (sum1.157);
+    \path[draw,-{Latex[length=2.5mm]}] (sum1) -- (divide1);
+    \path[draw,-{Latex[length=2.5mm]}] (divide1) -- (plus2);
+    \path[draw,-{Latex[length=2.5mm]}] (square1) -- node[above,xshift=-0.25cm,yshift=-0.4cm] {$-$} (plus2);
+
+    %wallis
+    \path[draw,-{Latex[length=2.5mm]}] (divide0) -- node[above,xshift=2.2cm,yshift=0cm]{$\mu_n$} (wallis.151);
+    \path[draw,-{Latex[length=2.5mm]}] (plus2) -- ++(1,0) |- node[above,xshift=2.95cm,yshift=0cm]{$\sigma_{n}^{2}$} (wallis.171);
+    \path[draw,-{Latex[length=2.5mm]}] (9,-2.5) -- node[above,xshift=0.16cm,yshift=0cm]{$I(x,y)$} (wallis.191);
+    \path[draw,-{Latex[length=2.5mm]}] (9,-3.325) -- node[above,xshift=-0.15cm,yshift=0cm]{parameter} (wallis.211);
+    \path[draw,-{Latex[length=2.5mm]}] (wallis) -- node[above,xshift=-0.2cm,yshift=0cm]{$I'(x,y)$} (16.75,-2.11);
+
+
+
 
 \end{tikzpicture}
