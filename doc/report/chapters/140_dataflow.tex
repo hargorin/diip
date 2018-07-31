@@ -4,16 +4,75 @@
 %
 % ==============================================================================
 \chapter{Dataflow} \label{chapt:dataflow}
+\todo[inline]{Graphics with dataflow inside FPGA}
 With the Wallis filter implemented on the FPGA the problem becomes that the
 image data has to be sent from the computer to the FPGA and back. The following
 chapter explains the realiztion of said dataflow. It is split into two main
-parts: The communcation and control parts.
+parts: The communcation and control parts. But before diving into them the
+concept of the dataflow is briefly dissected in the following chapter.\\
 
 During the work on the project it was discovered that the initial approach to
 the problem would not lead to the optimum solution. This is why a second
 implementation was made that differs in both communication and control parts. To
 prevent confusion these two solutions are refered to as solution A (the first
 approach) and solution B (the second, more performant approach).
+
+% ==============================================================================
+%                             Concept
+% ==============================================================================
+\section{Concept}
+As seen in the introduction the image data is sent to the FPGA over Ethernet.
+This means on the FPGA side an IP stack has to be implemented to handle Ethernet
+communication. The received data then has to be sent to the Wallis filter for
+processing and its results to be sent back to the host PC. To distinguish the
+data transmission from the dataflow inside the FPGA, the dataflow was split into
+two blocks: The communication and control block. The communication block handles
+the Ethernet communication while the control block feeds the data in the right
+order to the Wallis filter and does houskeeping work. Figure \ref{fig:dataflowa}
+shows the dataflow for solution A.
+
+Image data received from the UFT core is stored directly into FPGA block memory
+through AXI4 memory mapped interfaces. The UFT core signals a complete file
+transfer by asserting \texttt{rx\_done}. This is when the controller starts
+reading the data from memory and sending it through AXI4-Stream to the Wallis
+filter. The processed data is again stored in block memory. If all data has been
+processed, the controller configures the UFT core with the amount of data to
+send back and starts the transmission.
+
+\todo[inline]{Dataflow diagram for solution A (with memory)}
+
+\begin{figure}[b!]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+        % \input{images/dataflow/ufttop.tikz}
+    \end{adjustbox}
+    \caption{Dataflow inside FPGA for solution A}
+    \label{fig:dataflowa}
+\end{figure}
+
+Following the path of dataflow it is easy to see that the data is stored
+multiple
+times. In the receiving FiFo of the UFT core, the block memory, then by the
+controller in the transmitting and receiving path, again in block memory and in
+a Tx FiFo of the UFT transmitter. This cuases latency and high ressource usage.
+This is why in a second approach (solution B) the datapath was chosen more
+directly. Key element are the AXI4-Stream interfaces. Figure \ref{fig:dataflowb}
+shows the new approach using said stream interfaces. The UFT stack outputs
+received data comming from the Ethernet line with low latency. The controller
+then only buffers the necessary data and starts streaming pixel data to the
+Wallis filter as soon as enough data is received. Processed data is buffered in
+the controller until the transmitter is ready to send data back.
+
+\todo[inline]{Dataflow diagram for solution B (stream)}
+
+\begin{figure}[b!]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+        % \input{images/dataflow/ufttop.tikz}
+    \end{adjustbox}
+    \caption{Dataflow inside FPGA for solution B}
+    \label{fig:dataflowb}
+\end{figure}
 
 % ==============================================================================
 %                             Communication
@@ -71,7 +130,7 @@ packet acknowledgment. Table \ref{tab:uftcommandlist} lists the UFT commands.
 
 The UFT core was extended with the functionality to send acknowledges back to
 the PC for data packets and file transfers. For this to work, new connections
-inside the UFT block were made. Drawn in red, the 
+inside the UFT block were made. Drawn red in figure \ref{fig:ufttop}, the 
 \texttt{uft\_rx\_mem\_ctl} block signals the \texttt{uft\_tx\_ctl} block to send
 an acknowledgment. The connection consists of the signals listed in table 
 \ref{tab:acksignals}. The tx control block latches the two request signals 
@@ -88,7 +147,7 @@ signals are asserted.
     \begin{adjustbox}{max width=\textwidth}
         \input{images/dataflow/ufttop.tikz}
     \end{adjustbox}
-    \caption{UFT Top Block Design}
+    \caption{UFT Top Block Design with acknowledge path}
     \label{fig:ufttop}
 \end{figure}
 
@@ -173,7 +232,8 @@ acknowledged.
 %                             Control Interface
 % ==============================================================================
 \subsection{Control Interface}
-The data received by the UFT core is stored in memory and data to be sent back
+The data received by the UFT core in solution A is stored in memory and data to
+be sent back
 is also located in FPGA memory. To instruct the core to send data, a control
 interface is required. Tx base address, data size and rx base address are values
 that will be sent from the controller to the UFT core as described later in
@@ -221,7 +281,7 @@ packet. This allows parameters to be sent from PC to FPGA.
 
 This new control interface allows the control and status signals from the UFT
 core to be read and written using a single normed interface. Figure 
-\ref{fig:uftcoreaxilite} shows the complete UFT core with AXI4-Lite control
+\ref{fig:uftcoreaxilite} shows the complete UFT IP core with AXI4-Lite control
 interface, stream and control interface to the UDP core and AXI master burst
 interface for memory access (refer to \cite{p5report} for AXI master burst).
 
@@ -302,47 +362,176 @@ ports.
 %                             Control
 % ==============================================================================
 \section{Control} \label{ch:control}
+Now that the image data is received by the UFT core it has to be sent to the
+Wallis filter in the right order. Reordering the pixel data is the main task of
+the controller besides caching data and controlling the UFT and wallis cores. 
+
+As already mentioned at the beginning of chapter \ref{chapt:dataflow} two
+implementations were realized. Solution A was implemented using Vivado HLS and
+is documented in chapter \ref{ch:controller:hls} followed by solution B written
+in VHDL and delineated in chapter \ref{ch:controller:vhdl}. The problem is
+stated in the following chapter.
 
 % ==============================================================================
 %                             Concept
 % ==============================================================================
-\subsection{Concept}
+\subsection{Concept} \label{ch:control:concept}
+Image data comming from the PC is sent row wise with the left most pixel sent
+first. This is due to the fact that OpenCV (which is used on PC side to access
+images) stores the image data in said layout \cite{opencv_structures}. The
+Wallis filter however, requires its input data to be coloumn wise with the top
+most pixel sent first as described in chapter \ref{ch:ip:concept}. Figure 
+\ref{fig:memproblem} illustrates this issue. The blue ``write'' arrow shows the data
+comming from the UFT core and the red ``read'' arrow represents the order the
+data has to be sent to the Wallis filter. For illustration purposes a window
+length of five and image width of eight was used.
 
-\subsection{Implementation (HLS)}
+\begin{figure}[H]
+    \centering
+    \begin{adjustbox}{scale=0.7}
+        \input{images/controller/memproblem.tikz}
+    \end{adjustbox}
+    \caption{Memory reordering problem}
+    \label{fig:memproblem}
+\end{figure}
+
+This however is only one part of the problem. Another issue arises if the
+progression of the neighbourhood accross the input image is observed. We
+destinguish two scenarios: A) moving the neighbourhood horizontally to the right
+and B) advancing the neighbourhood to the next row vertically. The first
+scenario is illustrated in figure \ref{fig:memproblemgrowthx}. The green arrow
+marks the new coloumn of the neighbourhood to be sent to the Wallis filter.
+
+\begin{figure}[H]
+    \centering
+    \begin{adjustbox}{scale=0.7}
+        \input{images/controller/memproblemgrowthx.tikz}
+    \end{adjustbox}
+    \caption{Scenario A) Data growth in horizontal direction}
+    \label{fig:memproblemgrowthx}
+\end{figure}
+
+This progression is made for each coloumn of the input image until the last
+coloumn was processed. Then scenario B) comes to play. Moving the neighbourhood
+vertically to the next row by one pixel requires new image data of one row
+and $WINDOW\_LENGTH-1$ rows of image data that had already been processed on the
+previous row. Figure \ref{fig:memproblemgrowthy} illustrates scenario B.
+
+\begin{figure}[H]
+    \centering
+    \begin{adjustbox}{scale=0.7}
+        \input{images/controller/memproblemgrowthy.tikz}
+    \end{adjustbox}
+    \caption{Scenario B) Data growth in vertical direction}
+    \label{fig:memproblemgrowthy}
+\end{figure}
+
+From these two scenarios we can conclude two problems the controller has to
+solve:
+\begin{itemize}
+    \item Send the image data in the right order (coloumn wise with
+    $WINDOW\_LENGTH$ sized coloumns)
+    \item Cache $WINDOW\_LENGTH-1$ rows for the computation of the next image
+    row
+\end{itemize}
+
+In addition the controller has to start the UFT transmission if an image row has
+been processed and configure the Wallis filter with the appropriate parameters.
+
+\clearpage
+
+% ==============================================================================
+%                             HLS
+% ==============================================================================
+\subsection{Implementation HLS} \label{ch:controller:hls}
+Now that the problems are analysed, the proceeding can be stated. For the first
+solution a approach using Vivado HLS was picked. The main motivations for this
+decision were the fact that we learned how fast we can have a working IP core
+using the Vivado HLS workflow and that we wanted to test the ability to
+implement a state machine in Vivado HLS. In the following chapters the
+requirements for this statemachine are listed, a brief insight into the source
+code is given and the main hurdles while developing the core are unfold.
+
+\subsubsection*{Requirements}
+\todo[inline]{State machine diagram here}
+Besides the dataflow described in \ref{ch:control:concept} the IP core
+interfaces must be defined. Table \ref{tab:controlleraports} lists the IP
+interfaces as defined in \texttt{controller.cpp}.
+
+\begin{table}[t!]
+    \centering
+    \begin{tabular}{l l l p{8cm}}
+        \toprule
+        Variable & Type & Connection to & Description \\
+        \midrule
+        \texttt{memp} & \texttt{AXI4 Master} & Memory &
+        Access to the block memory where the image data is stored
+        \\
+        \texttt{cbus} & \texttt{AXI4 Master} & UFT core &
+        Control the AXI4-Lite slave registers to control the UFT core
+        \\
+        \texttt{inData} & \texttt{AXI4-Stream} & Wallis filter &
+        Processed pixels comming from the Wallis filter
+        \\
+        \texttt{outData} & \texttt{AXI4-Stream} & Wallis filter &
+        Image data sent to the Wallis filter for processing
+        \\
+        \texttt{rx\_done} & \texttt{ap\_uint<1>} & UFT core &
+        Is asserted after a file transfer is complete
+        \\
+        \bottomrule
+    \end{tabular}
+    \caption{Controller solution A interface ports}
+    \label{tab:controlleraports}
+\end{table}
+
+The IP core implements a finite state machine. After the initial state 
+\texttt{S\_INIT} where the UFT core is initialized the state machine goes to its
+idle state \texttt{S\_IDLE}. If the UFT core indicates the end of a file
+transfer the 
+
+\subsubsection*{Realization}
+
+\subsubsection*{Hurdles}
+
+\subsubsection*{Conclusion}
 
 
 \subsubsection*{IF-Statement} \label{ch:data:if}
 
-\begin{minipage}{\textwidth}
-\begin{lstlisting}[style=CStyle, caption=Buffer switching reloading without else statement, label=lst:buf_false]
-if( (outPpBuf == ppBufA) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) ) {
-    if(!ppBufBrdy) {
-        ...
-    }
-}
-if( (outPpBuf == ppBufB) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) ) {
-    if(!ppBufArdy) {
-        ...
-    }
-}
-\end{lstlisting}
-\end{minipage}
+% \begin{minipage}{\textwidth}
+% \begin{lstlisting}[style=CStyle, caption=Buffer switching reloading without else statement, label=lst:buf_false]
+% if( (outPpBuf == ppBufA) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) ) {
+%     if(!ppBufBrdy) {
+%         ...
+%     }
+% }
+% if( (outPpBuf == ppBufB) && (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) ) {
+%     if(!ppBufArdy) {
+%         ...
+%     }
+% }
+% \end{lstlisting}
+% \end{minipage}
 
-\begin{minipage}{\textwidth}
-\begin{lstlisting}[style=CStyle, caption=Buffer switching reloading with else statement, label=lst:buf_right]
-if (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) {
-	if( (outPpBuf == ppBufA)  ) {
-		if(!ppBufBrdy) {
-			...
-		}
-	}
-	else {
-		if(!ppBufArdy) {
-			...
-		}
-	}
-}
-\end{lstlisting}
-\end{minipage}
+% \begin{minipage}{\textwidth}
+% \begin{lstlisting}[style=CStyle, caption=Buffer switching reloading with else statement, label=lst:buf_right]
+% if (ms_pctr < (inLineSize-PIN_PONG_BUF_SIZE)) {
+% 	if( (outPpBuf == ppBufA)  ) {
+% 		if(!ppBufBrdy) {
+% 			...
+% 		}
+% 	}
+% 	else {
+% 		if(!ppBufArdy) {
+% 			...
+% 		}
+% 	}
+% }
+% \end{lstlisting}
+% \end{minipage}
 
-\subsection{Implementation (VHDL)}
+% ==============================================================================
+%                             VHDL
+% ==============================================================================
+\subsection{Implementation VHDL} \label{ch:controller:vhdl}
