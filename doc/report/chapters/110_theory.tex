@@ -265,15 +265,69 @@ First of all, the C/C++ algorithm can be tested in a simulation. This requires a
 \end{figure}
 
 \subsection{Directives} \label{ch:directives}
-If the FPGA is programmed using C/C++ language, there is no way to get around the directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The following three chapters explain some important directives to reduce the latency and increase the throughput. 
+If the FPGA is programmed using C/C++ language, there is no way to get around the directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The following three chapters explain some important directives to reduce the latency and increase the throughput. \\
+Directives are also called pragmas and can be written directly into the C/C++ code or added as directives in a separate tcl-file.
+
+\todo[inline]{Bilder von Interfce, Array Partition und Pipeline / Unroll anpassen!}
 
 \subsubsection*{Interface}
+The directive \texttt{interface} specifies the input and output ports of the IP core. Different interfaces can be implemented in the IP core as input and output ports. Among others, these are control interfaces or interfaces for data. \\
+The IP core can be controlled with the control interfaces. With this signal it can be started or stopped for example or send a handshake if the IP core has the operation finished. \\
+AXI4 interfaces can also be added directly to the IP core by directives. The AX4-Lite, AXI4-Master or AXI4-Stream interface can be connected. \\
+Among other things, memory elements can also be connected directly to the IP core. These are block RAM or FIFOs that can be used to read and process the data with the IP core. These can also be used to store output data of the IP core \cite{pragma}. \\
+The figure \ref{fig:p_interface} shows how the pragma \texttt{interface} is configured. First, the interface can be specified and whether it is an input or an output. Finally, the variable to which the pragma is to be applied.
+
+\begin{figure}[tb!]
+    \centering
+    \includegraphics[width=\textwidth]{images/theory/interface.png}
+    \caption{Pragma: interface}
+    \label{fig:p_interface}
+\end{figure}
+
 \subsubsection*{Array Partition}
-\subsubsection*{Loop Pipeline / Unroll}
+The \texttt{array\_partition} directive splits an array into several smaller elements. This means that in RTL synthesis several smaller memories or registers are used from a larger memory. However, this increases the throughput in the design but also the read and write ports for the storage. \\
+The figure \ref{fig:p_array_partition} shows the three different methods of partitioning an array.
+
+\begin{description}
+\item[Block]\hfill \\
+The whole array is split into several arrays of the same size. The elements are stored in the same order as in the array. The array is simply cropped apart.
+\item[Cyclic]\hfill \\ 
+The array is split into equal parts like \texttt{block}, but the storage order is different. As can be seen, each following element is stored in a different memory. 
+\item[Complete]\hfill \\ 
+This argument splits the complete array into individual elements.
+\end{description}
+
+
+\begin{figure}[tb!]
+    \centering
+    \includegraphics[width=\textwidth]{images/theory/array_partition.png}
+    \caption{Pragma: array\_partition}
+    \label{fig:p_array_partition}
+\end{figure}
+
+\subsubsection*{Pipeline / Unroll}
+In Vivado HLS the FPGA is described with C/C++ language. Among others, it is also possible to program for loops. These are still processed sequentially by the RTL synthesis, as can be seen in the figure \ref{fig:p_pipeline_unroll} with 9 clock cycles. The directive can improve the performance of the for loop. Two directives are available to increase the throughput of a for loop. These are \texttt{pipeline} and \texttt{unroll}.
+
+\begin{description}
+\item[Pipeline]\hfill \\
+This directive allows a for loop to be parallelized. This increases the throughput and the area. Now that more operations are happening in a clock.
+Pipeline is used if not all data for processing is available in the for loop. The figure \ref{fig:p_pipeline_unroll} shows that the read access leads to a latency of one clock cycle and the throughput could be increased.
+\item[Unroll]\hfill \\ 
+This directive allows the for loop to be fully parallelized. This is only possible if all the data that is required in the for loop is available. The figure \ref{fig:p_pipeline_unroll} shows that the entire for loop is now processed in one cycle. This again leads to an increase in throughput and the area in relation to directive \texttt{pipeline}.
+\end{description}
+
+With nested for loops, note that if pipeline is applied to the top loop, the inner for loops are automatically unrolled. \\
+You can also apply both directives in combination in a for loop. Since the unroll directive can specify a factor that unrolls the loop.
+
+\begin{figure}[tb!]
+    \centering
+    \includegraphics[width=\textwidth]{images/theory/pipeline_unroll.png}
+    \caption{Pragma: pipeline / unroll}
+    \label{fig:p_pipeline_unroll}
+\end{figure}
 
 \subsection{Arbitrary Precision} \label{ch:ap}
-Resources are limited in the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point in the FPGA. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
-\todo[inline]{Ressourcen von floating point vs ap\_fixed}
+Resources are limited in the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point in the FPGA \cite{floating}. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
 
 \textbf{Arbitrary Precision Integer:}
 Arbitrary Precision Integers are data types where it is possible to define any bit width. This has the advantage that resources can be reduced. Because it is not necessary to select the data types provided in C/C++ (8, 16, 32 bit or char, short, int etc.) \\
