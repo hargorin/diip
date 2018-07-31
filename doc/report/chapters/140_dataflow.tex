@@ -4,7 +4,6 @@
 %
 % ==============================================================================
 \chapter{Dataflow} \label{chapt:dataflow}
-\todo[inline]{Graphics with dataflow inside FPGA}
 With the Wallis filter implemented on the FPGA the problem becomes that the
 image data has to be sent from the computer to the FPGA and back. The following
 chapter explains the realiztion of said dataflow. It is split into two main
@@ -30,7 +29,7 @@ two blocks: The communication and control block. The communication block handles
 the Ethernet communication while the control block feeds the data in the right
 order to the Wallis filter and does houskeeping work. Figure \ref{fig:dataflowa}
 shows the dataflow for solution A.
-
+\clearpage
 Image data received from the UFT core is stored directly into FPGA block memory
 through AXI4 memory mapped interfaces. The UFT core signals a complete file
 transfer by asserting \texttt{rx\_done}. This is when the controller starts
@@ -39,12 +38,10 @@ filter. The processed data is again stored in block memory. If all data has been
 processed, the controller configures the UFT core with the amount of data to
 send back and starts the transmission.
 
-\todo[inline]{Dataflow diagram for solution A (with memory)}
-
-\begin{figure}[b!]
+\begin{figure}[t!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-        % \input{images/dataflow/ufttop.tikz}
+        \input{images/controller/dataflowa.tikz}
     \end{adjustbox}
     \caption{Dataflow inside FPGA for solution A}
     \label{fig:dataflowa}
@@ -63,12 +60,10 @@ then only buffers the necessary data and starts streaming pixel data to the
 Wallis filter as soon as enough data is received. Processed data is buffered in
 the controller until the transmitter is ready to send data back.
 
-\todo[inline]{Dataflow diagram for solution B (stream)}
-
 \begin{figure}[b!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-        % \input{images/dataflow/ufttop.tikz}
+        \input{images/controller/dataflowb.tikz}
     \end{adjustbox}
     \caption{Dataflow inside FPGA for solution B}
     \label{fig:dataflowb}
@@ -449,16 +444,15 @@ solution a approach using Vivado HLS was picked. The main motivations for this
 decision were the fact that we learned how fast we can have a working IP core
 using the Vivado HLS workflow and that we wanted to test the ability to
 implement a state machine in Vivado HLS. In the following chapters the
-requirements for this statemachine are listed, a brief insight into the source
+requirements for this state machine are listed, a brief insight into the source
 code is given and the main hurdles while developing the core are unfold.
 
 \subsubsection*{Requirements}
-\todo[inline]{State machine diagram here}
 Besides the dataflow described in \ref{ch:control:concept} the IP core
 interfaces must be defined. Table \ref{tab:controlleraports} lists the IP
 interfaces as defined in \texttt{controller.cpp}.
 
-\begin{table}[t!]
+\begin{table}[b!]
     \centering
     \begin{tabular}{l l l p{8cm}}
         \toprule
@@ -479,23 +473,81 @@ interfaces as defined in \texttt{controller.cpp}.
         \texttt{rx\_done} & \texttt{ap\_uint<1>} & UFT core &
         Is asserted after a file transfer is complete
         \\
+        \texttt{tx\_ready} & \texttt{ap\_uint<1>} & UFT core &
+        Is asserted if UFT core is ready to send
+        \\
         \bottomrule
     \end{tabular}
     \caption{Controller solution A interface ports}
     \label{tab:controlleraports}
 \end{table}
 
-The IP core implements a finite state machine. After the initial state 
+The IP core implements a finite state machine as seen in figure 
+\ref{fig:controllerfsm}. After the initial state
 \texttt{S\_INIT} where the UFT core is initialized the state machine goes to its
 idle state \texttt{S\_IDLE}. If the UFT core indicates the end of a file
-transfer the 
+transfer the image width is stored and the state machine switches to the 
+\texttt{S\_READ} state. There it fills the first junk of its buffers and
+switches to the \texttt{S\_STREAM} state. Now the data is sent from the
+internal buffers to the Wallis filter in the correct order. Simultaneously the
+processed pixels from the Wallis filter are stored inside a memory. If all
+pixels in one line are processed the state \texttt{S\_WRITE} is activated. The
+processed pixels are stored in block memory using the \texttt{memp} AXI4 Master
+interface and the state machine switches to the \texttt{S\_WAIT\_TO\_SEND}
+state. If the UFT core Tx is ready, the state \texttt{S\_SEND} is activated
+where the UFT core is configured and a transmission is started.
+
+\begin{figure}[H]
+    \centering
+    \begin{adjustbox}{scale=1}
+        \input{images/controller/fsm.tikz}
+    \end{adjustbox}
+    \caption{Controller solution A simplified state machine}
+    \label{fig:controllerfsm}
+\end{figure}
 
 \subsubsection*{Realization}
+\todo[inline]{Graphic for memory layout solution A}
+According to Xilinx application note XAPP-1209 \cite{xapp1209} a state
+machine in Vivado HLS can be realizes by using a switch statement in the C code.
+The code in file \texttt{controller.cpp} implements the state machine behaviour.
+The state machine code is very straight foreward. More work went into the memory
+layout. Because the memory bus to read and write pixels to and from memory is
+AXI4 based, single byte access result in considerably less throughput than
+burst access.
+To take advantage of these burst accesses, a ping-pong buffer structure was
+realized. There are two buffers, each of the size of $WINDOW\_LENGTH *
+AXI\_BURST\_SIZE$ bytes, where $AXI\_BURST\_SIZE$ represents the number of bytes
+read
+in one burst access. It requires $WINDOW\_LENGTH$ burst reads to fill one
+buffer. If one buffer is filled, it can be accessed by single byte access to
+read the data in the required order for the Wallis filter, as shown in figure
+\ref{fig:memproblem}. During the time the data is read from one buffer, the
+other buffer is filled with image data from the AXI4 bus, hence the name
+ping-pong buffer. Filling the buffer is done in the \texttt{fillBuff} routine
+as shown on listing \ref{lst:buf_fill}:
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Buffer fill simplified,
+label=lst:buf_fill]
+void fillBuff(volatile uint8_t *memp, volatile uint8_t *buf,
+    uint32_t imgWidth, uint32_t off)
+{
+    uint32_t i, inOff, outOff;
+    for(i = 0; i < WINDOW_LEN; i++)
+    {
+        inOff = off + i*imgWidth;
+        outOff = i*AXI_BURST_SIZE;
+        memcpy(&buf[outOff], &memp[inOff], AXI_BURST_SIZE);
+    }
+}\end{lstlisting}
+\end{minipage}
+
 
 \subsubsection*{Hurdles}
 
 \subsubsection*{Conclusion}
-
+\todo[inline]{ILA measurement showing slow output pixels}
 
 \subsubsection*{IF-Statement} \label{ch:data:if}
 
