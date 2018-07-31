@@ -1,0 +1,1 @@
+ELEPHANT This is a test file containing text to be sent to the FPGA. I hope this test is going to be successful. Lets add some fox text: The quick brown fox jumps over the lazy dog. I think this is enough characters for a single UFT packet. Over and out.

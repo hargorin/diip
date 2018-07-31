@@ -15,6 +15,9 @@
 │   └── uft_stack_v1_0
 ├── projects                        # Projects
 │   ├── diip                        # diip full project
+│   ├── diip_faster                 # diip full project using plain VHDL
+│   ├── vhdl_controller             # Test the vhdl controller implementation
+│   ├── diip                        # diip full project using HLS components
 │   ├── comm                        # diip communication project
 │   └── sobel                       # diip sobel filter project
 ├── scripts                         # Used for build process

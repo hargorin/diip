@@ -7,6 +7,7 @@
 set proj_top_function fun_top
 # Set the solution to be used
 set proj_top_solution "default_solution"
+set proj_top_solution_directive "directives.tcl"
 
 # Set the clock period in [ns]
 set proj_clk_period 8

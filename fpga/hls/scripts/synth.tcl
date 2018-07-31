@@ -18,7 +18,9 @@ source ../projects/$project_name/project.tcl
 
 # Create project
 open_project $project_name
-open_solution "sol_0"
+open_solution $proj_top_solution
+source "../projects/$project_name/directives/$proj_top_solution_directive"
+
 set_part $proj_part_name -tool vivado
 create_clock -period $proj_clk_period -name default
 

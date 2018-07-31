@@ -1,0 +1,112 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Wed Jul 25 14:22:54 2018
+[*]
+[dumpfile] "/home/noah/git/diip_dev/fpga/hlx/build/ghdl/dc_top_tb.ghw"
+[dumpfile_mtime] "Wed Jul 25 14:21:56 2018"
+[dumpfile_size] 3740519
+[savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/dc_top_tb.gtkw"
+[timestart] 0
+[size] 2174 1369
+[pos] -1 -1
+*-35.192539 245400000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.dc_top_tb.
+[treeopen] top.dc_top_tb.duv.
+[treeopen] top.dc_top_tb.duv.control.
+[sst_width] 414
+[signals_width] 404
+[sst_expanded] 1
+[sst_vpaned_height] 422
+@28
+top.dc_top_tb.clk
+top.dc_top_tb.clk
+top.dc_top_tb.rst_n
+@200
+-
+-UFT Rx
+@28
+top.dc_top_tb.uft_i_axis_tready
+top.dc_top_tb.uft_i_axis_tlast
+top.dc_top_tb.uft_i_axis_tvalid
+@22
+#{top.dc_top_tb.uft_i_axis_tdata[7:0]} top.dc_top_tb.uft_i_axis_tdata[7] top.dc_top_tb.uft_i_axis_tdata[6] top.dc_top_tb.uft_i_axis_tdata[5] top.dc_top_tb.uft_i_axis_tdata[4] top.dc_top_tb.uft_i_axis_tdata[3] top.dc_top_tb.uft_i_axis_tdata[2] top.dc_top_tb.uft_i_axis_tdata[1] top.dc_top_tb.uft_i_axis_tdata[0]
+@200
+-
+-UFT Tx
+@28
+top.dc_top_tb.uft_tx_start
+top.dc_top_tb.uft_tx_ready
+@22
+#{top.dc_top_tb.uft_tx_row_num[31:0]} top.dc_top_tb.uft_tx_row_num[31] top.dc_top_tb.uft_tx_row_num[30] top.dc_top_tb.uft_tx_row_num[29] top.dc_top_tb.uft_tx_row_num[28] top.dc_top_tb.uft_tx_row_num[27] top.dc_top_tb.uft_tx_row_num[26] top.dc_top_tb.uft_tx_row_num[25] top.dc_top_tb.uft_tx_row_num[24] top.dc_top_tb.uft_tx_row_num[23] top.dc_top_tb.uft_tx_row_num[22] top.dc_top_tb.uft_tx_row_num[21] top.dc_top_tb.uft_tx_row_num[20] top.dc_top_tb.uft_tx_row_num[19] top.dc_top_tb.uft_tx_row_num[18] top.dc_top_tb.uft_tx_row_num[17] top.dc_top_tb.uft_tx_row_num[16] top.dc_top_tb.uft_tx_row_num[15] top.dc_top_tb.uft_tx_row_num[14] top.dc_top_tb.uft_tx_row_num[13] top.dc_top_tb.uft_tx_row_num[12] top.dc_top_tb.uft_tx_row_num[11] top.dc_top_tb.uft_tx_row_num[10] top.dc_top_tb.uft_tx_row_num[9] top.dc_top_tb.uft_tx_row_num[8] top.dc_top_tb.uft_tx_row_num[7] top.dc_top_tb.uft_tx_row_num[6] top.dc_top_tb.uft_tx_row_num[5] top.dc_top_tb.uft_tx_row_num[4] top.dc_top_tb.uft_tx_row_num[3] top.dc_top_tb.uft_tx_row_num[2] top.dc_top_tb.uft_tx_row_num[1] top.dc_top_tb.uft_tx_row_num[0]
+@24
+#{top.dc_top_tb.uft_tx_data_size[31:0]} top.dc_top_tb.uft_tx_data_size[31] top.dc_top_tb.uft_tx_data_size[30] top.dc_top_tb.uft_tx_data_size[29] top.dc_top_tb.uft_tx_data_size[28] top.dc_top_tb.uft_tx_data_size[27] top.dc_top_tb.uft_tx_data_size[26] top.dc_top_tb.uft_tx_data_size[25] top.dc_top_tb.uft_tx_data_size[24] top.dc_top_tb.uft_tx_data_size[23] top.dc_top_tb.uft_tx_data_size[22] top.dc_top_tb.uft_tx_data_size[21] top.dc_top_tb.uft_tx_data_size[20] top.dc_top_tb.uft_tx_data_size[19] top.dc_top_tb.uft_tx_data_size[18] top.dc_top_tb.uft_tx_data_size[17] top.dc_top_tb.uft_tx_data_size[16] top.dc_top_tb.uft_tx_data_size[15] top.dc_top_tb.uft_tx_data_size[14] top.dc_top_tb.uft_tx_data_size[13] top.dc_top_tb.uft_tx_data_size[12] top.dc_top_tb.uft_tx_data_size[11] top.dc_top_tb.uft_tx_data_size[10] top.dc_top_tb.uft_tx_data_size[9] top.dc_top_tb.uft_tx_data_size[8] top.dc_top_tb.uft_tx_data_size[7] top.dc_top_tb.uft_tx_data_size[6] top.dc_top_tb.uft_tx_data_size[5] top.dc_top_tb.uft_tx_data_size[4] top.dc_top_tb.uft_tx_data_size[3] top.dc_top_tb.uft_tx_data_size[2] top.dc_top_tb.uft_tx_data_size[1] top.dc_top_tb.uft_tx_data_size[0]
+@200
+-
+@28
+top.dc_top_tb.uft_o_axis_tready
+top.dc_top_tb.uft_o_axis_tlast
+top.dc_top_tb.uft_o_axis_tvalid
+@24
+#{top.dc_top_tb.uft_o_axis_tdata[7:0]} top.dc_top_tb.uft_o_axis_tdata[7] top.dc_top_tb.uft_o_axis_tdata[6] top.dc_top_tb.uft_o_axis_tdata[5] top.dc_top_tb.uft_o_axis_tdata[4] top.dc_top_tb.uft_o_axis_tdata[3] top.dc_top_tb.uft_o_axis_tdata[2] top.dc_top_tb.uft_o_axis_tdata[1] top.dc_top_tb.uft_o_axis_tdata[0]
+@200
+-
+-Walis
+@22
+#{top.dc_top_tb.wa_par_bi[5:0]} top.dc_top_tb.wa_par_bi[5] top.dc_top_tb.wa_par_bi[4] top.dc_top_tb.wa_par_bi[3] top.dc_top_tb.wa_par_bi[2] top.dc_top_tb.wa_par_bi[1] top.dc_top_tb.wa_par_bi[0]
+#{top.dc_top_tb.wa_par_b_gmean[13:0]} top.dc_top_tb.wa_par_b_gmean[13] top.dc_top_tb.wa_par_b_gmean[12] top.dc_top_tb.wa_par_b_gmean[11] top.dc_top_tb.wa_par_b_gmean[10] top.dc_top_tb.wa_par_b_gmean[9] top.dc_top_tb.wa_par_b_gmean[8] top.dc_top_tb.wa_par_b_gmean[7] top.dc_top_tb.wa_par_b_gmean[6] top.dc_top_tb.wa_par_b_gmean[5] top.dc_top_tb.wa_par_b_gmean[4] top.dc_top_tb.wa_par_b_gmean[3] top.dc_top_tb.wa_par_b_gmean[2] top.dc_top_tb.wa_par_b_gmean[1] top.dc_top_tb.wa_par_b_gmean[0]
+#{top.dc_top_tb.wa_par_ci_gvar[19:0]} top.dc_top_tb.wa_par_ci_gvar[19] top.dc_top_tb.wa_par_ci_gvar[18] top.dc_top_tb.wa_par_ci_gvar[17] top.dc_top_tb.wa_par_ci_gvar[16] top.dc_top_tb.wa_par_ci_gvar[15] top.dc_top_tb.wa_par_ci_gvar[14] top.dc_top_tb.wa_par_ci_gvar[13] top.dc_top_tb.wa_par_ci_gvar[12] top.dc_top_tb.wa_par_ci_gvar[11] top.dc_top_tb.wa_par_ci_gvar[10] top.dc_top_tb.wa_par_ci_gvar[9] top.dc_top_tb.wa_par_ci_gvar[8] top.dc_top_tb.wa_par_ci_gvar[7] top.dc_top_tb.wa_par_ci_gvar[6] top.dc_top_tb.wa_par_ci_gvar[5] top.dc_top_tb.wa_par_ci_gvar[4] top.dc_top_tb.wa_par_ci_gvar[3] top.dc_top_tb.wa_par_ci_gvar[2] top.dc_top_tb.wa_par_ci_gvar[1] top.dc_top_tb.wa_par_ci_gvar[0]
+#{top.dc_top_tb.wa_par_c[5:0]} top.dc_top_tb.wa_par_c[5] top.dc_top_tb.wa_par_c[4] top.dc_top_tb.wa_par_c[3] top.dc_top_tb.wa_par_c[2] top.dc_top_tb.wa_par_c[1] top.dc_top_tb.wa_par_c[0]
+#{top.dc_top_tb.wa_par_c_gvar[21:0]} top.dc_top_tb.wa_par_c_gvar[19] top.dc_top_tb.wa_par_c_gvar[18] top.dc_top_tb.wa_par_c_gvar[17] top.dc_top_tb.wa_par_c_gvar[16] top.dc_top_tb.wa_par_c_gvar[15] top.dc_top_tb.wa_par_c_gvar[14] top.dc_top_tb.wa_par_c_gvar[13] top.dc_top_tb.wa_par_c_gvar[12] top.dc_top_tb.wa_par_c_gvar[11] top.dc_top_tb.wa_par_c_gvar[10] top.dc_top_tb.wa_par_c_gvar[9] top.dc_top_tb.wa_par_c_gvar[8] top.dc_top_tb.wa_par_c_gvar[7] top.dc_top_tb.wa_par_c_gvar[6] top.dc_top_tb.wa_par_c_gvar[5] top.dc_top_tb.wa_par_c_gvar[4] top.dc_top_tb.wa_par_c_gvar[3] top.dc_top_tb.wa_par_c_gvar[2] top.dc_top_tb.wa_par_c_gvar[1] top.dc_top_tb.wa_par_c_gvar[0]
+@200
+-
+@28
+top.dc_top_tb.wa_o_axis_tvalid
+top.dc_top_tb.wa_o_axis_tready
+top.dc_top_tb.wa_o_axis_tlast
+@22
+#{top.dc_top_tb.wa_o_axis_tdata[7:0]} top.dc_top_tb.wa_o_axis_tdata[7] top.dc_top_tb.wa_o_axis_tdata[6] top.dc_top_tb.wa_o_axis_tdata[5] top.dc_top_tb.wa_o_axis_tdata[4] top.dc_top_tb.wa_o_axis_tdata[3] top.dc_top_tb.wa_o_axis_tdata[2] top.dc_top_tb.wa_o_axis_tdata[1] top.dc_top_tb.wa_o_axis_tdata[0]
+@200
+-
+@28
+top.dc_top_tb.wa_i_axis_tvalid
+top.dc_top_tb.wa_i_axis_tready
+top.dc_top_tb.wa_i_axis_tlast
+@24
+#{top.dc_top_tb.wa_i_axis_tdata[7:0]} top.dc_top_tb.wa_i_axis_tdata[7] top.dc_top_tb.wa_i_axis_tdata[6] top.dc_top_tb.wa_i_axis_tdata[5] top.dc_top_tb.wa_i_axis_tdata[4] top.dc_top_tb.wa_i_axis_tdata[3] top.dc_top_tb.wa_i_axis_tdata[2] top.dc_top_tb.wa_i_axis_tdata[1] top.dc_top_tb.wa_i_axis_tdata[0]
+@200
+-
+-AXIs FIFO
+@28
+top.dc_top_tb.duv.fifo.s_axis_tlast
+top.dc_top_tb.duv.fifo.s_axis_tready
+top.dc_top_tb.duv.fifo.s_axis_tvalid
+@22
+#{top.dc_top_tb.duv.fifo.s_axis_tdata[7:0]} top.dc_top_tb.duv.fifo.s_axis_tdata[7] top.dc_top_tb.duv.fifo.s_axis_tdata[6] top.dc_top_tb.duv.fifo.s_axis_tdata[5] top.dc_top_tb.duv.fifo.s_axis_tdata[4] top.dc_top_tb.duv.fifo.s_axis_tdata[3] top.dc_top_tb.duv.fifo.s_axis_tdata[2] top.dc_top_tb.duv.fifo.s_axis_tdata[1] top.dc_top_tb.duv.fifo.s_axis_tdata[0]
+@28
+top.dc_top_tb.duv.fifo.m_axis_tlast
+top.dc_top_tb.duv.fifo.m_axis_tready
+top.dc_top_tb.duv.fifo.m_axis_tvalid
+@22
+#{top.dc_top_tb.duv.fifo.m_axis_tdata[7:0]} top.dc_top_tb.duv.fifo.m_axis_tdata[7] top.dc_top_tb.duv.fifo.m_axis_tdata[6] top.dc_top_tb.duv.fifo.m_axis_tdata[5] top.dc_top_tb.duv.fifo.m_axis_tdata[4] top.dc_top_tb.duv.fifo.m_axis_tdata[3] top.dc_top_tb.duv.fifo.m_axis_tdata[2] top.dc_top_tb.duv.fifo.m_axis_tdata[1] top.dc_top_tb.duv.fifo.m_axis_tdata[0]
+@200
+-
+-Tx Transaction Fifo
+@28
+top.dc_top_tb.duv.control.tx_transaction_fifo.writeen
+top.dc_top_tb.duv.control.tx_transaction_fifo.readen
+@200
+-DDBBGG
+@28
+top.dc_top_tb.duv.mmu.o_axis_tvalid_i
+top.dc_top_tb.duv.mmu.o_axis_tvalid_ilatched
+@200
+-
+@29
+top.dc_top_tb.duv.mmu.looped
+@28
+top.dc_top_tb.duv.mmu.cache_w_ptr
+top.dc_top_tb.duv.mmu.cache_r_base
+top.dc_top_tb.duv.mmu.cache_r_tip
+[pattern_trace] 1
+[pattern_trace] 0

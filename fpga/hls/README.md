@@ -7,6 +7,7 @@
 │   ├── sobel           # Edge detecting Sobel IP-core
 │   ├── stream_dummy    # dummy stream IP immitating Wallis filter
 │   └── template        # template folder structure
+│   └── wallis          # Wallis filter
 ```
 
 ## Install instructrions

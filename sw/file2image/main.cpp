@@ -2,8 +2,8 @@
 //  main.cpp
 //  file2image
 //
-//  Created by Jan Stocker on 30/11/17.
-//  Copyright © 2017 Jan Stocker. All rights reserved.
+//  Created by Jan Stocker on 22/06/18.
+//  Copyright © 2018 Jan Stocker. All rights reserved.
 //
 
 #include <iostream>
@@ -28,7 +28,7 @@ void printUsage () {
 }
 
 int main(int argc, const char * argv[]) {
-    unsigned char* buffer;
+    uint8_t* buffer;
     size_t result;
 
     if(argc < 5)
@@ -48,21 +48,23 @@ int main(int argc, const char * argv[]) {
     const char * infile = argv[1];
     const char * outfile = argv[2];
     char * pEnd;
+
     int filter_width = strtol(argv[3], &pEnd, 10);
     int filter_height = strtol(argv[4], &pEnd, 10);
+    buffer = (uint8_t*)malloc(sizeof(uint8_t)*filter_width*filter_height);
 
     // Filter-Image
-    FILE* f_data0 = fopen(infile, "rb");
-    buffer = (unsigned char*)malloc(sizeof(unsigned char)*filter_width*filter_height);
-    result = fread(buffer, sizeof(unsigned char), filter_width*filter_height, f_data0);
+    FILE* f_data = fopen(infile, "rb");
+    fseek(f_data, 0, SEEK_SET);
+    result = fread(buffer, sizeof(uint8_t), filter_width*filter_height, f_data);
 
-    Mat img(filter_width, filter_height, CV_8UC1, buffer);
-    fclose(f_data0);
+    Mat img(filter_height, filter_width, CV_8UC1, buffer);
+    fclose(f_data);
 
-    imwrite( outfile, img);
+    imwrite(outfile, img);
     if (argc == 6 && strcmp(argv[5], "-s") == 0)
     {
-        imshow( "Sobel", img );                   
+        imshow(outfile, img);                   
         waitKey(0);  
     }
     return 0;

@@ -1,0 +1,47 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Thu Jul 19 09:50:21 2018
+[*]
+[dumpfile] "(null)"
+[savefile] "/home/noah/git/diip_dev/fpga/hlx/simulation/div_gen_tb.gtkw"
+[timestart] 0
+[size] 1505 812
+[pos] 368 1
+*-25.805107 118400000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.div_model_tb.
+[sst_width] 217
+[signals_width] 395
+[sst_expanded] 1
+[sst_vpaned_height] 218
+@28
+top.div_model_tb.clk
+top.div_model_tb.rst_n
+@200
+-
+-i1
+@28
+top.div_model_tb.i1_axis_tvalid
+top.div_model_tb.i1_axis_tready
+@24
+#{top.div_model_tb.i1_axis_tdata[23:0]} top.div_model_tb.i1_axis_tdata[23] top.div_model_tb.i1_axis_tdata[22] top.div_model_tb.i1_axis_tdata[21] top.div_model_tb.i1_axis_tdata[20] top.div_model_tb.i1_axis_tdata[19] top.div_model_tb.i1_axis_tdata[18] top.div_model_tb.i1_axis_tdata[17] top.div_model_tb.i1_axis_tdata[16] top.div_model_tb.i1_axis_tdata[15] top.div_model_tb.i1_axis_tdata[14] top.div_model_tb.i1_axis_tdata[13] top.div_model_tb.i1_axis_tdata[12] top.div_model_tb.i1_axis_tdata[11] top.div_model_tb.i1_axis_tdata[10] top.div_model_tb.i1_axis_tdata[9] top.div_model_tb.i1_axis_tdata[8] top.div_model_tb.i1_axis_tdata[7] top.div_model_tb.i1_axis_tdata[6] top.div_model_tb.i1_axis_tdata[5] top.div_model_tb.i1_axis_tdata[4] top.div_model_tb.i1_axis_tdata[3] top.div_model_tb.i1_axis_tdata[2] top.div_model_tb.i1_axis_tdata[1] top.div_model_tb.i1_axis_tdata[0]
+@200
+-
+-i2
+@28
+top.div_model_tb.i2_axis_tvalid
+top.div_model_tb.i2_axis_tready
+@24
+#{top.div_model_tb.i2_axis_tdata[15:0]} top.div_model_tb.i2_axis_tdata[15] top.div_model_tb.i2_axis_tdata[14] top.div_model_tb.i2_axis_tdata[13] top.div_model_tb.i2_axis_tdata[12] top.div_model_tb.i2_axis_tdata[11] top.div_model_tb.i2_axis_tdata[10] top.div_model_tb.i2_axis_tdata[9] top.div_model_tb.i2_axis_tdata[8] top.div_model_tb.i2_axis_tdata[7] top.div_model_tb.i2_axis_tdata[6] top.div_model_tb.i2_axis_tdata[5] top.div_model_tb.i2_axis_tdata[4] top.div_model_tb.i2_axis_tdata[3] top.div_model_tb.i2_axis_tdata[2] top.div_model_tb.i2_axis_tdata[1] top.div_model_tb.i2_axis_tdata[0]
+@200
+-
+-out
+@28
+top.div_model_tb.o_axis_tvalid
+top.div_model_tb.o_axis_tready
+@24
+#{top.div_model_tb.o_axis_tdata[31:0]} top.div_model_tb.o_axis_tdata[31] top.div_model_tb.o_axis_tdata[30] top.div_model_tb.o_axis_tdata[29] top.div_model_tb.o_axis_tdata[28] top.div_model_tb.o_axis_tdata[27] top.div_model_tb.o_axis_tdata[26] top.div_model_tb.o_axis_tdata[25] top.div_model_tb.o_axis_tdata[24] top.div_model_tb.o_axis_tdata[23] top.div_model_tb.o_axis_tdata[22] top.div_model_tb.o_axis_tdata[21] top.div_model_tb.o_axis_tdata[20] top.div_model_tb.o_axis_tdata[19] top.div_model_tb.o_axis_tdata[18] top.div_model_tb.o_axis_tdata[17] top.div_model_tb.o_axis_tdata[16] top.div_model_tb.o_axis_tdata[15] top.div_model_tb.o_axis_tdata[14] top.div_model_tb.o_axis_tdata[13] top.div_model_tb.o_axis_tdata[12] top.div_model_tb.o_axis_tdata[11] top.div_model_tb.o_axis_tdata[10] top.div_model_tb.o_axis_tdata[9] top.div_model_tb.o_axis_tdata[8] top.div_model_tb.o_axis_tdata[7] top.div_model_tb.o_axis_tdata[6] top.div_model_tb.o_axis_tdata[5] top.div_model_tb.o_axis_tdata[4] top.div_model_tb.o_axis_tdata[3] top.div_model_tb.o_axis_tdata[2] top.div_model_tb.o_axis_tdata[1] top.div_model_tb.o_axis_tdata[0]
+#{top.div_model_tb.o_ganz[23:0]} top.div_model_tb.o_ganz[23] top.div_model_tb.o_ganz[22] top.div_model_tb.o_ganz[21] top.div_model_tb.o_ganz[20] top.div_model_tb.o_ganz[19] top.div_model_tb.o_ganz[18] top.div_model_tb.o_ganz[17] top.div_model_tb.o_ganz[16] top.div_model_tb.o_ganz[15] top.div_model_tb.o_ganz[14] top.div_model_tb.o_ganz[13] top.div_model_tb.o_ganz[12] top.div_model_tb.o_ganz[11] top.div_model_tb.o_ganz[10] top.div_model_tb.o_ganz[9] top.div_model_tb.o_ganz[8] top.div_model_tb.o_ganz[7] top.div_model_tb.o_ganz[6] top.div_model_tb.o_ganz[5] top.div_model_tb.o_ganz[4] top.div_model_tb.o_ganz[3] top.div_model_tb.o_ganz[2] top.div_model_tb.o_ganz[1] top.div_model_tb.o_ganz[0]
+#{top.div_model_tb.o_frac[7:0]} top.div_model_tb.o_frac[7] top.div_model_tb.o_frac[6] top.div_model_tb.o_frac[5] top.div_model_tb.o_frac[4] top.div_model_tb.o_frac[3] top.div_model_tb.o_frac[2] top.div_model_tb.o_frac[1] top.div_model_tb.o_frac[0]
+[pattern_trace] 1
+[pattern_trace] 0

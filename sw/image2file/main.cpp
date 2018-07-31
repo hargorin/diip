@@ -2,8 +2,8 @@
 //  main.cpp
 //  image2file
 //
-//  Created by Jan Stocker on 30/11/17.
-//  Copyright © 2017 Jan Stocker. All rights reserved.
+//  Created by Jan Stocker on 22/06/18.
+//  Copyright © 2018 Jan Stocker. All rights reserved.
 //
 
 #include <iostream>
@@ -46,14 +46,14 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
 
-    Mat img = imread(infile, CV_8UC1);
+    Mat img = imread(infile, IMREAD_GRAYSCALE);
 
     uint8_t data[img.cols * img.rows];
 
     uint32_t i = 0;
     for (int y = 0; y < img.rows; y++) {
         for (int x = 0; x < img.cols; x++) {
-            data[i++] = img.at<uchar>(Point(x, y));
+            data[i++] = img.at<uint8_t>(Point(x, y));
         }
     }
 
@@ -64,3 +64,4 @@ int main(int argc, const char * argv[]) {
     
     return 0;
 }
+

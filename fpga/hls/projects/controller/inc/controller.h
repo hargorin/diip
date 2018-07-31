@@ -33,33 +33,60 @@ using namespace std;
 
 // Register MAP
 #define UFT_REG_STATUS  0
+#define UFT_REG_STATUS_TX_READY  0x00000001
+
 #define UFT_REG_CONTROL 1
+#define UFT_REG_CONTROL_TX_START 0x00000001
+
 #define UFT_REG_RX_BASE 2
 #define UFT_REG_TX_BASE 3
 #define UFT_REG_RX_CTR  4
+#define UFT_REG_TX_SIZE 5
+#define UFT_REG_IMG_WIDTH  8
 
 // ***********************************************
-// *** Settings ***
+// *** memory layout ***
 // ***********************************************
-#define LINE_SIZE			32
-#define N_LINES 			32
+/**
+ * Define the window size of the wallis filter algorithm
+ */
+#define WINDOW_LEN 		21
 
-#define WINDOW_HEIGHT 		21
-#define AXI_M_BURST_SIZE	WINDOW_HEIGHT // chosen to neighbourhood size
+/**
+ * Number of bytes to read in one axi master access
+ * This also defines the ping pong buffer size
+ */
+#define AXI_BURST_SIZE 		32
 
+/**
+ * Define the output buffer size. This could later be obsolete
+ * if the data is forwarded as stream to the communication block
+ * 
+ * The imgWidth must not be greater than OUT_SIZE
+ */
+#define OUT_BUF_SIZE 			18000
 
-// From here the input image is stored by the UFT block
-#define IN_MEMORY_BASE 		0x00000000
-// From here the output image is stored by the controller
-#define OUT_MEMORY_BASE 	(IN_MEMORY_BASE+(LINE_SIZE*N_LINES))
+/**
+ * @brief Ping Pong buffer size
+ * @details Choosen to be a multiple of window size. The
+ * multiple is the burst transaction size that is done 
+ * for axi memp read
+ */
+#define PIN_PONG_BUF_SIZE 	(WINDOW_LEN*AXI_BURST_SIZE)
 
-#define IN_SIZE 			(LINE_SIZE*N_LINES)
-#define IN_LINE_SIZE		(LINE_SIZE*WINDOW_HEIGHT)
-#define OUT_SIZE 			((LINE_SIZE-WINDOW_HEIGHT+1)*(N_LINES-WINDOW_HEIGHT+1))
-#define OUT_LINE_SIZE		(LINE_SIZE-WINDOW_HEIGHT+1)
-
-#define TOTAL_MEM_SIZE 		(IN_SIZE+OUT_SIZE)
-
+/**
+ * Where the line data is stored
+ */
+#define IN_MEMORY_BASE 			0x00000000
+/**
+ * Where output data is stored
+ */
+// #ifdef __SYNTHESIS__
+// #define OUT_MEMORY_BASE 		0x10000000
+// #else
+#define IMG_WIDTH 128
+#define OUT_MEMORY_BASE 	    (IMG_WIDTH*WINDOW_LEN)
+// #endif
 
 
 // ***********************************************
@@ -90,4 +117,6 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 void controller_top(volatile uint8_t *memp, volatile uint32_t *cbus,
      AXI_STREAM &inData,
      AXI_STREAM &outData,
-	 ap_uint<1> rx_done);
+     ap_uint<1> rx_done,
+     ap_uint<1> tx_ready,
+     ap_uint<4> *outState);

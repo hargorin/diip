@@ -31,6 +31,9 @@ create_bd_port -dir I SW5
 
 # LED
 create_bd_port -dir O led0
+create_bd_port -dir O led1
+create_bd_port -dir O led2
+create_bd_port -dir O led3
 
 # Create PHY interface ports
 create_bd_port -dir O -type rst phy_resetn

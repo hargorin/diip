@@ -10,7 +10,7 @@
 
 
 # Project name
-NAME = diip
+NAME = diip_faster
 # FPGA Part number
 PART = xc7a200tfbg676-2
 
@@ -21,8 +21,11 @@ BUILD = build
 # Cores to build in the ./cores directory
 CORES = axi_master_burst_v2_0		\
 		temac_support_v1_0 			\
+		wallis_v1_0 				\
+		wallis_model_v1_0 			\
+		diip_controller_v1_0    	\
 		udp_ip_stack_v1_0			\
-		uft_stack_v1_0				\
+		uft_stack_v2_0				\
 		debounce_v1_0				\
 		impulse_generator_v1_0
 
@@ -35,7 +38,7 @@ RM = rm -rf
 # if make is killed or interrupted during the execution of their recipes, 
 # the target is not deleted
 .PRECIOUS: $(BUILD)/cores/% $(BUILD)/%.xpr $(BUILD)/%.bit
-.PHONY: all bit cores clean-cores project clean-project flash sim clean-sim clean impl
+.PHONY: all bit cores clean-cores project clean-project flash sim clean-sim clean impl flashqspi
 
 all: bit
 
@@ -57,7 +60,7 @@ synth: $(BUILD)/projects/$(NAME).runs/synth_1
 project: $(addprefix $(BUILD)/cores/, $(CORES)) $(addprefix $(BUILD)/projects/, $(NAME).xpr)
 
 clean-project:
-	$(RM) $(BUILD)/projects/*
+	$(RM) $(BUILD)/projects/$(NAME)*
 
 $(BUILD)/projects/$(NAME).xpr: projects/$(NAME)/*.tcl
 	mkdir -p $(@D)
@@ -105,6 +108,12 @@ flash: $(BUILD)/$(NAME).bit
 	$(VIVADO) -source scripts/flash.tcl -tclargs $(NAME) $(BUILD)/projects/ $(BUILD)/
 
 #
+# Flash QSPI
+# 
+flashqspi: $(BUILD)/$(NAME).bit
+	$(VIVADO) -source scripts/flashqspi.tcl -tclargs $(NAME) $(BUILD)/projects/ $(BUILD)/
+
+#
 # Simulation
 # 
 LASTTOP:=$(shell cat $(BUILD)/ghdl/stamp 2>/dev/null)
@@ -112,13 +121,15 @@ sim:
 ifeq ($(LASTTOP),$(TOP))
 	$(RM) $(BUILD)/ghdl/*.log
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-	./simulation/uftcheck.py -e $(BUILD)/ghdl/*.log
 else
 	$(RM) $(BUILD)/ghdl/*
 	scripts/configure_ghdl.sh ${TOP}
 	@echo "$(TOP)" > $(BUILD)/ghdl/stamp
 	cd $(BUILD)/ghdl/ && $(MAKE) run
-	./simulation/uftcheck.py -e build/ghdl/*.log
+endif
+ifeq ($(TOP),uft_top_tb)
+	./simulation/uftcheck.py -e $(BUILD)/ghdl/axi_stream_res*.log
+	./simulation/uftvalidate.sh
 endif
 
 clean-sim:
