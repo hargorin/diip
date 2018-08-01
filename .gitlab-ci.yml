@@ -13,48 +13,48 @@
 #     - make TOP=uft_top_tb sim
 
 
-# doc:
-#   stage: build
-#   tags:
-#     - doc
-#   image: noah95/latex
-#   script:
-#     - pdflatex -v
-#     - cd doc/report/ && make
-#   artifacts:
-#     paths:
-#     - doc/report/p5_diip_huetter_stocker.pdf
-
-fpga:
+doc:
   stage: build
   tags:
-    - vivado
-  image: docker-vivado:2017.3
-  before_script:
-    # The following is because of a bug in vivado HLS (http://svn.clifford.at/handicraft/2017/vivadobugs/vivadobug04.txt)
-    - sudo apt-get --yes --force-yes remove libgmp-dev
-  script: 
-    - source /opt/Xilinx/Vivado/2017.3/settings64.sh
-    - pwd
-    - echo $PATH
-    - id
-    - cd fpga/hlx/
-    - time make NAME=diip_faster impl
-  artifacts:
-    paths:
-    - "fpga/hlx/build/projects/*/*/*.dcp"
-    - "fpga/hlx/build/*.bit"
-    - "fpga/hlx/build/*.ltx"
-
-sw:
-  stage: build
-  image: ubuntu:16.04
-  before_script:
-    - apt-get update
-    - apt-get install -y gcc g++ build-essential
-    - apt-get install -y libopencv-dev
+    - doc
+  image: noah95/latex
   script:
-    - pushd sw/diip_cc/ && make && popd
+    - pdflatex -v
+    - cd doc/report/ && make
   artifacts:
     paths:
-      - "sw/diip_cc/bin/*"
+    - doc/report/p5_diip_huetter_stocker.pdf
+
+# fpga:
+#   stage: build
+#   tags:
+#     - vivado
+#   image: docker-vivado:2017.3
+#   before_script:
+#     # The following is because of a bug in vivado HLS (http://svn.clifford.at/handicraft/2017/vivadobugs/vivadobug04.txt)
+#     - sudo apt-get --yes --force-yes remove libgmp-dev
+#   script: 
+#     - source /opt/Xilinx/Vivado/2017.3/settings64.sh
+#     - pwd
+#     - echo $PATH
+#     - id
+#     - cd fpga/hlx/
+#     - time make NAME=diip_faster impl
+#   artifacts:
+#     paths:
+#     - "fpga/hlx/build/projects/*/*/*.dcp"
+#     - "fpga/hlx/build/*.bit"
+#     - "fpga/hlx/build/*.ltx"
+
+# sw:
+#   stage: build
+#   image: ubuntu:16.04
+#   before_script:
+#     - apt-get update
+#     - apt-get install -y gcc g++ build-essential
+#     - apt-get install -y libopencv-dev
+#   script:
+#     - pushd sw/diip_cc/ && make && popd
+#   artifacts:
+#     paths:
+#       - "sw/diip_cc/bin/*"

@@ -4,11 +4,11 @@
 
 Project 5 at FHNW by Noah Hütter and Jan Stocker
 
-## Build Status [![pipeline status](https://gitlab.fhnw.ch/noah.huetter/diip/badges/master/pipeline.svg)](https://gitlab.fhnw.ch/noah.huetter/diip/commits/master)
+## Build Status [![pipeline status](https://gitlab.fhnw.ch/noah.huetter/diip/badges/doc_noah/pipeline.svg)](https://gitlab.fhnw.ch/noah.huetter/diip/commits/doc_noah)
 
 | Part          | Download     |
 | ------------- |:-------------|
-| Project Report| [PDF](https://gitlab.fhnw.ch/noah.huetter/diip/-/jobs/artifacts/master/raw/doc/report/p5_diip_huetter_stocker.pdf?job=doc) |
+| Project Report| [PDF](https://gitlab.fhnw.ch/noah.huetter/diip/-/jobs/artifacts/doc_noah/raw/doc/report/p6_diip_huetter_stocker.pdf?job=doc) |
 
 
 ## Folder Structure
