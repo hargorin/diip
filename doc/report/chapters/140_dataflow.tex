@@ -19,7 +19,7 @@ approach) and solution B (the second, more performant approach).
 % ==============================================================================
 %                             Concept
 % ==============================================================================
-\section{Concept}
+\section{Concept} \label{ch:concept}
 As seen in the introduction the image data is sent to the FPGA over Ethernet.
 This means on the FPGA side an IP stack has to be implemented to handle Ethernet
 communication. The received data then has to be sent to the Wallis filter for
@@ -361,7 +361,7 @@ Now that the image data is received by the UFT core it has to be sent to the
 Wallis filter in the right order. Reordering the pixel data is the main task of
 the controller besides caching data and controlling the UFT and wallis cores. 
 
-As already mentioned at the beginning of chapter \ref{chapt:dataflow} two
+As already mentioned at the beginning of chapter \ref{chapt:dataflow}, two
 implementations were realized. Solution A was implemented using Vivado HLS and
 is documented in chapter \ref{ch:controller:hls} followed by solution B written
 in VHDL and delineated in chapter \ref{ch:controller:vhdl}. The problem is
@@ -379,7 +379,7 @@ most pixel sent first as described in chapter \ref{ch:ip:concept}. Figure
 \ref{fig:memproblem} illustrates this issue. The blue ``write'' arrow shows the data
 comming from the UFT core and the red ``read'' arrow represents the order the
 data has to be sent to the Wallis filter. For illustration purposes a window
-length of five and image width of eight was used.
+length of five and image width of eight is used.
 
 \begin{figure}[H]
     \centering
@@ -431,7 +431,8 @@ solve:
 \end{itemize}
 
 In addition the controller has to start the UFT transmission if an image row has
-been processed and configure the Wallis filter with the appropriate parameters.
+been processed and configure the Wallis filter with the parameters comming from
+the UFT core.
 
 \clearpage
 
@@ -461,7 +462,7 @@ interfaces as defined in \texttt{controller.cpp}.
         \texttt{memp} & \texttt{AXI4 Master} & Memory &
         Access to the block memory where the image data is stored
         \\
-        \texttt{cbus} & \texttt{AXI4 Master} & UFT core &
+        \texttt{cbus} & \texttt{AXI4 Master} \footnotemark & UFT core &
         Control the AXI4-Lite slave registers to control the UFT core
         \\
         \texttt{inData} & \texttt{AXI4-Stream} & Wallis filter &
@@ -481,10 +482,12 @@ interfaces as defined in \texttt{controller.cpp}.
     \caption{Controller solution A interface ports}
     \label{tab:controlleraports}
 \end{table}
+\footnotetext{Vivado HLS does not support AXI4-Lite master, but a AXI4 can
+        be converted to AXI4-Lite}
 
 The IP core implements a finite state machine as seen in figure 
 \ref{fig:controllerfsm}. After the initial state
-\texttt{S\_INIT} where the UFT core is initialized the state machine goes to its
+\texttt{S\_INIT} where the UFT core is initialized, the state machine goes to its
 idle state \texttt{S\_IDLE}. If the UFT core indicates the end of a file
 transfer the image width is stored and the state machine switches to the 
 \texttt{S\_READ} state. There it fills the first junk of its buffers and
@@ -502,7 +505,7 @@ where the UFT core is configured and a transmission is started.
     \begin{adjustbox}{scale=1}
         \input{images/controller/fsm.tikz}
     \end{adjustbox}
-    \caption{Controller solution A simplified state machine}
+    \caption{Controller solution A) simplified state machine}
     \label{fig:controllerfsm}
 \end{figure}
 
@@ -530,26 +533,98 @@ as shown on listing \ref{lst:buf_fill}:
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Buffer fill simplified,
 label=lst:buf_fill]
-void fillBuff(volatile uint8_t *memp, volatile uint8_t *buf,
-    uint32_t imgWidth, uint32_t off)
-{
-    uint32_t i, inOff, outOff;
-    for(i = 0; i < WINDOW_LEN; i++)
-    {
-        inOff = off + i*imgWidth;
-        outOff = i*AXI_BURST_SIZE;
-        memcpy(&buf[outOff], &memp[inOff], AXI_BURST_SIZE);
-    }
+uint32_t i, inOff, outOff;
+for(i = 0; i < WINDOW_LEN; i++) {
+    inOff = off + i*imgWidth;
+    outOff = i*AXI_BURST_SIZE;
+    memcpy(&buf[outOff], &memp[inOff], AXI_BURST_SIZE);
 }\end{lstlisting}
 \end{minipage}
 
+To send the right order of output pixels, two counters are required. The first
+counter named \texttt{ms\_rctr} increments after every pixel sent and wraps at
+$WINDOW\_LENGTH$. Therefore it counts the current coloumn. The second counter
+named \texttt{ms\_cctr} increments every time the \texttt{ms\_rctr} wrappes
+around and counts up to $IMAGE\_WIDTH$. From these two counters the address of
+the pixel to be sent can be calculated as shown in listing \ref{lst:aaddrcalc}.
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Pixel send address calculation,
+label=lst:aaddrcalc]
+oPxl.data = outPpBuf[AXI_BURST_SIZE*(ms_rctr++) + ms_cctr];\end{lstlisting}
+\end{minipage}
+
+Receiving a pixel from the Wallis core is simply storing the pixel at the next
+memory location of the
+output buffer. Listing \ref{lst:runinstream} shows the receiveing of processed
+pixels.
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Pixel read store,
+label=lst:runinstream]
+iPxl = inData.read();
+out_mem[sm_ctr++] = (uint8_t)iPxl.data;\end{lstlisting}
+\end{minipage}
+
+Everytime a pixel is read or written a corresponding counter is incremented.
+After both counter hit their compare value, the stream state is exited and the
+data is copied back to memory.
 
 \subsubsection*{Hurdles}
-
-\subsubsection*{Conclusion}
 \todo[inline]{ILA measurement showing slow output pixels}
+The C code was written in little time. With less than 300 lines of code its a
+very simple program. The C and Co-simulation yielded no errors but the
+implemented core together with the Wallis filter did not work as expected.
+Thanks to the integrated logic analyzer the signals connecting the controller
+and Wallis core could be inspected. Soon it was discovered that the controller
+only output one pixel and then stopped. It was discovered that this was due to
+the fact that a \texttt{read()} operation on a AXI-Stream in Vivado HLS is
+blocking, meaning that the synthesis tool implements the code in a  manner that
+if no data is
+valid on the stream, the code will wait until there is data on the stream. This
+led to the code waiting for an input byte and no output was generated. This
+issue was fixed by wrapping the read access with a query weather the input
+stream holds data. Listing \ref{lst:runinstream2} shows the adjusted pixel read.
+The same applied to the sending of data. It is first checked wheather the output
+stream is not full before sending new data.
 
-\subsubsection*{IF-Statement} \label{ch:data:if}
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle, caption=Pixel read store with query,
+label=lst:runinstream2]
+if(!inData.empty()) {
+    iPxl = inData.read();
+    out_mem[sm_ctr++] = (uint8_t)iPxl.data;
+}\end{lstlisting}
+\end{minipage}
+
+\clearpage
+\subsubsection*{Conclusion}
+To conclude the findings using a Vivado HLS based approach, the thesis that
+with little effort a working solution can be produced is confirmed. The required
+interfaces (AXI4-Master and AXI4-Stream) were implemented with a single line of
+code and the statemachine with a simple switch statement. After
+clearing some hurdles the controller core worked as expected with two drawbacks:
+
+\todo[inline]{How many clock cycles??}
+\vspace{1ex}
+\textbf{1. Throughput:} The controller core outputs data at a rate of one byte
+every N clock cycles. In theory, using a block memory as internal buffer, it
+should be possible to output one byte per clockcycle. This issue could not be
+resolved in a forseeable time. The analysis view of Vivado HLS would give
+indications on what calculation is resulting in a reduced throughput.
+
+\vspace{1ex}
+\textbf{2. Memory layout:} In solution A the image data is stored multiple time
+as already mentioned in chapter \ref{ch:concept}. The data is stored twice in
+the controller core alone: During read in the ping-pong buffer and during write
+in the output buffer. This increases the ressource usgage.
+
+\vspace{1ex}
+These two issues were the motivation to rethink the memory layout and
+functionality of the controller core which led to solution B, a controller
+implemented in VHDL.
+
+% \subsubsection*{IF-Statement} \label{ch:data:if}
 
 % \begin{minipage}{\textwidth}
 % \begin{lstlisting}[style=CStyle, caption=Buffer switching reloading without else statement, label=lst:buf_false]
