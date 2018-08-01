@@ -1,0 +1,52 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    entity/.style={
+        draw,
+        minimum height=1.0cm,
+        minimum width=3cm,
+        fill=white,
+        anchor=north west,
+    },
+]
+    %coordinates
+    \coordinate (cctl)      at (0,4);
+    \coordinate (cmmu)      at (1,2);
+    \coordinate (cfifo)     at (1,0);
+
+
+    %nodes
+
+    \begin{pgfonlayer}{main}
+        % entities
+        \node[entity, label={dc\_control}] (ctl) at (cctl) {};
+        \node[entity, label={dc\_mmu}] (mmu) at (cmmu) {};
+        \node[entity, label={axis\_fifo}] (fifo) at (cfifo) {};
+
+        % % ports
+        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(ctl.180) + (0,0)$) -- ($(ctl.180) + (-2.0,0)$) node[anchor=east] {uft control};
+
+        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(ctl.0) + (0,0)$) -- ($(ctl.0) + (3.0,0)$) node[anchor=west] {wallis control};
+        \path[draw,-{Latex[length=2.5mm]}] ($(mmu.0) + (0,0)$) -- ($(mmu.0) + (2.0,0)$) node[anchor=west] {wallis data in};
+        \path[draw,{Latex[length=2.5mm]}-] ($(mmu.180) + (0,-1/6)$) -- ($(mmu.180) + (-3,-1/6)$) node[anchor=east] {uft rx};
+        \path[draw,-{Latex[length=2.5mm]}] ($(fifo.180) + (0,-1/6)$) -- ($(fifo.180) + (-3,-1/6)$) node[anchor=east] {uft tx};
+        \path[draw,{Latex[length=2.5mm]}-] ($(fifo.0) + (0,0)$) -- ($(fifo.0) + (2,0)$) node[anchor=west] {wallis data out};
+
+
+        % % Interconnects
+        \path[draw,-{Latex[length=2.5mm]}] ($(ctl.270) + (-1.3,0)$) |- ($(fifo.180) + (0,1/6)$) node[anchor=east] {};
+        \path[draw,-{Latex[length=2.5mm]}] ($(ctl.270) + (-1.1,0)$) |- ($(mmu.180) + (0,1/6)$) node[anchor=east] {};
+        
+
+    \end{pgfonlayer}
+
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Board box
+    \begin{pgfonlayer}{background}
+        \node [draw, fill=gray!40, inner sep=15, fit={(ctl) (mmu) (fifo)}, label=dc\_top] (dctop) {};
+    \end{pgfonlayer} 
+
+\end{tikzpicture}

@@ -1,0 +1,52 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}
+        
+        % % Write path
+        \path[draw={rgb:red,1;green,2;blue,3},-{Latex[length=5mm]},line width=1.0mm] (0.5,4.5)  -- (7.5,4.5);
+        \path[draw={rgb:red,3;green,1;blue,2},-{Latex[length=5mm]},line width=1.0mm] (8.5,4.5)  -- (15.5,4.5);
+        
+        % % Text
+        % \node[] (write) at (-2,5) {Write};
+
+        % Braces
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (17.5,5) -- (17.5,0) node [black,midway,xshift=0.5cm,anchor=west] {Window length};
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-0pt,yshift=0pt] (8,-0.5) -- (0,-0.5) node [black,midway,yshift=-0.5cm,anchor=north] {AXI burst length};
+        
+        % Center pixel
+        \draw[black,line width=0.5mm] (2,2) rectangle (3,3);
+        % Window size
+        \draw[black,line width=0.5mm] (0,0) rectangle (5,5);
+        % Buffer A
+        \draw[draw={rgb:red,1;green,2;blue,3},line width=1mm] (-0.05,-0.05) rectangle (7.95,5.05);
+        % Buffer B
+        \draw[draw={rgb:red,3;green,1;blue,2},line width=1mm] (8.05,-0.05) rectangle (16.05,5.05);
+        % Axis
+        \foreach \x in {0,1,2,3,4}
+            \node[anchor=north] at ($(-0.5,5)-(0,\x)$)  {$\x$};
+        % Axis
+        \foreach \x in {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}
+            \node[anchor=south] at ($(0.1,5.1)+(\x,0)$)  {$\x$};
+
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % Grid
+        \draw[step=1cm,black,thin] (0,0) grid (17,5);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}

@@ -23,7 +23,7 @@ doc:
     - cd doc/report/ && make
   artifacts:
     paths:
-    - doc/report/p5_diip_huetter_stocker.pdf
+    - doc/report/p6_diip_huetter_stocker.pdf
 
 # fpga:
 #   stage: build
