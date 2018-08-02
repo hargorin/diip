@@ -8,10 +8,9 @@ The Wallis Fitler is implemented as an image processing algorithm. First follows
 
 \section{Concept} \label{ch:ip:concept}
 The figure \ref{fig:concept} shows the concept of the C/C++ code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters and the pixel $I(x,y)$ that is to be calculated. The calculated pixel is $I'(x,y)$ \\
-The sequence of the code is shown in the figure \ref{fig:sequence}. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the central pixel of the neighborhood is calculated. To calculate the next pixel, only one new column is read in. This step is the so called iteration.\\
+The sequence of the code is shown in the figure \ref{fig:sequence}. This consists of an initialization and a iteration. During the initialization, the complete neighborhood (here as an example 3x3) is read in and the central pixel of the neighborhood is calculated. To calculate the next pixel, only one new column (gray marked) is read in and the old column (hatched line) can be forgotten. This step is the so called iteration.\\
 The code is row based. This means that each new row of an image have the initialization procedure.
 
-\todo[inline]{tikz mit dem Konzept und der Sequenz (Init and Iter)}
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
@@ -24,7 +23,7 @@ The code is row based. This means that each new row of an image have the initial
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-        %\input{images/image_processing/concept.tikz}
+        \input{images/image_processing/init_iter.tikz}
     \end{adjustbox}
     \caption{Sequence of the code with initialization and iteration}
     \label{fig:sequence}
@@ -182,7 +181,7 @@ Finally, the sum of the pixels is divided by $1/N$ where N is 441. For the varia
 
 \begin{figure}[tb!]
     \centering
-    \begin{adjustbox}{max width=\textwidth}
+    \begin{adjustbox}{max width=\textwidth, keepaspectratio}
         \input{images/image_processing/mean_var_vhdl.tikz}
     \end{adjustbox}
     \caption{Concept of the mean and variance implementation in VHDL}
@@ -191,7 +190,7 @@ Finally, the sum of the pixels is divided by $1/N$ where N is 441. For the varia
 
 \subsubsection*{Wallis Algorithm}
 Block diagram \ref{fig:wallis_vhdl} is based on the equations of the Wallis algorithm \ref{eq:wallis_filter}. \\
-The pixel to be calculated is connected to the IP core via AXI4-Stream. The remaining parameters are connected to the AXI4-Lite \todo{AXI4-Lite korrekt?} interface. \\
+The pixel to be calculated is connected to the IP core via AXI4-Stream. The constant parameters are connected to the \texttt{controller} and are sent from the computer via user register. \\
 The division is solved with the \texttt{Divider Generator}. This is an IP core of Xilinx that can be divided. Once the pixel is calculated, it is sent to the controller via AXI4-Stream.
 
 \begin{figure}[tb!]
