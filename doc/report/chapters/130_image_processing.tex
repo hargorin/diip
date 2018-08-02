@@ -79,7 +79,7 @@ var = sum_Pixel2 / WIN_SIZE - (mean * mean);
 \end{minipage}
 
 
-\subsection{Division}
+\subsection{Division} \label{ch:hls:div}
 This section explains how the division of the equation \ref{eq:wallis_filter} for the Wallis filter is implemented. It is known that divisions in the FPGA take a long time and also require a lot of resources. Therefore the division will be examined in detail to optimize the code for throughput. \\
 First, I would like to comment on the accuracy of the division. Because resources can already be saved here. As discussed in chapter \ref{ch:ap}, a lot of resources can be saved with the accuracy and when apufixed is used.
 Finally, the calculated Wallis pixel is rounded to an integer between 0 - 255. This means that the intermediate results do not have to be infinitely accurate. With Matlab and the simulation of the C/C++ code in Viviado HLS, this hypothesis was tested and the accuracy of the data types adjusted. The data types ap\_[u]int and ap\_[u]fixed used instead of floating point. The size of the data types can be found in table \ref{tab:datatypes}. 
@@ -175,7 +175,10 @@ Chapter \ref{ch:concept_vhdl} contains the concept of the VHDL code by using a b
 This chapter presents the concept of the mean and the variance, as well as the Wallis filter. They are shown as a block diagram and are briefly explained.
 
 \subsubsection*{Mean \& Variance}
-
+Block diagram \ref{fig:mean_var_vhdl} is based on the two equations of the mean \ref{eq:mean} and the varince \ref{eq:var}. \\
+The pixel data is sent as 8 bit AXI4-Stream into the IP core. The data is received from the \texttt{dir\_shift\_reg} block. This block is used for initialization and iteration sequence, which is shown in Figure \ref{fig:sequence}. All pixels are passed directly to the plus output and through a FIFO of a space of 441 pixels. This FIFO is used to subtract the oldest pixels from the sum of the pixels, as shown in figure \ref{fig:sequence}. Therefore, this path goes to the minus output. The number 441 comes from the neighborhood which is $21 \cdot 21$. \\
+In the block \texttt{sum\_diff} the two outputs of the block \texttt{dir\_shift\_reg} are subtracted from each other and the result would be added in a sequence of 441 cycles. In the initialization sequence, the minus output is zero and the pixels are only added. This also means that a correct result s only obtained after 441 clock cycles and then still 21 clock cycles again if the IP core is in the iteration sequence. \\
+Finally, the sum of the pixels is divided by $1/N$ where N is 441. For the variance, the square mean is subtracted. The mean and the variance are passed to the Wallis Filter.
 
 \begin{figure}[tb!]
     \centering
@@ -187,6 +190,10 @@ This chapter presents the concept of the mean and the variance, as well as the W
 \end{figure}
 
 \subsubsection*{Wallis Algorithm}
+Block diagram \ref{fig:wallis_vhdl} is based on the equations of the Wallis algorithm \ref{eq:wallis_filter}. \\
+The pixel to be calculated is connected to the IP core via AXI4-Stream. The remaining parameters are connected to the AXI4-Lite \todo{AXI4-Lite korrekt?} interface. \\
+The division is solved with the \texttt{Divider Generator}. This is an IP core of Xilinx that can be divided. Once the pixel is calculated, it is sent to the controller via AXI4-Stream.
+
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
@@ -195,3 +202,18 @@ This chapter presents the concept of the mean and the variance, as well as the W
     \caption{Concept of the Wallis filter implementation in VHDL}
     \label{fig:wallis_vhdl}
 \end{figure}
+
+\subsection{Hurdles} \label{ch:ip:hurdles_vhdl}
+This chapter is about the hurdles in programming with VHDL and the two implementation of the mean and the variance, as well as the Wallis algorithm. The divisions and the storage of numbers <1 play a role here.
+
+\subsubsection*{Mean \& Variance}
+A division exists in the calculation of the mean and the variance. As already mentioned in chapter \ref{ch:hls:div}, a division in an FPGA is a complex task. \\
+This division is relatively easy to solve. As can be seen from the equation of the two calculations (\ref{eq:mean} \& \ref{eq:var}), the divisor is constant. This gives the possibility to calculate $1/N$ in advance and to store the obtained value as a constant in the FPGA. This results in a multiplication with two integers in the FPGA. \\
+Calculated $1/441$ results in $\approx 0.00226757$. This number is converted to binary and results in $\approx 0.0000000000100100101001001101$. The following number is stored as a constant $100101001001001101$. Note that 8 decimal digits have been removed. This must be observed with the following calculations, because the decimal place can change with each calculation! \\
+Since the division results in a multiplication of two integers, this can be processed in one clock cycle.
+
+
+\subsubsection*{Wallis Algorithm}
+In the Wallis algorithm it also has a division. In this case, however, it is not possible to simplify them because the numerator and denumerator change with each pixel. \\
+Xilinx has an IP core which solves divisions. It is called \texttt{Divider Generator} \cite{divider}. The \texttt{Divider Generator} contains three different implementations of divisions (LUTMult, Radix-2, High Radix). These three divisions are distinguished by resource consumption, latency and throughput. The numerator and denumerator can be passed to the \texttt{Divider Generator} via AXI4-Stream. The result is again sent via AXI4-Stream. \\
+The decision was made to implement the High-Radix. Due to the size of the dividend the LUTMult was omitted and because of the latency the implementation of the Radix-2. The latency of the divider should not exceed 21 clock cycles, because this is in the time of the iteration sequence and there is no delay in the calculation of the pixels. This could be fulfilled by the implementation of the High-Radix. The latency of the calculation can be influenced during implementation \cite{divider}.
