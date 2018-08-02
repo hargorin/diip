@@ -11,7 +11,7 @@
 * [x] Graphic for memory layout solution A
 * [x] dc top block design
 * [x] simple FiFo overview
-* [ ] Graphic for memory layout solution B
+* [x] Graphic for memory layout solution B
 
 ### Code to correct
 * [ ] Change all row_* pointers in dc_mmu to col* pointer which would make sense
