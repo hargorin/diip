@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
     printf("listening on %d\n", port);
 
     // open file for sending
-    FILE *fp = fopen( fname, "w" );
+    FILE *fp = fopen( fname, "wb" );
     if(fp == 0)
     {
         printf("Error: File not found\n");

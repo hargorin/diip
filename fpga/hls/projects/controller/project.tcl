@@ -7,6 +7,7 @@
 set proj_top_function controller_top
 # Set the solution to be used
 set proj_top_solution "default_solution"
+set proj_top_solution_directive "directives.tcl"
 
 # Set the clock period in [ns]
 set proj_clk_period 8
@@ -17,6 +18,6 @@ set proj_part_name "xc7a200tfbg676-2"
 # Settings of IP generation
 set proj_vendor "ime"
 set proj_library "diip"
-set proj_version "0.2" 
+set proj_version "0.4" 
 set proj_desc "diip Controller" 
 set proj_display_name "diip_controller"

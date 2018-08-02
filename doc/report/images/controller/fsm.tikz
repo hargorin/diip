@@ -1,0 +1,34 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm,
+                    semithick]
+
+    \tikzstyle{every state}=[fill=white,draw=black,text=black,minimum width=1cm]
+    
+    % states
+    \node[initial,state] (A)                    {INIT};
+    \node[state]         (B) [right of=A]       {IDLE};
+    \node[state]         (C) [above right of=B] {READ};
+    \node[state]         (D) [right of=C]       {STREAM};
+    \node[state]         (E) [below right of=D]       {WRITE};
+    \node[state, align=center]         (F) [below left of=E]       {WAIT\_TO\_ \\ SEND};
+    \node[state]         (G) [left of=F]       {SEND};
+
+
+    % path
+    \path   (A) edge              node {} (B)
+            (B) edge              node {} (C)
+            (C) edge              node {} (D)
+            (D) edge              node {} (E)
+            (E) edge              node {} (F)
+            (F) edge              node {} (G)
+            (G) edge              node {} (B);
+    \begin{pgfonlayer}{main}
+
+    \end{pgfonlayer}
+
+    \begin{pgfonlayer}{foreground}
+    
+    \end{pgfonlayer} 
+
+
+\end{tikzpicture}

@@ -27,6 +27,8 @@ ghdl --gen-makefile --ieee=synopsys -fexplicit $TOP > Makefile
 
 
 sed '8s/^/GHDLRUNFLAGS=--vcd='$TOP'.vcd --wave='$TOP'.ghw --ieee-asserts=disable-at-0 /' Makefile > Makefile_
+#without vcd and ghw files
+#sed '8s/^/GHDLRUNFLAGS=--ieee-asserts=disable-at-0 /' Makefile > Makefile_
 mv Makefile_ Makefile
 sed 's/^GHDLFLAGS=.*/GHDLFLAGS= --ieee=synopsys -fexplicit/g' Makefile > Makefile_
 mv Makefile_ Makefile

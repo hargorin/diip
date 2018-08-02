@@ -1,0 +1,49 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Mon Jul 23 09:18:37 2018
+[*]
+[dumpfile] "/home/jan/git/diip/fpga/hlx/build/ghdl/dir_shift_reg_tb.ghw"
+[dumpfile_mtime] "Mon Jul 23 09:17:39 2018"
+[dumpfile_size] 2145
+[savefile] "/home/jan/git/diip/fpga/hlx/simulation/dir_shift_reg_tb.gtkw"
+[timestart] 0
+[size] 1752 600
+[pos] -1 -1
+*-26.671120 418800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.dir_shift_reg_tb.
+[treeopen] top.dir_shift_reg_tb.dut.
+[sst_width] 255
+[signals_width] 201
+[sst_expanded] 1
+[sst_vpaned_height] 269
+@28
+top.dir_shift_reg_tb.clk
+@29
+top.dir_shift_reg_tb.rst_n
+@28
+top.dir_shift_reg_tb.clear
+@200
+-
+@28
+top.dir_shift_reg_tb.en
+@24
+#{top.dir_shift_reg_tb.datain[7:0]} top.dir_shift_reg_tb.datain[7] top.dir_shift_reg_tb.datain[6] top.dir_shift_reg_tb.datain[5] top.dir_shift_reg_tb.datain[4] top.dir_shift_reg_tb.datain[3] top.dir_shift_reg_tb.datain[2] top.dir_shift_reg_tb.datain[1] top.dir_shift_reg_tb.datain[0]
+@200
+-
+@28
+top.dir_shift_reg_tb.dut.fifo_init
+top.dir_shift_reg_tb.dut.ctr
+@200
+-
+@28
+top.dir_shift_reg_tb.dut.valid
+top.dir_shift_reg_tb.dut.c_simple_fifo.writeen
+top.dir_shift_reg_tb.dut.c_simple_fifo.readen
+@24
+#{top.dir_shift_reg_tb.dataoutp[7:0]} top.dir_shift_reg_tb.dataoutp[7] top.dir_shift_reg_tb.dataoutp[6] top.dir_shift_reg_tb.dataoutp[5] top.dir_shift_reg_tb.dataoutp[4] top.dir_shift_reg_tb.dataoutp[3] top.dir_shift_reg_tb.dataoutp[2] top.dir_shift_reg_tb.dataoutp[1] top.dir_shift_reg_tb.dataoutp[0]
+#{top.dir_shift_reg_tb.dataoutm[7:0]} top.dir_shift_reg_tb.dataoutm[7] top.dir_shift_reg_tb.dataoutm[6] top.dir_shift_reg_tb.dataoutm[5] top.dir_shift_reg_tb.dataoutm[4] top.dir_shift_reg_tb.dataoutm[3] top.dir_shift_reg_tb.dataoutm[2] top.dir_shift_reg_tb.dataoutm[1] top.dir_shift_reg_tb.dataoutm[0]
+@200
+-
+[pattern_trace] 1
+[pattern_trace] 0

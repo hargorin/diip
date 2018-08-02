@@ -1,0 +1,73 @@
+[*]
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Thu Jul 19 14:10:00 2018
+[*]
+[dumpfile] "/home/jan/git/diip/fpga/hlx/build/ghdl/wallis_filter_tb.ghw"
+[dumpfile_mtime] "Thu Jul 19 11:49:10 2018"
+[dumpfile_size] 5414
+[savefile] "/home/jan/git/diip/fpga/hlx/simulation/wallis_filter_tb.gtkw"
+[timestart] 278300000
+[size] 1864 750
+[pos] -1 -1
+*-25.333269 341500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.wallis_filter_tb.
+[treeopen] top.wallis_filter_tb.dut.
+[sst_width] 268
+[signals_width] 324
+[sst_expanded] 1
+[sst_vpaned_height] 412
+@28
+top.wallis_filter_tb.clk
+top.wallis_filter_tb.rst_n
+top.wallis_filter_tb.en
+@200
+-
+-Input
+@24
+#{top.wallis_filter_tb.pixel[7:0]} top.wallis_filter_tb.pixel[7] top.wallis_filter_tb.pixel[6] top.wallis_filter_tb.pixel[5] top.wallis_filter_tb.pixel[4] top.wallis_filter_tb.pixel[3] top.wallis_filter_tb.pixel[2] top.wallis_filter_tb.pixel[1] top.wallis_filter_tb.pixel[0]
+#{top.wallis_filter_tb.n_mean[7:0]} top.wallis_filter_tb.n_mean[7] top.wallis_filter_tb.n_mean[6] top.wallis_filter_tb.n_mean[5] top.wallis_filter_tb.n_mean[4] top.wallis_filter_tb.n_mean[3] top.wallis_filter_tb.n_mean[2] top.wallis_filter_tb.n_mean[1] top.wallis_filter_tb.n_mean[0]
+#{top.wallis_filter_tb.n_var[13:0]} top.wallis_filter_tb.n_var[13] top.wallis_filter_tb.n_var[12] top.wallis_filter_tb.n_var[11] top.wallis_filter_tb.n_var[10] top.wallis_filter_tb.n_var[9] top.wallis_filter_tb.n_var[8] top.wallis_filter_tb.n_var[7] top.wallis_filter_tb.n_var[6] top.wallis_filter_tb.n_var[5] top.wallis_filter_tb.n_var[4] top.wallis_filter_tb.n_var[3] top.wallis_filter_tb.n_var[2] top.wallis_filter_tb.n_var[1] top.wallis_filter_tb.n_var[0]
+@200
+-
+-Constant
+@24
+#{top.wallis_filter_tb.dut.par_c_gvar[19:0]} top.wallis_filter_tb.dut.par_c_gvar[19] top.wallis_filter_tb.dut.par_c_gvar[18] top.wallis_filter_tb.dut.par_c_gvar[17] top.wallis_filter_tb.dut.par_c_gvar[16] top.wallis_filter_tb.dut.par_c_gvar[15] top.wallis_filter_tb.dut.par_c_gvar[14] top.wallis_filter_tb.dut.par_c_gvar[13] top.wallis_filter_tb.dut.par_c_gvar[12] top.wallis_filter_tb.dut.par_c_gvar[11] top.wallis_filter_tb.dut.par_c_gvar[10] top.wallis_filter_tb.dut.par_c_gvar[9] top.wallis_filter_tb.dut.par_c_gvar[8] top.wallis_filter_tb.dut.par_c_gvar[7] top.wallis_filter_tb.dut.par_c_gvar[6] top.wallis_filter_tb.dut.par_c_gvar[5] top.wallis_filter_tb.dut.par_c_gvar[4] top.wallis_filter_tb.dut.par_c_gvar[3] top.wallis_filter_tb.dut.par_c_gvar[2] top.wallis_filter_tb.dut.par_c_gvar[1] top.wallis_filter_tb.dut.par_c_gvar[0]
+#{top.wallis_filter_tb.dut.par_ci_gvar[19:0]} top.wallis_filter_tb.dut.par_ci_gvar[19] top.wallis_filter_tb.dut.par_ci_gvar[18] top.wallis_filter_tb.dut.par_ci_gvar[17] top.wallis_filter_tb.dut.par_ci_gvar[16] top.wallis_filter_tb.dut.par_ci_gvar[15] top.wallis_filter_tb.dut.par_ci_gvar[14] top.wallis_filter_tb.dut.par_ci_gvar[13] top.wallis_filter_tb.dut.par_ci_gvar[12] top.wallis_filter_tb.dut.par_ci_gvar[11] top.wallis_filter_tb.dut.par_ci_gvar[10] top.wallis_filter_tb.dut.par_ci_gvar[9] top.wallis_filter_tb.dut.par_ci_gvar[8] top.wallis_filter_tb.dut.par_ci_gvar[7] top.wallis_filter_tb.dut.par_ci_gvar[6] top.wallis_filter_tb.dut.par_ci_gvar[5] top.wallis_filter_tb.dut.par_ci_gvar[4] top.wallis_filter_tb.dut.par_ci_gvar[3] top.wallis_filter_tb.dut.par_ci_gvar[2] top.wallis_filter_tb.dut.par_ci_gvar[1] top.wallis_filter_tb.dut.par_ci_gvar[0]
+#{top.wallis_filter_tb.dut.par_c[5:0]} top.wallis_filter_tb.dut.par_c[5] top.wallis_filter_tb.dut.par_c[4] top.wallis_filter_tb.dut.par_c[3] top.wallis_filter_tb.dut.par_c[2] top.wallis_filter_tb.dut.par_c[1] top.wallis_filter_tb.dut.par_c[0]
+#{top.wallis_filter_tb.dut.par_b_gmean[13:0]} top.wallis_filter_tb.dut.par_b_gmean[13] top.wallis_filter_tb.dut.par_b_gmean[12] top.wallis_filter_tb.dut.par_b_gmean[11] top.wallis_filter_tb.dut.par_b_gmean[10] top.wallis_filter_tb.dut.par_b_gmean[9] top.wallis_filter_tb.dut.par_b_gmean[8] top.wallis_filter_tb.dut.par_b_gmean[7] top.wallis_filter_tb.dut.par_b_gmean[6] top.wallis_filter_tb.dut.par_b_gmean[5] top.wallis_filter_tb.dut.par_b_gmean[4] top.wallis_filter_tb.dut.par_b_gmean[3] top.wallis_filter_tb.dut.par_b_gmean[2] top.wallis_filter_tb.dut.par_b_gmean[1] top.wallis_filter_tb.dut.par_b_gmean[0]
+#{top.wallis_filter_tb.dut.par_bi[5:0]} top.wallis_filter_tb.dut.par_bi[5] top.wallis_filter_tb.dut.par_bi[4] top.wallis_filter_tb.dut.par_bi[3] top.wallis_filter_tb.dut.par_bi[2] top.wallis_filter_tb.dut.par_bi[1] top.wallis_filter_tb.dut.par_bi[0]
+@200
+-
+-Signals
+@420
+#{top.wallis_filter_tb.dut.pi_nmean[8:0]} top.wallis_filter_tb.dut.pi_nmean[8] top.wallis_filter_tb.dut.pi_nmean[7] top.wallis_filter_tb.dut.pi_nmean[6] top.wallis_filter_tb.dut.pi_nmean[5] top.wallis_filter_tb.dut.pi_nmean[4] top.wallis_filter_tb.dut.pi_nmean[3] top.wallis_filter_tb.dut.pi_nmean[2] top.wallis_filter_tb.dut.pi_nmean[1] top.wallis_filter_tb.dut.pi_nmean[0]
+#{top.wallis_filter_tb.dut.num[29:0]} top.wallis_filter_tb.dut.num[29] top.wallis_filter_tb.dut.num[28] top.wallis_filter_tb.dut.num[27] top.wallis_filter_tb.dut.num[26] top.wallis_filter_tb.dut.num[25] top.wallis_filter_tb.dut.num[24] top.wallis_filter_tb.dut.num[23] top.wallis_filter_tb.dut.num[22] top.wallis_filter_tb.dut.num[21] top.wallis_filter_tb.dut.num[20] top.wallis_filter_tb.dut.num[19] top.wallis_filter_tb.dut.num[18] top.wallis_filter_tb.dut.num[17] top.wallis_filter_tb.dut.num[16] top.wallis_filter_tb.dut.num[15] top.wallis_filter_tb.dut.num[14] top.wallis_filter_tb.dut.num[13] top.wallis_filter_tb.dut.num[12] top.wallis_filter_tb.dut.num[11] top.wallis_filter_tb.dut.num[10] top.wallis_filter_tb.dut.num[9] top.wallis_filter_tb.dut.num[8] top.wallis_filter_tb.dut.num[7] top.wallis_filter_tb.dut.num[6] top.wallis_filter_tb.dut.num[5] top.wallis_filter_tb.dut.num[4] top.wallis_filter_tb.dut.num[3] top.wallis_filter_tb.dut.num[2] top.wallis_filter_tb.dut.num[1] top.wallis_filter_tb.dut.num[0]
+@200
+-
+@420
+#{top.wallis_filter_tb.dut.den[20:0]} top.wallis_filter_tb.dut.den[20] top.wallis_filter_tb.dut.den[19] top.wallis_filter_tb.dut.den[18] top.wallis_filter_tb.dut.den[17] top.wallis_filter_tb.dut.den[16] top.wallis_filter_tb.dut.den[15] top.wallis_filter_tb.dut.den[14] top.wallis_filter_tb.dut.den[13] top.wallis_filter_tb.dut.den[12] top.wallis_filter_tb.dut.den[11] top.wallis_filter_tb.dut.den[10] top.wallis_filter_tb.dut.den[9] top.wallis_filter_tb.dut.den[8] top.wallis_filter_tb.dut.den[7] top.wallis_filter_tb.dut.den[6] top.wallis_filter_tb.dut.den[5] top.wallis_filter_tb.dut.den[4] top.wallis_filter_tb.dut.den[3] top.wallis_filter_tb.dut.den[2] top.wallis_filter_tb.dut.den[1] top.wallis_filter_tb.dut.den[0]
+@200
+-
+@24
+#{top.wallis_filter_tb.dut.add[13:0]} top.wallis_filter_tb.dut.add[13] top.wallis_filter_tb.dut.add[12] top.wallis_filter_tb.dut.add[11] top.wallis_filter_tb.dut.add[10] top.wallis_filter_tb.dut.add[9] top.wallis_filter_tb.dut.add[8] top.wallis_filter_tb.dut.add[7] top.wallis_filter_tb.dut.add[6] top.wallis_filter_tb.dut.add[5] top.wallis_filter_tb.dut.add[4] top.wallis_filter_tb.dut.add[3] top.wallis_filter_tb.dut.add[2] top.wallis_filter_tb.dut.add[1] top.wallis_filter_tb.dut.add[0]
+@200
+-
+@24
+#{top.wallis_filter_tb.dut.wal[29:0]} top.wallis_filter_tb.dut.wal[29] top.wallis_filter_tb.dut.wal[28] top.wallis_filter_tb.dut.wal[27] top.wallis_filter_tb.dut.wal[26] top.wallis_filter_tb.dut.wal[25] top.wallis_filter_tb.dut.wal[24] top.wallis_filter_tb.dut.wal[23] top.wallis_filter_tb.dut.wal[22] top.wallis_filter_tb.dut.wal[21] top.wallis_filter_tb.dut.wal[20] top.wallis_filter_tb.dut.wal[19] top.wallis_filter_tb.dut.wal[18] top.wallis_filter_tb.dut.wal[17] top.wallis_filter_tb.dut.wal[16] top.wallis_filter_tb.dut.wal[15] top.wallis_filter_tb.dut.wal[14] top.wallis_filter_tb.dut.wal[13] top.wallis_filter_tb.dut.wal[12] top.wallis_filter_tb.dut.wal[11] top.wallis_filter_tb.dut.wal[10] top.wallis_filter_tb.dut.wal[9] top.wallis_filter_tb.dut.wal[8] top.wallis_filter_tb.dut.wal[7] top.wallis_filter_tb.dut.wal[6] top.wallis_filter_tb.dut.wal[5] top.wallis_filter_tb.dut.wal[4] top.wallis_filter_tb.dut.wal[3] top.wallis_filter_tb.dut.wal[2] top.wallis_filter_tb.dut.wal[1] top.wallis_filter_tb.dut.wal[0]
+@200
+-
+-Output
+@28
+top.wallis_filter_tb.dut.s_axis_dout_tvalid
+@420
+#{top.wallis_filter_tb.dut.quo[31:0]} top.wallis_filter_tb.dut.quo[31] top.wallis_filter_tb.dut.quo[30] top.wallis_filter_tb.dut.quo[29] top.wallis_filter_tb.dut.quo[28] top.wallis_filter_tb.dut.quo[27] top.wallis_filter_tb.dut.quo[26] top.wallis_filter_tb.dut.quo[25] top.wallis_filter_tb.dut.quo[24] top.wallis_filter_tb.dut.quo[23] top.wallis_filter_tb.dut.quo[22] top.wallis_filter_tb.dut.quo[21] top.wallis_filter_tb.dut.quo[20] top.wallis_filter_tb.dut.quo[19] top.wallis_filter_tb.dut.quo[18] top.wallis_filter_tb.dut.quo[17] top.wallis_filter_tb.dut.quo[16] top.wallis_filter_tb.dut.quo[15] top.wallis_filter_tb.dut.quo[14] top.wallis_filter_tb.dut.quo[13] top.wallis_filter_tb.dut.quo[12] top.wallis_filter_tb.dut.quo[11] top.wallis_filter_tb.dut.quo[10] top.wallis_filter_tb.dut.quo[9] top.wallis_filter_tb.dut.quo[8] top.wallis_filter_tb.dut.quo[7] top.wallis_filter_tb.dut.quo[6] top.wallis_filter_tb.dut.quo[5] top.wallis_filter_tb.dut.quo[4] top.wallis_filter_tb.dut.quo[3] top.wallis_filter_tb.dut.quo[2] top.wallis_filter_tb.dut.quo[1] top.wallis_filter_tb.dut.quo[0]
+#{top.wallis_filter_tb.o_ganz[23:0]} top.wallis_filter_tb.o_ganz[23] top.wallis_filter_tb.o_ganz[22] top.wallis_filter_tb.o_ganz[21] top.wallis_filter_tb.o_ganz[20] top.wallis_filter_tb.o_ganz[19] top.wallis_filter_tb.o_ganz[18] top.wallis_filter_tb.o_ganz[17] top.wallis_filter_tb.o_ganz[16] top.wallis_filter_tb.o_ganz[15] top.wallis_filter_tb.o_ganz[14] top.wallis_filter_tb.o_ganz[13] top.wallis_filter_tb.o_ganz[12] top.wallis_filter_tb.o_ganz[11] top.wallis_filter_tb.o_ganz[10] top.wallis_filter_tb.o_ganz[9] top.wallis_filter_tb.o_ganz[8] top.wallis_filter_tb.o_ganz[7] top.wallis_filter_tb.o_ganz[6] top.wallis_filter_tb.o_ganz[5] top.wallis_filter_tb.o_ganz[4] top.wallis_filter_tb.o_ganz[3] top.wallis_filter_tb.o_ganz[2] top.wallis_filter_tb.o_ganz[1] top.wallis_filter_tb.o_ganz[0]
+@24
+#{top.wallis_filter_tb.o_frac[7:0]} top.wallis_filter_tb.o_frac[7] top.wallis_filter_tb.o_frac[6] top.wallis_filter_tb.o_frac[5] top.wallis_filter_tb.o_frac[4] top.wallis_filter_tb.o_frac[3] top.wallis_filter_tb.o_frac[2] top.wallis_filter_tb.o_frac[1] top.wallis_filter_tb.o_frac[0]
+@29
+top.wallis_filter_tb.dut.valid
+@24
+#{top.wallis_filter_tb.wallis[7:0]} top.wallis_filter_tb.wallis[7] top.wallis_filter_tb.wallis[6] top.wallis_filter_tb.wallis[5] top.wallis_filter_tb.wallis[4] top.wallis_filter_tb.wallis[3] top.wallis_filter_tb.wallis[2] top.wallis_filter_tb.wallis[1] top.wallis_filter_tb.wallis[0]
+[pattern_trace] 1
+[pattern_trace] 0

@@ -8,3 +8,5 @@ infile.dat
 checksum
 *~
 benchmark
+command
+*.a

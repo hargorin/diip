@@ -61,8 +61,14 @@ set_false_path -from [get_ports {speed[1]}]
 set_property PACKAGE_PIN U6 [get_ports update_speed]
 set_property IOSTANDARD LVCMOS15 [get_ports update_speed]
 
-set_property PACKAGE_PIN R26 [get_ports led0]
+set_property PACKAGE_PIN M26 [get_ports led0]
 set_property IOSTANDARD LVCMOS25 [get_ports led0]
+set_property PACKAGE_PIN T24 [get_ports led1]
+set_property IOSTANDARD LVCMOS25 [get_ports led1]
+set_property PACKAGE_PIN T25 [get_ports led2]
+set_property IOSTANDARD LVCMOS25 [get_ports led2]
+set_property PACKAGE_PIN R26 [get_ports led3]
+set_property IOSTANDARD LVCMOS25 [get_ports led3]
 set_property PACKAGE_PIN U5 [get_ports SW4]
 set_property IOSTANDARD LVCMOS15 [get_ports SW4]
 set_property PACKAGE_PIN T5 [get_ports SW5]
@@ -71,7 +77,7 @@ set_property IOSTANDARD LVCMOS15 [get_ports SW5]
 ############################################################
 # IODELAY
 ############################################################
-set_property IODELAY_GROUP tri_mode_ethernet_mac_iodelay_grp [get_cells system_i/temac_support_0/U0/support/idelayctrl_common]
+set_property IODELAY_GROUP tri_mode_ethernet_mac_iodelay_grp [get_cells system_i/temac_support/U0/support/idelayctrl_common]
 
 
 ############################################################
