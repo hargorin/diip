@@ -756,7 +756,7 @@ definition is dissected in table \ref{tab:controllerbports}.
         \\
         \bottomrule
     \end{tabular}
-    \caption{Controller solution B interface ports (Unlisted interfaces
+    \caption{Controller solution B interface ports (unlisted interfaces
     are not used)}
     \label{tab:controllerbports}
 \end{table}
@@ -844,9 +844,10 @@ Now that the mechanics of a FiFo are dissected, the memory layout of the
 MMU can be illustrated. Figure \ref{fig:solbmemlayout} shows the memory layout.
 At the core of the memory management unit is a two
 dimensional array (it is implemented as a simple array in VHDL for better
-synthesis). Every line represents a input image line and every coloumn a input
+synthesis results). Every line represents an input image line and every coloumn an
+input
 image coloumn. The idea is to have a full block RAM for each line which is why
-from now on a line is called cache. The input image data is received line after
+from now on a line is called cache. The input image data is received line by
 line. Each input line is stored in a cache. If at least $WINDOW\_LENGTH$ lines
 are received, there is enough data in the memory to start a Wallis operation for
 one input line. If one input line is processed the Wallis neighbourhood
@@ -858,24 +859,6 @@ simple FiFo is that the distance between the read and write pointer may not
 become zero because the Wallis filter requires $WINDOW\_LENGTH$ lines to process
 data.
 
-The write mechanism consists of two pointers. The \texttt{cache\_w\_ptr} pointer
-points to the current cache in which the input line is stored. The 
-\texttt{col\_w\_ptr} points to the location in the cache of the current pixel to
-be stored. \texttt{col\_w\_ptr} is incremented every pixel and wraps at
-$IMAGE\_WIDTH$. \texttt{cache\_w\_ptr} is incremented if an image line is
-received and wraps at $CACHE\_N\_LINES$.
-
-The read mechanism consists of a total of four pointer. The \texttt{col\_r\_ptr}
-pointer points to the current image coloumn that is sent to the Wallis filter.
-It is incremented after $WINDOW\_LENGTH$ pixels are sent and wraps at
-$IMAGE\_WIDTH$. \texttt{cache\_r\_base} points to the top most cache of image
-data and \texttt{cache\_r\_tip} to the bottom most. They are both incremented
-after a image line is processed and wrap at $CACHE\_N\_LINES$. The 
-\texttt{cache\_r\_ptr} pointer points to the current cache from which the pixel
-is read and increments if a pixel is sent to the Wallis core. It wraps to zero
-if it reaches $CACHE\_N\_LINES$ and wraps to \texttt{cache\_r\_base} if it
-reaches \texttt{cache\_r\_tip}. 
-
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
@@ -885,13 +868,135 @@ reaches \texttt{cache\_r\_tip}.
     \label{fig:solbmemlayout}
 \end{figure}
 
+The write mechanism consists of two pointers. The \texttt{cache\_w\_ptr} pointer
+points to the current cache in which the input line is stored. The 
+\texttt{col\_w\_ptr} points to the location in the cache of the current pixel to
+be stored. \texttt{col\_w\_ptr} is incremented every pixel and set to zero at
+the start of a new line. \texttt{cache\_w\_ptr} is incremented if an image line
+is received and wraps at $CACHE\_N\_LINES$.
 
+The read mechanism consists of a total of four pointers. The \texttt{col\_r\_ptr}
+pointer points to the current image coloumn that is sent to the Wallis filter.
+It is incremented after $WINDOW\_LENGTH$ pixels are sent and set to zero at
+the beginning of a new line. \texttt{cache\_r\_base} points to the top most
+cache of image
+data and \texttt{cache\_r\_tip} to the bottom most. They are both incremented
+after an image line is processed and wrap at $CACHE\_N\_LINES$. The 
+\texttt{cache\_r\_ptr} pointer points to the current cache from which the pixel
+is read and increments if a pixel is sent to the Wallis core. It wraps to zero
+if it reaches $CACHE\_N\_LINES$ and wraps to \texttt{cache\_r\_base} if it
+reaches \texttt{cache\_r\_tip}. 
+
+With the pointer mechanics dissected, new conditions for read and write can be
+concluded. Listing \ref{lst:mmureadcond} shows the read condition. The
+difference to the simple FiFo condition is that if not looped the write pointer
+must be greater than the read tip. This ensures that always enough data is in
+memory for a Wallis operation.
+
+\begin{minipage}{\linewidth}
+    \begin{lstlisting}[
+        style=VHDLStyle, 
+        caption=MMU read condition, 
+        label=lst:mmureadcond
+        ]
+    if ((looped = true) or (cache_w_ptr > cache_r_tip)) then
+        DataOut <= Memory(BRAM_SIZE*cache_r_ptr+row_r_ptr);
+    end if;\end{lstlisting}
+\end{minipage}
+
+Listing \ref{lst:mmuwritecond} shows the write condition. It only differs in
+that the write pointer may not be equal to the read base instead of the read
+pointer as in the case of the simple FiFo.
+
+\begin{minipage}{\linewidth}
+    \begin{lstlisting}[
+        style=VHDLStyle, 
+        caption=MMU write condition, 
+        label=lst:mmuwritecond
+        ]
+    if ((looped = false) or (cache_w_ptr /= cache_r_base)) then
+        Memory(BRAM_SIZE*cache_w_ptr+row_w_ptr) := DataIn;
+    end if;\end{lstlisting}
+\end{minipage}
+
+The looped flag is set if \texttt{cache\_w\_ptr} wraps to zero and is cleared if
+\texttt{cache\_r\_tip} wraps to zero.
+
+These read and write conditions are used to access the memory and to drive the
+side channels of the AXI4-Stream (\texttt{tready} and \texttt{tvalid}). The 
+\texttt{tlast} signal is used to indicate the end of a line. Therefore the MMU
+can operate with an input and output stream and information about the image
+width and window length.
+
+The VHDL code for the memory management unit is mainly composed of processes.
+Each pointer is incremented and wrapped in its own process. The memory read and
+write accesses are described in processes as well. Finally there are two more
+processes: \texttt{p\_out\_pix\_ctr} counts the number of pixels sent and
+\texttt{p\_out\_pix\_m1} calculates the number of output pixels to send.
 
 
 
 \subsubsection*{Hurdles}
+After figuering out how to increment and wrap which pointer and when to allow
+reads and writes, the memory management unit worked well in simulation. The
+\texttt{dc\_control} and \texttt{axis\_fifo} block were quickly implemented. The
+core was tested using VHDL testbenches. A big advantage was that the controller
+and wallis core could be simulated before being implemented on the FPGA which
+made fault finding much faster. With this new stateless approach timing issues
+began to arise. 
+
+Address calculations had to be done within one clock cycle. While Vivado HLS
+optimizes variables and datapaths, this has to be done manually in a VHDL based
+approach. For example on critical path was the calculation of 
+\texttt{n\_out\_pix\_m1}. This signal is required to compare the output pixel
+counter and to signal the last pixel sent to the Wallis core. The calculation is
+shown in equation \ref{eq:noutpix}.
+
+\begin{equation}
+    n_{out\_pix\_m1} = win\_len*img\_width - 1
+    \label{eq:noutpix}
+\end{equation}
+
+$win\_len$ and $img\_width$ were chosen of a size that the multiplication could
+be implemented in a DSP block. The subtraction of one is also done in the same
+DSP block. Synthesis results showed that this DSP calculation required
+approximately 3.3ns
+which is almost already half of the targeted clock period of 8ns. Together with
+the datapath and following logic, this resulted in a critical path exceeding
+8ns. To fix this,
+this calculation had to be done in a clocked process so that a latch is
+inferred. Such timing issues had to be fixed for several signals.
+
 % timing
 % 
 \subsubsection*{Conclusion}
+Because the requirements were already dissected from solution A there was only a
+new memory layout to be realised for solution B. With the main difference being
+that now the behaviour was not described in C language but in VHDL. The total
+amount of time spent on the solutions were approximately the same. What had
+changed is on what the time was spent. While writig the code required the same
+amount of time, debugging and fault finding differed. The HLS solution required
+time in understanding how the synthesis tool translated the C code (referring
+to the AXI4-Stream blocking access problem) while it did not require thoughts on
+timing
+and critical paths. With VHDL these accesses had to be implemented manually and
+worked on first try but some time had to be spent on fixing timing issues.
+
+Performance wise, there is the expected increase in throughtput. Output pixels
+can be sent to the Wallis filter with every clock cycle as soon as there is
+enough image data in the cache. Figure \ref{fig:tracesolb} shows the output data
+stream. 
+
+\begin{figure}[tb!]
+    \centering
+    % \includegraphics[width=0.6\textwidth]{images/controller/tracesolb.png}
+    \caption{Solution B output data stream}
+    \label{fig:tracesolb}
+\end{figure}
+
+Another advantage of this solution is that the Wallis and controller components
+could be simulated together before implementation. This was not possible with
+the HLS based approach. Most of the issues could be resolved during simulation.
+
 
 
