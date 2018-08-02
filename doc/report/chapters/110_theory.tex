@@ -6,7 +6,7 @@
 % -----------------------------------------------------------------------------
 \chapter{Theoretical Background} \label{chapt:theoreticalback}
 % -----------------------------------------------------------------------------
-This chapter provides the basics of the project. On the one hand, it is about image processing and filtering as well as communication via Ethernet. What kind of image operations are possible and the Wallis filter are explained in the chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via Ethernet is in the chapter \ref{chapt:theory:ethernet}.
+This chapter provides the theory required for the project. On the one hand, it is about image processing and filtering as well as communication via Ethernet. What kind of image operations are possible and the Wallis filter are explained in the chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via Ethernet is provided in the chapter \ref{chapt:theory:ethernet}.
 
 
 % =============================================================================
@@ -349,3 +349,126 @@ For this purpose there is the library \texttt{ap\_fixed.h} and must be included.
 ap_ufixed<11,3> fp_var;
 \end{lstlisting}
 \end{minipage}
+
+% =============================================================================
+%
+%                          AXI4 Interfaces
+%
+% =============================================================================
+\section{AXI4 Interfaces} \label{chapt:theory:axi4interfaces}
+Advanced eXtensible Interface or AXI is part of the Advanced Microcontroller Bus
+Architecture (AMBA\textregistered) introduced by ARM\textregistered \cite{axispecs}. 
+It is intended for the interconnection of functional blocks inside a System on
+Chip or FPGA. IP cores offered by Xilinx implement these interfaces. Two types
+of AXI interfaces are destinguished: Memory mapped and stream. Memory mapped
+interfaces intend the bidirectional access to data stored in registers while
+streaming interfaces offer a unidirectional dataflow \cite{axistreamspecs}.
+
+\subsection{AXI4} \label{chapt:theory:axi4}
+The AXI4 interface is a memory mapped interface and consists of five transaction
+channels as shown in table
+\ref{tab:axi4transchan}. 
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ l  l}
+        \toprule
+        Transaction Channel & Use \\
+        \midrule
+        Write address channel & Generate write requests to slave \\
+        Write data channel & Write data to be sent to the slave \\
+        Write response channel & Write response from slave to master \\
+        Read address channel & Generate read requests to slave \\
+        Read data channel & Read data from slave to master \\
+        \bottomrule
+    \end{tabular}
+    \caption{AXI4 transaction channels}
+    \label{tab:axi4transchan}
+\end{table}
+
+Each channel has its own handshake signals. Handshake signals are used to
+indicate that the sender has valid data and the receiver is ready to accept
+data. Figure \ref{fig:axihandshake} shows the handshake signals. The VALID
+signal is set active if the sender has driven the INFORMATION lines with valid
+data. The receiver indicates with a READY impulse that it has read the
+information. 
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/theory/axi4handshake.png}
+    \caption{VALID before READY handshake \cite{axispecs}}
+    \label{fig:axihandshake}
+\end{figure}
+
+A AXI4 write transaction could run as followed:
+\begin{itemize}
+    \item Master sends address and burst size through write address channel
+    \item Master sends data through write data channel
+    \item Slave responds with status on write response channel
+\end{itemize}
+
+A AXI4 read transaction could run as followed:
+\begin{itemize}
+    \item Master sends read address and burst size through read address channel
+    \item Slave responds with data on read data channel
+\end{itemize}
+
+A burst transacion allows to send or receive a range of data with a single write
+request while a single beat transaction consists of one write request and one
+data word.
+
+\subsection{AXI4-Lite}
+AXI4-Lite is a scaled-down version of AXI4. It allows single beat write and
+reads but no burst transaction. It therefore requires less signals and is suited
+for configuering IP cores and register values. It consists of the same
+transaction channels and handshake signals. AXI4 and AXI4-Lite are compatible
+and can be converted.
+
+\subsection{AXI4-Stream}
+AXI4-Stream is a stream based interfaces. Data is sent in one direction from
+master to slave. It is not address based and features only one transaction
+channel. There is also no burst size limit. There are four required signals as
+shown in table \ref{tab:axi4steramreqsig}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ l  l l}
+        \toprule
+        Signal & Source & Description \\
+        \midrule
+        \texttt{ACLK} & Master & Rising edge sampled clock signal \\
+        \texttt{ARESETn} & Master & Global active low reset signal \\
+        \texttt{TVALID} & Master & indicates that the master is driving a valid transfer
+        \\
+        \texttt{TREADY} & Slave & indicates that the slave can accept a transfer \\
+        \texttt{TDATA[(8n-1):0]} & Master & Data payload \\
+        \bottomrule
+    \end{tabular}
+    \caption{AXI4-Stream required signals}
+    \label{tab:axi4steramreqsig}
+\end{table}
+
+\texttt{TVALID} and \texttt{TREADY} are the handshake signals as described in chapter 
+\ref{chapt:theory:axi4} and illustrated in figure \ref{fig:axihandshake}.
+AXI4-Stream defines further sideband signals, some of which are described in
+table \ref{tab:axi4steramside}.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ l  l l}
+        \toprule
+        Signal & Source & Description \\
+        \midrule
+        \texttt{TLAST} & Master & indicates the boundary of a packet \\
+        \texttt{TDEST[(d-1):0]} & Master & provides routing information for the data stream \\
+        \texttt{TUSER[(u-1):0]} & Master & user defined sideband information \\
+        \bottomrule
+    \end{tabular}
+    \caption{AXI4-Stream sideband signals}
+    \label{tab:axi4steramside}
+\end{table}
+
+In this project the \texttt{TLAST} signal is used frequently to indicate for
+example the end of a file transfer of the communication core or the last pixel
+of an image line.
+
