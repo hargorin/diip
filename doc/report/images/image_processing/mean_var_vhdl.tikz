@@ -50,6 +50,7 @@
     \coordinate (c_square2)     at (12.5,-1.5);
     \coordinate (c_divide0)     at (11,-0.15);
     \coordinate (c_divide1)     at (11,-3.15);
+    \coordinate (c_fifo)        at (1.0,-0.5);
 
     %nodes
 
@@ -63,10 +64,11 @@
         \node[entity_c] (square1) at (c_square1) {$()^2$};
         \node[entity_c] (square2) at (c_square2) {$()^2$};
 
-        \node[entity_c] (divide0) at (c_divide0) {$\frac{1}{441}$};
-        \node[entity_c] (divide1) at (c_divide1) {$\frac{1}{441}$};
+        \node[entity_c] (divide0) at (c_divide0) {$\frac{1}{N}$};
+        \node[entity_c] (divide1) at (c_divide1) {$\frac{1}{N}$};
 
         \node [entity_c, plus] (plus) at (c_plus) {};
+        \node [draw, fill=white, minimum width=0.5cm, minimum height=0.2cm, anchor=north west, align=center] (fifo) at (c_fifo) {\small FIFO};
 
 
         % ports
@@ -75,8 +77,11 @@
         \path[draw,-{Latex[length=2.5mm]}] (plus) -- node[above,xshift=0.34cm,yshift=-0.09cm]{$\sigma_{n}^{2}$} (15,-3.51);
 
         % Interconnects
-        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) node[anchor=east,xshift=0.85cm,yshift=0.18cm] {plus} -- ($(sum0.180) + (0,1/6)$);
-        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) node[anchor=east,xshift=1.184cm,yshift=0.18cm] {minus} -- ($(sum0.180) + (0,-1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,0.15) -- ($(shift.0) + (0,1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,-0.225) -- (fifo.180);
+        \path[draw,-{Latex[length=2.5mm]}] (fifo.0) -| ++(0.4,0.06) -- ($(shift.0) + (0,-1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) node[anchor=west,xshift=0cm,yshift=0.19cm] {plus} -- ($(sum0.180) + (0,1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) node[anchor=west,xshift=0cm,yshift=0.18cm] {minus} -- ($(sum0.180) + (0,-1/6)$);
 
         \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) -| (square1.90);
         \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) -| (square0.90);
@@ -93,6 +98,7 @@
         \path[draw,-{Latex[length=2.5mm]}] (square2.270) -| node[above,xshift=-0.25cm,yshift=-0.71cm] {$-$} (plus.90);
 
         %points
+        \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (0.5,-0.509) {};
         \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (4.359,-0.674) {};
         \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (5.859,-0.344) {};
         \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (12.859,-0.509) {};

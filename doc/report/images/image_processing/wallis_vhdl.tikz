@@ -1,0 +1,119 @@
+% \tikzsetnextfilename{system-overview}
+
+\tikzset{%
+  do path picture/.style={%
+    path picture={%
+      \pgfpointdiff{\pgfpointanchor{path picture bounding box}{south west}}%
+        {\pgfpointanchor{path picture bounding box}{north east}}%
+      \pgfgetlastxy\x\y%
+      \tikzset{x=\x/2,y=\y/2}%
+      #1
+    }
+  },
+  sin wave/.style={do path picture={    
+    \draw [line cap=round] (-3/4,0)
+      sin (-3/8,1/2) cos (0,0) sin (3/8,-1/2) cos (3/4,0);
+  }},
+  cross/.style={do path picture={    
+    \draw [line cap=round] (-1,-1) -- (1,1) (-1,1) -- (1,-1);
+  }},
+  plus/.style={do path picture={    
+    \draw [line cap=round] (-3/4,0) -- (3/4,0) (0,-3/4) -- (0,3/4);
+  }}
+}
+
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    entity/.style={
+        draw,
+        minimum height=3.5cm,
+        minimum width=5.75cm,
+        fill=white,
+        anchor=north west,
+    },
+    entity_c/.style={
+        circle,
+        draw,
+        minimum height=1.0cm,
+        minimum width=1cm,
+        fill=white,
+        anchor=north west,
+    },
+]
+    %coordinates
+    \coordinate (c_num)         at (0,0);
+    \coordinate (c_den)         at (0,-4.5);
+    \coordinate (c_add)         at (0,-9);
+    \coordinate (c_div)         at (9,0);
+    \coordinate (c_plus_num)    at (1.5,-0.5);
+    \coordinate (c_plus_den)    at (3.5,-5);
+    \coordinate (c_plus_add)    at (3.5,-9.5);
+    \coordinate (c_plus)        at (17,-1.39);
+    \coordinate (c_cross_num)   at (3.5,-0.5);
+    \coordinate (c_cross_den)   at (1.5,-5);
+    \coordinate (c_cross_add)   at (1.5,-9.5);
+
+    %nodes
+
+    \begin{pgfonlayer}{main}
+        % entities
+        \node[entity, label={numerator}] (num) at (c_num) {};
+        \node[entity_c, plus] (plus_num) at (c_plus_num) {};
+        \node[entity_c, cross] (cross_num) at (c_cross_num) {};
+        
+        \node[entity, label={denumerator}] (den) at (c_den) {};  
+        \node[entity_c, plus] (plus_den) at (c_plus_den) {};
+        \node[entity_c, cross] (cross_den) at (c_cross_den) {};
+        
+        \node[entity, label={addition}] (add) at (c_add) {};
+        \node[entity_c, plus] (plus_add) at (c_plus_add) {};
+        \node[entity_c, cross] (cross_add) at (c_cross_add) {};
+        
+        \node[entity, label={Divider Generator}] (div) at (c_div) {LogiCORE IP};
+        \node[entity_c, plus] (plus) at (c_plus) {};
+        
+        
+        % ports
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-0.86) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$I(x,y)$} --  (plus_num.180);
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-1.73) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$\mu_n$} -|  node[above,xshift=-0.25cm,yshift=0cm] {$-$} (plus_num.270);
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-2.6) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$c \cdot \sigma_{g}^{2}$} -|  (cross_num.270);
+
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-5.36) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$\sigma_{n}^{2}$} --  (cross_den.180);
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-6.23) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$c$} -| (cross_den.270);
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-7.1) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$(1-c) \sigma_{g}^{2}$} -|  (plus_den.270);
+
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-9.86) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$\mu_n$} --  (cross_add.180);
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-10.73) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$1-b$} -|  (cross_add.270);
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-11.6) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$b \cdot \mu_g$} -|  (plus_add.270);
+
+        \path[draw,-{Latex[length=2.5mm]}] (plus.0) -- node[anchor=west,xshift=-0.6cm,yshift=0.3cm]{$I'(x,y)$} (20,-1.75)   ;
+
+
+        % Interconnects
+        \path[draw,-{Latex[length=2.5mm]}] (plus_num.0) -- (cross_num.180);
+        \path[draw,-{Latex[length=2.5mm]}] (cross_den.0) -- (plus_den.180);
+        \path[draw,-{Latex[length=2.5mm]}] (cross_add.0) -- (plus_add.180);
+
+        \path[draw,-{Latex[length=2.5mm]}] (cross_num.0) -- (div.163);
+        \path[draw,-{Latex[length=2.5mm]}] (plus_den.0) -| ++(3,2.72) -- (div.197);
+        \path[draw,-{Latex[length=2.5mm]}] (div.0) -- (plus.180);
+        \path[draw,-{Latex[length=2.5mm]}] (plus_add.0) -| (plus.270);
+
+        %points
+
+
+        % Mean and Variance Block
+        \begin{pgfonlayer}{foreground}
+            \node [draw, fill=gray!20, inner sep=10, fit={($(num.north)+(0,8pt)$) (den) (add) (plus)}, label=Wallis Filter] (wf) {};
+        \end{pgfonlayer}
+
+        % Board box
+        % \begin{pgfonlayer}{background}
+        %     \node [draw, fill=gray!40, inner sep=10, fit={(plus_num) (cross_num)}, label=numerator] (tx) {};
+        % \end{pgfonlayer} 
+
+
+
+    \end{pgfonlayer}
+
+\end{tikzpicture}
