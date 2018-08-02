@@ -21,4 +21,4 @@
 * [ ] Where do you describe why you need the pixels coloumn wise? ch:ip:concept?
 * [ ] if-statements in HLS controller: What did we want to show?
 * [ ] Reference to code files - how?
-* [ ] Theoretical background: AXI4-Stream?
+* [x] Theoretical background: AXI4-Stream?
