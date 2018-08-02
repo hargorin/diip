@@ -168,8 +168,14 @@ set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
 
 
 \section{Implementation (VHDL)} \label{ch:ip:imp_vhdl}
+This chapter describes the Wallis filter with the calculation of the mean and the variance in the programming language VHDL. This makes it possible to check in chapter \ref{chapt:ver_bench} what are the advantages of the FPGA description in the C/C++ language with Vivado HLS. \\
+Chapter \ref{ch:concept_vhdl} contains the concept of the VHDL code by using a block diagram. This is divided into the calculation of the mean and variance, as well as the Wallis algorithm. The following chapter describes the problems with programming the algorithm.
 
-\subsection{Concept}
+\subsection{Concept} \label{ch:concept_vhdl}
+This chapter presents the concept of the mean and the variance, as well as the Wallis filter. They are shown as a block diagram and are briefly explained.
+
+\subsubsection*{Mean \& Variance}
+
 
 \begin{figure}[tb!]
     \centering
@@ -180,6 +186,7 @@ set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
     \label{fig:mean_var_vhdl}
 \end{figure}
 
+\subsubsection*{Wallis Algorithm}
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
