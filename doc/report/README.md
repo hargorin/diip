@@ -5,6 +5,7 @@
 * [ ] Latency of receiving path (from PHY to UFT out stream)
 * [ ] ILA/Trace measurement showing slow output pixels solution A
 * [ ] ILA/Trace measurement showing fast output pixels solution B
+* [ ] Maximum UFT transfer speed
 
 ### Graphics to draw
 * [x] Dataflow block diagram for solution A (with memory)
