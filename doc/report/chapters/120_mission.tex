@@ -93,12 +93,22 @@ the IP core.
 
 \todo[inline]{figure p5 UFT ip core from block design}
 
+\subsection{Image Size}
+The customer Nomoko has a camera with a resolution of 1500MPixel (\ref{app:technicial_requirements}). If this is a color image with 24 bit RGB values, the following file size will result:
+\begin{equation}
+    File Size = Pixel_{tot} * Pixel_{size} = 1500MPixel * 24bit = 36Gbit \cong 4.4GByte
+    \label{eq:filesize}
+\end{equation}
+
 \subsection{Wallis Filter} \label{chapt:mission:wallis}
 The employer, Nomoko, wants the Wallis filter to be implemented. The Wallis filter is used for local contrast enhancement. For example, the filter can compensate the house shadows in images and get more details from the image. 
 The Wallis filter is based on the equation \ref{eq:wallis_filter} as explained in chapter \ref{ch:th_wallis_filter}.
 
 
 \subsection{Development Environment}
+The image processing algorithm is written in Vivado HLS (\ref{app:technicial_requirements}). With Vivado HLS, an IP core for the Vivado HLx can be generated from a C/C++ code. Vivado HLS is useful when programming algorithms and afterwards translating them into hardware description language. \\ 
+\\
+Communication is implemented with configurable IP blocks provided by Xilinx or third party providers. Vivado HLS is mainly used for the dataflow in the FPGA (\ref{app:technicial_requirements}).
 
 % ==============================================================================
 %
@@ -106,6 +116,17 @@ The Wallis filter is based on the equation \ref{eq:wallis_filter} as explained i
 %
 % ==============================================================================
 \section{Possible Solutions} \label{chapt:solutions}
+
+\subsection{Image Processing} \label{chapt:mission:ip}
+The Wallis algorithm is based on the neighborhood operation (\ref{ch:th_wallis_filter}). Therefore, the borders of the image must be considered separately (\ref{ch:th:neighborhood}). There are four possible solutions to the border problem:
+
+\begin{itemize}
+\item The border pixels are not considered. This means that the destination image will be smaller depending on the size of the neighborhood
+\item If the filter exceeds the original image, the filter coefficients
+at the outside of the image are set to zero
+\item The pixels required outside the image are extrapolated according to the closest pixels
+\item The image is continued periodically
+\end{itemize}
 
 \subsection{Dataflow} \label{chapt:mission:dataflow}
 As described in \ref{ch:th_wallis_filter} the Wallis filter requires a
@@ -150,7 +171,8 @@ are dissected, the way of proceeding can be concluded.\\
 
 \textbf{Image processing}
     \begin{itemize}
-        \item placeholder
+        \item The border pixels are not considered. The destination image will be smaller than the source image. \todo{begruendung?}
+        \item The image is sent in several parts to the FPGA. Since 4.4GByte (\ref{eq:filesize}) do not have space on the FPGA (\ref{chapt:mission:fpgaboard}).
     \end{itemize}
 
 \textbf{Dataflow}
