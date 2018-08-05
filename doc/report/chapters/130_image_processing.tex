@@ -8,10 +8,9 @@ The Wallis Fitler is implemented as an image processing algorithm. First follows
 
 \section{Concept} \label{ch:ip:concept}
 The figure \ref{fig:concept} shows the concept of the C/C++ code programmed in the Vivado HLS. First, the mean and the variance must be calculated so that the Wallis filter can be applied afterwards with the parameters and the pixel $I(x,y)$ that is to be calculated. The calculated pixel is $I'(x,y)$ \\
-The sequence of the code is shown in the figure \ref{fig:sequence}. This consists of an initialization and a iteration. During the initialization, the complete neighborhood is read in and the central pixel of the neighborhood is calculated. To calculate the next pixel, only one new column is read in. This step is the so called iteration.\\
+The sequence of the code is shown in the figure \ref{fig:sequence}. This consists of an initialization and a iteration. During the initialization, the complete neighborhood (here as an example 3x3) is read in and the central pixel of the neighborhood is calculated. To calculate the next pixel, only one new column (gray marked) is read in and the old column (hatched line) can be forgotten. This step is the so called iteration.\\
 The code is row based. This means that each new row of an image have the initialization procedure.
 
-\todo[inline]{tikz mit dem Konzept und der Sequenz (Init and Iter)}
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
@@ -24,7 +23,7 @@ The code is row based. This means that each new row of an image have the initial
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-        %\input{images/image_processing/concept.tikz}
+        \input{images/image_processing/init_iter.tikz}
     \end{adjustbox}
     \caption{Sequence of the code with initialization and iteration}
     \label{fig:sequence}
@@ -84,16 +83,30 @@ This section explains how the division of the equation \ref{eq:wallis_filter} fo
 First, I would like to comment on the accuracy of the division. Because resources can already be saved here. As discussed in chapter \ref{ch:ap}, a lot of resources can be saved with the accuracy and when apufixed is used.
 Finally, the calculated Wallis pixel is rounded to an integer between 0 - 255. This means that the intermediate results do not have to be infinitely accurate. With Matlab and the simulation of the C/C++ code in Viviado HLS, this hypothesis was tested and the accuracy of the data types adjusted. The data types ap\_[u]int and ap\_[u]fixed used instead of floating point. The size of the data types can be found in table \ref{tab:datatypes}. 
 
-\todo[inline]{Tabelle fuellen}
 \begin{table}[tb!]
     \centering
     \begin{tabular}{l l l l l l}
         \toprule
-        Name & Type & Size & min Value & max Value & Comment \\
+        Name & Type & Size & min Value & max Value & Dependence \\
         \midrule
-        &  &  &  &  & 
-        \\
-
+        v\_pixel & ap\_uint & 8 & 0 & 255 & \\
+        g\_Mean & ap\_uint & 8 & 0 & 255 &  \\
+        g\_Var & ap\_uint & 14 & 0 & 16383 &  \\
+        n\_Mean & ap\_uint & 8 & 0 & 255 &  \\
+        n\_Var & ap\_uint & 14 & 0 & 16383 &  \\
+        brightness & ap\_ufixed & 5,1 & 0 & 1 &  \\
+        contrast & ap\_ufixed & 5,1 & 0 & 1 &  \\
+        w\_gMean & ap\_uint & 8 & 0 & 255 &  \\
+        w\_gVar & ap\_uint & 14 & 0 & 16383 &  \\
+        tmp\_Num & ap\_int & 23 & - & - &  v\_pixel, n\_Mean, g\_Var \\
+        fp\_Num & ap\_int & 23 & - & - &  tmp\_Num, contrast \\
+        fp\_nVar & ap\_uint & 14 & - & - &  n\_Var, contrast \\
+        fp\_nMean & ap\_uint & 8 & - & - &  n\_Mean, brightness \\
+        fp\_Var & ap\_uint & 15 & - & - &  n\_Var, w\_gVar \\
+        rec & ap\_ufixed & 18,1 & 1 & 1 &   \\
+        fp\_Den & ap\_ufixed & 18,1 & - & - &  rec, fp\_Var \\
+        fp\_Div & ap\_int & 23 & - & - &  fp\_Num, fp\_Den \\
+        w\_pixel & ap\_uint & 23 & - & - &  fp\_Div, w\_gMean, fp\_nMean \\
         \bottomrule
     \end{tabular}
     \caption{Accuracy of data types in the Wallis Filter division}
@@ -121,14 +134,13 @@ Now let us take a closer look at the calculation of the division. The equation o
 \subsubsection*{Code}
 The decision of the division was made on the reciprocal version, because it has a lower latency. In addition, the accuracy of the division was limited. Because finally the calculated pixel is rounded to an integer between 0-255 and the simulation has shown that it is not necessary to calculate infinite accurately. The code of the division and the data types used is below:
 
-\todo[inline]{groesse der Datentypen ueberpruefen!!!}
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
 ap_ufixed<18,1> rec = 1.0;
 ap_uint<15> fp_Var;
 ap_ufixed<18,1> fp_Den;
 ap_int<23> fp_Num;
-ap_int<31> fp_Div;
+ap_int<23> fp_Div;
 
 fp_Den = rec/fp_Var;
 fp_Div = fp_Num * fp_Den;
@@ -139,7 +151,6 @@ fp_Div = fp_Num * fp_Den;
 \subsection{AXI4-Stream}
 The calculation of the Wallis filter requires at least 21 pixels. Due of the limited AXI4-Stream (8 bits) as input stream, 21 clock cycles have to be waited until the calculation can be started. Since only 1 pixel was received per clock. This also prevents the for loops from unrolling, as not all data is available at the input (\ref{ch:directives}). \\
 The advantage of Vivado HLS is that interfaces, for example, can be adapted relatively easily and quickly. The AXI4-Stream has therefore been enlarged to receive one column per clock. This means that the AXI4-Stream has been extended to a data width of 256 bits (\cite{axi_stream}). This also made it possible to add the directive \texttt{unroll} to the for loops. Throughput has increased by a factor of 21.
-\todo[inline]{Fakotr 21 korrekt (throughput von 8bits auf 256bits)}
 
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
@@ -182,7 +193,7 @@ Finally, the sum of the pixels is divided by $1/N$ where N is 441. For the varia
 
 \begin{figure}[tb!]
     \centering
-    \begin{adjustbox}{max width=\textwidth}
+    \begin{adjustbox}{max width=\textwidth, keepaspectratio}
         \input{images/image_processing/mean_var_vhdl.tikz}
     \end{adjustbox}
     \caption{Concept of the mean and variance implementation in VHDL}
@@ -191,7 +202,7 @@ Finally, the sum of the pixels is divided by $1/N$ where N is 441. For the varia
 
 \subsubsection*{Wallis Algorithm}
 Block diagram \ref{fig:wallis_vhdl} is based on the equations of the Wallis algorithm \ref{eq:wallis_filter}. \\
-The pixel to be calculated is connected to the IP core via AXI4-Stream. The remaining parameters are connected to the AXI4-Lite \todo{AXI4-Lite korrekt?} interface. \\
+The pixel to be calculated is connected to the IP core via AXI4-Stream. The constant parameters are connected to the \texttt{controller} and are sent from the computer via user register. \\
 The division is solved with the \texttt{Divider Generator}. This is an IP core of Xilinx that can be divided. Once the pixel is calculated, it is sent to the controller via AXI4-Stream.
 
 \begin{figure}[tb!]
