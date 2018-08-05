@@ -33,65 +33,80 @@ sequential. The data is transfered to the FPGA over an Ethernet LAN connection
 for
 fast transfer rates. To accelerate the computing even further, the system needs
 to be scalable to multiple FPGA boards to distribute the workload.
+
+% Build upon 
+In preparation for this thesis, a semester project focused on two building
+blocks for this work: The communication block and the image processing block
+\cite{p5report}. The results were two seperate parts working but neither
+connected nor optimized. This thesis builds upon the results of said work and
+focuses on two main goals:
 \\
 
 % Primary objectives
-Thus, two primary objectives can be defined:
 \begin{enumerate}
-    \item The image needs to be transfered from a computer to the FPGA board and
-    back
-    \item The image data on the FPGA must be processed using a common
-    image processing task
+    \item Increase throughput of the dataflow by improving the communication and putting thoughts on scalability
+    \item Implement a more complex image processing algorithm to show the real
+    benefit of using FPGA for image processing
 \end{enumerate}
-\begin{figure}[t!]
-    \centering
-    \input{images/introduction/dataflow.tikz}
-    \caption{Data Flow}
-    \label{fig:datafl}
-\end{figure}
+% \begin{figure}[t!]
+%     \centering
+%     \input{images/introduction/dataflow.tikz}
+%     \caption{Data Flow}
+%     \label{fig:datafl}
+% \end{figure}
 
+% Sections with NEW are written new in p6
 % What is used to realize...
-To realize an Ethernet communication multiple protocols and standards must be
-implemented. Ready to use solutions are available. These are compared and
-selected. To keep it simple, User Datagram Protocol (UDP) is chosen for
-transport layer. Due to UDP's lack of reliable data transfer a session protocol
-is defined on top of UDP. This UDP file transfer protocol is implemented using
-hardware description language (HDL).
+% NEW Dataflow
+The existing communication solution is based on file transfer and stores
+received data in memory. This worked as a proof of concept but is not optimal
+for high throughput image processing. The communication part is extended with an
+acknowledge mechanism that allows retransmission of lost packets and a streaming
+interface that enables immediate processing of the image data. Furthermore a
+memory management unit is introduced that caches image data to reduce bandwidth
+usage.
 
-When working with mathematically more complex problems like image processing,
-writing the code in hardware description language is complex and
-incomprehensible. Therefore a high level synthesis (HLS) approach is put to use.
-The algorithm is described and thoroughly tested in C/C++ and then synthesized to
-HDL by the Xilinx Vivado HLS toolchain. A Sobel filter operation is chosen as
-image processing task to detect edges in the source image. This operation is
-rather simple but serves the purpose of this project and can be used for
-improved edge detection algorithms.
+% NEW Image processing
+In the preceeding project a Sobel filter was implemented using Vivado HLS. It
+uses a simple convolution matrix for edge detection. This operation was well
+suited for the first image processing task and to become acquainted with a high
+level synthesis tool. For this thesis a new image processing task is realized: A
+local contrast enhancment operation. The algorithm is described and thoroughly
+tested in C/C++ and then synthesized to HDL by the Xilinx Vivado HLS toolchain.
+To improve throughput and compare the results of a high level synthesis versus a
+low level HDL approach, the same filter is implemented in VHDL.
+
+% NEW Scalability
+The main intention behind using Ethernet as communication was that the
+processing could be distributed onto multiple FPGA. Methods on scalability are
+dissected and compared.
 
 An Artix7 Evaluation Kit by Xilinx serves as a development and testing platform.
 It is equipped with gigabit Ethernet LAN and an FPGA with sufficient logic
 elements and memory for both the communication and image processing task.
 \\
 
-% What is the result of the project
-The result is an image processing core that runs a Sobel filter operation on an
-input
-image to detect edges. It processes one eight-bit pixel per clock cycle at
-100MHz
-resulting in a 100 megapixels per second throughput. The
-data is read from FPGA block memory and stored there as well. An Ethernet
-communication stack written in VHDL handles layers two through five of the OSI
-model and transfers data at 8.9 MB/s to a computer using a custom file
-transfer protocol.
+% NEW What is the result of the project
+\todo[inline]{Insert total throughput, limits and theoretical maximums}
+The result is a complete image processing pipeline that begins on a PC where the
+input image is sent via Ethernet to the FPGA where it is processed and sent pack
+to the PC. The throughput is XXX MB/s limited by XXX. The Wallis filter core
+is capable of processing up to XXX megapixels per second. A benchmark shows the
+performance differences betwen a CPU based and FPGA based solution. Concepts on
+scalability show how the processing power of FPGAs can be exploited if multiple
+FPGA would work on a network.
 \\
 
-% How the document is built up
-This report is split into five main parts: Theoretical background, mission,
-image processing, communication and verification. 
-The theoretical background starting
-on page \pageref{chapt:theoreticalback} explains the basics of image
-processing, FPGA and Ethernet communication. Starting on page 
-\pageref{chapt:mission} the chapter mission will cover the starting point and
-presents the concept. Chapters \ref{chapt:image_processing} and \ref{chapt:dataflow} cover the actual implementation process of the image processing and communication parts
-before verifying these components in chapter \ref{chapt:ver_bench} starting
-on page \pageref{chapt:ver_bench}.
+% NEW How the document is built up
+This report is split into six main parts: Theoretical background, mission,
+image processing, dataflow, scalability and verification/benchmark.  The
+theoretical background starting on page \pageref{chapt:theoreticalback} explains
+the basics of image processing, FPGA, Ethernet communication and on chip
+interfaces. Starting on page \pageref{chapt:mission} the chapter mission will
+cover the starting point and presents the concept. Chapters 
+\ref{chapt:image_processing} and \ref{chapt:dataflow} cover the actual
+implementation process of the image processing and dataflow parts.
+Before verifying these components in chapter \ref{chapt:ver_bench} the
+scalability is studied in chapter \ref{chapt:scalability} starting on page
+\pageref{chapt:scalability}.
 

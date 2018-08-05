@@ -5,6 +5,7 @@
 * [ ] Latency of receiving path (from PHY to UFT out stream)
 * [ ] ILA/Trace measurement showing slow output pixels solution A
 * [ ] ILA/Trace measurement showing fast output pixels solution B
+* [ ] Maximum UFT transfer speed
 
 ### Graphics to draw
 * [x] Dataflow block diagram for solution A (with memory)
@@ -21,4 +22,4 @@
 * [ ] Where do you describe why you need the pixels coloumn wise? ch:ip:concept?
 * [ ] if-statements in HLS controller: What did we want to show?
 * [ ] Reference to code files - how?
-* [ ] Theoretical background: AXI4-Stream?
+* [x] Theoretical background: AXI4-Stream?
