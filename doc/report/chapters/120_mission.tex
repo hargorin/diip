@@ -120,6 +120,7 @@ Communication is implemented with configurable IP blocks provided by Xilinx or t
 \subsection{Image Processing} \label{chapt:mission:ip}
 The Wallis algorithm is based on the neighborhood operation (\ref{ch:th_wallis_filter}). Therefore, the borders of the image must be considered separately (\ref{ch:th:neighborhood}). There are four possible solutions to the border problem:
 
+\todo[inline]{NH: Is this list stil valid?}
 \begin{itemize}
 \item The border pixels are not considered. This means that the destination image will be smaller depending on the size of the neighborhood
 \item If the filter exceeds the original image, the filter coefficients
