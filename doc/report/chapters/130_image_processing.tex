@@ -230,7 +230,7 @@ received from the \texttt{dir\_shift\_reg} block. This block is used for
 initialization and iteration sequence, which is shown in figure 
 \ref{fig:sequence}. All pixels are passed directly to the plus output and
 through a FIFO with a delay of 441 pixels. This FIFO is used to subtract the
-oldest pixels from the sum of the pixels, as shown in figure \ref{fig:sequence}. Therefore, this path goes to the minus output. The number 441 comes from the neighborhood which is $21 \cdot 21$. \\
+oldest pixels from the sum of the pixels, as shown in figure \ref{fig:sequence}. Therefore, this path goes to the minus output. \\
 In the block \texttt{sum\_diff} the two outputs of the block \texttt{dir\_shift\_reg} are subtracted from each other and the result would be added in a sequence of 441 cycles. In the initialization sequence, the minus output is zero and the pixels are only added. This also means that a correct result is only obtained after 441 clock cycles and then still 21 clock cycles again if the IP core is in the iteration sequence. \\
 Finally, the sum of the pixels is divided by $1/N$ where N is 441. For the variance, the square mean is subtracted. The mean and the variance are passed to the Wallis Filter.
 \todo[inline]{NH: A simulation result showing the output of dir\_shift\_reg and
@@ -244,6 +244,15 @@ valid signal}
     \caption{Concept of the mean and variance implementation in VHDL}
     \label{fig:mean_var_vhdl}
 \end{figure}
+
+\begin{figure}[tb!]
+    \centering
+    \includegraphics[width=\textwidth]
+    {images/image_processing/dir_shift_reg.png}
+    \caption{Simulation of the dir\_shift\_reg displays the two outputs}
+    \label{fig:ac701}
+\end{figure}
+
 
 \subsubsection*{Wallis Algorithm}
 Block diagram \ref{fig:wallis_vhdl} is based on the equations of the Wallis algorithm \ref{eq:wallis_filter}.
