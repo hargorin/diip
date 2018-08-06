@@ -36,7 +36,7 @@ end entity mean_var_tb;
 architecture testbench of mean_var_tb is
 
 	-- Testbench DUT generics as constants
-    constant WIN_SIZE    : positive                  := 21*21;
+    constant WIN_SIZE    : positive                  := 3*3;
     constant M_IN_WIDTH  : positive                  := 8;
     constant M_OUT_WIDTH : positive                  := 17;
     constant V_IN_WIDTH  : positive                  := 16;
@@ -143,6 +143,7 @@ begin
 
 
     begin
+	inData <= "00000000";
     	waitfor(25);
 
     	-- randi([0,255],441,1)
