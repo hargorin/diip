@@ -118,13 +118,10 @@ Communication is implemented with configurable IP blocks provided by Xilinx or t
 \section{Possible Solutions} \label{chapt:solutions}
 
 \subsection{Image Processing} \label{chapt:mission:ip}
-The Wallis algorithm is based on the neighborhood operation (\ref{ch:th_wallis_filter}). Therefore, the borders of the image must be considered separately (\ref{ch:th:neighborhood}). There are four possible solutions to the border problem:
+The Wallis algorithm is based on the neighborhood operation (\ref{ch:th_wallis_filter}). Therefore, the borders of the image must be considered separately (\ref{ch:th:neighborhood}). There are three possible solutions to the border problem:
 
-\todo[inline]{NH: Is this list stil valid?}
 \begin{itemize}
 \item The border pixels are not considered. This means that the destination image will be smaller depending on the size of the neighborhood
-\item If the filter exceeds the original image, the filter coefficients
-at the outside of the image are set to zero
 \item The pixels required outside the image are extrapolated according to the closest pixels
 \item The image is continued periodically
 \end{itemize}
@@ -172,8 +169,8 @@ are dissected, the way of proceeding can be concluded.\\
 
 \textbf{Image processing}
     \begin{itemize}
-        \item The border pixels are not considered. The destination image will be smaller than the source image. \todo{begruendung?}
-        \item The image is sent in several parts to the FPGA. Since 4.4GByte (\ref{eq:filesize}) do not have space on the FPGA (\ref{chapt:mission:fpgaboard}).
+        \item The border pixels are not considered for simplicity. The destination image will be smaller than the source image.
+        \item The image is sent in several parts to the FPGA. Since 4.4GByte (see equation \ref{eq:filesize}) do not have space on the FPGA (see chapter \ref{chapt:mission:fpgaboard}).
     \end{itemize}
 
 \textbf{Dataflow}

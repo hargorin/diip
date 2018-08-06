@@ -29,10 +29,8 @@
     \coordinate (wallis)    at (13,-4.135);
     \coordinate (sum0)      at (3,-1.5);
     \coordinate (sum1)      at (3,-4);
-    \coordinate (plus0)     at (1.5,-1.25);
-    \coordinate (plus1)     at (1.5,-3.75);
     \coordinate (plus2)     at (6.5,-3.75);
-    \coordinate (square0)   at (0,-3.95);
+    \coordinate (square0)   at (1,-3.95);
     \coordinate (square1)   at (6.5,-2.75);
     \coordinate (divide0)   at (5,-1.5);
     \coordinate (divide1)   at (5,-4);
@@ -41,34 +39,26 @@
     \node[draw, fill=white, minimum width=4.04cm, minimum height=4.04cm, anchor=south, align=center, label={[xshift=-1cm, yshift=0cm]Wallis Filter}] (wallis) at (wallis) {$I'(x,y)$};
     \node[draw, fill=white, minimum width=1cm, minimum height=1cm, anchor=south, align=center] (sum0) at (sum0) {\huge $\Sigma$};
     \node[draw, fill=white, minimum width=1cm, minimum height=1cm, anchor=south, align=center] (sum1) at (sum1) {\huge $\Sigma$};
-    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center, plus] (plus0) at (plus0) {};
-    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center, plus] (plus1) at (plus1) {};
     \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center, plus] (plus2) at (plus2) {};
-    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (divide0) at (divide0) {$\frac{1}{441}$};
-    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (divide1) at (divide1) {$\frac{1}{441}$};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (divide0) at (divide0) {$\frac{1}{N}$};
+    \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (divide1) at (divide1) {$\frac{1}{N}$};
     \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (square0) at (square0) {$()^2$};
     \node [circle, draw, minimum width=0.5cm, minimum height=0.5cm, anchor=south, align=center] (square1) at (square1) {$()^2$};
 
 
-    \node[draw,fit={($(sum0.north)+(0,8pt)$) (sum1) (plus0) (plus1) (plus2) (square0) (square1) (divide0) (divide1)}] {}; 
-    \node[above,xshift=0.85cm,yshift=0cm] {Mean \& Variance};
+    \node[draw,fit={($(sum0.north)+(0,8pt)$) (sum1) (plus2) (square0) (square1) (divide0) (divide1)}] {}; 
+    \node[above,xshift=1.85cm,yshift=0cm] {Mean \& Variance};
 
     %path
-    \path[draw,-{Latex[length=2.5mm]}] (-1.75,-2) node[above,xshift=0.4cm,yshift=0cm]{pixel} -- ++(1.75,0) |- (plus0.west);
-    \path[draw,-{Latex[length=2.5mm]}] (-1.75,-2) -- ++(1.75,0) -- (square0);
+    \path[draw,-{Latex[length=2.5mm]}] (-0.75,-2) node[above,xshift=0.4cm,yshift=0cm]{pixel} -- ++(1.75,0) |- (sum0.west);
+    \path[draw,-{Latex[length=2.5mm]}] (-0.75,-2) -- ++(1.75,0) -- (square0);
 
     %mean
-    \path[draw,-{Latex[length=2.5mm]}] (plus0) -- (sum0);
     \path[draw,-{Latex[length=2.5mm]}] (sum0) -- (divide0);
     \path[draw,-{Latex[length=2.5mm]}] (divide0) -| (square1);
-    \path[draw,-{Latex[length=2.5mm]}] (sum0.north) |- ++(-0.75,0.25) -| node[above,xshift=-0.25cm,yshift=-0.65cm] {$-$} (plus0.north);
 
     %variance
-    \path[draw,-{Latex[length=2.5mm]}] (square0) -- (plus1);
-    \path[draw,-{Latex[length=2.5mm]}] (plus1) -- (sum1);
-    \path[draw,-{Latex[length=2.5mm]}] (sum1.north) |- ++(-0.75,0.25) -| node[above,xshift=-0.25cm,yshift=-0.65cm] {$-$} (plus1.north);
-    %\path[draw,-{Latex[length=2.5mm]}] (sum1.north) |- node[above,xshift=0cm,yshift=0cm] {$-$} (plus1.east);
-    %\path[draw,-{Latex[length=2.5mm]}] (plus1.south) |- (sum1.157);
+    \path[draw,-{Latex[length=2.5mm]}] (square0) -- (sum1);
     \path[draw,-{Latex[length=2.5mm]}] (sum1) -- (divide1);
     \path[draw,-{Latex[length=2.5mm]}] (divide1) -- (plus2);
     \path[draw,-{Latex[length=2.5mm]}] (square1) -- node[above,xshift=-0.25cm,yshift=-0.4cm] {$-$} (plus2);

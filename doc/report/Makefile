@@ -10,7 +10,7 @@ CHAPTERS_DIR=chapters
 OUT_DIR=build
 
 # For tikz
-TNAME=images/image_processing/init_iter.tikz
+TNAME=images/image_processing/datawidth_mean_var.tikz
 
 SRC_FILES := $(wildcard $(CHAPTERS_DIR)/*.tex)
 PDF_FILES := $(patsubst $(CHAPTERS_DIR)/%.tex,$(OUT_DIR)/%.pdf,$(SRC_FILES))
