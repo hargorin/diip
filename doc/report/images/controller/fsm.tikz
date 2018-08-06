@@ -2,7 +2,7 @@
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm,
                     semithick]
 
-    \tikzstyle{every state}=[fill=white,draw=black,text=black,minimum width=1cm]
+    \tikzstyle{every state}=[fill=white,draw=black,text=black,minimum width=2.2cm]
     
     % states
     \node[initial,state] (A)                    {INIT};
