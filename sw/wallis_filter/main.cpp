@@ -22,7 +22,7 @@ using namespace std;
 #define G_MEAN      127       // Mean of the input image
 #define G_VAR       3600      // Standard Deviation for the input image
 #define CONTRAST    0.8125    // Contrast expansion factor 0.82
-#define BRIGHTNESS  0.484375  // Brightness forcing factor 0.49
+#define BRIGHTNESS  0.5  	  // Brightness forcing factor 0.49
 
 #define WIN_LENGTH  21  // Between 11 and 41 (depends on camera resolution)
 #define WIN_SIZE    (WIN_LENGTH * WIN_LENGTH)
@@ -105,7 +105,7 @@ int main(int argc, const char * argv[]) {
 
 
     tic(&tt);
-    //for (int i = 0; i < 10000; i++) {
+    for (int i = 0; i < 100; i++) {
         index = 0;
         for(uint16_t y = 0; y < g_height; y++) {
             sum_Pixel = 0;
@@ -147,7 +147,7 @@ int main(int argc, const char * argv[]) {
                 wallis[index++] = Wallis(w_pixel, n_Mean, n_Var);
             }
         }
-    //}
+    }
     toc(&tt);
 
     Mat w_img = Mat(g_height, g_width, CV_8UC1, wallis);

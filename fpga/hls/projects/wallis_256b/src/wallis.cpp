@@ -15,18 +15,18 @@ apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2);
 
 // Wallis Filter
 apuint8_t Wallis_Filter(apuint8_t iPxl, apuint8_t n_Mean, apuint14_t n_Var,
-						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-						ap_ufixed<5,1> brightness);
+						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+						ap_ufixed<5,1,AP_RND> brightness);
 
 
 void wallis(AXI_STREAM_IN &inData, AXI_STREAM_OUT &outData,
-			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-			ap_ufixed<5,1> brightness) {
+			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+			ap_ufixed<5,1,AP_RND> brightness) {
 
 	g_Mean = 127;
 	g_Var = 3600;
-	contrast = 0.82;
-	brightness = 0.49;
+	contrast = 0.8125;
+	brightness = 0.5;
 	
 	// ************************************************************************
 	// Variables
@@ -163,8 +163,8 @@ apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2) {
  * Calculate the Wallis Filter
  */
 apuint8_t Wallis_Filter(apuint8_t iPxl, apuint8_t n_Mean, apuint14_t n_Var,
-						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-						ap_ufixed<5,1> brightness) {
+						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+						ap_ufixed<5,1,AP_RND> brightness) {
 
 	apint23_t tmp_Num;
 	apint23_t num;

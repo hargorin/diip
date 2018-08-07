@@ -16,8 +16,8 @@ using namespace cv;
 #define INPUT_IMAGE "mountain.tif"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.82 //0.75 0.82
-#define BRIGHTNESS	0.49	//0.8 0.49
+#define CONTRAST 	0.8125 //0.75 0.82
+#define BRIGHTNESS	0.5	//0.8 0.49
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -168,11 +168,11 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	// Show image
-//	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
-//	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
-//
-//	imwrite("wallis_hw_room256x256.jpg", hw_dst_img);
-//	imwrite("wallis_sw_room256x256.jpg", c_dst_img);
+	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
+
+	imwrite("wallis_hw.tif", hw_dst_img);
+	imwrite("wallis_sw.tif", c_dst_img);
 //	if (getenv("DISPLAY") != NULL)
 //	{
 //		imshow( "Original", src_gray );

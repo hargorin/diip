@@ -17,8 +17,8 @@ using namespace std;
 #define FILE_NAME "mountain"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.82 //0.75 0.82
-#define BRIGHTNESS	0.49	//0.8 0.49
+#define CONTRAST 	0.8125 //0.75 0.82
+#define BRIGHTNESS	0.5	//0.8 0.49
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -185,13 +185,13 @@ int main(int argc, const char * argv[]) {
 		Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 		Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
-		ostringstream name;
+		ostringstream name_hw, name_sw;
 		char buffer[2];
 		sprintf(buffer, "%d", a);
-		name << "wallis_hw_" << FILE_NAME << "_" << buffer << ".tif";
-		imwrite(name.str(), hw_dst_img);
-		name << "wallis_sw_" << FILE_NAME << "_" << buffer << ".tif";
-		//imwrite(name.str(), c_dst_img);
+		name_hw << "wallis_hw_" << FILE_NAME << "_" << buffer << ".tif";
+		imwrite(name_hw.str(), hw_dst_img);
+		name_sw << "wallis_sw_" << FILE_NAME << "_" << buffer << ".tif";
+		imwrite(name_sw.str(), c_dst_img);
 	/*	if (getenv("DISPLAY") != NULL)
 		{
 			imshow( "Original", src_gray );

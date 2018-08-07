@@ -51,5 +51,5 @@ typedef hls::stream<AXI_VALUE_OUT> AXI_STREAM_OUT;
 
 // Top-Function
 void wallis(AXI_STREAM_IN &inData, AXI_STREAM_OUT &outData,
-			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-			ap_ufixed<5,1> brightness);
+			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+			ap_ufixed<5,1,AP_RND> brightness);
