@@ -217,8 +217,6 @@ set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
 \section{Implementation (VHDL)} \label{ch:ip:imp_vhdl}
 This chapter describes the Wallis filter with the calculation of the mean and the variance in the programming language VHDL. This makes it possible to check in chapter \ref{chapt:ver_bench} what are the advantages of the FPGA description in the C/C++ language with Vivado HLS. \\
 Chapter \ref{ch:concept_vhdl} contains the concept of the VHDL code by using a block diagram. This is divided into the calculation of the mean and variance, as well as the Wallis algorithm. The following chapter describes the problems with programming the algorithm.
-\todo[inline]{NH:Again, for leserfuehrung mention at the beginning of image
-processing that first HLS and then VHDL and why. Else this comes too sudden.}
 
 \subsection{Concept} \label{ch:concept_vhdl}
 This chapter presents the concept of the mean and the variance, as well as the Wallis filter. They are shown as a block diagram and are briefly explained.
@@ -226,16 +224,19 @@ This chapter presents the concept of the mean and the variance, as well as the W
 \subsubsection*{Mean \& Variance}
 Block diagram \ref{fig:mean_var_vhdl} is based on the two equations of the mean \ref{eq:mean} and the varince \ref{eq:var}. \\
 The pixel data is sent as 8 bit AXI4-Stream into the IP core. The data is
-received from the \texttt{dir\_shift\_reg} block. This block is used for
+received from the block \texttt{dir\_shift\_reg} . This block is used for
 initialization and iteration sequence, which is shown in figure 
 \ref{fig:sequence}. All pixels are passed directly to the plus output and
 through a FIFO with a delay of 441 pixels. This FIFO is used to subtract the
-oldest pixels from the sum of the pixels, as shown in figure \ref{fig:sequence}. Therefore, this path goes to the minus output. \\
-In the block \texttt{sum\_diff} the two outputs of the block \texttt{dir\_shift\_reg} are subtracted from each other and the result would be added in a sequence of 441 cycles. In the initialization sequence, the minus output is zero and the pixels are only added. This also means that a correct result is only obtained after 441 clock cycles and then still 21 clock cycles again if the IP core is in the iteration sequence. \\
+oldest pixels from the sum of the pixels, as shown in figure \ref{fig:sequence}.
+Therefore, this path goes to the minus output. Figure \ref{fig:sim_shift_sum}
+shows the simulation of the block \texttt{dir\_shift\_reg}. The delay of the
+input data can be seen at the minus output. \\
+In the block \texttt{sum\_diff} the two outputs of the block 
+\texttt{dir\_shift\_reg} are subtracted from each other and the result would be
+added in a sequence of 441 cycles. In the initialization sequence, the minus output is zero and the pixels are only added. This also means that a correct result is only obtained after 441 clock cycles and then still 21 clock cycles again if the IP core is in the iteration sequence. Figure \ref{fig:sim_shift_sum} shows the simulation of the block \texttt{sum\_diff}. The difference of the input data of the \texttt{dir\_shift\_reg} can be seen at the output.\\
 Finally, the sum of the pixels is divided by $1/N$ where N is 441. For the variance, the square mean is subtracted. The mean and the variance are passed to the Wallis Filter.
-\todo[inline]{NH: A simulation result showing the output of dir\_shift\_reg and
-sum\_diff would clarify what the intention is. Perhaps with 3x3 window and
-valid signal}
+
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth, keepaspectratio}
@@ -248,9 +249,10 @@ valid signal}
 \begin{figure}[tb!]
     \centering
     \includegraphics[width=\textwidth]
-    {images/image_processing/dir_shift_reg.png}
-    \caption{Simulation of the dir\_shift\_reg displays the two outputs}
-    \label{fig:ac701}
+    {images/image_processing/dir_shift_sum_diff.png}
+    \caption{Simulation of the \texttt{dir\_shift\_reg} and the
+    \texttt{sum\_diff} block with a \texttt{WIN\_SIZE} of 9}
+    \label{fig:sim_shift_sum}
 \end{figure}
 
 

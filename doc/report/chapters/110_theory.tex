@@ -324,22 +324,19 @@ This argument splits the complete array into individual elements.
 \end{figure}
 
 \subsubsection*{Pipeline / Unroll}
-In Vivado HLS the FPGA is described with C/C++ language. Among others, it is also possible to program  loops. These are still processed sequentially by the RTL synthesis, as can be seen in figure \ref{fig:p_pipeline_unroll} with 9 clock cycles. The directive can improve the performance of the loop. Two directives are available to increase the throughput of a loop. These are \texttt{pipeline} and \texttt{unroll}.
+In Vivado HLS the FPGA is described with C/C++ language. Among others, it is also possible to program  loops. These are still processed sequentially by the C/C++ simulation, as can be seen in figure \ref{fig:p_pipeline_unroll} (sequential) with 9 clock cycles. The loop includes read and write access, as well as data processing. This loop is executed three times.  The directives can improve the performance of the loop. Two directives are available to increase the throughput of a loop. These are \texttt{pipeline} and \texttt{unroll}.
 
 \begin{description}
 \item[Pipeline]\hfill \\
 This directive allows a loop to be parallelized. This increases the throughput and the area. Now that more operations are happening in a clock.
-Pipeline is used if not all data for processing is available in the loop. Figure \ref{fig:p_pipeline_unroll} shows that the read access leads to a latency of one clock cycle and the throughput could be increased.
+Pipeline is used if not all data for processing is available in the loop. Figure \ref{fig:p_pipeline_unroll} (pipeline) shows that only one read access per clock can be made. This results in a latency of one clock. The other operations can be parallelized. This will lead to a processing of the loop of 5 clock cycles. The throughput could therefore be increased.
+
 \item[Unroll]\hfill \\ 
-This directive allows the loop to be fully parallelized. This is only possible
-if all data that is required in the loop is available. Figure 
-\ref{fig:p_pipeline_unroll} shows that the entire loop is now processed in one
-clock cycle. This again leads to an increase in throughput and the area in
-relation to directive \texttt{pipeline}.
+This directive allows the entire for loop to be parallelized. This is only possible if all data is available at the beginning of the for loop. Figure \ref{fig:p_pipeline_unroll} shows that the processing of the loop only requires 3 clock cycles and the throughput could be increased in comparison to \texttt{pipeline}.
 \end{description}
 
 With nested for loops, note that if pipeline is applied to the top loop, the inner loops are automatically unrolled. \\
-You can also apply both directives in combination in a loop. Since the unroll directive can specify a factor that unrolls the loop.
+You can also apply both directives in combination in a loop. This is useful if, for example, the data was previously split per \texttt{array\_partition} and it is now possible to read multiple data (but not all data) in one clock cycle. Since the unroll directive can specify a factor that unrolls the loop.
 
 \todo[inline]{NH: you explained Pipeline/Unroll way better at ECC than in these
 two
