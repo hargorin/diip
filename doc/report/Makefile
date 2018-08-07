@@ -4,6 +4,7 @@ PROJECT=main
 OUTPUT=p6_diip_huetter_stocker
 PDFLATEX=pdflatex -file-line-error -interaction=nonstopmode -output-directory . -jobname $(OUTPUT) $(PROJECT)
 BIBTEX=bibtex
+GLOSSARY=makeglossaries p6_diip_huetter_stocker
 PDFVIEWER = evince
 
 CHAPTERS_DIR=chapters
@@ -29,6 +30,7 @@ all: $(OUTPUT).pdf
 $(OUTPUT).pdf : *.tex chapters/*.tex revision
 	$(PDFLATEX)
 	$(BIBTEX) $(OUTPUT)
+	$(GLOSSARY)
 	$(PDFLATEX)
 	$(PDFLATEX)
 

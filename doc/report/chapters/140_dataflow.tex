@@ -79,7 +79,7 @@ missing:
 
 \begin{itemize}
 	\item Acknowledgment of received data
-	\item Retransmission if a packat was not received
+	\item Retransmission if a packet was not received
 	\item Control interface
 	\item Stream based data interface
 \end{itemize}
@@ -133,8 +133,8 @@ an acknowledgment. The connection consists of the signals listed in table
 running and an acknowledge request is made. If the tx state machine enters idle
 or wait state it checks these latches for an acknowledge request. If a request
 is latched, the tx command assembler and tx arbiter are turned on to send an
-acknowledge packet. After the packet was sent, the according \texttt{\_done}
-signals are asserted.
+acknowledge packet. After the packet was sent, the according 
+\texttt{ack\_cmd\_nseq\_done}/\texttt{ack\_cmd\_ft\_done} signals are asserted.
 
 
 \begin{figure}[b!]
@@ -200,8 +200,8 @@ packet was received. Each element represents a data packet.
         caption=ack buffer allocation, 
         label=lst:ackbufalloc
         ]
-    uint8_t *ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
-    memset(ack_buf, 0, nseq * sizeof(uint8_t));\end{lstlisting}
+uint8_t *ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
+memset(ack_buf, 0, nseq * sizeof(uint8_t));\end{lstlisting}
 \end{minipage}
 
 During transmission, the sender checks the receiving buffer for data. If a
@@ -213,11 +213,11 @@ acknowledge packet was received, the acknowledge array is updated.
         caption=ack update, 
         label=lst:ackupdate
         ]
-    Recv(sockfd, buf, 1500, 0);
-    if(get_command(buf) == CONTROLL_ACKFP)
-    {
-        ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
-    }\end{lstlisting}
+Recv(sockfd, buf, 1500, 0);
+if(get_command(buf) == CONTROLL_ACKFP)
+{
+    ack_buf[get_command_ackfp_seqnbr(buf)] = 1;
+}\end{lstlisting}
 \end{minipage}
 
 This allows the sending routine to retransmit packets that were not
@@ -391,11 +391,11 @@ length of five and image width of eight is used.
 \end{figure}
 
 This however is only one part of the problem. Another issue arises if the
-progression of the neighbourhood accross the input image is observed. We
-destinguish two scenarios: A) moving the neighbourhood horizontally to the right
-and B) advancing the neighbourhood to the next row vertically. The first
+progression of the neighborhood accross the input image is observed. We
+destinguish two scenarios: A) moving the neighborhood horizontally to the right
+and B) advancing the neighborhood to the next row vertically. The first
 scenario is illustrated in figure \ref{fig:memproblemgrowthx}. The green arrow
-marks the new coloumn of the neighbourhood to be sent to the Wallis filter.
+marks the new coloumn of the neighborhood to be sent to the Wallis filter.
 
 \begin{figure}[H]
     \centering
@@ -407,7 +407,7 @@ marks the new coloumn of the neighbourhood to be sent to the Wallis filter.
 \end{figure}
 
 This progression is made for each coloumn of the input image until the last
-coloumn was processed. Then scenario B) comes to play. Moving the neighbourhood
+coloumn was processed. Then scenario B) comes to play. Moving the neighborhood
 vertically to the next row by one pixel requires new image data of one row
 and $WINDOW\_LENGTH-1$ rows of image data that had already been processed on the
 previous row. Figure \ref{fig:memproblemgrowthy} illustrates scenario B.
@@ -511,7 +511,8 @@ where the UFT core is configured and a transmission is started.
 
 \subsubsection*{Realization}
 According to Xilinx application note XAPP-1209 \cite{xapp1209} a state
-machine in Vivado HLS can be realizes by using a switch statement in the C code.
+machine in Vivado HLS can be realizes by using a switch statement in the C/C++
+code.
 The code in file \texttt{controller.cpp} implements the state machine behaviour.
 The state machine code is very straight foreward. More work went into the memory
 layout. Because the memory bus to read and write pixels to and from memory is
@@ -530,7 +531,7 @@ ping-pong buffer.
 
 Figure \ref{fig:solamemlayout} shows the memory layout of
 solution A. The blue and red rectangles represent the two buffers. Visualized is
-a AXI burst length of eight and a window lendgth of five.
+a AXI burst length of eight and a window length of five.
 
 \begin{figure}[tb!]
     \centering
@@ -586,7 +587,7 @@ data is copied back to memory.
 
 \subsubsection*{Hurdles}
 \todo[inline]{ILA measurement showing slow output pixels}
-The C code was written in little time. With less than 300 lines of code its a
+The C/C++ code was written in little time. With less than 300 lines of code its a
 very simple program. The C and Co-simulation yielded no errors but the
 implemented core together with the Wallis filter did not work as expected.
 Thanks to the integrated logic analyzer the signals connecting the controller
@@ -622,10 +623,19 @@ clearing some hurdles the controller core worked as expected with two drawbacks:
 \todo[inline]{How many clock cycles??}
 \vspace{1ex}
 \textbf{1. Throughput:} The controller core outputs data at a rate of one byte
-every N clock cycles. In theory, using a block memory as internal buffer, it
+every 9 clock cycles as can be seen in the result of the simulation in figure
+\ref{fig:shlowhlsoutput} (simulation clock period is 8ns).
+In theory, using a block memory as internal buffer, it
 should be possible to output one byte per clockcycle. This issue could not be
 resolved in a forseeable time. The analysis view of Vivado HLS would give
 indications on what calculation is resulting in a reduced throughput.
+
+\begin{figure}[tb!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/controller/hlscontrolleroutput.png}
+    \caption{Controller solution A) output data}
+    \label{fig:shlowhlsoutput}
+\end{figure}
 
 \vspace{1ex}
 \textbf{2. Memory layout:} In solution A the image data is stored multiple time
@@ -822,9 +832,9 @@ read condition.
         caption=FiFo read condition, 
         label=lst:fiforeadcond
         ]
-    if ((looped = true) or (w_ptr /= r_ptr)) then
-        DataOut <= Memory(r_ptr);
-    end if;\end{lstlisting}
+if ((looped = true) or (w_ptr /= r_ptr)) then
+    DataOut <= Memory(r_ptr);
+end if;\end{lstlisting}
 \end{minipage}
 
 Similarly, listing \ref{lst:fifowritecond} shows the write condition.
@@ -835,9 +845,9 @@ Similarly, listing \ref{lst:fifowritecond} shows the write condition.
         caption=FiFo write condition, 
         label=lst:fifowritecond
         ]
-    if ((looped = false) or (w_ptr /= r_ptr)) then
-        Memory(w_ptr) := DataIn;
-    end if;\end{lstlisting}
+if ((looped = false) or (w_ptr /= r_ptr)) then
+    Memory(w_ptr) := DataIn;
+end if;\end{lstlisting}
 \end{minipage}
 
 Now that the mechanics of a FiFo are dissected, the memory layout of the
@@ -850,7 +860,7 @@ image coloumn. The idea is to have a full block RAM for each line which is why
 from now on a line is called cache. The input image data is received line by
 line. Each input line is stored in a cache. If at least $WINDOW\_LENGTH$ lines
 are received, there is enough data in the memory to start a Wallis operation for
-one input line. If one input line is processed the Wallis neighbourhood
+one input line. If one input line is processed the Wallis neighborhood
 window slides one pixel downwards. Observed in the Y-axis (top to bottom) this
 mechanism resembles
 a FiFo with \texttt{cache\_w\_ptr} being the write pointer and 
@@ -899,9 +909,9 @@ memory for a Wallis operation.
         caption=MMU read condition, 
         label=lst:mmureadcond
         ]
-    if ((looped = true) or (cache_w_ptr > cache_r_tip)) then
-        DataOut <= Memory(BRAM_SIZE*cache_r_ptr+row_r_ptr);
-    end if;\end{lstlisting}
+if ((looped = true) or (cache_w_ptr > cache_r_tip)) then
+    DataOut <= Memory(BRAM_SIZE*cache_r_ptr+row_r_ptr);
+end if;\end{lstlisting}
 \end{minipage}
 
 Listing \ref{lst:mmuwritecond} shows the write condition. It only differs in
@@ -914,9 +924,9 @@ pointer as in the case of the simple FiFo.
         caption=MMU write condition, 
         label=lst:mmuwritecond
         ]
-    if ((looped = false) or (cache_w_ptr /= cache_r_base)) then
-        Memory(BRAM_SIZE*cache_w_ptr+row_w_ptr) := DataIn;
-    end if;\end{lstlisting}
+if ((looped = false) or (cache_w_ptr /= cache_r_base)) then
+    Memory(BRAM_SIZE*cache_w_ptr+row_w_ptr) := DataIn;
+end if;\end{lstlisting}
 \end{minipage}
 
 The looped flag is set if \texttt{cache\_w\_ptr} wraps to zero and is cleared if
@@ -972,11 +982,12 @@ inferred. Such timing issues had to be fixed for several signals.
 \subsubsection*{Conclusion}
 Because the requirements were already dissected from solution A there was only a
 new memory layout to be realised for solution B. With the main difference being
-that now the behaviour was not described in C language but in VHDL. The total
+that now the behaviour was not described in C/C++ language but in VHDL. The
+total
 amount of time spent on the solutions were approximately the same. What had
 changed is on what the time was spent. While writig the code required the same
 amount of time, debugging and fault finding differed. The HLS solution required
-time in understanding how the synthesis tool translated the C code (referring
+time in understanding how the synthesis tool translated the C/C++ code (referring
 to the AXI4-Stream blocking access problem) while it did not require thoughts on
 timing
 and critical paths. With VHDL these accesses had to be implemented manually and
@@ -985,11 +996,11 @@ worked on first try but some time had to be spent on fixing timing issues.
 Performance wise, there is the expected increase in throughtput. Output pixels
 can be sent to the Wallis filter with every clock cycle as soon as there is
 enough image data in the cache. Figure \ref{fig:tracesolb} shows the output data
-stream. 
+stream with a $WINDOW\_LENGTH$ of three. 
 
 \begin{figure}[tb!]
     \centering
-    % \includegraphics[width=0.6\textwidth]{images/controller/tracesolb.png}
+    \includegraphics[width=\textwidth]{images/controller/vhdlcontrollerout.png}
     \caption{Solution B output data stream}
     \label{fig:tracesolb}
 \end{figure}

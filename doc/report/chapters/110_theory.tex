@@ -102,7 +102,7 @@ Image analysis often employs global image operations that uses the entire image 
 % -----------------------------------------------------------------------------
 \subsection{Wallis Filter}\label{ch:th_wallis_filter}
 % -----------------------------------------------------------------------------
-The main goal of the Wallis filter is to adjust the mean and variance of an image and to map it into a given mean and variance to the destination image. This is mainly used for local contrast enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
+The main goal of the Wallis filter is to adjust the mean and variance of an image and to map it to a given mean and variance of the output image. This is mainly used for local contrast enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
 The Wallis filter equation is \cite{wallis_filter}:
 \begin{equation}
     I'(x,y) = \frac{( I(x,y) - \mu_{n})\cdot c \cdot \sigma_{g}^{2}}{c \cdot \sigma_{n}^{2} + (1 - c) \cdot \sigma_{g}^{2}} + b \cdot \mu_{g} + (1 - b) \cdot \mu_{n}
@@ -122,7 +122,7 @@ The Wallis filter equation is \cite{wallis_filter}:
 
 The two facotrs b and c can have the range from 0 to 1. The larger b is selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
 The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
-The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
+The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
 
 
 % =============================================================================
@@ -376,7 +376,7 @@ ap_ufixed<11,3> fp_var;
 % =============================================================================
 \section{AXI4 Interfaces} \label{chapt:theory:axi4interfaces}
 Advanced eXtensible Interface or AXI is part of the Advanced Microcontroller Bus
-Architecture (AMBA\textregistered) introduced by ARM\textregistered \cite{axispecs}. 
+Architecture (AMBA\textregistered) introduced by ARM\textregistered  \cite{axispecs}. 
 It is intended for the interconnection of functional blocks inside a System on
 Chip or FPGA. IP cores offered by Xilinx implement these interfaces. Two types
 of AXI interfaces are destinguished: Memory mapped and stream. Memory mapped
@@ -419,14 +419,14 @@ information.
     \label{fig:axihandshake}
 \end{figure}
 
-A AXI4 write transaction could run as followed:
+An AXI4 write transaction could run as followed:
 \begin{itemize}
     \item Master sends address and burst size through write address channel
     \item Master sends data through write data channel
     \item Slave responds with status on write response channel
 \end{itemize}
 
-A AXI4 read transaction could run as followed:
+An AXI4 read transaction could run as followed:
 \begin{itemize}
     \item Master sends read address and burst size through read address channel
     \item Slave responds with data on read data channel

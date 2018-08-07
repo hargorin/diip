@@ -4,7 +4,119 @@
 %
 % ==============================================================================
 \chapter{Verification \& Benchmark} \label{chapt:ver_bench}
+With the image processing an dataflow parts implemented, they can be verified
+and benchmarked. The next chapters hold the verification process of both the
+image processing part and the dataflow part. After both components are verified
+they are benchmarked as one unity against a computer based implementation in
+chapter \ref{ch:benchmark}.
 
+
+% ==============================================================================
+%
+%                             Verification
+%
+% ==============================================================================
 \section{Verification} \label{ch:verification}
+The verification process ensures that all components work as expected. It is
+split into the image processing and dataflow parts. They were tested
+independantly to reduce complexity and simulation time. The system as a unity is
+then tested in chapter \ref{ch:benchmark} benchmark.
 
-\section{Benchmark} \label{ch:benchmark}
+% ==============================================================================
+%
+%                             Image Processing
+%
+% ==============================================================================
+\subsection{Image Procession}\label{ch:verification:imageprocessing}
+
+% ==============================================================================
+%
+%                             Dataflow
+%
+% ==============================================================================
+\subsection{Dataflow}\label{ch:verification:dataflow}
+The dataflow part is again divided into two parts, the communication and
+controller parts. While in the communication part only the most recent version
+is tested (reffering to chapter \ref{chapt:dataflow} explaining the solotion
+A and B with streaming interface), both versions of the controller are verified.
+
+\subsubsection*{Communication}
+The communication part was in a large part taken from the last semester project
+and was been thoroughly tested and validated in the project report 
+\cite{p5report}. The three new implemented features are verified in this
+chapter. They consist of:
+\begin{itemize}
+    \item Acknowledge
+    \item User registers
+    \item Stream interface
+\end{itemize}
+
+\vspace{1ex}
+\textbf{Acknowledge:} To test the acknowledge function, a file was sent to the
+FPGA from the computer
+and the Ethernet traffic monitored with Wireshark Netowrk Protocol Analyzer.
+Wiresharks packet dissections are exported to a json file that was then analyzed
+using the \texttt{uftcheck} utility. It was written to analyze network pacekts
+for UFT transfers. The first lines of output yielded:
+
+    \begin{adjustbox}{max width=1.7\textwidth}
+\begin{minipage}{2\linewidth}
+    \begin{lstlisting}[
+        % basicstyle=\small, %or \small or \footnotesize etc.
+        % columns=fullflexible,
+        % frame=single,
+        % breaklines=false,
+        % style=CStyle, 
+        % caption=ack buffer allocation, 
+        % label=lst:ackbufalloc
+        ]
++------+----------------------+----------------------+-----+------------+------+------+
+| Pack |         From         |          To          | D/C |  Control   | TCID | SEQ  | 
++------+----------------------+----------------------+-----+------------+------+------+
+|  1   | 192.168.5.10 (50719) | 192.168.5.9 (42042)  |  C  |  FT Start  |  12  | 1036 |
+|  2   | 192.168.5.10 (50719) | 192.168.5.9 (42042)  |  D  |            |  12  |  0   |
+|  3   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  0   |
+|  5   | 192.168.5.10 (50719) | 192.168.5.9 (42042)  |  D  |            |  12  |  1   |
+|  6   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  1   |\end{lstlisting}
+\end{minipage}
+\end{adjustbox}
+
+The sending PC starts a file transmission with a file transfer start packet and
+the first data packet. The next packet (3) is comming from the FPGA to the PC
+and acknowledges the first data packet (sequence 0). To verify that all packets
+are acknowledged, the sending program reports an acknowledge status after the
+files has been sent. 
+
+\begin{minipage}{\linewidth}
+    \begin{lstlisting}[
+        % basicstyle=\small, %or \small or \footnotesize etc.
+        % columns=fullflexible,
+        % frame=single,
+        % breaklines=false,
+        % style=CStyle, 
+        % caption=ack buffer allocation, 
+        % label=lst:ackbufalloc
+        ]
+$ ./sender 192.168.5.9 42042 payload/cat.jpg
+UFT Sender demo
+destination 192.168.5.9:42042
+HURRAY! All 1036 packets have been acknowledged.
+time elapsed: 1.18s Speed: 0.859 MB/s Size: 1.012 MB\end{lstlisting}
+\end{minipage}
+
+\vspace{1ex}
+\textbf{User register:} To test wether the user registers can be written and are
+output correctly by the communication core, a integrated logic analyzer (ILA)
+was used. An ILA can be configured on the FPGA to record internal signals. The
+results are transferred to the PC over USB and displayed in \gls{vivadohlx}. 
+
+
+\subsubsection*{Controller}
+
+% ==============================================================================
+%
+%                             Benchmark
+%
+% ==============================================================================
+\section{Benchmark}\label{ch:benchmark}
+
