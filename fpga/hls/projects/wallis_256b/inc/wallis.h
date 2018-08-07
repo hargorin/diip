@@ -21,15 +21,14 @@
 // ****************************************************************************
 typedef ap_uint<8>		apuint8_t;
 typedef ap_uint<10>		apuint10_t;
-typedef ap_uint<12>		apuint12_t;
 typedef ap_uint<14>		apuint14_t;
+typedef ap_uint<15>		apuint15_t;
 typedef ap_uint<16>		apuint16_t;
-typedef ap_uint<18> 	apuint18_t;
 typedef ap_uint<19>		apuint19_t;
 typedef ap_uint<27>		apuint27_t;
 typedef ap_uint<168>	apuint168_t;
 
-typedef ap_int<23>		apint23_t;
+typedef ap_int<23>	apint23_t;
 
 
 
