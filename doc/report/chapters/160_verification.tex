@@ -204,4 +204,88 @@ calculation on the computer. The resulting \gls{rmse} is listed in table \ref{ta
 %
 % ==============================================================================
 \section{Benchmark}\label{ch:benchmark}
+To conclude the results of this work, the different solutions are compared in
+this chapter. Furthermore the throughput is compared to a CPU based solution.
+There are four different processing methods in total.
+
+\begin{itemize}
+    \item The solution using HLS with 8bit data bus
+    \item The solution using HLS with 256bit data bus. This method was not
+    implemented on the FPGA hence simulation results were used
+    \item The solution implemented using VHDL
+    \item A programm running on CPU written in C++
+\end{itemize}
+
+Methods 1. and 3. are measured by processing an image stored on the computer
+which is sent to the FPGA, processed and sent back. The time required for the
+processing of an image divided by its pixel count result in the throughput
+measured in megapixels per second ($Mp/s$). To calculate the throughput of
+method 2. the results from \ref{ch:verification:imageprocessing} is used. Method
+4. is written in C++ and uses OpenCV to read image data. Throughput is
+calculated the same as for methods 1. and 3.
+\\
+
+As source image a fixed aspect ration of 16:9 was chosen. This is a common
+format used among other for movies. The image was resized to four different
+heights: 480p, 720p, 1080p and 2160p with the largest one being equivalent to
+the
+4k image standard. The content of the image does not influence the throughput.
+\\
+
+First the three FPGA implementations are put to contrast.
+Figure \ref{fig:benchmarkcompare} and table \ref{tab:throughputmeasuremetns}
+show the results of the throughput measurements. The missing valud for HLS 8bit
+is due to a bug in the computer software for this image size that could not be
+resolved by the time the benchmark was made. The HLS 8bit implementation yields
+the lowest throughput. This is mainly due to the controller core which requires
+the image data to be re-sent for every line the wallis filter processes. No
+image lines are buffered on the FPGA. The HLS 256bit theoretical result is
+approximately 11 times faster than the 8bit version. This is due to the fact
+that... \todo{WHY???}. Finaly the VHDL implementation yields the highest
+throughput for images larger or equal to 1080p. This was to be expected for two
+reasons. First, the VHDL wallis filter core can process pixels at one pixel per
+clock cycle which is more than the 8bit HLS version is capeable of \todo{true?}.
+Second, the memory management was been greatly improved from the HLS to the VHDL
+controller in that image data is buffered on the FPGA to reduce multiple
+transmissions of image data from PC to FPGA. \\
+The increase of throughput over image height can be explained by the way the
+controller works. \todo{Why exactly is that the case??}
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/benchmark/results.tikz}
+    \end{adjustbox}
+    \caption{Wallis throughput comparisson}
+    \label{fig:benchmarkcompare}
+\end{figure}
+
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l l l l l}
+        \toprule
+        Solution & 480p & 720p & 1080p & 2160p \\
+        \midrule
+        HLS 8bit   & 0.17  &       & 0.168 & 0.161 \\
+        HLS 256bit & 1.909 & 1.909 & 1.909 & 1.909 \\
+        VHDL       & 0.89  & 1.291 & 2.348 & 4.115 \\
+        % CPU        & 12.56 & 16.23 & 15.99 & 15.91 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Throughput measurements}
+    \label{tab:throughputmeasuremetns}
+\end{table}
+
+With all three FPGA implementations compared, the main limit in throughput is
+how the data is transfered to the FPGA. 
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/benchmark/theoreticalmax.tikz}
+    \end{adjustbox}
+    \caption{Theoretical throughput of FPGA versus CPU}
+    \label{fig:theoreticalmax}
+\end{figure}
+
 
