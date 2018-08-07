@@ -28,6 +28,39 @@ then tested in chapter \ref{ch:benchmark} benchmark.
 %
 % ==============================================================================
 \subsection{Image Procession}\label{ch:verification:imageprocessing}
+The verification of the image processing is validated with two different 
+methods. Firstly, an image is processed with the Wallis filter and compared 
+with a reference image. The reference image is generated from a C/C++ program 
+which calculates using floating point calculations. In the second aspect the 
+throughput is validated. \\
+The devices under validation (DUV) are two written in Vivado HLS using C/C++ 
+and one VHDL version. The Vivado HLS versions differ in the input stream. One 
+has an 8 bit AXI4-Stream and the other one has a 256 bit AXI4-Stream input. The
+VHDL is an 8 bit AXI4-Stream.
+
+\subsubsection*{Image Comparsion}
+During the verification an image is processed with the Wallis filter. The Wallis filter is run on the computer as a C/C++ program and has floating point variables. This Wallis filtering is used as a reference image. Two images, added in the appendix \ref{app:images_wallis}, are available as reference images.
+The reference images are passed through the DUV and compared with the reference images. The root-mean-square error (RMSE) serves as a rule. The RMSE indicates how well the  Wallis filtered image deviates on average from the reference image \cite{rmse}.
+
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l l l l l}
+        \toprule
+        DUV & C/C++ simulation (HLS) & RTL simulation (HLS) & ghdl & FPGA \\
+        \midrule
+        C/C++ 8 bit (HLS) &  &  & - & \\
+        C/C++ 256 bit (HLS) &  & & - & - \\
+        VHDL 8 bit & - & - &  & \\
+        \bottomrule
+    \end{tabular}
+    \caption{RMSE of the Wallis filter verification}
+    \label{tab:rmse}
+\end{table}
+
+
+
+\subsubsection*{Throughput}
+
 
 % ==============================================================================
 %
