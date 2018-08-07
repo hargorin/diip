@@ -27,7 +27,7 @@ then tested in chapter \ref{ch:benchmark} benchmark.
 %                             Image Processing
 %
 % ==============================================================================
-\subsection{Image Procession}\label{ch:verification:imageprocessing}
+\subsection{Image Processing}\label{ch:verification:imageprocessing}
 
 % ==============================================================================
 %
@@ -59,14 +59,11 @@ Wiresharks packet dissections are exported to a json file that was then analyzed
 using the \texttt{uftcheck} utility. It was written to analyze network pacekts
 for UFT transfers. The first lines of output yielded:
 
-    \begin{adjustbox}{max width=1.7\textwidth}
-\begin{minipage}{2\linewidth}
+\vspace{1ex}
+    % \begin{adjustbox}{max width=1.7\textwidth}
+\begin{minipage}{1\linewidth}
     \begin{lstlisting}[
-        % basicstyle=\small, %or \small or \footnotesize etc.
-        % columns=fullflexible,
-        % frame=single,
-        % breaklines=false,
-        % style=CStyle, 
+        style=TextStyle, 
         % caption=ack buffer allocation, 
         % label=lst:ackbufalloc
         ]
@@ -77,23 +74,21 @@ for UFT transfers. The first lines of output yielded:
 |  2   | 192.168.5.10 (50719) | 192.168.5.9 (42042)  |  D  |            |  12  |  0   |
 |  3   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  0   |
 |  5   | 192.168.5.10 (50719) | 192.168.5.9 (42042)  |  D  |            |  12  |  1   |
-|  6   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  1   |\end{lstlisting}
+|  6   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  1   |
+\end{lstlisting}
 \end{minipage}
-\end{adjustbox}
+% \end{adjustbox}
 
+\vspace{1ex}
 The sending PC starts a file transmission with a file transfer start packet and
 the first data packet. The next packet (3) is comming from the FPGA to the PC
 and acknowledges the first data packet (sequence 0). To verify that all packets
 are acknowledged, the sending program reports an acknowledge status after the
 files has been sent. 
 
-\begin{minipage}{\linewidth}
+\begin{minipage}{1\linewidth}
     \begin{lstlisting}[
-        % basicstyle=\small, %or \small or \footnotesize etc.
-        % columns=fullflexible,
-        % frame=single,
-        % breaklines=false,
-        % style=CStyle, 
+        style=TextStyle, 
         % caption=ack buffer allocation, 
         % label=lst:ackbufalloc
         ]
@@ -106,12 +101,102 @@ time elapsed: 1.18s Speed: 0.859 MB/s Size: 1.012 MB\end{lstlisting}
 
 \vspace{1ex}
 \textbf{User register:} To test wether the user registers can be written and are
-output correctly by the communication core, a integrated logic analyzer (ILA)
+output correctly by the communication core, a \gls{ila} 
 was used. An ILA can be configured on the FPGA to record internal signals. The
-results are transferred to the PC over USB and displayed in \gls{vivadohlx}. 
+results are transferred to the PC over USB and displayed in \gls{vivadohlx}. All
+user registers (0 through 7) are written with differen values and the reult
+observed using the ILA matched the sent data.
 
+\vspace{1ex}
+\textbf{Stream interface:} The last modification made to the communication core
+was the AXI4-Stream interface. This was similarly tested as the user registers.
+Using an ILA the output of the stream was observed and the correct order of data
+verified. 
 
-\subsubsection*{Controller}
+\subsubsection*{Controller} 
+The most important thing to verify in the controller core is the correct order
+of output pixel. This is done by generating input data representing an image,
+feeding this data through the controller core and observing the output pixels.
+This validation is split into the two solutions implemented using HLS (solution
+A) and VHDL (solution B).
+
+\vspace{1ex}
+\textbf{Solution A) HLS:} In Vivado HLS the validation was done in C and
+Co-simulation. A testbench C/C++ file generates pseudo random image data. This
+data is then processed using the controller core and in the testbench itself.
+The two results are then compared. Using different input data and image sizes,
+all output results matched. A test on the FPGA was omitted. This validation will
+later take plave in the overall validation in chapter \ref{ch:verification:overallvalidation}.
+
+\vspace{1ex}
+\textbf{Solution B) VHDL:} The same approach was used in the solution written in
+VHDL except that the testbench is not written in C/C++ but in VHDL. The input
+stream sends an incrementing pixel value with an image width and height of
+eight. The window length was reduced to three for simplicity. Figure 
+\ref{fig:vhdlcontrollerstimuli} shows the input data values.
+
+ \begin{figure}[h!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/validation/dataflow/stimuli.tikz}
+    \end{adjustbox}
+    \caption{VHDL controller validation stimuli}
+    \label{fig:vhdlcontrollerstimuli}
+\end{figure}
+
+Observed was the output stream that was stored in a text file by the VHDL
+testbench. The resulting pixel order was then validated using random samples.
+Listing \ref{lst:controlleroutstreamvhdl} shows the output pixel values of the
+first three lines.
+
+\begin{minipage}{\linewidth}
+    \begin{lstlisting}[
+        style=TextStyle, 
+        caption=Output stream hexadecimal coded, 
+        label=lst:controlleroutstreamvhdl
+        ]
+00 08 10 01 09 11 02 0A 12 03 0B 13 04 0C 14 05 0D 15 06 0E 16 07 0F 17 
+08 10 18 09 11 19 0A 12 1A 0B 13 1B 0C 14 1C 0D 15 1D 0E 16 1E 0F 17 1F
+10 18 20 11 19 21 12 1A 22 13 1B 23 14 1C 24 15 1D 25 16 1E 26 17 1F 27\end{lstlisting}
+\end{minipage}
+
+% ==============================================================================
+%
+%                             Overall Validation
+%
+% ==============================================================================
+\subsection{Overall Validation}\label{ch:verification:overallvalidation}
+To validate the overall system, the image processing and dataflow parts are
+combined in a Vivado HLx project. Two projects are distinguished:
+\begin{itemize}
+    \item \texttt{diip}\footnote{\Gls{diip}} Project using solution A) with HLS
+    implementation
+    \item \texttt{diip\_faster} Project using solution B) with VHDL
+    implementation
+\end{itemize}
+
+On the computer side, the program \texttt{diip\_cc} written in C++ reads the
+pixels from an input image, splits the data into according UFT packets and sends
+them to the FPGA. The processed pixels are received and stored in the output
+image. Similar to the proceeding in \ref{ch:verification:imageprocessing} two
+test images were used and compared to the results of a floating point
+calculation on the computer. The resulting \gls{rmse} is listed in table \ref{tab:overallvalidationresults}. 
+
+\todo[inline]{Fill table}
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l c c}
+        \toprule
+        Solution & RMSE room & RMSE mountain \\
+        \midrule
+        diip (HLS) & 0.001 & 0.001 \\
+        diip\_faster (VHDL) & 0.001 & 0.001 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Overall validation results}
+    \label{tab:overallvalidationresults}
+\end{table}
+
 
 % ==============================================================================
 %
