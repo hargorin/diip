@@ -1,0 +1,49 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    \coordinate (corig)      at (0,0);
+    \coordinate (cmonitor)   at (0,0);
+    \coordinate (ccom)       at (5,0);
+    \coordinate (cip)        at (10,0);
+
+
+    %nodes
+
+    \begin{pgfonlayer}{main}
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center] (com) at (ccom) {Controller};
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, above =1cm of com] (commu) {Communication};
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 1cm of com, yshift=3cm] (ip1) {Image\\Processing};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 1cm of com, yshift=1.5cm] (ip2) {Image\\Processing};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 1cm of com, yshift=0cm] (ip3) {Image\\Processing};
+        
+        \node[circle,fill=black,minimum size=0.2cm,inner sep=0pt, below = 0.5cm of ip3] (dt1)  {};
+        \node[circle,fill=black,minimum size=0.2cm,inner sep=0pt, below = 0.5cm of dt1] (dt2)  {};
+
+        % \node[] (eth) at ($(cmonitor) + (4.5, 1.0)$) {LAN};
+        
+        % \draw[line width = 0.5mm] ($(eth) + (0,-1.0)$) ellipse (0.2cm and 0.5cm);
+    \end{pgfonlayer}
+
+    % FPGA box
+    \begin{pgfonlayer}{main}
+        \node[above = 2.7cm of com, xshift=-1.0cm] (fpga) { FPGA };
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{foreground}
+        \node (f_fpga) [draw=black, fill=gray!20, inner sep=10, fit={(com) (ip1) (ip2) (ip3) (dt2) (dt1)}] {};
+    \end{pgfonlayer} 
+
+    
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(commu.180) + (-1.5,0)$) -- ($(commu.180) + (0,0)$) node[near start, left, anchor=east,xshift=-0.5cm] () {PC} ;
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(com.90) + (0,0)$) -- ($(commu.270) + (0,0)$) node[near start, left, anchor=east,xshift=-0.5cm] () {} ;
+
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(com.0) + (0,0.1)$) -- ($(ip1.180) + (0,0)$) node[near start, left, anchor=east,xshift=-0.5cm] () {} ;
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(com.0) + (0,0)$) -- ($(ip2.180) + (0,0)$) node[near start, left, anchor=east,xshift=-0.5cm] () {} ;
+    \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(com.0) + (0,0)$) -- ($(ip3.180) + (0,0)$) node[near start, left, anchor=east,xshift=-0.5cm] () {} ;
+
+
+\end{tikzpicture}

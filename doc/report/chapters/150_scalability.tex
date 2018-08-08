@@ -4,64 +4,220 @@
 %
 % ==============================================================================
 \chapter{Scalability} \label{chapt:scalability}
+The code for this project is written from the beginning with the possibility to
+scale it up in mind. The main idea being that the throughput can be increased.
+Scalability in regard to this project can be divided into two terms:
+\begin{itemize}
+    \item Inside FPGA
+    \item Across multiple FPGAs
+\end{itemize}
 
-% \secton{Inside FPGA}
-% \begin{table}[tb!]
-%     \centering
-%     \begin{tabular}{p{0.49\textwidth} p{0.49\textwidth}}
-%         \toprule
-%         \multicolumn{1}{c}{Solution A} & \multicolumn{1}{c}{Solution B} \\
-%         \midrule
-%         Insert figure & Insert figure \\\midrule
-%         Initial size & \\
-%         {\( 
-%             s_i = i_w(w_l+(N-1))
-%         \)}
-%         &
-%         {\( 
-%             s_i = w_l(w_l+(N-1))
-%         \)}
-%         \\\midrule
-%         Iterarion size & \\
-%         {\( 
-%             s_r  = i_w
-%         \)}
-%         &
-%         {\( 
-%             s_r  = w_l+(N-1)
-%         \)}
-%         \\\midrule
-%         Store size & \\
-%         {\( 
-%             s_s  = i_w(w_l+(N-1))
-%         \)}
-%         &
-%         {\( 
-%             s_s  = w_l(w_l+(N-1))
-%         \)}
-%         \\\midrule
-%         Number of inits per image & \\
-%         {\( 
-%             n_i  = 1
-%         \)}
-%         &
-%         {\( 
-%             n_i  = \frac{1}{N}(i_w-w_l+1)
-%         \)}
-%         \\\midrule
-%         Total tx size & \\
-%         {\( 
-%             s_{tx}  = i_w \cdot i_h
-%         \)}
-%         &
-%         {\( 
-%             s_{tx}  = n_i s_i + (i_w-w_l)s_r n_i
-%         \)}
-%         \\
-%         \bottomrule
-%     \end{tabular}
-%     \caption{Throughput measurements}
-%     \label{tab:throughputmeasuremetns}
-% \end{table}
+In the following sections these two aspects are dissected theoretically.
 
-% \secton{Accross FPGA}
+\section{Inside FPGA}
+Every FPGA has a given amount of ressources (LUTs, memory and so forth, as
+described in table \ref{tab:XC7A200T}). The inside FPGA scalability aims towards
+optimal usage of these ressources. Before methods for scalability can be
+compared it must be clarified what can be scaled. The \gls{diip} project
+consists of three main parts. The communication, controller and image processing
+parts. The communication part is only implemented once to handle the
+communication to the PC and therefore can not be scaled. The image processing
+part however can be implemented multiple times inside the FPGA to increase
+throughput. Therefore the conrtoller part splits up the incomming image data and
+distributes it to the image processing cores. To summarize the inside FPGA
+scalability:
+\begin{itemize}
+    \item Implement the communication part once
+    \item Implement the image processing part as many times as the available
+    ressources allow it
+    \item Adapt the controller to distribute data accross the processing cores
+\end{itemize}
+
+Figure \ref{fig:insidefpgascaleconceptbd} clarifies the concept. Note that all
+image processing cores are equal.
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/scalability/insidescalebd.tikz}
+    \end{adjustbox}
+    \caption{Block diagram of a inside FPGA scaled solution}
+    \label{fig:insidefpgascaleconceptbd}
+\end{figure}
+
+Now that the concept is clarified, two possible solutions are compared to
+distribute the image data accross the image processing cores, proposal A and B.
+They differ in the way in what order the data is sent to the FPGA and how it is
+cached inside the FPGA. For each proposal the following metrics are calculated.
+
+\begin{description}
+    \item[Initial size $s_i$]\hfill \\
+    The number of pixels that have to be sent to the FPGA before beginning
+    interational operation.
+    \item[Iteration size $s_r$]\hfill \\
+    How many pixels that have to be sent to start a new iteration.
+    \item[Store size $s_s$]\hfill \\
+    How many pixels have to be cached inside the FPGA.
+    \item[Number of inits per image $n_i$]\hfill \\
+    Denotes the number of initial data transfers of size $s_i$ have to be made
+    per image.
+    \item[Total tx size $s_{tx}$]\hfill \\
+    The total number of pixels sent to the FPGA to calculate one image.
+\end{description}
+
+
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+        \toprule
+        \multicolumn{1}{c}{Solution A} & \multicolumn{1}{c}{Solution B} \\
+        \midrule
+        Insert figure & Insert figure \\\midrule
+        \textbf{Concept} & \\
+        Image data is sent line wise. Each image processing core handles one
+        input line, starts as soon as enough data is transfered and jumps $N$ lines
+        downwards after completion.
+        &
+        Image data is sent coloumn wise with $w_l+(N-1)$ pixels per coloumn. All
+        image processing cores start processing at the same time and progress
+        $N$ lines downwards after completion.
+        \\\midrule
+        \textbf{Initial size} & \\
+        {\( 
+            s_i = i_w(w_l+(N-1))
+        \)}
+        &
+        {\( 
+            s_i = w_l(w_l+(N-1))
+        \)}
+        \\\midrule
+        \textbf{Iterarion size} & \\
+        {\( 
+            s_r  = i_w
+        \)}
+        &
+        {\( 
+            s_r  = w_l+(N-1)
+        \)}
+        \\\midrule
+        \textbf{Store size} & \\
+        {\( 
+            s_s  = i_w(w_l+(N-1))
+        \)}
+        &
+        {\( 
+            s_s  = w_l(w_l+(N-1))
+        \)}
+        \\\midrule
+        \textbf{Number of inits per image} & \\
+        {\( 
+            n_i  = 1
+        \)}
+        &
+        {\( 
+            n_i  = \frac{1}{N}(i_w-w_l+1)
+        \)}
+        \\\midrule
+        \textbf{Total tx size} & \\
+        {\( 
+            s_{tx}  = i_w \cdot i_h
+        \)}
+        &
+        {\( 
+            s_{tx}  = n_i s_i + (i_w-w_l)s_r n_i
+        \)}
+        \\
+        \bottomrule
+    \end{tabular}
+    \caption{Inside FPGA scalability methods}
+    \label{tab:insidefpgascalability}
+\end{table}
+
+Before comparing the two proposals another metric has to be taken into
+consideration: The effective throughput of the image processing core. The way
+the wallis filter works is that it requires a neighbourhood of pixels. For each
+line the core processes, the initial neighbourhood has to be resent. Equation
+\ref{eq:theomaxvhdlwallise} derived in appendix 
+\ref{app:derivations:theomaxvhdlwallis} is used to calculate the effective
+throughput $b_r$ of a Wallis filter core. To simplify, the image height $i_h$ is
+considered to be much larger than the window length $w_l$ and therefore the
+equation can be noted as shown in equatio \ref{eq:vhdlwallismaxb}. Using the
+throughput of the VHDL Wallis filter implementation ($b_w=125Mp/s$) and the
+window length $w_l=21$ the effective bandwidth $b_r$ is calculated:
+
+\begin{align}
+    b_r  & \approx \frac{b_w}{w_l} = 5.95 Mp/s
+    \label{eq:vhdlwallismaxb}
+\end{align}
+
+Under the assumption that the real throughput $b_r$ scales proportionally with the
+number of image processing cores implemented, equation 
+\ref{eq:scaledrealttotalhroughput} can be noted to represent the total image
+processing throughput $b_t$.
+
+\begin{align}
+    b_t  & = N \cdot b_r
+    \label{eq:scaledrealttotalhroughput}
+\end{align}
+
+Considering the maximum throughput of the Gigabit-Ethernet connection of
+$b_e=125MB/s$ \footnote{True Ethernet throughput is less than 125MB/s
+considering packet overhead} equation \ref{eq:maxethernetthrouhgput} can be derived to calculate the
+maximum number of image processing cores that can be implemented before the
+Ethernet communication link is saturated.
+
+\begin{align}
+    b_e \geq b_t = N \cdot b_r \Rightarrow N \leq \frac{b_e}{b_r} \approx 
+    \frac{b_e w_l}{b_w} = w_l = 21
+    \label{eq:maxethernetthrouhgput}
+\end{align}
+
+To calculate the free memory the results from \ref{asdf} \todo{ref to ressource
+VHDL} are dissected to calculate the available memory. Table \ref{tab:membudget}
+lists the required block memory usage.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l r}
+        \toprule
+        Item & BRAM tiles \\
+        \midrule
+        Total available & 365 \\
+        TEMAC support & -2 \\
+        UDP IP Core & -1.5 \\
+        21 divider generators & -10.5 \\
+        21 Wallis cores & -10.5 \\
+        \midrule
+        Free & 340.5\\
+        \bottomrule
+    \end{tabular}
+    \caption{FPGA block memory budget}
+    \label{tab:membudget}
+\end{table}
+
+After using up memory for the communication and image processing cores, 340.5
+block RAM tiles with 36Kb each results in 1'532KB of remaining block RAM that
+can be used for image caching. Table \ref{tab:parsum} summarizes the
+parameters that are used to compare the two inside FPGA scale proposals.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{l r l}
+        \toprule
+        Parameter & Value & Description\\
+        \midrule
+        $N$ & 21 & Number of image processing cores to implement \\
+        $s_b$ & 1'532KB & Block memory storage available for cache \\
+        $w_l$ & 21 & Window length of the Wallis filter \\
+        \bottomrule
+    \end{tabular}
+    \caption{Parameter summary}
+    \label{tab:parsum}
+\end{table}
+
+
+\section{Across FPGA}
+text
+
+\section{Usecase}
+

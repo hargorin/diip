@@ -363,8 +363,18 @@ Now that the different implementations are compared against each other, the
 two implementations with the highest throughput (VHDL and HLS 256bit
 implementations) are put to contrast with a CPU based computation.  The CPU
 programm was run multiple times for each image and the mean throughput is
-calculated. Figure \ref{fig:theoreticalmax} and table 
+calculated. The program was running on a Intel Core i7-6700HQ running at 2.60
+GHz on a single core.  Figure \ref{fig:theoreticalmax} and table
 \ref{tab:throughputcompare} show the results.
+\\
+
+The CPU performance is the fastest of all three. It processes the images 2.76
+times faster than the VHDL solution and 1.45 times faster than the HLS 256bit
+solution. As mentioned in the scalability chapter (\ref{chapt:scalability}) the
+throughput of both FPGA implementations (VHDL and HLS 256bit) can be improved by
+implementing the Wallis filter multiple times on one FPGA. By implementing the
+HLS solution twice or the VHDL solution three times, a regular CPU could already
+be outrunned by one FPGA.
 
 \begin{figure}[b!]
     \centering
@@ -377,13 +387,13 @@ calculated. Figure \ref{fig:theoreticalmax} and table
 
 \begin{table}[b!]
     \centering
-    \begin{tabular}{l l l l l l}
+    \begin{tabular}{l l l l l l l}
         \toprule
-        Solution & 480p & 720p & 1080p & 2160p & \\
+        Solution & 480p & 720p & 1080p & 2160p & & Performance Gain vs VHDL\\
         \midrule
-        VHDL       & 5.92  & 5.84  & 5.78  & 5.73  & $MB/s$\\
-        HLS 256bit & 11.3  & 11.1  & 11.0  & 10.9  & $MB/s$\\
-        CPU        & 12.56 & 16.23 & 15.99 & 15.91 & $MB/s$\\
+        VHDL       & 5.92  & 5.84  & 5.78  & 5.73  & $MB/s$ & \\
+        HLS 256bit & 11.3  & 11.1  & 11.0  & 10.9  & $MB/s$ & x1.90\\
+        CPU        & 12.56 & 16.23 & 15.99 & 15.91 & $MB/s$ & x2.76\\
         \bottomrule
     \end{tabular}
     \caption{FPGA PC Throughput comparisson}
