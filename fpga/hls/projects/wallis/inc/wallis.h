@@ -21,10 +21,9 @@
 // ****************************************************************************
 typedef ap_uint<8>	apuint8_t;
 typedef ap_uint<10>	apuint10_t;
-typedef ap_uint<12>	apuint12_t;
 typedef ap_uint<14>	apuint14_t;
+typedef ap_uint<15>	apuint15_t;
 typedef ap_uint<16>	apuint16_t;
-typedef ap_uint<18> apuint18_t;
 typedef ap_uint<19>	apuint19_t;
 typedef ap_uint<27>	apuint27_t;
 
@@ -47,5 +46,6 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 
 // Top-Function
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
-			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-			ap_ufixed<5,1> brightness);
+			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+			ap_ufixed<5,1,AP_RND> brightness);
+

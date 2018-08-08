@@ -15,5 +15,5 @@ create_solution "sol11_ecc" "wallis" "directives_sol11.tcl"
 
 
 # Add custom files
-add_files -tb ../projects/wallis/input_files/landscape.jpg
-add_files -tb ../projects/wallis/input_files/room.jpg
+add_files -tb ../projects/wallis/input_files/mountain.tif
+add_files -tb ../projects/wallis/input_files/room.tif

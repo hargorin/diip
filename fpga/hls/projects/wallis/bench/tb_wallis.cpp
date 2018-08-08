@@ -13,11 +13,12 @@
 #include <iostream>
 using namespace cv;
 
-#define INPUT_IMAGE "room.jpg"
+#define INPUT_IMAGE "room.tif"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
-#define CONTRAST 	0.82 //0.75 0.82
-#define BRIGHTNESS	0.49	//0.8 0.49
+#define CONTRAST 	0.8125 //0.75 0.82
+#define BRIGHTNESS	0.5	//0.8 0.49
+
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -37,10 +38,10 @@ int main(int argc, const char * argv[]) {
 	// Edit Image
 	Mat src_gray;
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
-	//uint16_t img_width = src_gray.cols;
-	//uint16_t img_height = src_gray.rows;
-	uint16_t img_height = 40;
-	uint16_t img_width = 40;
+	uint16_t img_width = src_gray.cols;
+	uint16_t img_height = src_gray.rows;
+	//uint16_t img_height = 40;
+	//uint16_t img_width = 40;
 	uint16_t g_height = (img_height - WIN_LENGTH + 1);
 	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
@@ -172,8 +173,8 @@ int main(int argc, const char * argv[]) {
 /*	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
-	imwrite("wallis_hw_room.jpg", hw_dst_img);
-	imwrite("wallis_sw_room.jpg", c_dst_img);
+	imwrite("wallis_hw_room.tif", hw_dst_img);
+	imwrite("wallis_sw_room.tif", c_dst_img);
 	if (getenv("DISPLAY") != NULL)
 	{
 		imshow( "Original", src_gray );
@@ -214,66 +215,7 @@ uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
 	return var;
 }
 
-/*uint16_t C_Var(uint8_t *pixel, uint8_t mean) {
-	uint32_t c_sumPow = 0;
-	uint16_t var = 0;
-
-	for(uint16_t k = 0; k < WIN_SIZE; k++) {
-		c_sumPow += (pixel[k] - mean) * (pixel[k] - mean);
-	}
-
-	var = c_sumPow / (WIN_SIZE);
-	return var;
-}*/
-
 uint8_t C_Wallis(uint8_t v_pixel, uint8_t n_mean, uint16_t n_var, uint8_t g_mean, uint16_t g_var, float brightness, float contrast) {
-/*
-	float tmp_Num;
-	float fp_Num;
-	float fp_nVar;
-	float fp_nMean;
-	float fp_Var;
-	float fp_Den;
-	float fp_Div;
-	float w_Pixel;
-
-	float w_gMean = brightness * g_mean;
-	float w_gVar = (1-contrast) * g_var;
-
-
-	// int23 = (uint8 - uint8) * uint14
-	tmp_Num = (v_pixel - n_mean) * g_var;
-	//printf("%.6f\n", (float)tmp_Num);
-
-	// <27,23> = int23 * <5,1>
-	fp_Num = tmp_Num * contrast;
-	//printf("%.6f\n", (float)fp_Num);
-
-	// <18,14> = <5,1> * uint14
-	fp_nVar = contrast * n_var;
-	//printf("%.6f\n", (float)fp_nVar);
-
-	// <12,8> = (1 - <5,1>) * uint8
-	fp_nMean = (1-brightness) * n_mean;
-	//printf("%.6f\n", (float)fp_nMean);
-
-	// <19,15> = <18,14> + <18,14>
-	fp_Var = fp_nVar + w_gVar;
-	//printf("%.6f\n", (float)fp_Var);
-
-	// <20,5> = 1/ <19,15>
-	fp_Den = 1/fp_Var;
-	//printf("%.6f\n", (float)fp_Den);
-
-	// <35,29> = <27,23> * <20,5>
-	fp_Div = fp_Num * fp_Den;
-	//printf("%.6f\n", (float)fp_Div);
-
-	// <36,30> = <35,29> + <12,8> +  <12,8>
-	w_Pixel = fp_Div + w_gMean + fp_nMean;
-	//printf("%d\n", (uint8_t)w_Pixel);
-*/
-
 	float w_Pixel;
 
 	float dgb = ((v_pixel - n_mean)*contrast*g_var) / (contrast*n_var+(1-contrast)*g_var);

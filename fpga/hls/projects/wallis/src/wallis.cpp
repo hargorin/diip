@@ -14,19 +14,21 @@ apuint8_t Cal_Mean(apuint19_t sum_Pixel);
 apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2);
 
 // Wallis Filter
-apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
-						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-						ap_ufixed<5,1> brightness);
+apuint8_t Wallis_Filter(apuint8_t iPxl, apuint8_t n_Mean, apuint14_t n_Var,
+						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+						ap_ufixed<5,1,AP_RND> brightness);
+
 
 
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
-			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-			ap_ufixed<5,1> brightness) {
+			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+			ap_ufixed<5,1,AP_RND> brightness) {
+
 
 	g_Mean = 127;
 	g_Var = 3600;
-	contrast = 0.82;
-	brightness = 0.49;
+	contrast = 0.8125;
+	brightness = 0.5;
 	
 	// ************************************************************************
 	// Variables
@@ -154,95 +156,38 @@ apuint16_t Cal_Variance(apuint16_t mean2, apuint27_t sum_pixel2) {
 /*
  * Calculate the Wallis Filter
  */
-apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint14_t n_Var,
-						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1> contrast,
-						ap_ufixed<5,1> brightness) {
+apuint8_t Wallis_Filter(apuint8_t iPxl, apuint8_t n_Mean, apuint14_t n_Var,
+						apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
+						ap_ufixed<5,1,AP_RND> brightness) {
 
 	apint23_t tmp_Num;
-	ap_int<23> fp_Num;
-	ap_uint<14> fp_nVar;
-	ap_uint<8> fp_nMean;
-	ap_uint<15> fp_Var;
-	//ap_ufixed<18,1> fp_Den;
-	//ap_int<333> fp_Div;
+	apint23_t num;
+	apuint14_t c_nVar;
+	apuint8_t bi_nMean;
+	apuint15_t den_Var;
+	ap_ufixed<18,1> den;
+	apint23_t div;
+	apint23_t w_Pixel;
 
-	// mehr clk und mehr ressourcen dafür bessere genauigkeit
-	//ap_fixed<27,25> fp_Num;
-	//ap_ufixed<18,16> fp_nVar;
-	//ap_ufixed<12,10> fp_nMean;
-	//ap_ufixed<19,17> fp_Var;
-	ap_ufixed<18,1> fp_Den;
-	ap_fixed<31,31> fp_Div;
+	apuint8_t b_gMean = brightness * g_Mean;
+	apuint14_t ci_gVar = (1 - contrast) * g_Var;
 
-	//ap_ufixed<36,30> w_Pixel;
-	ap_fixed<32,32> w_Pixel;
-	//apuint8_t w_Pixel;
+	tmp_Num = (apint23_t)((iPxl - n_Mean) * g_Var);
+	num = tmp_Num * contrast;
+	c_nVar = contrast * n_Var;
+	bi_nMean = (1 - brightness) * n_Mean;
+	den_Var = (apuint15_t)(c_nVar + ci_gVar);
 
-	apuint12_t w_gMean = brightness * g_Mean;
-	apuint18_t w_gVar = (1-contrast) * g_Var;
+	ap_ufixed<18,1> rec = 1.0;
+	den = rec / den_Var;
+	div = num * den;
 
-	// int23 = (uint8 - uint8) * uint14
-	tmp_Num = (v_pixel - n_Mean) * g_Var;
-	//printf("%d\n", (int32_t)tmp_Num);
-
-	// <27,23> = int23 * <5,1>
-	fp_Num = tmp_Num * contrast;
-	//printf("%.6f\n", (float)fp_Num);
-
-	// <18,14> = <5,1> * uint14
-	fp_nVar = contrast * n_Var;
-	//printf("%.6f\n", (float)fp_nVar);
-
-	// <12,8> = (1 - <5,1>) * uint8
-	fp_nMean = (1-brightness) * n_Mean;
-	//printf("%.6f\n", (float)fp_nMean);
-
-	// <19,15> = <18,14> + <18,14>
-	fp_Var = fp_nVar + w_gVar;
-	//printf("%.6f\n", (float)fp_Var);
-
-	//fp_Var = 2;
-	// <20,5> = 1/ <19,15>
-	ap_ufixed<18,1> noah = 1.0;
-	fp_Den = noah/fp_Var;
-	//printf("%.15f\n", (float)fp_Den);
-
-	// <35,29> = <27,23> * <20,5>
-	fp_Div = fp_Num * fp_Den;
-	//printf("%.6f\n", (float)fp_Div);
-
-	// <36,30> = <35,29> + <12,8> +  <12,8>
-	w_Pixel = fp_Div + w_gMean + fp_nMean;
-	//printf("%d\n", (uint8_t)w_Pixel);
-
+	w_Pixel = div + b_gMean + bi_nMean;
 	if(w_Pixel > 255) w_Pixel = 255;
 	if(w_Pixel < 0) w_Pixel = 0;
 
 	return (apuint8_t)w_Pixel;
 }
-
-/*apuint8_t Wallis_Filter(apuint8_t v_pixel, apuint8_t n_Mean, apuint35_t n_Var,
-						apuint8_t g_Mean, apuint16_t g_Var, float fContrast,
-						float fBrightness) {
-	float tmp_Num = 0.0;
-	//float fp_nVar = 0.0;
-	float fp_Mean = 0.0;
-	float fp_Var = 0.0;
-	float fp_Den = 0.0;
-	float fp_Div = 0.0;
-	float w_Pixel = 0.0;
-
-	tmp_Num = (v_pixel - n_Mean) * g_Var * fContrast;
-	fp_Var = fContrast * n_Var + (1-fContrast)*g_Var;
-	fp_Mean = fBrightness * g_Mean + (1-fBrightness) * n_Mean;
-	//fp_Var = fp_nVar + w_gVar;
-	fp_Den = 1/fp_Var;
-	fp_Div = tmp_Num * fp_Den;
-	w_Pixel = fp_Div + fp_Mean;
-
-	return (apuint8_t)w_Pixel;
-
-}*/
 
 
 
