@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Wed Jul 18 15:24:07 2018
--- Last update : Fri Jul 20 11:41:00 2018
+-- Last update : Wed Aug  8 12:17:30 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -59,6 +59,7 @@ architecture behav of div_model is
  
     signal num : signed (23 downto 0);
     signal den : signed (15 downto 0);
+    signal div : signed (31 downto 0);
     signal quo : signed (31 downto 0);
 begin
     -- division
@@ -66,8 +67,16 @@ begin
     den <= signed(i2_axis_tdata);
  
     quo(31 downto 8) <= num / den when den /= X"0000"
+        else (others => '0');  
+    div <= (shift_left(resize(num, quo'length), 8) / den) when den /= X"0000"
+        else (others => '0');  
+    quo( 7 downto 0) <= div(7 downto 0) when den /= X"0000"
         else (others => '0');
-    quo( 7 downto 0) <= (others => '0');
+
+    --r_num <= shift_left(resize(num, quo'length), 4);
+    --r_den <= shift_left(resize(den, quo'length), 4);
+    --quo <= r_num / r_den when r_den /= X"00000000"
+    --    else (others => '0');
  
     -- be always ready
     i1_axis_tready <= '1';
