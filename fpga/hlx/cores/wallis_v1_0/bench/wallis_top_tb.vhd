@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 16:06:12 2018
--- Last update : Wed Aug  8 14:12:45 2018
+-- Last update : Wed Aug  8 14:34:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -36,9 +36,9 @@ end entity wallis_top_tb;
 architecture testbench of wallis_top_tb is
 
    -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 32;
+    constant IMG_WIDTH : natural := 128;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 32;
+    constant IMG_HEIGHT : natural := 128;
 
 
 	-- Testbench DUT generics as constants
