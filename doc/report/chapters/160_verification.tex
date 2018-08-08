@@ -39,23 +39,58 @@ has an 8 bit AXI4-Stream and the other one has a 256 bit AXI4-Stream input. The
 VHDL is an 8 bit AXI4-Stream.
 
 \subsubsection*{Image Comparsion}
-During the verification an image is processed with the Wallis filter. The Wallis filter is run on the computer as a C/C++ program and has floating point variables. This Wallis filtering is used as a reference image. Two images, added in the appendix \ref{app:images_wallis}, are available as reference images.
-The reference images are passed through the DUV and compared with the reference images. The root-mean-square error (RMSE) serves as a rule. The RMSE indicates how well the  Wallis filtered image deviates on average from the reference image \cite{rmse}.
+During the verification an image is processed with the Wallis filter. The Wallis filter is run on the computer as a C/C++ program and has floating point variables. This Wallis filtering is used as a reference image. Two images (room and mountain), added in the appendix \ref{app:images_wallis}, are available as reference images. \\
+The reference images are passed through the DUV and compared with the reference images. The root-mean-square error (RMSE) serves as a rule. The RMSE indicates how well the  Wallis filtered image deviates on average from the reference image \cite{rmse}. The parameters for the Wallis filter, which were used for the images, can be found in table \ref{tab:parameter}.
 
 \begin{table}[tb!]
     \centering
     \begin{tabular}{l l l l l}
         \toprule
-        DUV & C/C++ simulation (HLS) & RTL simulation (HLS) & ghdl & FPGA \\
+        Image & Brightness & Contrast & Global Mean & Global Variance \\
         \midrule
-        C/C++ 8 bit (HLS) &  &  & - & \\
-        C/C++ 256 bit (HLS) &  & & - & - \\
-        VHDL 8 bit & - & - &  & \\
+        room \ref{fig:ref_room} & 0.5 & 0.8125 & 127 & 3600 \\
+        mountain \ref{fig:ref_mountain} & 0.5 & 0.8125 & 127 & 3600 \\
         \bottomrule
     \end{tabular}
-    \caption{RMSE of the Wallis filter verification}
-    \label{tab:rmse}
+    \caption{Parameters for the Wallis filter}
+    \label{tab:parameter}
 \end{table}
+
+
+
+Table \ref{tab:rmse_room} lists the RMSE values of the room image and the RMSE values of the mountain image in the table \ref{tab:rmse_mountain}. They represent the deviation from the reference image in percent. The deviation from the C/C++ program with the 8 bit AXI4 stream and the 256 bit AXI4 stream does not differ from each other. A total deviation of 0.32\% has been measured in the room image. This corresponds to an intensity value of 0.816 in the range of 0 - 255. There is also only a deviation of 0.33\% in the mountain image. The GHDL verification is with 1.23\% respectively ??? already much higher. The intensity deviates by 3.14 pixels. This is due to the fact that in the VHDL code the mean value and the variance are not exactly calculated in contrast to the HLS versions. \todo{Begruednung!!!}
+
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l l l l}
+        \toprule
+        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & GHDL \\
+        \midrule
+        C/C++ 8 bit (HLS) & 0.32\% & 0.32\% & -\\
+        C/C++ 256 bit (HLS) & 0.32\% & 0.32\% & - \\
+        VHDL 8 bit & - & - & 1.23\% \\
+        \bottomrule
+    \end{tabular}
+    \caption{RMSE of the Wallis filter verification of the room image}
+    \label{tab:rmse_room}
+\end{table}
+
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l l l l}
+        \toprule
+        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & GHDL \\
+        \midrule
+        C/C++ 8 bit (HLS) & 0.33\% & 0.33\% & - \\
+        C/C++ 256 bit (HLS) & 0.33\% & 0.33\% & - \\
+        VHDL 8 bit & - & - & \\
+        \bottomrule
+    \end{tabular}
+    \caption{RMSE of the Wallis filter verification of the mountain image}
+    \label{tab:rmse_mountain}
+\end{table}
+
+
 
 
 
