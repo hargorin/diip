@@ -28,6 +28,7 @@
 * [ ] if-statements in HLS controller: What did we want to show?
 * [ ] Reference to code files - how?
 * [x] Theoretical background: AXI4-Stream?
+* [ ] HLS256/8 throughput measured simulation results
 
 ### New Wallis parameter for IP validation
 ```C

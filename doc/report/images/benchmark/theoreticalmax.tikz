@@ -15,7 +15,7 @@
                 % ytick={0,4,...,20},
                 xmajorgrids=true,ymajorgrids=true,
                 xlabel={image height [$p$]},
-                ylabel={throughput [$Mp/s$]},
+                ylabel={throughput [$MB/s$]},
                 title={Theoretical Maximum vs CPU},
                 legend style={
                     cells={anchor=east},
@@ -23,29 +23,39 @@
                 },
                 legend cell align=left,
                 scatter/classes={
-                    c={mark=diamond*,fill=blue,draw=blue},
-                    d={mark=*,fill=brown,draw=brown},
-                    a={mark=triangle*,fill=black,draw=black},
-                    b={mark=square*,fill=red,draw=red}
+                    a={mark=square*,fill=red,draw=red},
+                    b={mark=diamond*,fill=blue,draw=blue},
+                    c={mark=*,fill=brown,draw=brown}
                 }
             ]
             \addplot[scatter,only marks, scatter src=explicit symbolic]
             table[meta=label] {
                 x    y   label
+                %% HLS 8 bit
+                % 480  1.45 a
+                % 720  1.41 a
+                % 1080 1.43 a
+                % 2160 1.40 a
+                %% HLS 256bit
+                480  11.3 a
+                720  11.1 a
+                1080 11.0 a
+                2160 10.9 a
                 %% VHDL
-                480  5.92 c
-                720  5.84 c
-                1080 5.78 c
-                2160 5.73 c
+                480  5.92 b
+                720  5.84 b
+                1080 5.78 b
+                2160 5.73 b
                 %% CPU
-                480  12.56 d
-                720  16.23 d
-                1080 15.99 d
-                2160 15.91 d
+                480  12.56 c
+                720  16.23 c
+                1080 15.99 c
+                2160 15.91 c
             };
-            \addlegendentry{FPGA theoretical max}
+            % \addlegendentry{FPGA theoretical max}
             % \addlegendentry{HLS 8bit}
-            % \addlegendentry{HLS 256bit}
+            \addlegendentry{HLS 256bit}
+            \addlegendentry{VHDL}
             \addlegendentry{CPU}
         \end{axis}
 

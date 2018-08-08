@@ -5,3 +5,63 @@
 % ==============================================================================
 \chapter{Scalability} \label{chapt:scalability}
 
+% \secton{Inside FPGA}
+% \begin{table}[tb!]
+%     \centering
+%     \begin{tabular}{p{0.49\textwidth} p{0.49\textwidth}}
+%         \toprule
+%         \multicolumn{1}{c}{Solution A} & \multicolumn{1}{c}{Solution B} \\
+%         \midrule
+%         Insert figure & Insert figure \\\midrule
+%         Initial size & \\
+%         {\( 
+%             s_i = i_w(w_l+(N-1))
+%         \)}
+%         &
+%         {\( 
+%             s_i = w_l(w_l+(N-1))
+%         \)}
+%         \\\midrule
+%         Iterarion size & \\
+%         {\( 
+%             s_r  = i_w
+%         \)}
+%         &
+%         {\( 
+%             s_r  = w_l+(N-1)
+%         \)}
+%         \\\midrule
+%         Store size & \\
+%         {\( 
+%             s_s  = i_w(w_l+(N-1))
+%         \)}
+%         &
+%         {\( 
+%             s_s  = w_l(w_l+(N-1))
+%         \)}
+%         \\\midrule
+%         Number of inits per image & \\
+%         {\( 
+%             n_i  = 1
+%         \)}
+%         &
+%         {\( 
+%             n_i  = \frac{1}{N}(i_w-w_l+1)
+%         \)}
+%         \\\midrule
+%         Total tx size & \\
+%         {\( 
+%             s_{tx}  = i_w \cdot i_h
+%         \)}
+%         &
+%         {\( 
+%             s_{tx}  = n_i s_i + (i_w-w_l)s_r n_i
+%         \)}
+%         \\
+%         \bottomrule
+%     \end{tabular}
+%     \caption{Throughput measurements}
+%     \label{tab:throughputmeasuremetns}
+% \end{table}
+
+% \secton{Accross FPGA}

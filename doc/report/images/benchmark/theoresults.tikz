@@ -12,11 +12,11 @@
         \begin{axis}[
                 % domain=-2:6,
                 xtick={0,500,...,2500},
-                ytick={0,1,...,18},
+                ytick={0,2,...,18},
                 xmajorgrids=true,ymajorgrids=true,
                 xlabel={image height [$p$]},
                 ylabel={throughput [$MB/s$]},
-                title={Image Processing Benchmark},
+                title={Image Processing Theoretical Maximums},
                 legend style={
                     cells={anchor=east},
                     legend pos=outer north east,
@@ -24,8 +24,8 @@
                 legend cell align=left,
                 scatter/classes={
                     a={mark=triangle*,fill=black,draw=black},
-                    b={mark=diamond*,fill=blue,draw=blue}
-                    % b={mark=square*,fill=red,draw=red},
+                    b={mark=square*,fill=red,draw=red},
+                    c={mark=diamond*,fill=blue,draw=blue}
                     % d={mark=*,fill=brown,draw=brown}
                 }
             ]
@@ -33,20 +33,20 @@
             table[meta=label] {
                 x    y   label
                 %% HLS 8 bit
-                480  0.17 a
-                % 720   a
-                1080 0.168 a
-                2160 0.161 a
+                480  1.45 a
+                720  1.41 a
+                1080 1.43 a
+                2160 1.40 a
                 %% HLS 256bit
-                % 480  11.3 b
-                % 720  11.1 b
-                % 1080 11.0 b
-                % 2160 10.9 b
+                480  11.3 b
+                720  11.1 b
+                1080 11.0 b
+                2160 10.9 b
                 %% VHDL
-                480  0.89 b
-                720  1.291 b
-                1080 2.348 b
-                2160 4.115 b
+                480  5.92 c
+                720  5.84 c
+                1080 5.78 c
+                2160 5.73 c
                 %% CPU
                 % 480  12.56 d
                 % 720  16.23 d
@@ -54,7 +54,7 @@
                 % 2160 15.91 d
             };
             \addlegendentry{HLS 8bit}
-            % \addlegendentry{HLS 256bit}
+            \addlegendentry{HLS 256bit}
             \addlegendentry{VHDL}
             % \addlegendentry{CPU}
         \end{axis}
