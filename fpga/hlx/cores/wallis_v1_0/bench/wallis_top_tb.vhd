@@ -36,9 +36,9 @@ end entity wallis_top_tb;
 architecture testbench of wallis_top_tb is
 
    -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 128;
+    constant IMG_WIDTH : natural := 680;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 128;
+    constant IMG_HEIGHT : natural := 558;
 
 
 	-- Testbench DUT generics as constants
