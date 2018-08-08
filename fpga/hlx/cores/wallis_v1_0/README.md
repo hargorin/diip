@@ -9,4 +9,6 @@ Change IMG_WIDTH and IMG_HEIGHT in file wallis>top_tb.vhd
 
 ```bash
 make --directory ../../ TOP=wallis_top_tb sim
+cat ../../build/ghdl/axi_stream_res_00* | tr -d ' \n'  | xxd -r -p > bench/out_pixel.bin
+../../../../sw/file2image/file2image bench/out_pixel.bin bench/out.tif 12 12
 ```
