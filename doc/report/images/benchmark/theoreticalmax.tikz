@@ -12,11 +12,11 @@
         \begin{axis}[
                 % domain=-2:6,
                 xtick={0,500,...,2500},
-                ytick={0,20,...,130},
+                % ytick={0,4,...,20},
                 xmajorgrids=true,ymajorgrids=true,
                 xlabel={image height [$p$]},
                 ylabel={throughput [$Mp/s$]},
-                title={Theoretical Limit vs CPU},
+                title={Theoretical Maximum vs CPU},
                 legend style={
                     cells={anchor=east},
                     legend pos=outer north east,
@@ -33,17 +33,17 @@
             table[meta=label] {
                 x    y   label
                 %% VHDL
-                480  125 c
-                720  125 c
-                1080 125 c
-                2160 125 c
+                480  5.92 c
+                720  5.84 c
+                1080 5.78 c
+                2160 5.73 c
                 %% CPU
                 480  12.56 d
                 720  16.23 d
                 1080 15.99 d
                 2160 15.91 d
             };
-            \addlegendentry{VHDL}
+            \addlegendentry{FPGA theoretical max}
             % \addlegendentry{HLS 8bit}
             % \addlegendentry{HLS 256bit}
             \addlegendentry{CPU}

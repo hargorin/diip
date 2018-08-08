@@ -230,11 +230,11 @@ format used among other for movies. The image was resized to four different
 heights: 480p, 720p, 1080p and 2160p with the largest one being equivalent to
 the
 4k image standard. The content of the image does not influence the throughput.
-\\
 
+\subsection{Compare implementations}
 First the three FPGA implementations are put to contrast.
 Figure \ref{fig:benchmarkcompare} and table \ref{tab:throughputmeasuremetns}
-show the results of the throughput measurements. The missing valud for HLS 8bit
+show the results of the throughput measurements. The missing value for HLS 8bit
 is due to a bug in the computer software for this image size that could not be
 resolved by the time the benchmark was made. The HLS 8bit implementation yields
 the lowest throughput. This is mainly due to the controller core which requires
@@ -247,9 +247,7 @@ reasons. First, the VHDL wallis filter core can process pixels at one pixel per
 clock cycle which is more than the 8bit HLS version is capeable of \todo{true?}.
 Second, the memory management was been greatly improved from the HLS to the VHDL
 controller in that image data is buffered on the FPGA to reduce multiple
-transmissions of image data from PC to FPGA. \\
-The increase of throughput over image height can be explained by the way the
-controller works. \todo{Why exactly is that the case??}
+transmissions of image data from PC to FPGA. 
 
 \begin{figure}[tb!]
     \centering
@@ -267,7 +265,7 @@ controller works. \todo{Why exactly is that the case??}
         Solution & 480p & 720p & 1080p & 2160p \\
         \midrule
         HLS 8bit   & 0.17  &       & 0.168 & 0.161 \\
-        HLS 256bit & 1.909 & 1.909 & 1.909 & 1.909 \\
+        HLS 256bit & 11.3 & 11.1 & 11.0 & 10.9 \\
         VHDL       & 0.89  & 1.291 & 2.348 & 4.115 \\
         % CPU        & 12.56 & 16.23 & 15.99 & 15.91 \\
         \bottomrule
@@ -276,16 +274,66 @@ controller works. \todo{Why exactly is that the case??}
     \label{tab:throughputmeasuremetns}
 \end{table}
 
-With all three FPGA implementations compared, the main limit in throughput is
-how the data is transfered to the FPGA. 
+The increase in throughput over image size can be explained by the way the
+PC program works. To prevent an overflow of the image cache inside the
+controller on the FPGA, a delay of $d_l$ seconds is inserted after an image line
+is sent. This ensures that the FPGA is given enough time to calculate one image
+line. From there the theoretical maximum throughput can be calculated. Equation
+\ref{eq:theomaxb} shows the throughput (for derivation refer to appendix \ref{app:derivations:theomax}).
 
-\begin{figure}[tb!]
+\begin{align}
+    b  & \approx \frac{i_w}{d_l + \frac{i_w}{b_e}}
+    \label{eq:theomaxb}
+\end{align}
+
+\begin{tabular}{rl}
+    $b     =$ & theoretical throughput of VHDL solution \\
+    $i_w   =$ & image width \\
+    $d_l   =$ & delay between sending two image lines \\
+    $b_e   =$ & ethernet throughput \\
+\end{tabular} \\
+
+If $d_l$ were to be reduced to zero, the throughput would strive towards $b_e$.
+
+\subsection{FPGA versus CPU}
+Now that the different implementations are compared against each other, the
+implementation with highest throughput (VHDL implementation) is put to contrast
+with a CPU based computation. Before this can be compared the maximum possible
+throughput of the VHDL implementation is calculated because the communication is
+the limiting factor.
+
+\begin{align}
+    b  & = \frac{i_h}{w_l (i_h-w_l+1)}
+    \label{eq:theomaxvhdlwallisshort}
+\end{align}
+
+Equation \ref{eq:theomaxvhdlwallisshort} is used to calculate the maximum
+possible throughput for each of the test images (for derivation refer to appendix \ref{app:derivations:theomaxvhdlwallis}). The CPU programm was run
+multiple times for each image and the mean throughput calculated. Figure 
+\ref{fig:theoreticalmax} and table \ref{tab:throughputcompare} show the results.
+
+\begin{figure}[b!]
     \centering
     \begin{adjustbox}{max width=\linewidth}
         \input{images/benchmark/theoreticalmax.tikz}
     \end{adjustbox}
-    \caption{Theoretical throughput of FPGA versus CPU}
+    \caption{Theoretical maximum throughput of FPGA versus CPU}
     \label{fig:theoreticalmax}
 \end{figure}
+
+\begin{table}[b!]
+    \centering
+    \begin{tabular}{l l l l l l}
+        \toprule
+        Solution & 480p & 720p & 1080p & 2160p & \\
+        \midrule
+        VHDL       & 5.92  & 5.84 & 5.78 & 5.73 & $MB/s$\\
+        CPU        & 12.56 & 16.23 & 15.99 & 15.91 & $MB/s$\\
+        \bottomrule
+    \end{tabular}
+    \caption{FPGA PC Throughput comparisson}
+    \label{tab:throughputcompare}
+\end{table}
+
 
 

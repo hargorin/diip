@@ -16,3 +16,53 @@
 
 \section{UDP file transfer calculation} \label{app:uftcalc}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/uftcalc.pdf}
+
+
+\section{Derivations} \label{app:derivations}
+\subsection{Theoretical maximum throughput of VHDL solution} \label{app:derivations:theomax}
+
+\begin{align}
+    b  & = \frac{i_p}{t_t} \\
+       & = \frac{i_w i_h}{t_i+(i_h-w_l+1)t_r} \\
+       & = \frac{i_w i_h}{(\frac{i_w}{b_e}+d_l)w_l+(i_h-w_l+1)(\frac{i_w}
+       {b_e}+d_l)} \\
+       & = \frac{i_w i_h}{(\frac{i_w}{b_e}+d_l)(i_h+1)} \\
+       & = \frac{i_w i_h}{d_l(i_h+1)+\frac{i_w}{b_e}(i_h+1)} \\
+       & \approx \frac{i_w}{d_l+\frac{i_w}{b_e}}
+    \label{eq:theomaxb}
+\end{align}
+\begin{tabular}{rl}
+    $b     =$ & theoretical throughput of VHDL solution \\
+    $i_p   =$ & total image pixels \\
+    $t_t   =$ & total processing time \\
+    $i_w   =$ & image width \\
+    $i_h   =$ & image height \\
+    $t_i   =$ & time to send the initial lines \\
+    $w_l   =$ & windows length \\
+    $t_r   =$ & iterration time to process one line \\
+    $b_e   =$ & ethernet throughput \\
+    $d_l   =$ & delay between sending two image lines \\
+\end{tabular} \\
+
+\subsection{Theoretical maximum throughput of VHDL Wallis core} 
+\label{app:derivations:theomaxvhdlwallis}
+
+\begin{align}
+    b  & = \frac{i_p}{t_w} &\\
+       & = \frac{i_wi_h}{\frac{n_{ps}}{b_w}} &\\
+       & = \frac{i_w i_h b_w}{w_l i_w (i_h-w_l+1)} &\\
+       & = \frac{i_h}{w_l (i_h-w_l+1)} &\\
+       & = \frac{b_w}{w_l (1-\frac{w_l}{i_h}+\frac{1}{i_h})} &\\
+       & \approx \frac{b_w}{w_l} &(i_h \to \infty)
+    \label{eq:theomaxvhdlwallis}
+\end{align}
+\begin{tabular}{rl}
+    $b     =$ & theoretical throughput of VHDL Wallis filter \\
+    $i_p   =$ & total image pixels \\
+    $t_w   =$ & total processing time of Wallis filter \\
+    $i_w   =$ & image width \\
+    $i_h   =$ & image height \\
+    $n_{ps}=$ & Number of pixels processed by Wallis filter on input \\
+    $b_w   =$ & throughput of Wallis filter \\
+    $w_l   =$ & window length \\
+\end{tabular} \\
