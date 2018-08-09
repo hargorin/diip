@@ -125,7 +125,7 @@ During verification, the throughput of the Wallis filter will also be evaluated.
 \end{table}
 
 
-\subsubsection*{Ressource}
+\subsubsection*{Ressource} \label{ch:ver:ip:ressource}
 For the implementation of the Wallis filter, another important factor is the
 resources it requires on the FPGA. The resources used in the FPGA for the
 implementation of the Wallis filter are listed in table \ref{tab:ressource}.
@@ -479,8 +479,8 @@ maximum results.
 \end{table}
 
 The HLS 8bit solution is the slowest of the three implementations. Its filter
-core accepts 21 pixels per 86 clock cycles as described in \todo{ref
-to hls8bit validation}. With the input width of the IP-core extended to 265bit,
+core accepts 21 pixels per 86 clock cycles as described in table \ref{tab:throughput}. 
+With the input width of the IP-core extended to 265bit,
 a new throughput of around 11 MB/s is achieved. The third solution written
 in VHDL is placed in between the two HLS solutions. Its IP-core accepts one
 pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
