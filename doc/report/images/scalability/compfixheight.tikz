@@ -1,0 +1,76 @@
+% Preamble: 
+% \pgfplotsset{width=7cm,compat=1.5.1}
+\begin{adjustbox}{max width=1\linewidth}
+\begin{tabular}{c c}
+\begin{tikzpicture}
+    % \pgfplotsset{
+    %     scaled x ticks=base 10:3
+    % }
+    \begin{axis}[
+            % height=9cm,
+            % width=9cm,
+            grid=major,
+            title=BRAM usage with variable image width,
+            xlabel=$i_w \lbrack p \rbrack$,
+            ylabel=BRAM tile usage,
+            legend pos=north west,
+            % xtick={10,20,...,70},
+            every axis plot/.append style={thick}
+        ]
+
+            \addplot[mark=none,blue] coordinates {
+                (8192, 72.03472222)
+                (16384,145.7777778)
+                (32768,291.5555556)
+                (64536,583.1111111)
+            };
+            \addlegendentry{prosoal A}
+
+            \addplot[mark=none,red] coordinates {
+                (8192, 0.186848958)
+                (16384,0.186848958)
+                (32768,0.186848958)
+                (64536,0.186848958)
+            };
+            \addlegendentry{prosoal B}
+            
+            \addplot[mark=none, black, dashed] coordinates {(8192,340.5) (64536,340.5)};
+            \addlegendentry{available}
+    \end{axis}
+\end{tikzpicture}
+&
+\begin{tikzpicture}
+    \begin{axis}[
+            % height=9cm,
+            % width=9cm,
+            grid=major,
+            title=Tx size with variable image width,
+            xlabel=$i_w \lbrack p \rbrack$,
+            ylabel=$s_{tx} \lbrack p \rbrack$,
+            legend pos=north west,
+            % xtick={10,20,...,70},
+            every axis plot/.append style={thick}
+        ]
+
+            \addplot[mark=none,blue,smooth] coordinates {
+                (8192, 198967296)
+                (16384, 402653184)
+                (32768, 805306368)
+                (64536, 1610612736)
+            };
+            \addlegendentry{prosoal A}
+
+            \addplot[mark=none,red,smooth] coordinates {
+                (8192, 127795360)
+                (16384, 523288576)
+                (32768, 2094497792)
+                (64536, 8383365120)
+            };
+            \addlegendentry{prosoal B}
+            
+            \addplot[mark=none, black, dashed] coordinates {(8192,198967296) (64536,1610612736)};
+            \addlegendentry{image size}
+    \end{axis}
+\end{tikzpicture}
+\end{tabular}
+\end{adjustbox}

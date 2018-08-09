@@ -1,0 +1,39 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}
+        
+        % Init pixels
+        \draw[fill=gray!20] (0,0) rectangle (1,0.6);
+        \node[anchor=west] at (1.2,0.3)  {Init data};
+
+        \draw[pattern=north east lines, pattern color=gray!60] (3,0) rectangle (4,0.6);
+        \node[anchor=west] at (4.2,0.3)  {Iteration data};
+
+        \draw[blue,line width=0.6mm] (7,0) rectangle (8,0.6);
+        \draw[red,line width=0.6mm,dashed] (8.5,0) rectangle (9.5,0.6);
+        % \draw[black,line width=0.4mm,dotted] (10,0) rectangle (11,0.6);
+        \node[anchor=west] at (9.7,0.3)  {Image processing cores};
+        % Iter pixels
+        % \draw[pattern=north east lines, pattern color=gray!60] (3,2) rectangle (4,7);
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % Grid
+        % \draw[step=1cm,gray,thin] (0,0) grid (6,7);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}

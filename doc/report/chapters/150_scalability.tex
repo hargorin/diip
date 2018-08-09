@@ -63,6 +63,8 @@ cached inside the FPGA. For each proposal the following metrics are calculated.
     per image.
     \item[Total tx size $s_{tx}$]\hfill \\
     The total number of pixels sent to the FPGA to calculate one image.
+    \item[Number of image processing cores $N$]\hfill \\
+    The number of image processing cores implemented on the FPGA.
 \end{description}
 
 
@@ -70,9 +72,25 @@ cached inside the FPGA. For each proposal the following metrics are calculated.
     \centering
     \begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
         \toprule
-        \multicolumn{1}{c}{Solution A} & \multicolumn{1}{c}{Solution B} \\
+        \multicolumn{1}{c}{Proposal A} & \multicolumn{1}{c}{Proposal B} \\
         \midrule
-        Insert figure & Insert figure \\\midrule
+            \begin{adjustbox}{max width=0.4\textwidth}
+                \input{images/scalability/proposela.tikz}
+            \end{adjustbox}
+        & 
+            \begin{adjustbox}{max width=0.4\textwidth}
+                \input{images/scalability/proposelb.tikz}
+            \end{adjustbox}
+        \\
+        % \multicolumn{1}{c}{caption}&
+        % \multicolumn{1}{c}{caption}
+        % \\
+        \multicolumn{2}{c}{
+            \begin{adjustbox}{max width=0.8\textwidth}
+                \input{images/scalability/proposellegend.tikz}
+            \end{adjustbox}
+        }
+        \\\midrule
         \textbf{Concept} & \\
         Image data is sent line wise. Each image processing core handles one
         input line, starts as soon as enough data is transfered and jumps $N$ lines
@@ -129,19 +147,19 @@ cached inside the FPGA. For each proposal the following metrics are calculated.
         \\
         \bottomrule
     \end{tabular}
-    \caption{Inside FPGA scalability methods}
+    \caption{Inside FPGA scalability proposals}
     \label{tab:insidefpgascalability}
 \end{table}
 
 Before comparing the two proposals another metric has to be taken into
 consideration: The effective throughput of the image processing core. The way
 the wallis filter works is that it requires a neighbourhood of pixels. For each
-line the core processes, the initial neighbourhood has to be resent. Equation
+line the core processes, the initial neighbourhood has to be sent. Equation
 \ref{eq:theomaxvhdlwallise} derived in appendix 
 \ref{app:derivations:theomaxvhdlwallis} is used to calculate the effective
 throughput $b_r$ of a Wallis filter core. To simplify, the image height $i_h$ is
 considered to be much larger than the window length $w_l$ and therefore the
-equation can be noted as shown in equatio \ref{eq:vhdlwallismaxb}. Using the
+equation can be noted as shown in equation \ref{eq:vhdlwallismaxb}. Using the
 throughput of the VHDL Wallis filter implementation ($b_w=125Mp/s$) and the
 window length $w_l=21$ the effective bandwidth $b_r$ is calculated:
 
@@ -196,7 +214,7 @@ lists the required block memory usage.
 \end{table}
 
 After using up memory for the communication and image processing cores, 340.5
-block RAM tiles with 36Kb each results in 1'532KB of remaining block RAM that
+block RAM tiles with 36Kb each results in 1'496KB of remaining block RAM that
 can be used for image caching. Table \ref{tab:parsum} summarizes the
 parameters that are used to compare the two inside FPGA scale proposals.
 
@@ -214,6 +232,28 @@ parameters that are used to compare the two inside FPGA scale proposals.
     \caption{Parameter summary}
     \label{tab:parsum}
 \end{table}
+
+Now the two proposals can be put to contrast. Starting with figure 
+\ref{fig:sca:compfixheight} the two proposals are compared against each other
+with an input image of fixed height and variable with. This was chosen because
+with the main limiting factor being \gls{bramtile} usage, the store size $s_s$ has to
+be observed and it is for both proposals independant of image height $i_h$. The
+two proposals can be differentiated in that proposal A is optimized for low tx
+size $s_{tx}$ (and therefore optimized for throughput) while proposal B requires
+buch less memory (area optimized). 
+\\
+The BRAM usage 
+
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/scalability/compfixheight.tikz}
+    \end{adjustbox}
+    \caption{Comparing proposals width variable image width ($w_l=N=21$,
+    $i_h=24'576$)}
+    \label{fig:sca:compfixheight}
+\end{figure}
 
 
 \section{Across FPGA}
