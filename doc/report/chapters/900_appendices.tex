@@ -11,12 +11,58 @@
 \section{Technicial requirements} \label{app:technicial_requirements}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/technical_requirements_P6.pdf}
 
+\section{Data types of the Wallis filter} \label{app:datatypes}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{l l}
+        \toprule
+        Name & Description \\
+        \midrule
+        iPxl & 			Pixel from the input image which is calculated \\
+        g\_Mean &  		Global mean of the output image \\
+        g\_Var &  		Global variance of the output image \\
+        n\_Mean &		Mean of the neighborhood \\
+        n\_Var &  		Variance of the neighborhood \\
+        brightness & 	Brightness factor \\
+        contrast & 		Contrast factor \\
+        b\_gMean &  	Multiplication of brightness and global mean\\
+        ci\_gVar &  	Multiplication of (1 - contrast) and global variance\\
+        tmp\_Num &  	Temporary numerator of the division without contrast\\
+        num &   		Numerator of the division with contrast\\
+        c\_nVar &  		Multiplication of contrast and neighborhood variance\\
+        bi\_nMean &  	Multiplication of (1 - brigthness) and neighborhood mean\\
+        den\_Var & 		Denumerator of the division \\
+        rec & 			Variable has value 1 to calculate a reciprocal division\\
+        den & 			Result of the reciprocal division\\
+        div &  			Result of the entire Wallis filter division\\
+        w\_pixel &  	Output pixel from the Wallis filter\\
+        \bottomrule
+    \end{tabularx}
+    \caption{Description of data types in the Wallis filter division}
+\end{table}
+
+\clearpage
+
 \section{UDP File Transfer} \label{app:uftspec}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/UDP_File_Transfer.pdf}
 
 \section{UDP file transfer calculation} \label{app:uftcalc}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/uftcalc.pdf}
 
+\section{Images for Wallis filter} \label{app:images_wallis}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{appendices/ref_room.png}
+    \caption{Reference image for the image processing verification}
+    \label{fig:ref_room}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{appendices/ref_mountain.png}
+    \caption{Reference image for the image processing verification}
+    \label{fig:ref_mountain}
+\end{figure}
 
 \section{Derivations} \label{app:derivations}
 \subsection{Theoretical maximum throughput of VHDL solution} \label{app:derivations:theomax}
