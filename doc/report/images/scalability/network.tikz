@@ -1,0 +1,79 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    
+    %nodes
+
+    \begin{pgfonlayer}{main}
+        % PC
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, align=center] 
+            (pc) at (0,0) {PC/server};
+        % Switch
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, align=center, right=3cm of pc] 
+            (switch) {10G switch};
+
+        % FPGA1
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, align=center, below=1cm of switch, xshift=-5.5cm] 
+            (f1) {FPGA};
+        % FPGA2
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, align=center, right=0.5cm of f1] 
+            (f2) {FPGA};
+        % Dot
+        \node[circle,fill=black,minimum size=0.2cm,inner sep=0pt, right = 0.5cm of f2] (dt1)  {};
+        \node[circle,fill=black,minimum size=0.2cm,inner sep=0pt, right = 0.2cm of dt1] (dt2)  {};
+        % FPGA3
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, align=center, right=0.5cm of dt2] 
+            (f3) {FPGA};
+
+        % PC to switch
+        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] ($(pc.0) + (0,0)$) -- ($(switch.180) + (0,0)$)
+            node[midway, above] () {10Gb/s} ;
+
+        % Switch to f1
+        \path[draw,-] 
+            ($(switch.270) + (-1,0)$) |- ($(f1.90) + (0,0.6)$) -- ($(f1.90) + (0,0)$)
+            node[midway, above] () {} ;
+        % Switch to f2
+        \path[draw,-] 
+            ($(switch.270) + (-0.7,0)$) |- ($(f2.90) + (0,0.4)$) -- ($(f2.90) + (0,0)$)
+            node[midway, above] () {} ;
+        % Switch to f3
+        \path[draw,-] 
+            ($(switch.270) + (1,0)$) |- ($(f3.90) + (0,0.6)$) -- ($(f3.90) + (0,0)$)
+            node[midway, above] () {} ;
+
+        % 10G ellipse
+        \draw[line width = 0.5mm] ($(switch.180) + (0,0)$) ellipse (0.2cm and 0.4cm);
+        % 1G ellipse
+        \draw[line width = 0.5mm] ($(switch.270) + (0,0)$) ellipse (1.2cm and 0.2cm);
+        
+        % 10G desc arrow
+        \path[draw,-] 
+            ($(switch.180) + (-0.1,0.3) + (-1,0.8)$) -- 
+            ($(switch.180) + (-0.1,0.3)$)
+            node[near start, above, anchor=south east,xshift=-0.3cm] () {10Gb/s uplink} ;
+        % 1G desc arrow
+        \path[draw,-] 
+            ($(switch.270) + (1.0,0.1) + (1,0.8)$) -- 
+            ($(switch.270) + (1.0,0.1)$)
+            node[near start, above, anchor=south west,xshift=0.3cm] () {1Gb/s downlink} ;
+        % Braces
+            \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-0pt,yshift=0pt] 
+            ($(f3.0) + (0.5,-0.8)$) -- ($(f1.180) + (-0.5,-0.8)$)
+            node [black,midway,yshift=-0.5cm,anchor=north] {$N_F=10$};
+    \end{pgfonlayer}
+
+    % FPGA box
+    \begin{pgfonlayer}{main}
+        % \node[above = 0.2cm of com, xshift=-1.5cm] (fpga) { FPGA };
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{foreground}
+        % \node (f_fpga) [draw=black, fill=gray!20, inner sep=20, fit={(com) (ip) }] {};
+    \end{pgfonlayer} 
+
+    
+    
+
+\end{tikzpicture}

@@ -242,8 +242,23 @@ two proposals can be differentiated in that proposal A is optimized for low tx
 size $s_{tx}$ (and therefore optimized for throughput) while proposal B requires
 buch less memory (area optimized). 
 \\
-The BRAM usage 
+The BRAM usage is best utilized by proposal A at approximately
+$i_w=32Kp$\footnote{32 is chosen because it is a power of two} while
+the necessary tx size is kept at the minimum. Its one disatvantage being the
+limited image width of 32Kp. Three workarounds can be considered to raise the
+limit in image width:
+\begin{itemize}
+    \item Use less image processing cores. This would decrease the required
+    block memory and the image width can be increased. However by decreasing the
+    number of image processing cores, the total throughput would also drop.
+    \item Use proposal B. Its BRAM usage is significantly smaller however the tx
+    size will increase.
+    \item Split the image on the PC and process each coloumn as if it was a
+    single image.
+\end{itemize}
 
+This problem leads to the next term in scalability: The scalability across
+multiple FPGA.
 
 \begin{figure}[tb!]
     \centering
@@ -257,7 +272,87 @@ The BRAM usage
 
 
 \section{Across FPGA}
-text
+Now that one FPGA is capable of processing image data at the rate at which it is
+trasfered to it through Ethernet, the solution can be scaled on a network. This
+was the main reason to use Ethernet as communication basis. An input image is
+split into parts on the computer and processed individually by FPGAs. The
+processed pixels are merged together on the PC to form the output image. Figure
+\ref{fig:sca:acrossfpgapart} illustrates a coloumn wise image splitting to three
+parts. The colored boxes represent one Wallis filter processing a single line.
 
-\section{Usecase}
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/scalability/acrossfpgapart.tikz}
+    \end{adjustbox}
+    \caption{Image partitioning for distribution across multiple FPGA}
+    \label{fig:sca:acrossfpgapart}
+\end{figure}
+
+For the Wallis filter operation, the image data has to be overlapped between the
+segments to omit the loss of pixels where the image is cut. To calculate the
+throughput of a distributed FPGA image processing solution, this multiple
+sending of data has to be taken into consideration. Equation 
+\ref{eq:sca:linesize} derives how the total line size $s_l$ is calculated in
+reference to the number of FPGAs $N_F$ the image is distributed to. Width the
+image width $i_w$ being much greater than the window length $w_l$, 
+\ref{eq:sca:linesize} can be approximated.
+
+\begin{align}
+    s_l  & = i_w & (N_f = 1) \\
+         & = i_w + (N_F-1) \cdot 2 \cdot \lfloor\frac{w_l}{2}\rfloor & \\
+         & = i_w + (N_F-1)(w_l-1) & (w_l=2k+1, k \in \mathbb{N} )\\
+         & \approx i_w & (i_w \gg w_l)
+    \label{eq:sca:linesize}
+\end{align}
+
+Concluding this finding it can be infered that the throughput of a distributed
+image processing solution scales proportionally to the number of FPGAs the image
+is distributed to:
+\begin{align}
+    b_t & \propto N_F \\
+        & \approx N_F \cdot b_e
+\end{align}
+\begin{tabular}{rl}
+    $b_t        =$ & Total throughput of distributed image processing \\
+    $N_F        =$ & Number of FPGAs used \\
+    $b_e        =$ & Throughput of Ethernet connection to the FPGA \\
+\end{tabular} \\
+
+A last thought is put on the network infrastructure that is required to
+process iamges distributed. The network link of 1Gb/s on the FPGA's Ethernet
+port is saturated. Therefore if multiple FPGAs are used on a network, the
+interconnecting network switch must be capable of an uplink to the PC or server
+with a multiple of the throughput of the FPGA downlink. Figure 
+\ref{fig:sca:network} illustrates a network where 10 FPGAs are connected to a
+gigabit switch that features an uplink port supporting 10Gb/s throughput. An
+example would be the GS418TPP switch \cite{netgearswitch}. 16 gigabit ports
+could be used to connect to FPGAs and the SFP uplink port using fibre or copper
+to connect to a PC.
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/scalability/network.tikz}
+    \end{adjustbox}
+    \caption{Network topology required to distribute workload onto multiple
+    FPGAa}
+    \label{fig:sca:network}
+\end{figure}
+
+\section{Conclusion}
+By scaling the Wallis filter operation inside the FPGA full advantage can be
+taken of the available Ethernet bandwith. The controller core thereby caches as
+many input lines as can be fitted into block memory to reduce multiple
+transmissions of image data and increasing link efficiency. By dividing the input
+image into multiple coloumns it can be distributed onto multiple FPGAs on a
+network. This scalability across FPGAs is only limited by the network
+infrastructure.
+\\
+
+Assuming the VHDL implementation of the Wallis filter is used as image
+processing core, it can be scaled 21 times inside the FPGA before the Ethernet
+communication link is saturated. Using a 10Gb/s switch and and 10 FPGAs a total
+image processing throughput of $b_t=10*1Gb/s=1.25GB/s$ can be achieved.
+
 
