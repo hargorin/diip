@@ -110,7 +110,6 @@ During verification, the throughput of the Wallis filter will also be evaluated.
     \label{tab:throughput}
 \end{table}
 
-
 % ==============================================================================
 %
 %                             Dataflow
@@ -141,14 +140,11 @@ Wiresharks packet dissections are exported to a json file that was then analyzed
 using the \texttt{uftcheck} utility. It was written to analyze network pacekts
 for UFT transfers. The first lines of output yielded:
 
-    \begin{adjustbox}{max width=1.7\textwidth}
-\begin{minipage}{2\linewidth}
+\vspace{1ex}
+    % \begin{adjustbox}{max width=1.7\textwidth}
+\begin{minipage}{1\linewidth}
     \begin{lstlisting}[
-        % basicstyle=\small, %or \small or \footnotesize etc.
-        % columns=fullflexible,
-        % frame=single,
-        % breaklines=false,
-        % style=CStyle, 
+        style=TextStyle, 
         % caption=ack buffer allocation, 
         % label=lst:ackbufalloc
         ]
@@ -159,23 +155,21 @@ for UFT transfers. The first lines of output yielded:
 |  2   | 192.168.5.10 (50719) | 192.168.5.9 (42042)  |  D  |            |  12  |  0   |
 |  3   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  0   |
 |  5   | 192.168.5.10 (50719) | 192.168.5.9 (42042)  |  D  |            |  12  |  1   |
-|  6   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  1   |\end{lstlisting}
+|  6   | 192.168.5.9 (42042)  | 192.168.5.10 (50719) |  C  | ACK packet |  12  |  1   |
+\end{lstlisting}
 \end{minipage}
-\end{adjustbox}
+% \end{adjustbox}
 
+\vspace{1ex}
 The sending PC starts a file transmission with a file transfer start packet and
 the first data packet. The next packet (3) is comming from the FPGA to the PC
 and acknowledges the first data packet (sequence 0). To verify that all packets
 are acknowledged, the sending program reports an acknowledge status after the
 files has been sent. 
 
-\begin{minipage}{\linewidth}
+\begin{minipage}{1\linewidth}
     \begin{lstlisting}[
-        % basicstyle=\small, %or \small or \footnotesize etc.
-        % columns=fullflexible,
-        % frame=single,
-        % breaklines=false,
-        % style=CStyle, 
+        style=TextStyle, 
         % caption=ack buffer allocation, 
         % label=lst:ackbufalloc
         ]
@@ -188,12 +182,102 @@ time elapsed: 1.18s Speed: 0.859 MB/s Size: 1.012 MB\end{lstlisting}
 
 \vspace{1ex}
 \textbf{User register:} To test wether the user registers can be written and are
-output correctly by the communication core, a integrated logic analyzer (ILA)
+output correctly by the communication core, a \gls{ila} 
 was used. An ILA can be configured on the FPGA to record internal signals. The
-results are transferred to the PC over USB and displayed in \gls{vivadohlx}. 
+results are transferred to the PC over USB and displayed in \gls{vivadohlx}. All
+user registers (0 through 7) are written with differen values and the reult
+observed using the ILA matched the sent data.
 
+\vspace{1ex}
+\textbf{Stream interface:} The last modification made to the communication core
+was the AXI4-Stream interface. This was similarly tested as the user registers.
+Using an ILA the output of the stream was observed and the correct order of data
+verified. 
 
-\subsubsection*{Controller}
+\subsubsection*{Controller} 
+The most important thing to verify in the controller core is the correct order
+of output pixel. This is done by generating input data representing an image,
+feeding this data through the controller core and observing the output pixels.
+This validation is split into the two solutions implemented using HLS (solution
+A) and VHDL (solution B).
+
+\vspace{1ex}
+\textbf{Solution A) HLS:} In Vivado HLS the validation was done in C and
+Co-simulation. A testbench C/C++ file generates pseudo random image data. This
+data is then processed using the controller core and in the testbench itself.
+The two results are then compared. Using different input data and image sizes,
+all output results matched. A test on the FPGA was omitted. This validation will
+later take plave in the overall validation in chapter \ref{ch:verification:overallvalidation}.
+
+\vspace{1ex}
+\textbf{Solution B) VHDL:} The same approach was used in the solution written in
+VHDL except that the testbench is not written in C/C++ but in VHDL. The input
+stream sends an incrementing pixel value with an image width and height of
+eight. The window length was reduced to three for simplicity. Figure 
+\ref{fig:vhdlcontrollerstimuli} shows the input data values.
+
+ \begin{figure}[h!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/validation/dataflow/stimuli.tikz}
+    \end{adjustbox}
+    \caption{VHDL controller validation stimuli}
+    \label{fig:vhdlcontrollerstimuli}
+\end{figure}
+
+Observed was the output stream that was stored in a text file by the VHDL
+testbench. The resulting pixel order was then validated using random samples.
+Listing \ref{lst:controlleroutstreamvhdl} shows the output pixel values of the
+first three lines.
+
+\begin{minipage}{\linewidth}
+    \begin{lstlisting}[
+        style=TextStyle, 
+        caption=Output stream hexadecimal coded, 
+        label=lst:controlleroutstreamvhdl
+        ]
+00 08 10 01 09 11 02 0A 12 03 0B 13 04 0C 14 05 0D 15 06 0E 16 07 0F 17 
+08 10 18 09 11 19 0A 12 1A 0B 13 1B 0C 14 1C 0D 15 1D 0E 16 1E 0F 17 1F
+10 18 20 11 19 21 12 1A 22 13 1B 23 14 1C 24 15 1D 25 16 1E 26 17 1F 27\end{lstlisting}
+\end{minipage}
+
+% ==============================================================================
+%
+%                             Overall Validation
+%
+% ==============================================================================
+\subsection{Overall Validation}\label{ch:verification:overallvalidation}
+To validate the overall system, the image processing and dataflow parts are
+combined in a Vivado HLx project. Two projects are distinguished:
+\begin{itemize}
+    \item \texttt{diip}\footnote{\Gls{diip}} Project using solution A) with HLS
+    implementation
+    \item \texttt{diip\_faster} Project using solution B) with VHDL
+    implementation
+\end{itemize}
+
+On the computer side, the program \texttt{diip\_cc} written in C++ reads the
+pixels from an input image, splits the data into according UFT packets and sends
+them to the FPGA. The processed pixels are received and stored in the output
+image. Similar to the proceeding in \ref{ch:verification:imageprocessing} two
+test images were used and compared to the results of a floating point
+calculation on the computer. The resulting \gls{rmse} is listed in table \ref{tab:overallvalidationresults}. 
+
+\todo[inline]{Fill table}
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l c c}
+        \toprule
+        Solution & RMSE room & RMSE mountain \\
+        \midrule
+        diip (HLS) & 0.001 & 0.001 \\
+        diip\_faster (VHDL) & 0.001 & 0.001 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Overall validation results}
+    \label{tab:overallvalidationresults}
+\end{table}
+
 
 % ==============================================================================
 %
@@ -201,4 +285,201 @@ results are transferred to the PC over USB and displayed in \gls{vivadohlx}.
 %
 % ==============================================================================
 \section{Benchmark}\label{ch:benchmark}
+To conclude the results of this work, the different solutions are compared in
+this chapter. The working implementations (including send and receive from PC)
+and theoretical limits are differentiated. Furthermore the throughput is
+compared to a CPU based solution.
+There are four different processing methods in total.
+
+\begin{itemize}
+    \item The solution using HLS with 8bit data bus
+    \item The solution using HLS with 256bit data bus. This method was not
+    implemented on the FPGA hence simulation results were used
+    \item The solution implemented using VHDL
+    \item A programm running on CPU written in C++
+\end{itemize}
+
+Methods 1. and 3. are measured by processing an image stored on the computer
+which is sent to the FPGA, processed and sent back. The time required for the
+processing of an image divided by its pixel count result in the throughput
+measured in megapixels per second ($Mp/s$). To calculate the throughput of
+method 2. the results from \ref{ch:verification:imageprocessing} is used. Method
+4. is written in C++ and uses OpenCV to read image data. Throughput is
+calculated the same as for methods 1. and 3.
+\\
+
+As source image a fixed aspect ration of 16:9 was chosen. This is a common
+format used among other for movies. The image was resized to four different
+heights: 480p, 720p, 1080p and 2160p with the largest one being equivalent to
+the
+4k image standard. The content of the image does not influence the throughput.
+
+\subsection{Compare implementations}
+First the two working FPGA implementations are put to contrast (1. and 3.).
+Figure \ref{fig:benchmarkcompare} and table \ref{tab:throughputmeasuremetns}
+show the results of the throughput measurements. The missing value for HLS 8bit
+is due to a bug in the computer software for this image size that could not be
+resolved by the time the benchmark was made. The HLS 8bit implementation yields
+the lowest throughput. This is mainly due to the controller core which requires
+the image data to be re-sent for every line the wallis filter processes. No
+image lines are buffered on the FPGA. The VHDL implementation yields the
+highest
+throughput. This was to be expected for two
+reasons. First, the VHDL wallis filter core can process pixels at one pixel per
+clock cycle which is more than the 8bit HLS version is capeable of (21 pixels
+per 86 clock cycles).
+Second, the memory management was been greatly improved from the HLS to the VHDL
+controller in that image data is buffered on the FPGA to reduce multiple
+transmissions of image data from PC to FPGA. 
+
+\begin{figure}[tb!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/benchmark/results.tikz}
+    \end{adjustbox}
+    \caption{Wallis throughput comparisson}
+    \label{fig:benchmarkcompare}
+\end{figure}
+
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{l l l l l l}
+        \toprule
+        Solution & 480p & 720p & 1080p & 2160p & \\
+        \midrule
+        HLS 8bit   & 0.17  &       & 0.168 & 0.161 & $MB/s$ \\
+        % HLS 256bit & 11.3 & 11.1 & 11.0 & 10.9 \\
+        VHDL       & 0.89  & 1.291 & 2.348 & 4.115 & $MB/s$\\
+        % CPU        & 12.56 & 16.23 & 15.99 & 15.91 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Throughput measurements}
+    \label{tab:throughputmeasuremetns}
+\end{table}
+
+The increase in throughput over image size on the VHDL solution can be explained
+by the way the
+PC program works. To prevent an overflow of the image cache inside the
+controller on the FPGA, a delay of $d_l$ seconds is inserted after an image line
+is sent. This ensures that the FPGA is given enough time to calculate one image
+line. From there the theoretical maximum throughput can be calculated. Equation
+\ref{eq:theomaxb} shows the throughput (for derivation refer to appendix 
+\ref{app:derivations:theomax}). $d_l$ was set to $500\mu s$ for the benchmark.
+
+\begin{align}
+    b  & \approx \frac{i_w}{d_l + \frac{i_w}{b_e}}
+    \label{eq:theomaxb}
+\end{align}
+
+\begin{tabular}{rl}
+    $b     =$ & theoretical throughput of VHDL solution \\
+    $i_w   =$ & image width \\
+    $d_l   =$ & delay between sending two image lines \\
+    $b_e   =$ & ethernet throughput \\
+\end{tabular} \\
+
+If $d_l$ were to be reduced to zero, the throughput would strive towards $b_e$.
+
+\subsection{Compare theoretical limits}
+To show the real performance of a FPGA for image processing the theoretical
+limits are put to contrast in this chapter without considering how the image
+data is sent to the FPGA.
+Before this can be done the maximum possible throughput of the three FPGA
+implementations are calculated.
+
+\begin{align}
+    b_{ip}  & = \frac{i_hb_w}{w_l (i_h-w_l+1)}
+    \label{eq:theomaxvhdlwallisshort}
+\end{align}
+
+\begin{tabular}{rl}
+    $b_{ip}=$ & theoretical throughput image processing core \\
+    $i_h   =$ & image height \\
+    $b_w   =$ & throughput of image processing core on input in pixels per
+    second \\
+    $w_l   =$ & window length \\
+\end{tabular} \\
+
+Equation \ref{eq:theomaxvhdlwallisshort} is used to calculate the maximum
+possible throughput for each of the test images (for derivation refer to
+appendix \ref{app:derivations:theomaxvhdlwallis}). Figure \ref{fig:theoresults}
+and table \ref{tab:FPGAimplementationstheoreticallimits} show the theoretical
+maximum results.
+
+\begin{figure}[b!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/benchmark/theoresults.tikz}
+    \end{adjustbox}
+    \caption{Theoretical maximum throughput of FPGA}
+    \label{fig:theoresults}
+\end{figure}
+
+\begin{table}[b!]
+    \centering
+    \begin{tabular}{l l l l l l l}
+        \toprule
+        Solution & $b_w$ & 480p & 720p & 1080p & 2160p & \\
+        \midrule
+        HLS 8bit       & 29.1 & 1.45 & 1.43 & 1.41 & 1.40 & $MB/s$\\
+        HLS 256bit     & 228  & 11.3 & 11.1 & 11.0 & 10.9 & $MB/s$\\
+        VHDL           & 119  & 5.92 & 5.84 & 5.78 & 5.73 & $MB/s$\\
+        \bottomrule
+    \end{tabular}
+    \caption{FPGA implementations theoretical limits}
+    \label{tab:FPGAimplementationstheoreticallimits}
+\end{table}
+
+The HLS 8bit solution is the slowest of the three implementations. Its filter
+core accepts 21 pixels per 86 clock cycles as described in \todo{ref
+to hls8bit validation}. With the input width of the IP-core extended to 265bit,
+a new throughput of around 11 MB/s is achieved. The third solution written
+in VHDL is placed in between the two HLS solutions. Its IP-core accepts one
+pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
+125MHz clock frequency.
+
+\clearpage
+\subsection{FPGA versus CPU}
+Now that the different implementations are compared against each other, the
+two implementations with the highest throughput (VHDL and HLS 256bit
+implementations) are put to contrast with a CPU based computation.  The CPU
+programm was run multiple times for each image and the mean throughput is
+calculated. The program was running on a Intel Core i7-6700HQ running at 2.60
+GHz on a single core.  Figure \ref{fig:theoreticalmax} and table
+\ref{tab:throughputcompare} show the results.
+\\
+
+The CPU performance is the fastest of all three. It processes the images 2.76
+times faster than the VHDL solution and 1.45 times faster than the HLS 256bit
+solution. As mentioned in the scalability chapter (\ref{chapt:scalability}) the
+throughput of both FPGA implementations (VHDL and HLS 256bit) can be improved by
+implementing the Wallis filter multiple times on one FPGA. By implementing the
+HLS solution twice or the VHDL solution three times, a regular CPU could already
+be outrunned by one FPGA.
+
+\begin{figure}[b!]
+    \centering
+    \begin{adjustbox}{max width=\linewidth}
+        \input{images/benchmark/theoreticalmax.tikz}
+    \end{adjustbox}
+    \caption{Theoretical maximum throughput of FPGA versus CPU}
+    \label{fig:theoreticalmax}
+\end{figure}
+
+\begin{table}[b!]
+    \centering
+    \begin{tabular}{l l l l l l l}
+        \toprule
+        Solution & 480p & 720p & 1080p & 2160p & & Performance Gain vs VHDL\\
+        \midrule
+        VHDL       & 5.92  & 5.84  & 5.78  & 5.73  & $MB/s$ & \\
+        HLS 256bit & 11.3  & 11.1  & 11.0  & 10.9  & $MB/s$ & x1.90\\
+        CPU        & 12.56 & 16.23 & 15.99 & 15.91 & $MB/s$ & x2.76\\
+        \bottomrule
+    \end{tabular}
+    \caption{FPGA PC Throughput comparisson}
+    \label{tab:throughputcompare}
+\end{table}
+
+
 

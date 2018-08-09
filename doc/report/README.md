@@ -6,6 +6,8 @@
 * [x] ILA/Trace measurement showing slow output pixels solution A
 * [x] ILA/Trace measurement showing fast output pixels solution B -> vhdlcontrollerout.png
 * [ ] Maximum UFT transfer speed
+* [ ] Build v1.0 on ime machine
+* [x] Build v2.0 on ime machine
 
 ### Graphics to draw
 * [x] Dataflow block diagram for solution A (with memory)
@@ -18,11 +20,15 @@
 ### Code to correct
 * [ ] Change all row_* pointers in dc_mmu to col* pointer which would make sense
 
+### Backlog
+* [ ] Report utilization VHDL <-> HLS
+
 ### Check with Jan
 * [ ] Where do you describe why you need the pixels coloumn wise? ch:ip:concept?
 * [ ] if-statements in HLS controller: What did we want to show?
 * [ ] Reference to code files - how?
 * [x] Theoretical background: AXI4-Stream?
+* [ ] HLS256/8 throughput measured simulation results
 
 ### New Wallis parameter for IP validation
 ```C

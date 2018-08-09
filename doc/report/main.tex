@@ -219,7 +219,7 @@
 \usepackage{setspace}
 									%verbatim-like environment
 \usepackage[version=0.96]{pgf}			%PGF/TikZ is a tandem of languages for producing vector graphics from a 
-\usepackage{tikz}						%geometric/algebraic description.
+\usepackage{tikz,pgfplots}						%geometric/algebraic description.
 \usepackage{xcolor}
 \usepackage{tabularx}
 \usetikzlibrary{arrows,shapes,snakes,
@@ -235,7 +235,8 @@
 
 \usepackage{listings}
 \usepackage{color}
-\usepackage[toc]{glossaries}
+\usepackage[toc,nopostdot,style=altlist,nonumberlist]{glossaries}
+% \usepackage[toc,style=longheader,nonumberlist]{glossaries}
 \makeglossaries
 \input{chapters/910_glossary}
  
@@ -262,6 +263,21 @@
     showtabs=false,                  
     tabsize=2,
     language=C
+}
+
+\lstdefinestyle{TextStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=false,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    % numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
 }
 
 \lstdefinestyle{VHDLStyle}{
