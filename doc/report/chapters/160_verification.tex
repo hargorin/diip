@@ -18,9 +18,9 @@ chapter \ref{ch:benchmark}.
 % ==============================================================================
 \section{Verification} \label{ch:verification}
 The verification process ensures that all components work as expected. It is
-split into the image processing and dataflow parts. They were tested
+split into the image processing and dataflow parts. They are tested
 independantly to reduce complexity and simulation time. The system as a unity is
-then tested in chapter \ref{ch:benchmark} benchmark.
+then tested in chapter \ref{ch:verification:overallvalidation}.
 
 % ==============================================================================
 %
@@ -28,19 +28,28 @@ then tested in chapter \ref{ch:benchmark} benchmark.
 %
 % ==============================================================================
 \subsection{Image Procession}\label{ch:verification:imageprocessing}
-The verification of the image processing is validated with two different 
-methods. Firstly, an image is processed with the Wallis filter and compared 
+The verification of the image processing is done using two different 
+methods. First, an image is processed with the Wallis filter and compared 
 with a reference image. The reference image is generated from a C/C++ program 
-which calculates using floating point calculations. In the second aspect the 
+which calculates uses floating point percision for calculations. In the second
+aspect the 
 throughput is validated. \\
-The devices under validation (DUV) are two written in Vivado HLS using C/C++ 
+The devices under validation (DUV) consist of two written in Vivado HLS using
+C/C++
 and one VHDL version. The Vivado HLS versions differ in the input stream. One 
 has an 8 bit AXI4-Stream and the other one has a 256 bit AXI4-Stream input. The
-VHDL is an 8 bit AXI4-Stream.
+VHDL has an 8 bit AXI4-Stream.
 
 \subsubsection*{Image Comparsion}
-During the verification an image is processed with the Wallis filter. The Wallis filter is run on the computer as a C/C++ program and has floating point variables. This Wallis filtering is used as a reference. Two images (room and mountain), added in the appendix \ref{app:images_wallis}, are available as reference images. \\
-The reference images are passed through the DUV and compared with the reference images. The root-mean-square error (RMSE) serves as a rule. The RMSE indicates how well the  Wallis filtered image deviates on average from the reference image \cite{rmse}. The parameters for the Wallis filter, which were used for the images, can be found in table \ref{tab:parameter}.
+During the verification an image is processed with the Wallis filter. The Wallis
+filter is run on the computer as a C/C++ program and has floating point
+variables. This Wallis filtering is used as a reference. Two images (room and
+mountain), added in appendix \ref{app:images_wallis}, are chosen as reference images. \\
+The reference images are passed through the DUV and compared with the reference
+images. The \gls{rmse} serves as a metric. The RMSE
+indicates how much the  Wallis filtered image deviates on average from the
+reference image \cite{rmse}. The parameters for the Wallis filter that were used
+for the images can be found in table \ref{tab:parameter}.
 
 \begin{table}[tb!]
     \centering
@@ -58,34 +67,36 @@ The reference images are passed through the DUV and compared with the reference 
 
 
 
-Table \ref{tab:rmse_room} lists the RMSE values of the room image and the RMSE
-values of the mountain image in the table \ref{tab:rmse_mountain}. They
+Table \ref{tab:rmse_room} lists the RMSE values of the room image and table 
+\ref{tab:rmse_mountain} the RMSE
+values of the mountain image. They
 represent the deviation from the reference image in percent. The deviation from
-the C/C++ program with the 8 bit AXI4 stream and the 256 bit AXI4 stream does
-not differ from each other. A total deviation of 0.32\% has been measured in the
+the C/C++ program with the 8 bit AXI4 stream and the 256 bit AXI4 stream do
+not differ from each other. A total deviation of 0.32\% has been measured for
+the
 room image. This corresponds to an intensity value of 0.816 in the range of 0 -
-255. There is also only a deviation of 0.33\% in the mountain image. The GHDL
-verification is with 1.23\% respectively 0.49\% already much higher than the
-HLS versions. The intensity deviates by 3.14 pixels respectively 1.25 pixels.
+255. There is also only a deviation of 0.33\% in the mountain image. The VHDL
+verification is with 1.23\% respectively 0.49\% higher than the
+HLS versions. The intensity deviates by 3.14 pixels or 1.25 pixels respectively.
 It is assumed that the deviation occurs due to rounding in the VHDL solution. In
 comparison to the HLS solution, the VHDL solution does not calculate the mean
-and the variance exactly. On the other hand, it is assumed that it plays a role
-in the image content. This means how strongly the intensity in the image differs
-again and again. The room image always changes intensity, whereby the mountain
-image is white at the top and black at the bottom.
+and the variance exactly. Further it is assumed that image contents play a
+role. Meaning how strong the intensity in the image differs in regard to the
+location. The room image changes intensity more often, whereby the mountain
+image is bright at the top and dark at the bottom.
 
 \begin{table}[tb!]
     \centering
     \begin{tabular}{l l l l}
         \toprule
-        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & GHDL \\
+        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & VHDL Simulation (ghdl) \\
         \midrule
-        HLS 8bit    & 0.32\%    & 0.32\%    & -\\
-        HLS 256bit  & 0.32\%    & 0.32\%    & - \\
-        VHDL        & -         & -         & 1.23\% \\
+        HLS 8bit    & 0.32\%    & 0.32\%    & {}\\
+        HLS 256bit  & 0.32\%    & 0.32\%    & {} \\
+        VHDL        & {}         & {}         & 1.23\% \\
         \bottomrule
     \end{tabular}
-    \caption{RMSE of the Wallis filter verification of the room image}
+    \caption{RMSE of the Wallis filter verification using the room image}
     \label{tab:rmse_room}
 \end{table}
 
@@ -93,34 +104,49 @@ image is white at the top and black at the bottom.
     \centering
     \begin{tabular}{l l l l}
         \toprule
-        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & GHDL \\
+        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & VHDL Simulation (ghdl) \\
         \midrule
-        HLS 8bit    & 0.33\%    & 0.33\%    & - \\
-        HLS 256bit  & 0.33\%    & 0.33\%    & - \\
-        VHDL        & -         & -         & 0.49\% \\
+        HLS 8bit    & 0.33\%    & 0.33\%    & {} \\
+        HLS 256bit  & 0.33\%    & 0.33\%    & {} \\
+        VHDL        & {}         & {}         & 0.49\% \\
         \bottomrule
     \end{tabular}
-    \caption{RMSE of the Wallis filter verification of the mountain image}
+    \caption{RMSE of the Wallis filter verification using the mountain image}
     \label{tab:rmse_mountain}
 \end{table}
 
-
-
 \subsubsection*{Throughput}
-During verification, the throughput of the Wallis filter will also be evaluated. For this purpose, the throughput at the input of the filter is displayed. This means how many pixels per clock are loaded into the Wallis filter. Again, the three different methods (HLS 8bit, HLS 256bit \& VHDL 8bit) of the Wallis filter are compared. The table \ref{tab:throughput} lists the three different methods. The 8 bit versions should have a throughput of one pixel per clock, this is 125Mp/s. But the HLS 8 bit version only reached 21 pixels in 86 clocks. This results in a throughput of 30.5Mp/s. This is 4 time slower than the theoretical value. This has to do with the fact that the division requires 23 clocks and that the loop cannot be pipelined by reading the pixels (see chapter \ref{ch:hls:div} and \ref{ch:ip:axi}). For this reason the 256 bit version was developed. This has a theoretical maximum of 2625Mp/s. A throughput of 21 pixels could be achieved in 11 clock cycles. This is equivalent to 238.6Mp/s. in relation to the 8 bit version only a better throughput of a factor of 7.8 could be achieved. The limiting factor is still the division. With the VHDL version the theoretical maximum of 125Mp/s has been reached.
+During verification, the throughput of the Wallis filter is also evaluated.
+For this purpose, the throughput at the input of the filter is measured. This
+means how many pixels per clock are loaded into the Wallis filter. Again, the
+three different methods (HLS 8bit, HLS 256bit \& VHDL 8bit) of the Wallis filter
+are compared. Table \ref{tab:throughput} lists the three different methods. The
+8 bit versions should have a throughput of one pixel per clock, this is 125Mp/s
+at 125MHz clock frequency. But the HLS 8 bit version only reaches 21 pixels in
+86 clocks. This results in a throughput of 30.5Mp/s. This is four times slower
+than the theoretical value. This has to do with the fact that the division
+requires 23 clock cycles and that the loop cannot be pipelined by reading the
+pixels (see chapter \ref{ch:hls:div} and \ref{ch:ip:axi}). For this reason the
+256 bit version was developed. It has a theoretical maximum of 2625Mp/s
+throughput. A throughput of 21 pixels in 11 clock cycles could be achieved. This
+is equivalent to 238.6Mp/s. in relation to the 8 bit version only a better
+throughput of a factor of 7.8 could be achieved. The limiting factor is still
+the division. With the VHDL version the theoretical maximum of 125Mp/s has been
+reached.
 
 \begin{table}[tb!]
     \centering
     \begin{tabular}{l l l l}
         \toprule
-        DUV & Target [pxl/clk] & Actual [pxl/clk]  & Throughput [Mp/s]\\
+        DUV & Target [p/clk] & Actual [p/clk]  & Throughput [Mp/s]\\
         \midrule
         HLS 8bit    & 1     & 21/86     & 30.5\\
         HLS 256bit  & 21    & 21/11     & 238.6 \\
         VHDL        & 1     & 1         & 125 \\
         \bottomrule
     \end{tabular}
-    \caption{Throughput of the Wallis filter related to the input pixels}
+    \caption{Throughput of the Wallis filter related to the input pixels at
+    125MHz clock frequency}
     \label{tab:throughput}
 \end{table}
 
@@ -128,22 +154,25 @@ During verification, the throughput of the Wallis filter will also be evaluated.
 \subsubsection*{Ressource} \label{ch:ver:ip:ressource}
 For the implementation of the Wallis filter, another important factor is the
 resources it requires on the FPGA. The resources used in the FPGA for the
-implementation of the Wallis filter are listed in table \ref{tab:ressource}.
+implementation of the Wallis filter are listed in table \ref{tab:ressource} as
+absolute values and as percentage of the available in the FPGA (value in
+parantheses).
 Slices, Block RAMs and DSPs are compared with each other. A slice in the FPGA 
 (XC7A200T) contains four LUTs and eight flip-flops \cite{ds180}.
-The VHDL implementation needs the least resources in the three comparisons. All
-three implementations need practically the same number of DSPs. Comparison of
-the two HLS versions. The 256bit version needs less BlockRAM, but more slices.
+The VHDL implementation needs the least resources in the comparison. All
+three implementations need practically the same number of DSPs. Comparing
+the two HLS versions, the 256bit version needs less block memory, but more
+slices.
 
 \begin{table}[tb!]
     \centering
-    \begin{tabular}{l l l l}
+    \begin{tabular}{l l l l l l l}
         \toprule
-        DUV         & Slice (33650) & BlockRAM (365) & DSP (740) \\
+        DUV         & Slice & (33650) & BRAM & (365) & DSP & (740) \\
         \midrule
-        HLS 8bit    & 949 (2.8\%)   & 10.5 (2.9\%)  & 17 (2.3\%) \\
-        HLS 256bit  & 1542 (4.6\%)  & 5 (1.4\%)     & 16 (2.2\%) \\
-        VHDL        & 253 (0.8\%)   & 1 (0.3\%)     & 16 (2.2\%) \\
+        HLS 8bit    & 949 & (2.8\%)   & 10.5 & (2.9\%)  & 17 & (2.3\%) \\
+        HLS 256bit  & 1542 & (4.6\%)  & 5 & (1.4\%)     & 16 & (2.2\%) \\
+        VHDL        & 253 & (0.8\%)   & 1 & (0.3\%)     & 16 & (2.2\%) \\
         \bottomrule
     \end{tabular}
     \caption{Ressources of the three implemented Wallis filters}
@@ -307,7 +336,7 @@ calculation on the computer. The resulting \gls{rmse} is listed in table
 the FPGA is positive. It can be seen that the HLS solution has the same
 deviation as the simulation on the PC (see chapter 
 \ref{ch:verification:imageprocessing}). The VHDL version has a smaller
-deviation across the entire system than the GHDL simulation on the PC (see
+deviation across the entire system than the \gls{ghdl} simulation on the PC (see
 chapter \ref{ch:verification:imageprocessing}). Also to be seen here is that
 the room image has a larger deviation in the VHDL solution than the
 mountain image. This is to be justified with the same reasons as explained in
