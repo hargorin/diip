@@ -191,9 +191,9 @@ fp_Div = fp_Num * fp_Den;
 \end{minipage}
 
 
-\subsection{AXI4-Stream}
+\subsection{AXI4-Stream} \label{ch:ip:axi}
 The calculation of the Wallis filter requires at least 21 pixels. Due to the initial AXI4-Stream data size (8 bits), 21 clock cycles have to be waited until the calculation can be started. Since only 1 pixel was received per clock. This also prevents the loops from unrolling, as not all data is available at the input (\ref{ch:directives}). \\
-The advantage of Vivado HLS is that interfaces, for example, can be adapted relatively easily and quickly. The AXI4-Stream has therefore been enlarged to receive one column per clock. This means that the AXI4-Stream has been extended to a data width of 256 bits (\cite{axi_stream}). This also made it possible to add the directive \texttt{unroll} to the loops. Throughput has increased by a factor of 21.
+The advantage of Vivado HLS is that interfaces, for example, can be adapted relatively easily and quickly. The AXI4-Stream has therefore been enlarged to receive one column per clock. This means that the AXI4-Stream has been extended to a data width of 256 bits (\cite{axi_stream}). This also made it possible to add the directive \texttt{unroll} to the loops. With this solution the troughput has increased by a factor of 7.8 to the 8 bit version.
 
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
