@@ -4,8 +4,8 @@
 %
 % ==============================================================================
 \chapter{Conclusion}
-In this last chapter the project results and problems are briefly summarized and
-a short outlook for future work is given.
+In this last chapter the project results are briefly summarized and
+a short outlook for possible future work is given.
 
 % ==============================================================================
 %
@@ -13,37 +13,59 @@ a short outlook for future work is given.
 %
 % ==============================================================================
 \section{Image Processing}
-The implemented image processing algorithm performs an edge detecting Sobel
-filter on an input image of varying size. It is capable of 100 MB/s
-throughput at only one percent FPGA resource utilization. The IP block can be
-duplicated multiple times on the FPGA to increase the throughput. Although the
-throughput seems high, the Sobel operation does not show the real potential of
-using FPGA for image processing. Using more FPGA resources a more complex
-algorithm could be implemented yielding a similar performance in throughput.
+A new image processing core was implemented that locally optimizes contrast 
+(Wallis filter). Multiple implementations have been validated and compared.
+Using high level synthesis to describe an algorithm has proven that the desired
+operation can be achieved in little time. Nevertheless the theoretical possible
+throughput could not be achieved. Therefore a VHDL implementation was written
+that processes pixels at 125Mp/s and uses less than three percent of FPGA
+ressources. 
 
 % ==============================================================================
 %
-%                             COMM
+%                             Dataflow
 %
 % ==============================================================================
-\section{Communication}
-On the communication part of the project a file transfer protocol on top of UDP
-is defined and implemented in hardware. File transfers of up to 1MB are tested
-and a throughput of 8.93 MB/s was achieved. This corresponds to 98.9\% of the
-theoretical maximum. It is important to note that this was only achieved by
-delaying the packets by 100$\mu s$ to avoid packet loss. This was necessary
-because packet retransmission upon no acknowledgment is not yet implemented.
+\section{Dataflow}
+The existing communication core was extended with acknowledge, user registers
+and AXI4-Stream interfaces. The new image processing algorithm requires the
+input data in a specific order. Therefore a controller was implemented using two
+different design flows. The HLS approach showed that complex interfaces such as
+AXI4 can be controller with a few lines of code and that state machines can be
+implemented as well. The unfavourable memory management and the lack of high
+throughput
+led to the implementation of a VHDL based controller and memory management unit.
+It caches necessary image data to obviate multiple image transmission and can
+support the full throughput of the image processing core.
 
 % ==============================================================================
 %
-%                             Together
+%                             Overall
+%
+% ==============================================================================
+\section{Overall}
+The final product called \gls{diip} is is based on the VHDL implementations of
+image processing and dataflow parts. Images can be sent from the PC to the FPGA
+where
+the Wallis operation is applied and the image is sent back. Image data
+throughput of up to 4.1MB/s have been measured. The system is designed with
+scalability in mind. A dedicated theoretical examination shows that if the
+image processing core was implemented 21 times in the FPGA the full bandwidth of
+gigabit Ethernet could be used to process image data yielding 125MB/s
+throughput. Furthermore if multiple FPGAs were used, the total throughput would
+scale proportional to the number of FPGAs used.
+
+% ==============================================================================
+%
+%                             Future Work
 %
 % ==============================================================================
 \section{Future Work}
-For further steps a more demanding image processing task could be implemented to
-show the advantages of using FPGA for image processing. An example would be the
-\textit{Canny Edge Detector} that takes the output of Sobel and creates a binary
-image with better edge detection. Furthermore the communication can be improved
-by implementing the packet acknowledgment for reliable and faster data transfer.
-Finally the workload could be distributed onto multiple FPGAs on a network
- to further increase throughput.
+This scalability is proven on paper and can now be implemented onto the FPGA.
+The controller core can be extended to send the data to multiple Wallis filter
+cores. After writing a computer application that can handle the fast transfer
+speeds the true benefit of using FPGA for image processing can be shown in
+praxis. Because the data transfer is Ethernet based a cluster of FPGAs can be
+built up to compete against high performance CPU and GPU based image processing
+pipelines.
+
