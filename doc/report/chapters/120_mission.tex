@@ -150,6 +150,14 @@ task of managing the dataflow between the communication and Wallis cores. This
 approach takes little FPGA ressources but involves more time to develop.
 
 \subsection{Scalability} \label{chapt:mission:scalability}
+Appendix \ref{app:technicial_requirements} lists two possible solutions to scale
+the image processing inside the FPGA. 
+\begin{itemize}
+    \item Store the image in block memory and distribute it to the image
+    processing's local memory for processing
+    \item Data is streamed from the communication part directly to the different
+    image processing cores
+\end{itemize}
 
 % ==============================================================================
 %
@@ -161,11 +169,6 @@ approach takes little FPGA ressources but involves more time to develop.
 Now that the possible solutions for dataflow, image processing and scalability
 are dissected, the way of proceeding can be concluded.\\
 
-
-\textbf{Scalability}
-    \begin{itemize}
-        \item Use stream interfaces where possible
-    \end{itemize}
 
 \textbf{Image processing}
     \begin{itemize}
@@ -180,6 +183,14 @@ are dissected, the way of proceeding can be concluded.\\
         communication and Wallis filter
     \end{itemize}
 
+\textbf{Scalability}
+    \begin{itemize}
+        \item Use stream interfaces on the image processing and dataflow parts
+        to enable stream based scalability
+        \item Assess the inside and across FPGA scalability in theory
+    \end{itemize}
+
+
 Figure \ref{fig:blockdiagram} shows the top level block diagram. Image data is
 sent from the PC to the FPGA over Ethernet. The communication block handles the
 file transfer and stores the image data in FPGA block memory. A controller core
@@ -190,9 +201,9 @@ the PC.
 
 \begin{figure}[b!]
     \centering
-    % \input{images/mission/block_diagram.tikz}
+    \input{images/mission/block_diagram.tikz}
     \caption{Block diagram}
     \label{fig:blockdiagram}
 \end{figure}
-\todo[inline]{Top block diagram}
+
 
