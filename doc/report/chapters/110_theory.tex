@@ -275,8 +275,6 @@ an IP core can be generated from the HDL code and used in the Vivado HLx \cite{v
 If the FPGA is configured using C/C++ language, there is no way to get around directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The following three chapters explain some important directives to reduce the latency and increase the throughput. \\
 Directives are also called pragmas and can be written directly into the C/C++ code or added as directives in a separate tcl-file.
 
-\todo[inline]{Bilder von Interfce, Array Partition und Pipeline / Unroll anpassen!}
-
 \subsubsection*{Interface}
 The directive \texttt{interface} specifies the input and output ports of the IP core. Different interfaces can be implemented in the IP core as input and output ports. Among others, these are control interfaces or interfaces for data. 
 The IP core can be controlled with the control interfaces. With this signal it
