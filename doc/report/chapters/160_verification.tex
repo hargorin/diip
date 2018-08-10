@@ -4,7 +4,7 @@
 %
 % ==============================================================================
 \chapter{Verification \& Benchmark} \label{chapt:ver_bench}
-With the image processing an dataflow parts implemented, they can be verified
+With the image processing and dataflow parts implemented, they can be verified
 and benchmarked. The next chapters hold the verification process of both the
 image processing part and the dataflow part. After both components are verified
 they are benchmarked as one unity against a computer based implementation in
@@ -12,7 +12,7 @@ chapter \ref{ch:benchmark}.
 
 % ==============================================================================
 %
-%                             Verification
+%                             Overview
 %
 % ==============================================================================
 \section{Overview} \label{ch:overview}
@@ -234,7 +234,7 @@ slices.
 \subsection{Dataflow}\label{ch:verification:dataflow}
 The dataflow part is again divided into two parts, the communication and
 controller parts. While in the communication part only the most recent version
-is tested (reffering to chapter \ref{chapt:dataflow} explaining the solotion
+is tested (reffering to chapter \ref{chapt:dataflow} explaining the solution
 A and B with streaming interface), both versions of the controller are verified.
 
 \subsubsection*{Communication}
@@ -251,7 +251,7 @@ chapter. They consist of:
 \vspace{1ex}
 \textbf{Acknowledge:} To test the acknowledge function, a file was sent to the
 FPGA from the computer
-and the Ethernet traffic monitored with Wireshark Netowrk Protocol Analyzer.
+and the Ethernet traffic monitored with Wireshark Network Protocol Analyzer.
 Wiresharks packet dissections are exported to a json file that was then analyzed
 using the \texttt{uftcheck} utility. It was written to analyze network pacekts
 for UFT transfers. The first lines of output yielded:
@@ -301,7 +301,7 @@ time elapsed: 1.18s Speed: 0.859 MB/s Size: 1.012 MB\end{lstlisting}
 output correctly by the communication core, a \gls{ila} 
 was used. An ILA can be configured on the FPGA to record internal signals. The
 results are transferred to the PC over USB and displayed in \gls{vivadohlx}. All
-user registers (0 through 7) are written with differen values and the reult
+user registers (0 through 7) are written with differen values and the result
 observed using the ILA matched the sent data.
 
 \vspace{1ex}
@@ -323,7 +323,7 @@ Co-simulation. A testbench C/C++ file generates pseudo random image data. This
 data is then processed using the controller core and in the testbench itself.
 The two results are then compared. Using different input data and image sizes,
 all output results matched. A test on the FPGA was omitted. This validation will
-later take plave in the overall validation in chapter \ref{ch:verification:overallvalidation}.
+later take place in the overall validation in chapter \ref{ch:verification:overallvalidation}.
 
 \vspace{1ex}
 \textbf{Solution B) VHDL:} The same approach was used in the solution written in
@@ -418,7 +418,7 @@ There are four different processing methods in total.
     \item The solution using HLS with 8bit data bus
     \item The solution using HLS with 256bit data bus. This method was not
     implemented on the FPGA hence simulation results were used
-    \item The solution implemented using VHDL
+    \item The solution implemented using VHDL 8bit
     \item A programm running on CPU written in C++
 \end{itemize}
 
@@ -431,7 +431,7 @@ method 2. the results from \ref{ch:verification:imageprocessing} is used. Method
 calculated the same as for methods 1. and 3.
 \\
 
-As source image a fixed aspect ration of 16:9 was chosen. This is a common
+As a source image a fixed aspect ration of 16:9 was chosen. This is a common
 format used among other for movies. The image was resized to four different
 heights: 480p, 720p, 1080p and 2160p with the largest one being equivalent to
 the
@@ -445,7 +445,7 @@ of a controller or the communication part. Finally the fastest image processing
 solution is put in comparison with a CPU based processing.
 
 \subsection{Compare implementations}
-First the two working FPGA implementations are put to contrast (1. and 3.).
+First the two working FPGA implementations are put in contrast (1. and 3.).
 Figure \ref{fig:benchmarkcompare} and table \ref{tab:throughputmeasuremetns}
 show the results of the throughput measurements. The missing value for HLS 8bit
 is due to a bug in the computer software for this image size that could not be
@@ -453,7 +453,7 @@ resolved by the time the benchmark was made. The HLS 8bit implementation yields
 the lowest throughput. This is mainly due to the controller core which requires
 the image data to be re-sent for every line the Wallis filter processes 
 (no
-image lines are buffered on the FPGA) meaning
+image lines are cached on the FPGA) meaning
 that the full potential of the HLS 8bit image processing core is not taken
 advantage of. The VHDL implementation yields the
 highest
@@ -462,7 +462,7 @@ reasons. First, the VHDL wallis filter core can process pixels at one pixel per
 clock cycle which is more than the 8bit HLS version is capeable of (21 pixels
 per 86 clock cycles).
 Second, the memory management has been greatly improved from the HLS to the VHDL
-controller in that image data is buffered on the FPGA to reduce multiple
+controller in that image data is cached on the FPGA to reduce multiple
 transmissions of image data from PC to FPGA. 
 
 \begin{figure}[tb!]
@@ -515,7 +515,7 @@ If $d_l$ were to be reduced to zero, the throughput would strive towards $b_e$.
 
 \subsection{Compare theoretical limits}
 To show the real performance of a FPGA for image processing the theoretical
-limits are put to contrast in this chapter without considering how the image
+limits are put in contrast in this chapter without considering how the image
 data is sent to the FPGA.
 Before this can be done the maximum possible throughput of the three FPGA
 implementations are calculated.
@@ -575,7 +575,7 @@ pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
 \subsection{FPGA versus CPU}
 Now that the different implementations are compared against each other, the
 two implementations with the highest throughput (VHDL and HLS 256bit
-implementations) are put to contrast with a CPU based computation.  The CPU
+implementations) are put in contrast with a CPU based computation.  The CPU
 programm was run multiple times for each image and the mean throughput is
 calculated. The program was running on a Intel Core i7-6700HQ running at 2.60
 GHz on a single core.  Figure \ref{fig:theoreticalmax} and table
@@ -601,13 +601,13 @@ be outrunned by one FPGA.
 
 \begin{table}[b!]
     \centering
-    \begin{tabular}{l l l l l l l}
+    \begin{tabular}{l l l l l l}
         \toprule
-        Solution & 480p & 720p & 1080p & 2160p & & Performance Gain vs VHDL\\
+        Solution & 480p & 720p & 1080p & 2160p & \\
         \midrule
-        VHDL 8bit       & 5.92  & 5.84  & 5.78  & 5.73  & $MB/s$ & \\
-        HLS  256bit & 11.3  & 11.1  & 11.0  & 10.9  & $MB/s$ & x1.90\\
-        CPU        & 12.56 & 16.23 & 15.99 & 15.91 & $MB/s$ & x2.76\\
+        VHDL 8bit       & 5.92  & 5.84  & 5.78  & 5.73  & $MB/s$ \\
+        HLS  256bit & 11.3  & 11.1  & 11.0  & 10.9  & $MB/s$ \\
+        CPU        & 12.56 & 16.23 & 15.99 & 15.91 & $MB/s$ \\
         \bottomrule
     \end{tabular}
     \caption{FPGA PC Throughput comparisson}

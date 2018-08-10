@@ -232,7 +232,7 @@ lists the required block memory usage.
     \centering
     \begin{tabular}{l r}
         \toprule
-        Item & BRAM tiles \\
+        Item & 36Kb BRAM tiles \footnote{One 36Kb BRAM tile can be used as two 18Kb RAMs} \\
         \midrule
         Total available & 365 \\
         TEMAC support & -2 \\
@@ -267,7 +267,7 @@ parameters that are used to compare the two inside FPGA scale proposals.
     \label{tab:parsum}
 \end{table}
 
-Now the two proposals can be put to contrast. Starting with figure 
+Now the two proposals can be put in contrast. Starting with figure 
 \ref{fig:sca:compfixheight} the two proposals are compared against each other
 with an input image of fixed height and variable with. This was chosen because
 with the main limiting factor being \gls{bramtile} usage, the store size $s_s$ has to
