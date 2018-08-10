@@ -12,7 +12,8 @@
         \begin{axis}[
                 % domain=-2:6,
                 xtick={0,500,...,2500},
-                % ytick={0,4,...,20},
+                ymin=0,
+                ytick={0,2,...,16},
                 xmajorgrids=true,ymajorgrids=true,
                 xlabel={image height [$p$]},
                 ylabel={throughput [$MB/s$]},
