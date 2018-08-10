@@ -87,12 +87,10 @@ elements and memory for both the communication and image processing task.
 \\
 
 % NEW What is the result of the project
-\todo[inline]{Insert total throughput, limits and theoretical maximums}
 The result is a complete image processing pipeline that begins on a PC where the
 input image is sent via Ethernet to the FPGA where it is processed and sent pack
-to the PC. The throughput is XXX MB/s limited by XXX. The Wallis filter core
-is capable of processing up to XXX megapixels per second. A benchmark shows the
-performance differences betwen a CPU based and FPGA based solution. Concepts on
+to the PC. The achieved image throughput is 4.1MB/s primarily limited by the image processing core. The Wallis filter core
+is capable of processing up to 125 megapixels per second on the input. A benchmark shows the performance differences betwen a CPU based and FPGA based solution. Concepts on
 scalability show how the processing power of FPGAs can be exploited if multiple
 FPGA would work on a network.
 \\
