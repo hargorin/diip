@@ -17,9 +17,10 @@ A new image processing core was implemented that locally optimizes contrast
 (Wallis filter). Multiple implementations have been validated and compared.
 Using high level synthesis to describe an algorithm has proven that the desired
 operation can be achieved in little time. Nevertheless the theoretical possible
-throughput could not be achieved. Therefore a VHDL implementation was written
-that processes pixels at 125Mp/s and uses less than three percent of FPGA
-ressources. 
+throughput could not be achieved. The main reason being that the dataflow was
+not described well enough in C/C++ language to achieve the desired throughput.
+Therefore a VHDL implementation was written that processes pixels at 125Mp/s and
+uses less than three percent of FPGA ressources.
 
 % ==============================================================================
 %
@@ -57,6 +58,22 @@ scale proportional to the number of FPGAs used.
 
 % ==============================================================================
 %
+%                             Working with High Level Synthesis
+%
+% ==============================================================================
+\section{Working with High Level Synthesis}
+The time spent on working with \gls{vivadohls} has shown several advantages and
+disadvantages. It has shown that thinking close to hardwre is crucial. Using
+C/C++ as language is a trap to fall back and think of the code as if it would be
+executed sequentially. The function to be implemented should be split into
+building blocks the same way as it would be done using a hardware description
+language. If the code was written with the exact same line of thought as a HDL
+approach, then the same throughput should be achievable. And if that is managed,
+HLS would bring significant advantages like the simple implementation of complex
+interfaces (e.g. AXI4) and the reduced time in testbench development.
+
+% ==============================================================================
+%
 %                             Future Work
 %
 % ==============================================================================
@@ -67,5 +84,11 @@ cores. After writing a computer application that can handle the fast transfer
 speeds the true benefit of using FPGA for image processing can be shown in
 praxis. Because the data transfer is Ethernet based a cluster of FPGAs can be
 built up to compete against high performance CPU and GPU based image processing
-pipelines.
+pipelines. Another method to increase throughput would be to implement a VHDL
+256bit image processing core that would be able to process 21 pixels per clock
+cycle and produce one pixel per clock cycle on the output. This would omit the
+scalability inside the FPGA because the Ethernet link would already be
+saturated. Furthermore the HLS implementations could be improved by describing
+the dataflow more hardware oriented and proove that using HLS the same
+throughput can be achieved as when using a hardware description language.
 
