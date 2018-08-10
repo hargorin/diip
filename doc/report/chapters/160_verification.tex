@@ -10,6 +10,52 @@ image processing part and the dataflow part. After both components are verified
 they are benchmarked as one unity against a computer based implementation in
 chapter \ref{ch:benchmark}.
 
+% ==============================================================================
+%
+%                             Verification
+%
+% ==============================================================================
+\section{Overview} \label{ch:overview}
+This chapter lists all the solutions that are compared in verification and benchmark. The solutions can be found in table \ref{tab:ver:overview}.
+
+\begin{table}[tb!]
+    \centering
+    \begin{tabular}{p{3.8cm} p{10cm}}
+        % \toprule
+        % Solution & Description \\
+        \toprule
+        \multicolumn{2}{l}{\textbf{Image Processing}}\\
+        \toprule
+        HLS 8bit & This solution is a Wallis filter with an 8bit AXI4-Stream as input and using C/C++ in Vivado HLS and is implemented on the FPGA.\\
+        \midrule
+        HLS 256bit & This solution is a Wallis filter with an 256bit AXI4-Stream as input and using C/C++ in Vivado HLS and is not implemented on the FPGA.\\
+        \midrule
+        VHDL 8bit & This solution is a Wallis filter with an 8bit AXI4-Stream as input and using VHDL and is implemented on the FPGA.\\
+        \midrule
+        C/C++ Wallis filter & This solution is a Wallis filter using C/C++ on the Computer.\\
+        \toprule
+        \multicolumn{2}{l}{\textbf{Controller}}\\
+        \toprule
+        Controller HLS &  The HLS controller reads image data stored in block RAM using AXI4 interface and sends it to the Wallis filter via AXI4-Stream. Works only with memory based communication. \\
+        \midrule
+        Controller VHDL & The VHDL controller receives image data directly from the communication part via AXI4-Stream and sends it to the Wallis filter via AXI4-Stream. Works only with stream based communication. \\
+        \toprule
+        \multicolumn{2}{l}{\textbf{Communication}}\\
+        \toprule
+        Communication Memory based & Stores the received image data in block RAM using AX4 interface. \\
+        \midrule
+        Communication Stream based & Received data is streamed directly to the controller. Data to send is also transfered using AXI4-Stream. \\
+        \toprule
+        \multicolumn{2}{l}{\textbf{Overall}}\\
+        \toprule
+        diip & This solution includes the HLS 8bit Wallis filter, the HLS controller and the communication based on memory. \\
+        \midrule
+        diip\_fatser & This solution includes the VHDL 8bit Wallis filter, the VHDL controller and the communication based on streaming. \\
+        \bottomrule
+    \end{tabular}
+    \caption{Overview of the solutions for the verification and benchmark}
+    \label{tab:ver:overview}
+\end{table}
 
 % ==============================================================================
 %
@@ -91,9 +137,9 @@ image is bright at the top and dark at the bottom.
         \toprule
         DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & VHDL Simulation (ghdl) \\
         \midrule
-        HLS 8bit    & 0.32\%    & 0.32\%    & {}\\
-        HLS 256bit  & 0.32\%    & 0.32\%    & {} \\
-        VHDL        & {}         & {}         & 1.23\% \\
+        HLS  8bit    & 0.32\%    & 0.32\%    & {}\\
+        HLS  256bit  & 0.32\%    & 0.32\%    & {} \\
+        VHDL 8bit        & {}         & {}         & 1.23\% \\
         \bottomrule
     \end{tabular}
     \caption{RMSE of the Wallis filter verification using the room image}
@@ -106,9 +152,9 @@ image is bright at the top and dark at the bottom.
         \toprule
         DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & VHDL Simulation (ghdl) \\
         \midrule
-        HLS 8bit    & 0.33\%    & 0.33\%    & {} \\
-        HLS 256bit  & 0.33\%    & 0.33\%    & {} \\
-        VHDL        & {}         & {}         & 0.49\% \\
+        HLS  8bit    & 0.33\%    & 0.33\%    & {} \\
+        HLS  256bit  & 0.33\%    & 0.33\%    & {} \\
+        VHDL 8bit        & {}         & {}         & 0.49\% \\
         \bottomrule
     \end{tabular}
     \caption{RMSE of the Wallis filter verification using the mountain image}
@@ -140,9 +186,9 @@ reached.
         \toprule
         DUV & Target [p/clk] & Actual [p/clk]  & Throughput [Mp/s]\\
         \midrule
-        HLS 8bit    & 1     & 21/86     & 30.5\\
-        HLS 256bit  & 21    & 21/11     & 238.6 \\
-        VHDL        & 1     & 1         & 125 \\
+        HLS  8bit    & 1     & 21/86     & 30.5\\
+        HLS  256bit  & 21    & 21/11     & 238.6 \\
+        VHDL 8bit        & 1     & 1         & 125 \\
         \bottomrule
     \end{tabular}
     \caption{Throughput of the Wallis filter related to the input pixels at
@@ -170,9 +216,9 @@ slices.
         \toprule
         DUV         & Slice & (33650) & BRAM & (365) & DSP & (740) \\
         \midrule
-        HLS 8bit    & 949 & (2.8\%)   & 10.5 & (2.9\%)  & 17 & (2.3\%) \\
-        HLS 256bit  & 1542 & (4.6\%)  & 5 & (1.4\%)     & 16 & (2.2\%) \\
-        VHDL        & 253 & (0.8\%)   & 1 & (0.3\%)     & 16 & (2.2\%) \\
+        HLS  8bit    & 949 & (2.8\%)   & 10.5 & (2.9\%)  & 17 & (2.3\%) \\
+        HLS  256bit  & 1542 & (4.6\%)  & 5 & (1.4\%)     & 16 & (2.2\%) \\
+        VHDL 8bit       & 253 & (0.8\%)   & 1 & (0.3\%)     & 16 & (2.2\%) \\
         \bottomrule
     \end{tabular}
     \caption{Ressources of the three implemented Wallis filters}
@@ -320,9 +366,9 @@ first three lines.
 To validate the overall system, the image processing and dataflow parts are
 combined in a Vivado HLx project. Two projects are distinguished:
 \begin{itemize}
-    \item \texttt{diip}\footnote{\Gls{diip}} Project using solution A) with HLS
+    \item \texttt{diip}\footnote{\Gls{diip}} Project using solution A) with 8bit HLS
     implementation
-    \item \texttt{diip\_faster} Project using solution B) with VHDL
+    \item \texttt{diip\_faster} Project using solution B) with 8bit VHDL
     implementation
 \end{itemize}
 
@@ -347,8 +393,8 @@ chapter \ref{ch:verification:imageprocessing}. It is assumed that this depends o
         \toprule
         Solution            & RMSE room [\%]    & RMSE mountain [\%]\\
         \midrule
-        diip (HLS)          & 0.32             & 0.33 \\
-        diip\_faster (VHDL) & 0.91             & 0.37 \\
+        diip         & 0.32             & 0.33 \\
+        diip\_faster & 0.91             & 0.37 \\
         \bottomrule
     \end{tabular}
     \caption{Overall validation results}
@@ -436,7 +482,7 @@ transmissions of image data from PC to FPGA.
         \midrule
         HLS 8bit   & 0.17  &       & 0.168 & 0.161 & $MB/s$ \\
         % HLS 256bit & 11.3 & 11.1 & 11.0 & 10.9 \\
-        VHDL       & 0.89  & 1.291 & 2.348 & 4.115 & $MB/s$\\
+        VHDL 8bit      & 0.89  & 1.291 & 2.348 & 4.115 & $MB/s$\\
         % CPU        & 12.56 & 16.23 & 15.99 & 15.91 \\
         \bottomrule
     \end{tabular}
@@ -508,9 +554,9 @@ maximum results.
         \toprule
         Solution & $b_w$ & 480p & 720p & 1080p & 2160p & \\
         \midrule
-        HLS 8bit       & 29.1 & 1.45 & 1.43 & 1.41 & 1.40 & $MB/s$\\
-        HLS 256bit     & 228  & 11.3 & 11.1 & 11.0 & 10.9 & $MB/s$\\
-        VHDL           & 119  & 5.92 & 5.84 & 5.78 & 5.73 & $MB/s$\\
+        HLS  8bit       & 29.1 & 1.45 & 1.43 & 1.41 & 1.40 & $MB/s$\\
+        HLS  256bit     & 228  & 11.3 & 11.1 & 11.0 & 10.9 & $MB/s$\\
+        VHDL 8bit          & 119  & 5.92 & 5.84 & 5.78 & 5.73 & $MB/s$\\
         \bottomrule
     \end{tabular}
     \caption{FPGA implementations theoretical limits}
@@ -559,8 +605,8 @@ be outrunned by one FPGA.
         \toprule
         Solution & 480p & 720p & 1080p & 2160p & & Performance Gain vs VHDL\\
         \midrule
-        VHDL       & 5.92  & 5.84  & 5.78  & 5.73  & $MB/s$ & \\
-        HLS 256bit & 11.3  & 11.1  & 11.0  & 10.9  & $MB/s$ & x1.90\\
+        VHDL 8bit       & 5.92  & 5.84  & 5.78  & 5.73  & $MB/s$ & \\
+        HLS  256bit & 11.3  & 11.1  & 11.0  & 10.9  & $MB/s$ & x1.90\\
         CPU        & 12.56 & 16.23 & 15.99 & 15.91 & $MB/s$ & x2.76\\
         \bottomrule
     \end{tabular}
@@ -585,9 +631,9 @@ much more BlockRAM than the Wallis filter and it needs less than slice in percen
         DUV         & Slice (33650) & Throughput [MB/s] & Efficiency [kB/s per
         slice]\\
         \midrule
-        HLS 8bit    &  969          & 1.4               & 1.4   \\
-        HLS 256bit  &  1542         & 11.0              & 7.1   \\
-        VHDL        &  0.8          & 5.8               & 7250  \\
+        HLS  8bit    &  969          & 1.4               & 1.4   \\
+        HLS  256bit  &  1542         & 11.0              & 7.1   \\
+        VHDL 8bit        &  0.8          & 5.8               & 7250  \\
         \bottomrule
     \end{tabular}
     \caption{Efficiency of the Wallis filter in relation to area and throughput}
