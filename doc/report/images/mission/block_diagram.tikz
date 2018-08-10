@@ -48,8 +48,8 @@
     \path[draw,-{Latex[length=2.5mm]}] ($(mon.0) + (0,0.2)$) -- ($(com.180) + (0,0.2)$) node[near end, above] () {1.} ;
     \path[draw,{Latex[length=2.5mm]}-] ($(mon.0) + (0,-0.2)$) -- ($(com.180) + (0,-0.2)$) node[near end, below] () {8.} ;
 
-    \path[draw,-{Latex[length=2.5mm]}] ($(control.180) + (0,0.2)$) -- ($(ip.0) + (0,0.2)$) node[midway, above] () {4.} ;
-    \path[draw,{Latex[length=2.5mm]}-] ($(control.180) + (0,-0.2)$) -- ($(ip.0) + (0,-0.2)$) node[midway, below] () {5.} ;
+    \path[draw,-{Latex[length=2.5mm]}] ($(control.180) + (0,-0.2)$) -- ($(ip.0) + (0,-0.2)$) node[midway, below] () {4.} ;
+    \path[draw,{Latex[length=2.5mm]}-] ($(control.180) + (0,0.2)$) -- ($(ip.0) + (0,+0.2)$) node[midway, above] () {5.} ;
 
     \path[draw,-{Latex[length=2.5mm]}] ($(control.90) + (-0.2,0)$) -- ($(mem.270) + (-0.2,0)$) node[midway, left] () {6.} ;
     \path[draw,{Latex[length=2.5mm]}-] ($(control.90) + (0.2,0)$) -- ($(mem.270) + (0.2,0)$) node[midway, right] () {3.} ;
