@@ -213,6 +213,7 @@ The pixels are temporarily stored in a block RAM (BRAM). But this brings another
 With the directive \texttt{array\_partition} (see chapter \ref{ch:directives})
 an array can be divided into multiple smaller arrays. The array is divided into 21 smaller arrays. So it is possible to read 21 pixels per clock and there is no problem with the latency. \\
 In the listening \ref{lst:array_partition} the array pixel is partitioned into 21 arrays with the directive \texttt{array\_partition}, so that 21 pixels per clock can be read. 
+
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=TextStyle, caption=Set directive array\_partition, label=lst:array_partition]
 set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
