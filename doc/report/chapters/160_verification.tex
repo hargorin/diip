@@ -390,6 +390,13 @@ format used among other for movies. The image was resized to four different
 heights: 480p, 720p, 1080p and 2160p with the largest one being equivalent to
 the
 4k image standard. The content of the image does not influence the throughput.
+\\
+
+The benchmark is split into three seperate comparisons. First the two overall
+working solutions are compared (diip and diip\_faster). Then the theoretical
+limits of the three image processing solution are compared without the influence
+of a controller or the communication part. Finally the fastest image processing
+solution is put in comparison with a CPU based processing.
 
 \subsection{Compare implementations}
 First the two working FPGA implementations are put to contrast (1. and 3.).
@@ -398,14 +405,17 @@ show the results of the throughput measurements. The missing value for HLS 8bit
 is due to a bug in the computer software for this image size that could not be
 resolved by the time the benchmark was made. The HLS 8bit implementation yields
 the lowest throughput. This is mainly due to the controller core which requires
-the image data to be re-sent for every line the wallis filter processes. No
-image lines are buffered on the FPGA. The VHDL implementation yields the
+the image data to be re-sent for every line the Wallis filter processes 
+(no
+image lines are buffered on the FPGA) meaning
+that the full potential of the HLS 8bit image processing core is not taken
+advantage of. The VHDL implementation yields the
 highest
 throughput. This was to be expected for two
 reasons. First, the VHDL wallis filter core can process pixels at one pixel per
 clock cycle which is more than the 8bit HLS version is capeable of (21 pixels
 per 86 clock cycles).
-Second, the memory management was been greatly improved from the HLS to the VHDL
+Second, the memory management has been greatly improved from the HLS to the VHDL
 controller in that image data is buffered on the FPGA to reduce multiple
 transmissions of image data from PC to FPGA. 
 
