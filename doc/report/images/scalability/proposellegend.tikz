@@ -23,6 +23,10 @@
         \node[anchor=west] at (9.7,0.3)  {Image processing cores};
         % Iter pixels
         % \draw[pattern=north east lines, pattern color=gray!60] (3,2) rectangle (4,7);
+
+        \draw[cyan,line width=0.6mm] (7,-1) rectangle (8,-0.4);
+        \draw[magenta,line width=0.6mm,dashed] (8.5,-1) rectangle (9.5,-0.4);
+        \node[anchor=west] at (9.7,-0.7)  {Processed output pixels};
     \end{pgfonlayer}
 
     % Foreground
