@@ -1,5 +1,7 @@
 package diip_java_cc.Model;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -8,6 +10,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Observable;
 import java.util.concurrent.TimeUnit;
+
+import javax.imageio.ImageIO;
 
 public class Model extends Observable {
 
@@ -19,12 +23,38 @@ public class Model extends Observable {
 	// ================================================================================
 	// Private Data
 	// ================================================================================
-	
-	public Model() {
-	}
+	BufferedImage sourceImage = null;
+	BufferedImage outputImage = null;
 
 	// ================================================================================
 	// Private Functions
+	// ================================================================================
+	
+
+	// ================================================================================
+	// Public Functions
+	// ================================================================================
+	public Model() {
+	}
+	
+	public void loadSourceImage(String fname) {
+		
+		File fimage = new File(fname);
+		
+		try {
+			sourceImage = ImageIO.read(fimage);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		this.setChanged();
+		this.notifyObservers();
+	}
+	
+
+	// ================================================================================
+	// Test Functions
 	// ================================================================================
 	public void udpTest() {
 		DatagramSocket socket = null;
@@ -158,8 +188,12 @@ public class Model extends Observable {
         lw.terminate();
 	}
 
-	// ================================================================================
-	// Public Functions
-	// ================================================================================
+	public BufferedImage getSourceImage() {
+		return sourceImage;
+	}
+
+	public BufferedImage getOutputImage() {
+		return outputImage;
+	}
 	
 }

@@ -77,6 +77,7 @@ public class UFT {
 				ByteBuffer bb = ByteBuffer.wrap(buf);
 				int dummy = bb.getInt();
 				rx.uregContent = bb.getInt();
+				rx.address = packet.getAddress();
 				return rx;
 			}
         }

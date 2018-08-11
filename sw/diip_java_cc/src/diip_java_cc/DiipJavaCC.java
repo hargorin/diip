@@ -19,32 +19,32 @@ public class DiipJavaCC {
 
 		// TEST
 //		model.udpTest();
-		model.uftTest();
+//		model.uftTest();
 		
-//		// look and feel
-//		try {
-//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//		} catch (Exception e) {
-//		}
-//		
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				Thread.currentThread().setPriority(8); // Thread.MAX_PRIORITY
-//				Model model = new Model();
-//				MainView view = new MainView();
-//				Controller controller = new Controller(model, view);
-//
-//				view.setController(controller);
-//
-//				view.build();
-//				view.setVisible(true);
-//
-//				// Add observers
-//				model.addObserver(view);
-//				controller.contol();
-//			}
-//		});
+		// look and feel
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+		}
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				Thread.currentThread().setPriority(8); // Thread.MAX_PRIORITY
+				Model model = new Model();
+				MainView view = new MainView();
+				Controller controller = new Controller(model, view);
+
+				view.setController(controller);
+
+				view.build();
+				view.setVisible(true);
+
+				// Add observers
+				model.addObserver(view);
+				controller.contol();
+			}
+		});
 
 		
 		System.out.println("Exiting main()");
