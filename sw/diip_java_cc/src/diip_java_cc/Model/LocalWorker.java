@@ -65,6 +65,10 @@ public class LocalWorker extends Thread {
         	// Receive one line
         	udata = UFT.receive(socket);
         	if(udata.status == UFTData.Status.TIMEOUT) continue;
+        	if(udata.status == UFTData.Status.USER) {
+        		System.out.printf("User reg %d set to %d\n", udata.uregAddress, udata.uregContent);
+        		continue;
+        	}
         	
         	// Copy to image buffer
         	System.arraycopy(udata.data, 0, imcache, CACHE_N_LINES*rxLinePtr, udata.length);
@@ -72,7 +76,7 @@ public class LocalWorker extends Thread {
         	rxLinePtr++;
         	if(rxLinePtr == CACHE_N_LINES) rxLinePtr = 0;
         	
-//        	System.console().printf("Line received. rxLinePtr=%d\n", rxLinePtr);
+        	System.out.printf("Line received. rxLinePtr=%d\n", rxLinePtr);
         	
         	// If enough data is here
         	if(rxLines > 21) {

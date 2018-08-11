@@ -6,7 +6,7 @@ public class UFTData {
 
 
 	public enum Status {
-		VALID, TIMEOUT,
+		DATA, TIMEOUT, USER,
 	};
 	
 	// ================================================================================
@@ -17,4 +17,8 @@ public class UFTData {
 	public int length;
 	public InetAddress address;
 	public Status status;
+	
+	// User register
+	public int uregAddress;
+	public long uregContent; 
 }

@@ -6,6 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class UFT {
@@ -51,7 +52,7 @@ public class UFT {
         	// Check timeout condition
         	if(timeoutCtr > TIMEOUT_MAX) {
         		rx.status = UFTData.Status.TIMEOUT;
-        		System.out.println("TIMEOUT");
+//        		System.out.println("TIMEOUT");
         		return rx;
         	}
 			try {
@@ -69,11 +70,20 @@ public class UFT {
 			// Check for start packet
 			if(getPacketType(buf) == pktType.FTS)
 				startreceived = true;
+			// Check for user register
+			if(getPacketType(buf) == pktType.USER) {
+				rx.status = UFTData.Status.USER;
+				rx.uregAddress = buf[3];
+				ByteBuffer bb = ByteBuffer.wrap(buf);
+				int dummy = bb.getInt();
+				rx.uregContent = bb.getInt();
+				return rx;
+			}
         }
 		
         // get tcid and nseq from start packet
-        tcid = (buf[1]<<16) + (buf[2]<<8) + (buf[3]<<0); 
-        nseq = (buf[4]<<24) + (buf[5]<<16) + (buf[6]<<8) + (buf[7]<<0); 
+        tcid = ((0xFF & buf[1])<<16) + ((0xFF & buf[2])<<8) + ((0xFF & buf[3])<<0); 
+        nseq = ((0xFF & buf[4])<<24) + ((0xFF & buf[5])<<16) + ((0xFF & buf[6])<<8) + ((0xFF & buf[7])<<0); 
 
         // Allocate data
         byte[] rxdata = new byte[1500*nseq];
@@ -86,7 +96,7 @@ public class UFT {
         	// Check timeout condition
         	if(timeoutCtr > TIMEOUT_MAX) {
         		rx.status = UFTData.Status.TIMEOUT;
-        		System.out.println("TIMEOUT");
+//        		System.out.println("TIMEOUT");
         		return rx;
         	}
 			try {
@@ -99,8 +109,8 @@ public class UFT {
 				e.printStackTrace();
 			}
 
-			System.out.printf("received %d bytes from %s\n", packet.getLength(), packet.getAddress().toString());
-        	System.out.println(Arrays.toString(packet.getData()));
+//			System.out.printf("received %d bytes from %s\n", packet.getLength(), packet.getAddress().toString());
+//        	System.out.println(Arrays.toString(packet.getData()));
         	
 			// Check for data and correct tcid
 			if(getPacketType(buf) == pktType.DATA)
@@ -108,7 +118,7 @@ public class UFT {
 				if((buf[0]&0x7f) == tcid) {
 					// Copy data from packet to buffer, increment pointer and counter
 					nrx++;
-			        System.out.printf("nrx=%d\n", nrx);
+//			        System.out.printf("nrx=%d\n", nrx);
 					System.arraycopy(packet.getData(), 4, rxdata, rxdataptr, packet.getLength()-4);
 					rxdataptr += packet.getLength()-4;
 					totalrxbytes += packet.getLength()-4;
@@ -120,7 +130,7 @@ public class UFT {
         rx.data = rxdata;
         rx.tcid = tcid;
         rx.address = packet.getAddress();
-		rx.status = UFTData.Status.VALID;
+		rx.status = UFTData.Status.DATA;
         rx.length = totalrxbytes;
 		return rx;
 	}
@@ -191,6 +201,38 @@ public class UFT {
 	    // send stop packet
 	    p = new DatagramPacket(buf, 8, a, port);
         Util.sendDatagram(s, p);		
+	}
+	
+	/**
+	 * Set UFT user register
+	 * @param reg
+	 * @param regdata
+	 * @param s
+	 * @param a
+	 * @param port
+	 */
+	public static void setUserReg (int reg, long regdata, DatagramSocket s, InetAddress a, int port) {
+
+		int nseq, len;
+		DatagramPacket p;
+
+	    byte[] buf = new byte[8];
+	    
+	    // assemble start packet
+	    buf[0] = 4;
+	    buf[1] = 0; buf [2] = 0; buf[3] = (byte) reg;
+
+	    buf[4] = (byte)(regdata / (1<<24));
+	    regdata = regdata - buf[4]/(1<<24);
+	    buf[5] = (byte)(regdata / (1<<16));
+	    regdata = regdata - buf[5]/(1<<16);
+	    buf[6] = (byte)(regdata / (1<<8));
+	    regdata = regdata - buf[6]/(1<<8);
+	    buf[7] = (byte)(regdata);
+	    // send start packet
+	    p = new DatagramPacket(buf, 8, a, port);
+//	    System.out.println(Arrays.toString(buf));
+        Util.sendDatagram(s, p);
 	}
 	
 	/**
