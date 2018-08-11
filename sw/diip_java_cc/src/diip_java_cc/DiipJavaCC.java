@@ -18,7 +18,8 @@ public class DiipJavaCC {
 		
 
 		// TEST
-		model.udpTest();
+//		model.udpTest();
+		model.uftTest();
 		
 //		// look and feel
 //		try {

@@ -1,0 +1,209 @@
+package diip_java_cc.Model;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+
+public class UFT {
+
+	// ================================================================================
+	// Settings
+	// ================================================================================
+	public static final int TX_PACKET_SIZE = 1024;
+
+	// How many times the UDP receive socket can timeout before the send/receive is 
+	// aborted
+	public static final int TIMEOUT_MAX = 100;
+	
+	// ================================================================================
+	// Types
+	// ================================================================================
+	public enum pktType {
+		FTS, FTP, ACKFP, ACKFT, USER, DATA
+	};
+
+	// ================================================================================
+	// Public static methods
+	// ================================================================================
+	/**
+	 * Receive a UFT data packet
+	 * @param socket
+	 * @param address
+	 * @return
+	 */
+	public static UFTData receive (DatagramSocket s) {
+		UFTData rx = new UFTData();
+		int tcid, nseq;
+		int timeoutCtr = 0;
+		int totalrxbytes=0;
+
+	    byte[] buf = new byte[1500];
+        DatagramPacket packet = new DatagramPacket(buf, buf.length);
+    	Util.setDatagramSoTimeout(s, 1);
+		
+		// Wait for start packet
+        boolean startreceived = false;
+        while(!startreceived) {
+        	// Check timeout condition
+        	if(timeoutCtr > TIMEOUT_MAX) {
+        		rx.status = UFTData.Status.TIMEOUT;
+        		System.out.println("TIMEOUT");
+        		return rx;
+        	}
+			try {
+				s.receive(packet);
+				
+			} catch (SocketTimeoutException e1) {
+				// no data recevied, continue
+				timeoutCtr++;
+				continue;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+//			System.out.printf("received %d bytes from %s\n", packet.getLength(), packet.getAddress().toString());
+//        	System.out.println(Arrays.toString(packet.getData()));
+			// Check for start packet
+			if(getPacketType(buf) == pktType.FTS)
+				startreceived = true;
+        }
+		
+        // get tcid and nseq from start packet
+        tcid = (buf[1]<<16) + (buf[2]<<8) + (buf[3]<<0); 
+        nseq = (buf[4]<<24) + (buf[5]<<16) + (buf[6]<<8) + (buf[7]<<0); 
+
+        // Allocate data
+        byte[] rxdata = new byte[1500*nseq];
+        int rxdataptr = 0;
+        
+		// Receive all data
+        timeoutCtr = 0;
+//        System.out.printf("tcid=%d nseq=%d\n", tcid, nseq);
+        for(int nrx = 0; nrx < nseq; ) {
+        	// Check timeout condition
+        	if(timeoutCtr > TIMEOUT_MAX) {
+        		rx.status = UFTData.Status.TIMEOUT;
+        		System.out.println("TIMEOUT");
+        		return rx;
+        	}
+			try {
+				s.receive(packet);
+			} catch (SocketTimeoutException e1) {
+				// no data recevied, continue
+				timeoutCtr++;
+				continue;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			System.out.printf("received %d bytes from %s\n", packet.getLength(), packet.getAddress().toString());
+        	System.out.println(Arrays.toString(packet.getData()));
+        	
+			// Check for data and correct tcid
+			if(getPacketType(buf) == pktType.DATA)
+				
+				if((buf[0]&0x7f) == tcid) {
+					// Copy data from packet to buffer, increment pointer and counter
+					nrx++;
+			        System.out.printf("nrx=%d\n", nrx);
+					System.arraycopy(packet.getData(), 4, rxdata, rxdataptr, packet.getLength()-4);
+					rxdataptr += packet.getLength()-4;
+					totalrxbytes += packet.getLength()-4;
+				}
+        }
+        
+        
+		
+        rx.data = rxdata;
+        rx.tcid = tcid;
+        rx.address = packet.getAddress();
+		rx.status = UFTData.Status.VALID;
+        rx.length = totalrxbytes;
+		return rx;
+	}
+
+	/**
+	 * Send a data junk via UFT
+	 * @param udata
+	 * @param s
+	 * @param a
+	 * @param port
+	 */
+	public static void send (UFTData udata, DatagramSocket s, InetAddress a, int port) {
+		int nseq, len;
+		DatagramPacket p;
+
+	    byte[] buf = new byte[1500];
+	    
+	    // calculate nseq
+	    len = udata.data.length;
+	    nseq = (int) Math.ceil(len/(double)TX_PACKET_SIZE);
+	    		
+	    // assemble start packet
+	    buf[0] = 0;
+	    buf[1] = 0; buf [2] = 0; buf[3] = (byte) udata.tcid;
+	    int nseqt = nseq;
+	    buf[4] = (byte)(nseqt / (1<<24));
+	    nseqt = nseqt - buf[4]/(1<<24);
+	    buf[5] = (byte)(nseqt / (1<<16));
+	    nseqt = nseqt - buf[5]/(1<<16);
+	    buf[6] = (byte)(nseqt / (1<<8));
+	    nseqt = nseqt - buf[6]/(1<<8);
+	    buf[7] = (byte)(nseqt);
+	    // send start packet
+	    p = new DatagramPacket(buf, 8, a, port);
+        Util.sendDatagram(s, p);
+        
+        // Send data packets
+        for(int pctr = 0; pctr < nseq; pctr++) {
+        	buf[0] = (byte) (0x80 | (byte)udata.tcid);
+
+    	    int pctrt = pctr;
+    	    buf[1] = (byte)(pctrt / (1<<16));
+    	    pctrt = pctrt - buf[1]/(1<<16);
+    	    buf[2] = (byte)(pctrt / (1<<8));
+    	    pctrt = pctrt - buf[2]/(1<<8);
+    	    buf[3] = (byte)(pctrt);
+    	    
+        	if( len-(pctr*TX_PACKET_SIZE) >  TX_PACKET_SIZE) {
+        		System.arraycopy(udata.data, pctr*TX_PACKET_SIZE, buf, 4, TX_PACKET_SIZE);
+        		p = new DatagramPacket(buf, TX_PACKET_SIZE+4, a, port);
+        	}
+        	else {
+        		System.arraycopy(udata.data, pctr*TX_PACKET_SIZE, buf, 4, len-(pctr*TX_PACKET_SIZE));
+        		p = new DatagramPacket(buf, len-(pctr*TX_PACKET_SIZE)+4, a, port);
+        	}
+        		
+    	    
+            Util.sendDatagram(s, p);
+        }
+	    
+        // Send stop packet
+	    buf[0] = 1;
+	    buf[1] = 0; buf [2] = 0; buf[3] = (byte) udata.tcid;
+	    buf[4] = 0;
+	    buf[5] = 0;
+	    buf[6] = 0;
+	    buf[7] = 0;
+	    // send stop packet
+	    p = new DatagramPacket(buf, 8, a, port);
+        Util.sendDatagram(s, p);		
+	}
+	
+	/**
+	 * Dissects the packet type
+	 * @param b
+	 * @return
+	 */
+	public static pktType getPacketType (byte[] b) {
+		if			(b[0] == 0) return pktType.FTS;
+		else if 	(b[0] == 1) return pktType.FTP;
+		else if 	(b[0] == 2) return pktType.ACKFP;
+		else if 	(b[0] == 3) return pktType.ACKFT;
+		else if 	(b[0] == 4) return pktType.USER;
+		else return pktType.DATA;
+	}
+}
