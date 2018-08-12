@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -14,11 +16,14 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class ImagePanel extends JPanel{
+public class ImagePanel extends JPanel implements ComponentListener {
 
     private BufferedImage image;
+    private Image scaledimage;
+    private boolean componentChanged = true;
 
     public ImagePanel() {
+    	addComponentListener(this);
     }
 
     public void setImage (BufferedImage image) {
@@ -56,25 +61,60 @@ public class ImagePanel extends JPanel{
     
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
         
         double scale;
-        
-        
-        try {
-            if((double)super.getWidth()/image.getWidth() < (double)super.getHeight()/image.getHeight() )
-            	scale = (double)super.getWidth()/image.getWidth();
-            else
-            	scale = (double)super.getHeight()/image.getHeight();
 
-            System.out.printf("scale=%f\n",scale);
-//            Image scaledImage = image.getScaledInstance(super.getWidth(), super.getHeight(),
-//                    Image.SCALE_SMOOTH);
-//            Image scaledImage = image.getScaledInstance(this.getWidth(),this.getHeight(),Image.SCALE_SMOOTH);
-            g.drawImage(resize(image,scale,scale), 0, 0, this); // see javadoc for more info on the parameters			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}            
+		System.out.println("paintComponent");
+        if (componentChanged == true) {
+            super.paintComponent(g);
+	        try {
+	            if((double)super.getWidth()/image.getWidth() < (double)super.getHeight()/image.getHeight() )
+	            	scale = (double)super.getWidth()/image.getWidth();
+	            else
+	            	scale = (double)super.getHeight()/image.getHeight();
+	
+	            scaledimage = resize(image,scale,scale);
+	            System.out.printf("scale=%f\n",scale);
+	            
+	            int newImageWidth = (int) (image.getWidth() * scale);
+	            int newImageHeight = (int) (image.getHeight() * scale);
+	            BufferedImage resizedImage = new BufferedImage(newImageWidth , newImageHeight, image.getType());
+	            Graphics2D g2 = resizedImage.createGraphics();
+	            g2.drawImage(image, 0, 0, newImageWidth , newImageHeight , null);
+	            g2.dispose();
+	            g.drawImage(resizedImage, 0, 0, this); // see javadoc for more info on the parameters
+	            
+//	            g.drawImage(image, 0, 0, this); // see javadoc for more info on the parameters
+	            componentChanged = false;
+			} catch (Exception e) {
+				// TODO: handle exception
+			}     
+        }
     }
+    @Override
+	public void componentResized(ComponentEvent e) {
+		componentChanged = true;
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		componentChanged = true;
+		
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		componentChanged = true;
+		
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// TODO Auto-generated method stub
+		componentChanged = true;
+		
+	}
 
 }
