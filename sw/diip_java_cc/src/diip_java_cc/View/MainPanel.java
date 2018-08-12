@@ -438,6 +438,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		lblImageWidth.setText(String.valueOf(model.getSourceImage().getHeight()));
 		
 		lblWorkers.setText(String.valueOf(model.getNWorkers()));
+		
+		btGo.setEnabled(!model.getDP().isRunning());
 	}
 
 	@Override

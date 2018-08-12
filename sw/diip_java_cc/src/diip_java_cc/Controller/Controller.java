@@ -28,8 +28,7 @@ public class Controller {
 	}
 
 	public void goRequest() {
-		// TODO Auto-generated method stub
-		
+		model.goRequest();
 	}
 
 	public void localWorkerChanged(int i, boolean selected) {

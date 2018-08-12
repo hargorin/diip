@@ -33,6 +33,8 @@ public class Model extends Observable {
 	private LocalWorker localWorker1 = null;
 	private LocalWorker localWorker2 = null;
 	
+	private DistributedProcessor dp;
+	
 	// ================================================================================
 	// Private Functions
 	// ================================================================================
@@ -55,6 +57,7 @@ public class Model extends Observable {
 	// Public Functions
 	// ================================================================================
 	public Model() {
+		dp = new DistributedProcessor(this);
 	}
 	
 	public void loadSourceImage(String fname) {
@@ -108,7 +111,26 @@ public class Model extends Observable {
 		return availableWorkers;
 	}
 	
+
+
+	public void goRequest() {
+		if(!dp.isRunning()) {
+			dp = new DistributedProcessor(this);
+			dp.start();
+		}
+		
+		setChanged();
+		notifyObservers();
+	}
 	
+	public DistributedProcessor getDP() { 
+		return dp;
+	}
+
+	public void notifyDpDone() {
+		setChanged();
+		notifyObservers();
+	}
 
 
 	// ================================================================================
