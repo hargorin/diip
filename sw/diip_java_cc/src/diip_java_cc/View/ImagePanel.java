@@ -64,7 +64,7 @@ public class ImagePanel extends JPanel implements ComponentListener {
         
         double scale;
 
-		System.out.println("paintComponent");
+//		System.out.println("paintComponent");
         if (componentChanged == true) {
             super.paintComponent(g);
 	        try {
@@ -74,7 +74,7 @@ public class ImagePanel extends JPanel implements ComponentListener {
 	            	scale = (double)super.getHeight()/image.getHeight();
 	
 	            scaledimage = resize(image,scale,scale);
-	            System.out.printf("scale=%f\n",scale);
+//	            System.out.printf("scale=%f\n",scale);
 	            
 	            int newImageWidth = (int) (image.getWidth() * scale);
 	            int newImageHeight = (int) (image.getHeight() * scale);

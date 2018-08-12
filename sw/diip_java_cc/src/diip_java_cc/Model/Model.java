@@ -8,6 +8,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
@@ -18,18 +20,36 @@ public class Model extends Observable {
 	// ================================================================================
 	// Public Data
 	// ================================================================================
-	
+
 
 	// ================================================================================
 	// Private Data
 	// ================================================================================
 	BufferedImage sourceImage = null;
 	BufferedImage outputImage = null;
+	
+	private int availableWorkers = 0;
 
+	private LocalWorker localWorker1 = null;
+	private LocalWorker localWorker2 = null;
+	
 	// ================================================================================
 	// Private Functions
 	// ================================================================================
-	
+
+	/**
+	 * Counts the number of available workers
+	 */
+	private void assessWorkers() {
+		// local workers
+		availableWorkers = 0;
+		if(localWorker1!=null) availableWorkers++;
+		if(localWorker2!=null) availableWorkers++;
+//		System.out.printf("Workers: %d\n",availableWorkers);
+		// notify to update GUI
+		this.setChanged();
+		this.notifyObservers();
+	}
 
 	// ================================================================================
 	// Public Functions
@@ -51,7 +71,45 @@ public class Model extends Observable {
 		this.setChanged();
 		this.notifyObservers();
 	}
+
+	public BufferedImage getSourceImage() {
+		return sourceImage;
+	}
+
+	public BufferedImage getOutputImage() {
+		return outputImage;
+	}
+
+	public void localWorkerSetEnabled(int i, boolean selected) {
+		if(selected) {
+			if(i==1) {
+				localWorker1 = new LocalWorker();
+				localWorker1.start();
+			}
+			if(i==2) {
+				localWorker2 = new LocalWorker();
+				localWorker2.start();
+			}
+		}
+		else {
+			if(i==1) {
+				localWorker1.terminate();
+				localWorker1 = null;
+			}
+			if(i==2) {
+				localWorker2.terminate();
+				localWorker2 = null;
+			}
+		}
+		this.assessWorkers();
+	}
 	
+	public int getNWorkers() {
+		return availableWorkers;
+	}
+	
+	
+
 
 	// ================================================================================
 	// Test Functions
@@ -188,12 +246,6 @@ public class Model extends Observable {
         lw.terminate();
 	}
 
-	public BufferedImage getSourceImage() {
-		return sourceImage;
-	}
 
-	public BufferedImage getOutputImage() {
-		return outputImage;
-	}
 	
 }

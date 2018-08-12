@@ -33,8 +33,7 @@ public class Controller {
 	}
 
 	public void localWorkerChanged(int i, boolean selected) {
-		
-		
+		model.localWorkerSetEnabled(i,selected);
 	}
 
 	public void fpgaChanged(int i, boolean selected, String ipport) {

@@ -48,7 +48,7 @@ public class MainPanel extends JPanel implements ActionListener {
 	private JLabel lblLW1;
 	private JLabel lblLW2;
 	private JLabel lblImageWidth;
-	private JLabel lblImageHeight;
+	private JLabel lblImageHeight, lblWorkers;
 	/**
 	 * Create the panel.
 	 */
@@ -192,9 +192,9 @@ public class MainPanel extends JPanel implements ActionListener {
 		panel_3.add(panel_6, gbc_panel_6);
 		GridBagLayout gbl_panel_6 = new GridBagLayout();
 		gbl_panel_6.columnWidths = new int[]{81, 75, 0};
-		gbl_panel_6.rowHeights = new int[] {0, 0, 0, 0, 0};
+		gbl_panel_6.rowHeights = new int[] {0, 0, 0, 0, 0, 0};
 		gbl_panel_6.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_panel_6.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_6.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_6.setLayout(gbl_panel_6);
 		
 		JLabel lblImageWidht = new JLabel("Image Widht");
@@ -223,7 +223,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		gbc_lblImageHeightStatic.gridy = 1;
 		panel_6.add(lblImageHeightStatic, gbc_lblImageHeightStatic);
 		
-		JLabel lblImageHeight = new JLabel("-");
+		lblImageHeight = new JLabel("-");
 		GridBagConstraints gbc_lblImageHeight = new GridBagConstraints();
 		gbc_lblImageHeight.anchor = GridBagConstraints.NORTH;
 		gbc_lblImageHeight.insets = new Insets(0, 0, 5, 0);
@@ -250,13 +250,27 @@ public class MainPanel extends JPanel implements ActionListener {
 		
 		btGo = new JButton("Go");
 		btGo.addActionListener(this);
+		
+		JLabel lblWorkersstatic = new JLabel("Workers");
+		GridBagConstraints gbc_lblWorkersstatic = new GridBagConstraints();
+		gbc_lblWorkersstatic.anchor = GridBagConstraints.WEST;
+		gbc_lblWorkersstatic.insets = new Insets(0, 0, 5, 5);
+		gbc_lblWorkersstatic.gridx = 0;
+		gbc_lblWorkersstatic.gridy = 3;
+		panel_6.add(lblWorkersstatic, gbc_lblWorkersstatic);
+		
+		lblWorkers = new JLabel("-");
+		GridBagConstraints gbc_lblWorkers = new GridBagConstraints();
+		gbc_lblWorkers.insets = new Insets(0, 0, 5, 0);
+		gbc_lblWorkers.gridx = 1;
+		gbc_lblWorkers.gridy = 3;
+		panel_6.add(lblWorkers, gbc_lblWorkers);
 		GridBagConstraints gbc_btGo = new GridBagConstraints();
 		gbc_btGo.fill = GridBagConstraints.BOTH;
 		gbc_btGo.gridwidth = 2;
-		gbc_btGo.insets = new Insets(0, 0, 0, 5);
 		gbc_btGo.anchor = GridBagConstraints.NORTHWEST;
 		gbc_btGo.gridx = 0;
-		gbc_btGo.gridy = 3;
+		gbc_btGo.gridy = 4;
 		panel_6.add(btGo, gbc_btGo);
 		
 		JPanel panel_7 = new JPanel();
@@ -419,6 +433,11 @@ public class MainPanel extends JPanel implements ActionListener {
 
 		pnlLTop.setImage(model.getSourceImage());
 		pnlLBot.setImage(model.getOutputImage());
+
+		lblImageHeight.setText(String.valueOf(model.getSourceImage().getWidth()));
+		lblImageWidth.setText(String.valueOf(model.getSourceImage().getHeight()));
+		
+		lblWorkers.setText(String.valueOf(model.getNWorkers()));
 	}
 
 	@Override
@@ -435,7 +454,7 @@ public class MainPanel extends JPanel implements ActionListener {
 			controller.localWorkerChanged(1,cbLW1.isSelected());
 		}
 		if(e.getSource() == cbLW2) {
-			controller.localWorkerChanged(2,cbLW1.isSelected());
+			controller.localWorkerChanged(2,cbLW2.isSelected());
 		}
 		if(e.getSource() == btGo) {
 			controller.goRequest();

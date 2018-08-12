@@ -29,7 +29,7 @@ public class LocalWorker extends Thread {
 	// ================================================================================
 	// For communication
     private DatagramSocket socket;
-    private boolean running;
+    private boolean running = false;
     private byte[] buf = new byte[1500];
 	private int port;
     
@@ -209,6 +209,9 @@ public class LocalWorker extends Thread {
     	return this.port;
     }
 
+    public boolean isRunning() {
+    	return running;
+    }
 	// ================================================================================
 	// private methods
 	// ================================================================================
