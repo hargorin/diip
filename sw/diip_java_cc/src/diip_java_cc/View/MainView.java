@@ -56,7 +56,7 @@ public class MainView extends JFrame implements Observer {
 		// Window properties
 		setTitle("diip Control Center");
 		
-		mp = new MainPanel();
+		mp = new MainPanel(controller);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		getContentPane().add(mp);
 

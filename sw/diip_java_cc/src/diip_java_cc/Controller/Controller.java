@@ -26,5 +26,20 @@ public class Controller {
 
 		model.loadSourceImage("res/mountain.png");
 	}
+
+	public void goRequest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void localWorkerChanged(int i, boolean selected) {
+		
+		
+	}
+
+	public void fpgaChanged(int i, boolean selected, String ipport) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
