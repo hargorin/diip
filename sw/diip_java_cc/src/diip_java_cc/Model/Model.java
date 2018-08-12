@@ -25,6 +25,7 @@ public class Model extends Observable {
 	// ================================================================================
 	// Private Data
 	// ================================================================================
+	private List<BufferedImage> inputImages = new ArrayList<BufferedImage>();
 	BufferedImage sourceImage = null;
 	BufferedImage outputImage = null;
 	
@@ -34,6 +35,9 @@ public class Model extends Observable {
 	private LocalWorker localWorker2 = null;
 	
 	private DistributedProcessor dp;
+	private List<Worker> workers = new ArrayList<Worker>();
+	private Worker fpgaWorker1;
+	private Worker fpgaWorker2;
 	
 	// ================================================================================
 	// Private Functions
@@ -47,6 +51,8 @@ public class Model extends Observable {
 		availableWorkers = 0;
 		if(localWorker1!=null) availableWorkers++;
 		if(localWorker2!=null) availableWorkers++;
+		if(fpgaWorker1!=null) availableWorkers++;
+		if(fpgaWorker2!=null) availableWorkers++;
 //		System.out.printf("Workers: %d\n",availableWorkers);
 		// notify to update GUI
 		this.setChanged();
@@ -116,6 +122,32 @@ public class Model extends Observable {
 	public void goRequest() {
 		if(!dp.isRunning()) {
 			dp = new DistributedProcessor(this);
+			// Assemble list of workers
+			workers.clear();
+			if(localWorker1!=null) {
+				workers.add(new Worker("localhost",localWorker1.getPort()));
+			}
+			if(localWorker2!=null) {
+				workers.add(new Worker("localhost",localWorker2.getPort()));
+			}
+			if(fpgaWorker1 != null) {
+				workers.add(new Worker(fpgaWorker1.ip, fpgaWorker1.port));
+			}
+			if(fpgaWorker2 != null) {
+				workers.add(new Worker(fpgaWorker2.ip, fpgaWorker2.port));
+			}
+			dp.setWorkers(workers);
+			inputImages.add(sourceImage);
+			dp.setImagess(inputImages);
+
+			WallisParameters wapar = new WallisParameters();
+	    	wapar.brightness = 0.5;
+	    	wapar.contrast = 0.8125;
+	    	wapar.gMean = 127;
+	    	wapar.gVar = 3600;
+	    	wapar.winLen = 21;
+	    	
+	    	dp.setWaPar(wapar);
 			dp.start();
 		}
 		
@@ -128,10 +160,28 @@ public class Model extends Observable {
 	}
 
 	public void notifyDpDone() {
+		outputImage = dp.getOutImages().get(0);
 		setChanged();
 		notifyObservers();
 	}
 
+	public void fpgaChanged(int i, boolean selected, String ipport) {
+		String [] arrOfStr = ipport.split(":", 2);
+		
+		if(selected) {
+			if(i == 1)
+				fpgaWorker1 = new Worker(arrOfStr[0], Integer.parseInt(arrOfStr[1]));
+			if(i == 2)
+				fpgaWorker2 = new Worker(arrOfStr[0], Integer.parseInt(arrOfStr[1]));
+		}
+		else {
+			if(i == 1)
+				fpgaWorker1 = null;
+			if(i == 2)
+				fpgaWorker2 = null;
+		}
+		this.assessWorkers();
+	}
 
 	// ================================================================================
 	// Test Functions
@@ -267,6 +317,7 @@ public class Model extends Observable {
         System.out.printf("Done\n");
         lw.terminate();
 	}
+
 
 
 	

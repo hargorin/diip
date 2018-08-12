@@ -36,8 +36,7 @@ public class Controller {
 	}
 
 	public void fpgaChanged(int i, boolean selected, String ipport) {
-		// TODO Auto-generated method stub
-		
+		model.fpgaChanged(i,selected,ipport);
 	}
 	
 }

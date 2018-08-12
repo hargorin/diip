@@ -10,4 +10,5 @@ public class WallisParameters {
 	public double brightness;
 	public double gMean;
 	public double gVar;
+	public int winLen;
 }

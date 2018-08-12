@@ -59,6 +59,13 @@ public class LocalWorker extends Thread {
 			}
     	}
     	System.out.printf("new localworker on port %d\n", this.port);
+    	
+    	wapar = new WallisParameters();
+    	wapar.brightness = 0.5;
+    	wapar.contrast = 0.8125;
+    	wapar.gMean = 127;
+    	wapar.gVar = 3600;
+    	wapar.winLen = 21;
     }
     
     public void run() {
@@ -77,6 +84,7 @@ public class LocalWorker extends Thread {
         	if(udata.status == UFTData.Status.TIMEOUT) continue;
         	if(udata.status == UFTData.Status.USER) {
         		System.out.printf("User reg %d set to %d\n", udata.uregAddress, udata.uregContent);
+        		if(udata.uregAddress == 1) wapar.imgWidth = (int) udata.uregContent;
         		continue;
         	}
         	
@@ -84,12 +92,14 @@ public class LocalWorker extends Thread {
         	System.arraycopy(udata.data, 0, imcache, CACHE_N_LINES*rxLinePtr, udata.length);
         	
         	rxLinePtr++;
+        	rxLines++;
         	if(rxLinePtr == CACHE_N_LINES) rxLinePtr = 0;
         	
-        	System.out.printf("Line received. rxLinePtr=%d\n", rxLinePtr);
+        	System.out.printf("Line received. rxLines=%d\n", rxLines);
         	
         	// If enough data is here
-        	if(rxLines > 21) {
+        	if(rxLines >= 21) {
+        		System.out.println("Processing Wallis");
         		sum_Pixel = 0;
         		sum_Pixel2 = 0;
         		outIndex = 0;
@@ -98,7 +108,7 @@ public class LocalWorker extends Thread {
                 // Initialization WIN
                 for(int x_win = 0; x_win < WIN_LENGTH; x_win++) {
                     for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {
-                    	pixelAt(x_win, y_win);
+//                    	pixelAt(x_win, y_win);
 //                        System.out.printf("%02x\n",pixelAt(x_win, y_win));
                         sum_Pixel += pixelAt(x_win, y_win);
                         sum_Pixel2 += pixelAt(x_win, y_win)*pixelAt(x_win, y_win);
@@ -142,12 +152,13 @@ public class LocalWorker extends Thread {
                 }
                 udata.data = outPixSend;
                 udata.length = outIndex;
-                udata.tcid = rxLines;
+                udata.tcid = 0;
                 UFT.send(udata, socket, udata.address, 2222);
                 
                 // Increment pointer
                 readCachePtr++;
                 readCachePtr%=CACHE_N_LINES;
+        		System.out.println("Processing Wallis Done");
         	}
         	
         	
