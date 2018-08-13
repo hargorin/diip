@@ -118,15 +118,15 @@ consulted.
         }
         \\\midrule
         \textbf{Concept} & \\
-        Image data is sent line wise. Each image processing core handles one
-        input line, starts as soon as enough data is transfered and jumps $N$ lines
+        Image data is sent line wise. Each image processing core calculates one
+        output line, starts as soon as enough data is transfered and jumps $N$ lines
         downwards after line completion. Initialization transfer is done once
         per image. The image cache stores $w_l+(N-1)$ full image lines.
         &
         Image data is sent coloumn wise with $w_l+(N-1)$ pixels per coloumn. All
         image processing cores start processing at the same time and progress
         $N$ lines downwards after completion. An initialization transfer has to be done
-        every $N$ lines. The image cache stores only the currently required
+        every time all cores finishe their line. The image cache stores only the currently required
         pixels for the Wallis cores.
         \\\midrule
         \textbf{Initial size} & \\
@@ -182,8 +182,8 @@ consulted.
 \clearpage
 Before comparing the two proposals another metric has to be taken into
 consideration: The effective throughput of the image processing core. The way
-the Wallis filter works is that it requires a neighbourhood of pixels. For each
-line the core processes, the initial neighbourhood has to be sent. Equation
+the Wallis filter works is that it requires a neighborhood of pixels. For each
+line the core processes, the initial neighborhood has to be sent. Equation
 \ref{eq:vhdlwallismaxb} derived in appendix 
 \ref{app:derivations:theomaxvhdlwallis} is used to calculate the effective
 throughput $b_r$ of a Wallis filter core. To simplify, the image height $i_h$ is
@@ -232,7 +232,7 @@ lists the required block memory usage.
     \centering
     \begin{tabular}{l r}
         \toprule
-        Item & 36Kb BRAM tiles \footnote{One 36Kb BRAM tile can be used as two 18Kb RAMs} \\
+        Item & 36Kb BRAM tiles \footnotemark \\
         \midrule
         Total available & 365 \\
         TEMAC support & -2 \\
@@ -245,9 +245,10 @@ lists the required block memory usage.
     \caption{FPGA block memory budget}
     \label{tab:membudget}
 \end{table}
+\footnotetext{One 36Kb BRAM tile can be used as two 18Kb RAMs}
 
 After using up memory for the communication and image processing cores, 340.5
-block RAM tiles with 36Kb each results in 1'496KB of remaining block RAM that
+block RAM tiles with 36Kb each results in 1'532KB of remaining block RAM that
 can be used for image caching inside the controller core to reduce the multiple
 transmission of image data. Table \ref{tab:parsum} summarizes the
 parameters that are used to compare the two inside FPGA scale proposals.
@@ -323,7 +324,7 @@ with the filled boxed representing the processed output pixels.
     \begin{adjustbox}{max width=\linewidth}
         \input{images/scalability/acrossfpgapart.tikz}
     \end{adjustbox}
-    \caption{Image partitioning for distribution across multiple FPGA}
+    \caption{Image partitioning for distribution across three FPGAs}
     \label{fig:sca:acrossfpgapart}
 \end{figure}
 
@@ -338,7 +339,7 @@ image width $i_w$ being much greater than the window length $w_l$,
 \ref{eq:sca:linesize} can be approximated.
 
 \begin{align}
-    s_l  & = i_w & (N_f = 1) \\
+    s_l  & = i_w & (N_F = 1) \\
          & = i_w + (N_F-1) \cdot 2 \cdot \lfloor\frac{w_l}{2}\rfloor & \\
          & = i_w + (N_F-1)(w_l-1) & (w_l=2k+1, k \in \mathbb{N} )\\
          & \approx i_w & (i_w \gg w_l)
