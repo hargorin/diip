@@ -67,7 +67,7 @@
     \path[draw,-{Latex[length=2.5mm]}] (divide0) -- node[above,xshift=2.2cm,yshift=0cm]{$\mu_n$} (wallis.151);
     \path[draw,-{Latex[length=2.5mm]}] (plus2) -- ++(1,0) |- node[above,xshift=2.95cm,yshift=0cm]{$\sigma_{n}^{2}$} (wallis.171);
     \path[draw,-{Latex[length=2.5mm]}] (9,-2.5) -- node[above,xshift=0.16cm,yshift=0cm]{$I(x,y)$} (wallis.191);
-    \path[draw,-{Latex[length=2.5mm]}] (9,-3.325) -- node[above,xshift=-0.15cm,yshift=0cm]{parameter} (wallis.211);
+    \path[draw,-{Latex[length=2.5mm]}] (9,-3.325) -- node[above,xshift=-0.15cm,yshift=0cm]{parameters} (wallis.211);
     \path[draw,-{Latex[length=2.5mm]}] (wallis) -- node[above,xshift=-0.2cm,yshift=0cm]{$I'(x,y)$} (16.75,-2.11);
 
 
