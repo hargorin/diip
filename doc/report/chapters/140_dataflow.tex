@@ -21,7 +21,8 @@ approach) and solution B (the second, more performant approach).
 % ==============================================================================
 \section{Concept} \label{ch:concept}
 As seen in the introduction the image data is sent to the FPGA over Ethernet.
-This means on the FPGA side an IP stack has to be implemented to handle Ethernet
+This means that on the FPGA side an IP stack has to be implemented to handle
+Ethernet
 communication. The received data then has to be sent to the Wallis filter for
 processing and its results to be sent back to the host PC. To distinguish the
 data transmission from the dataflow inside the FPGA, the dataflow was split into
@@ -51,7 +52,7 @@ Following the path of dataflow it is easy to see that the data is stored
 multiple
 times. In the receiving FiFo of the UFT core, the block memory, then by the
 controller in the transmitting and receiving path, again in block memory and in
-a Tx FiFo of the UFT transmitter. This cuases latency and high ressource usage.
+a Tx FiFo of the UFT transmitter. This causes latency and high ressource usage.
 This is why in a second approach (solution B) the datapath was chosen more
 directly. Key element are the AXI4-Stream interfaces. Figure \ref{fig:dataflowb}
 shows the new approach using said stream interfaces. The UFT stack outputs
@@ -94,8 +95,8 @@ explained.
 The communication is based on the User Datagram Protocol (UDP). This protocol
 features low overhead and is simple to implement. The main problem is that the
 data sent is not acknowledged hence the sender has no feedback wheather the data
-was received or not. This is one reason a custom session protocol (UFT: UDP
-File Transfer) was introduced in project 5. It provides command packets for data
+was received or not. This is one reason a custom session protocol (\gls{uft})
+was introduced in the preceeding project. It provides command packets for data
 packet acknowledgment. Table \ref{tab:uftcommandlist} lists the UFT commands.
 
 
@@ -204,7 +205,7 @@ uint8_t *ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
 memset(ack_buf, 0, nseq * sizeof(uint8_t));\end{lstlisting}
 \end{minipage}
 
-During transmission, the sender checks the receiving buffer for data. If a
+During transmission, the sender checks the receiving buffer for data. If an
 acknowledge packet was received, the acknowledge array is updated.
 
 \begin{minipage}{\linewidth}
@@ -232,7 +233,7 @@ be sent back
 is also located in FPGA memory. To instruct the core to send data, a control
 interface is required. Tx base address, data size and rx base address are values
 that will be sent from the controller to the UFT core as described later in
-chapter \ref{ch:control}. For this purpose a AXI4-Lite slave interface was
+chapter \ref{ch:control}. For this purpose an AXI4-Lite slave interface was
 realized. AXI4-Lite is a stripped-down version of AXI4. It allows single beat,
 memory mapped read and write access from master to slave \cite{axispecs}.
 
@@ -249,14 +250,14 @@ packet. This allows parameters to be sent from PC to FPGA.
 		Nr & R/W & Offset [hex] & Description \\
         \midrule
 		0 & RO & 00 & Status register. Bit 0: \texttt{tx\_ready}. Set if transmitter is
-		ready to send data \\
+		ready to send data. \\
 		1 & WO & 04 & Control register. Bit 0: \texttt{tx\_start}. Set 1 to start
-		transmitter \\
+		transmitter. \\
 		2 & WO & 08 & Receiver base address. Received data is stored starting from this
-		address \\
+		address. \\
 		3 & WO & 0C & Transmitter base address. Data to send is read from this address.
 		\\
-		4 & RO & 10 & Rx counter. Counts how many file transfers were received \\
+		4 & RO & 10 & Rx counter. Counts how many file transfers were received. \\
 		5 & WO & 14 & Tx size. How many bytes to send. \\
 		6 & & 18 &  Not used\\
 		7 & & 1C &  Not used\\
@@ -308,14 +309,15 @@ changed to directly connect the AXI4-Stream from the UDP stack to the outside.
 Advantage of this solution is the reduced latency and less memory usage. One
 downside is that the receiver is no longer able to reorder packets if they do
 not arrive in order. As long as the application runs on a closed network it can
-be assumed that packets will not change order.
+be assumed that packets will not change order. The changes made for the
+streaming interfaces are shown in figure \ref{fig:ufttopstream}.
 
 \begin{figure}[b!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
         \input{images/dataflow/ufttopstream.tikz}
     \end{adjustbox}
-    \caption{UFT Top Block Design with AXI4-Stram interface}
+    \caption{UFT Top Block Design with AXI4-Stream interface}
     \label{fig:ufttopstream}
 \end{figure}
 
@@ -359,7 +361,7 @@ ports.
 \section{Control} \label{ch:control}
 Now that the image data is received by the UFT core it has to be sent to the
 Wallis filter in the right order. Reordering the pixel data is the main task of
-the controller besides caching data and controlling the UFT and wallis cores. 
+the controller besides caching data and controlling the UFT and Wallis cores. 
 
 As already mentioned at the beginning of chapter \ref{chapt:dataflow}, two
 implementations were realized. Solution A was implemented using Vivado HLS and
@@ -372,7 +374,8 @@ stated in the following chapter.
 % ==============================================================================
 \subsection{Concept} \label{ch:control:concept}
 Image data comming from the PC is sent row wise with the left most pixel sent
-first. This is due to the fact that OpenCV (which is used on PC side to access
+first. This is due to the fact that \gls{opencv} (which is used on PC
+side to access
 images) stores the image data in said layout \cite{opencv_structures}. The
 Wallis filter however, requires its input data to be coloumn wise with the top
 most pixel sent first as described in chapter \ref{ch:ip:concept}. Figure 
@@ -487,17 +490,17 @@ interfaces as defined in \texttt{controller.cpp}.
 
 The IP core implements a finite state machine as seen in figure 
 \ref{fig:controllerfsm}. After the initial state
-\texttt{S\_INIT} where the UFT core is initialized, the state machine goes to its
-idle state \texttt{S\_IDLE}. If the UFT core indicates the end of a file
+\texttt{INIT} where the UFT core is initialized, the state machine goes to its
+idle state \texttt{IDLE}. If the UFT core indicates the end of a file
 transfer the image width is stored and the state machine switches to the 
-\texttt{S\_READ} state. There it fills the first junk of its buffers and
-switches to the \texttt{S\_STREAM} state. Now the data is sent from the
+\texttt{READ} state. There it fills the first junk of its buffers and
+switches to the \texttt{STREAM} state. Now the data is sent from the
 internal buffers to the Wallis filter in the correct order. Simultaneously the
 processed pixels from the Wallis filter are stored inside a memory. If all
-pixels in one line are processed the state \texttt{S\_WRITE} is activated. The
+pixels in one line are processed the state \texttt{WRITE} is activated. The
 processed pixels are stored in block memory using the \texttt{memp} AXI4 Master
-interface and the state machine switches to the \texttt{S\_WAIT\_TO\_SEND}
-state. If the UFT core Tx is ready, the state \texttt{S\_SEND} is activated
+interface and the state machine switches to the \texttt{WAIT\_TO\_SEND}
+state. If the UFT core Tx is ready, the state \texttt{SEND} is activated
 where the UFT core is configured and a transmission is started.
 
 \begin{figure}[H]
@@ -511,13 +514,13 @@ where the UFT core is configured and a transmission is started.
 
 \subsubsection*{Realization}
 According to Xilinx application note XAPP-1209 \cite{xapp1209} a state
-machine in Vivado HLS can be realizes by using a switch statement in the C/C++
+machine in Vivado HLS can be realized by using a switch statement in the C/C++
 code.
 The code in file \texttt{controller.cpp} implements the state machine behaviour.
 The state machine code is very straight foreward. More work went into the memory
 layout. Because the memory bus to read and write pixels to and from memory is
-AXI4 based, single byte access result in considerably less throughput than
-burst access.
+AXI4 based, multiple single byte access result in considerably less throughput
+than single burst access.
 To take advantage of these burst accesses, a ping-pong buffer structure was
 realized. There are two buffers, each of the size of $WINDOW\_LENGTH *
 AXI\_BURST\_SIZE$ bytes, where $AXI\_BURST\_SIZE$ represents the number of bytes
@@ -531,7 +534,7 @@ ping-pong buffer.
 
 Figure \ref{fig:solamemlayout} shows the memory layout of
 solution A. The blue and red rectangles represent the two buffers. Visualized is
-a AXI burst length of eight and a window length of five.
+an AXI burst length of eight and a window length of five.
 
 \begin{figure}[tb!]
     \centering
@@ -586,14 +589,14 @@ After both counter hit their compare value, the stream state is exited and the
 data is copied back to memory.
 
 \subsubsection*{Hurdles}
-\todo[inline]{ILA measurement showing slow output pixels}
-The C/C++ code was written in little time. With less than 300 lines of code its a
+The C/C++ code was written in little time. With less than 300 lines of code it
+is a
 very simple program. The C and Co-simulation yielded no errors but the
-implemented core together with the Wallis filter did not work as expected.
-Thanks to the integrated logic analyzer the signals connecting the controller
+implemented core together with the Wallis filter core did not work as expected.
+Thanks to the \gls{ila} the signals connecting the controller
 and Wallis core could be inspected. Soon it was discovered that the controller
 only output one pixel and then stopped. It was discovered that this was due to
-the fact that a \texttt{read()} operation on a AXI-Stream in Vivado HLS is
+the fact that a \texttt{read()} operation on a AXI4-Stream in Vivado HLS is
 blocking, meaning that the synthesis tool implements the code in a  manner that
 if no data is
 valid on the stream, the code will wait until there is data on the stream. This
@@ -620,15 +623,15 @@ interfaces (AXI4-Master and AXI4-Stream) were implemented with a single line of
 code and the statemachine with a simple switch statement. After
 clearing some hurdles the controller core worked as expected with two drawbacks:
 
-\todo[inline]{How many clock cycles??}
 \vspace{1ex}
 \textbf{1. Throughput:} The controller core outputs data at a rate of one byte
 every 9 clock cycles as can be seen in the result of the simulation in figure
 \ref{fig:shlowhlsoutput} (simulation clock period is 8ns).
 In theory, using a block memory as internal buffer, it
-should be possible to output one byte per clockcycle. This issue could not be
+should be possible to output one byte per clock cycle. This issue could not be
 resolved in a forseeable time. The analysis view of Vivado HLS would give
-indications on what calculation is resulting in a reduced throughput.
+indications on what calculation is resulting in a reduced throughput but the
+analysis results could not be interpreted.
 
 \begin{figure}[tb!]
     \centering
@@ -713,7 +716,7 @@ definition is dissected in table \ref{tab:controllerbports}.
         Name & Type & To & Description \\
         \midrule
         %%% UFT Rx
-        \texttt{uft\_i\_axis} & \texttt{Stream} & UFT Rx &
+        \texttt{uft\_i\_axis} & \texttt{AXI4-Stream} & UFT Rx &
         Receive data stream from UFT core
         \\
 
@@ -738,7 +741,7 @@ definition is dissected in table \ref{tab:controllerbports}.
         \\  
         \midrule
         %%% UFT Tx
-        \texttt{uft\_o\_axis} & \texttt{Stream} & UFT Tx &
+        \texttt{uft\_o\_axis} & \texttt{AXI4-Stream} & UFT Tx &
         Transmit data stream to UFT core
         \\
         \texttt{uft\_tx\_start} & \texttt{arb} & UFT Tx &
@@ -755,10 +758,10 @@ definition is dissected in table \ref{tab:controllerbports}.
         \\
         \midrule
         %%% Wallis
-        \texttt{wa\_i\_axis} & \texttt{Stream} & Wallis &
+        \texttt{wa\_i\_axis} & \texttt{AXI4-Stream} & Wallis &
         Image input data to the Wallis core
         \\
-        \texttt{wa\_o\_axis} & \texttt{Stream} & Wallis &
+        \texttt{wa\_o\_axis} & \texttt{AXI4-Stream} & Wallis &
         Processed image data from the Wallis core
         \\
         \texttt{wa\_par} & \texttt{arb} & Wallis &
@@ -772,20 +775,19 @@ definition is dissected in table \ref{tab:controllerbports}.
 \end{table}
 
 Furthermore the order of pixel to be sent to the Wallis filter remain the same
-as described in chapter \ref{ch:control:concept}. 
-
-A stream based approach also eliminates the need for a statemachine. The entire
+as described in chapter \ref{ch:control:concept}. A stream based approach also eliminates the need for a statemachine. The entire
 controller is to be stateless.
 
 \subsubsection*{Realization}
-The controller core consists of three entities joined in a top entity. The 
+The controller core consists of three entities joined in a top entity. Figure 
+\ref{fig:dctop} shows a block diagram of the controller. The 
 \texttt{dc\_control} entity takes control of house keeping such as initiating a
 UFT transmission after complete processing and resetting all instances on a new
 input image. The processed pixels are buffered in the \texttt{axis\_fifo}. This
 is necessary because if an Ethernet transmission is started, every clock a byte
 has to be valid. The third entity, \texttt{dc\_mmu} is where the image data is
 cached and sent to the Wallis filter in the right order, hence the name memory
-management unit. Figure \ref{fig:dctop} shows a block diagram of the controller.
+management unit.
 
 \begin{figure}[b!]
     \centering
@@ -951,7 +953,7 @@ After figuering out how to increment and wrap which pointer and when to allow
 reads and writes, the memory management unit worked well in simulation. The
 \texttt{dc\_control} and \texttt{axis\_fifo} block were quickly implemented. The
 core was tested using VHDL testbenches. A big advantage was that the controller
-and wallis core could be simulated before being implemented on the FPGA which
+and Wallis core could be simulated before being implemented on the FPGA which
 made fault finding much faster. With this new stateless approach timing issues
 began to arise. 
 
