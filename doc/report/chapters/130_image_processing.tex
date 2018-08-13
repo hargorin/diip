@@ -271,7 +271,7 @@ The pixel data is sent as 8 bit AXI4-Stream into the IP core. The data is
 received by the block \texttt{dir\_shift\_reg} . This block is used for
 initialization and iteration sequence, which is shown in figure 
 \ref{fig:sequence}. All pixels are passed directly to the plus output and
-through a FIFO with a delay of 441 pixels to the minus output (441 being the
+through a FiFo with a delay of 441 pixels to the minus output (441 being the
 window size or the
 square of the window length). This FiFo is later used to subtract the
 old pixels from the sum of the pixels, as shown in figure \ref{fig:sequence}.
