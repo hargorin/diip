@@ -40,7 +40,6 @@ blocks for this work: The communication block and the image processing block
 \cite{p5report}. The results were two seperate parts working but neither
 connected nor optimized. This thesis builds upon the results of said work and
 focuses on two main goals:
-\\
 
 % Primary objectives
 \begin{enumerate}
@@ -72,8 +71,9 @@ usage.
 In the preceeding project a Sobel filter was implemented using Vivado HLS. It
 uses a simple convolution matrix for edge detection. This operation was well
 suited for the first image processing task and to become acquainted with a high
-level synthesis tool. For this thesis a new image processing task is realized: a
-local contrast enhancement operation. The algorithm is described and thoroughly
+level synthesis tool. For this thesis a new image processing task is realized: the
+local contrast enhancement operation called Wallis filter. The algorithm is
+described and thoroughly
 tested in C/C++ and then synthesized to HDL by the Xilinx Vivado HLS toolchain.
 To improve throughput and compare the results of high level synthesis versus a
 low level HDL approach, the same filter is implemented in VHDL.
@@ -92,9 +92,13 @@ elements and memory for both the communication and image processing task.
 The result is a complete image processing pipeline that begins on a PC where the
 input image is sent via Ethernet to the FPGA where it is processed and sent pack
 to the PC. The achieved image throughput is 4.1MB/s primarily limited by the image processing core. The Wallis filter core alone
-is capable of processing up to 125 megapixels per second on the input. A benchmark shows the performance differences between a CPU based and FPGA based solution. Concepts on
-scalability show how the processing power of FPGAs can be exploited if multiple
-FPGA would work on a network.
+is capable of processing up to 125 megapixels per second on the input. A
+benchmark shows the performance differences between a CPU based and FPGA based
+solution. 
+Concepts on scalability show how the processing power of FPGAs can be
+exploited if multiple FPGAs would work on a network. The total throughput then
+increases proportional to the number of FPGAs used in the cluster and multiple
+gigabytes per seconds of throughput is possible.
 \\
 
 % NEW How the document is built up

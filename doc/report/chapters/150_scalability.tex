@@ -37,7 +37,7 @@ calculations the VHDL controller and VHDL image processing core is used with the
 Every FPGA has a given amount of ressources (LUTs, memory and so forth, as
 described in table \ref{tab:XC7A200T}). The inside FPGA scalability aims towards
 optimal usage of these ressources. Before methods for scalability can be
-compared it must be clarified what can be scaled. The \gls{diip} project
+compared it must be clarified what can be scaled. The project
 consists of three main parts: the communication, controller and image processing
 parts. The communication part is only implemented once to handle the
 communication to the PC and therefore can not be scaled. The image processing
@@ -73,7 +73,7 @@ metrics are calculated.
 \begin{description}
     \item[Initial size $s_i$]\hfill \\
     The number of pixels that have to be sent to the FPGA before beginning
-    interational operation.
+    iterational operation.
     \item[Iteration size $s_r$]\hfill \\
     How many pixels that have to be sent to start a new iteration.
     \item[Store size $s_s$]\hfill \\
@@ -197,7 +197,7 @@ throughput of the VHDL Wallis filter implementation ($b_w=125Mp/s$) and the
 window length $w_l=21$ the real throughput $b_r$ is calculated:
 
 \begin{align}
-    b_r  & \approx \frac{b_w}{w_l} = 5.95 Mp/s
+    b_r  & \approx \frac{b_w}{w_l} = \frac{125Mp/s}{21} = 5.95 Mp/s
     \label{eq:vhdlwallismaxb}
 \end{align}
 

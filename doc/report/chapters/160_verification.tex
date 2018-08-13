@@ -8,7 +8,8 @@ With the image processing and dataflow parts implemented, they can be verified
 and benchmarked. The next chapters hold the verification process of both the
 image processing part and the dataflow part. After both components are verified
 they are benchmarked as one unity against a computer based implementation in
-chapter \ref{ch:benchmark}.
+chapter \ref{ch:benchmark}. Before starting, the following chapter summarizes
+all solutions developed in this project.
 
 % ==============================================================================
 %
@@ -465,7 +466,7 @@ that the full potential of the HLS 8bit image processing core is not taken
 advantage of. The VHDL implementation yields the
 highest
 throughput. This was to be expected for two
-reasons. First, the VHDL wallis filter core can process pixels at one pixel per
+reasons. First, the VHDL Wallis filter core can process pixels at one pixel per
 clock cycle which is more than the 8bit HLS version is capeable of (21 pixels
 per 86 clock cycles).
 Second, the memory management has been greatly improved from the HLS to the VHDL

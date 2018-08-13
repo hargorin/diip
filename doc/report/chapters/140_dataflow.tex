@@ -285,7 +285,7 @@ interface for memory access (refer to \cite{p5report} for AXI master burst).
 
 \begin{figure}[b!]
     \centering
-    \includegraphics[width=0.5\textwidth] {images/dataflow/uftcoreaxilite.png}
+    \includegraphics[width=0.45\textwidth] {images/dataflow/uftcoreaxilite.png}
     \caption{UFT core with AXI4-Lite interface}
     \label{fig:uftcoreaxilite}
 \end{figure}
@@ -353,7 +353,7 @@ ports.
 
 \begin{figure}[b!]
     \centering
-    \includegraphics[width=0.5\textwidth] {images/dataflow/uftcorestream.png}
+    \includegraphics[width=0.45\textwidth] {images/dataflow/uftcorestream.png}
     \caption{UFT IP core with AXI4-Stream interface}
     \label{fig:uftipcoreaxistream}
 \end{figure}
@@ -594,7 +594,7 @@ data is copied back to memory.
 \subsubsection*{Hurdles}
 The C/C++ code was written in little time. With less than 300 lines of code it
 is a
-very simple program. The C and Co-simulation yielded no errors but the
+very simple program. The C/C++ and RTL-simulation yielded no errors but the
 implemented core together with the Wallis filter core did not work as expected.
 Thanks to the \gls{ila} the signals connecting the controller
 and Wallis core could be inspected. Soon it was discovered that the controller
@@ -952,7 +952,7 @@ processes: \texttt{p\_out\_pix\_ctr} counts the number of pixels sent and
 
 
 \subsubsection*{Hurdles}
-After figuering out how to increment and wrap which pointer and when to allow
+After figuring out how to increment and wrap which pointer and when to allow
 reads and writes, the memory management unit worked well in simulation. The
 \texttt{dc\_control} and \texttt{axis\_fifo} block were quickly implemented. The
 core was tested using VHDL testbenches. A big advantage was that the controller
@@ -968,7 +968,7 @@ counter and to signal the last pixel sent to the Wallis core. The calculation is
 shown in equation \ref{eq:noutpix}.
 
 \begin{equation}
-    n_{out\_pix\_m1} = win\_len*img\_width - 1
+    n_{out\_pix\_m1} = img\_width \cdot win\_len - 1
     \label{eq:noutpix}
 \end{equation}
 
@@ -990,7 +990,7 @@ new memory layout to be realised for solution B. With the main difference being
 that now the behaviour was not described in C/C++ language but in VHDL. The
 total
 amount of time spent on the solutions were approximately the same. What had
-changed is on what the time was spent. While writig the code required the same
+changed is on what the time was spent. While writing the code required the same
 amount of time, debugging and fault finding differed. The HLS solution required
 time in understanding how the synthesis tool translated the C/C++ code (referring
 to the AXI4-Stream blocking access problem) while it did not require thoughts on
