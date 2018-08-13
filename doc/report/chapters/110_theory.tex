@@ -7,8 +7,8 @@
 \chapter{Theoretical Background} \label{chapt:theoreticalback}
 % -----------------------------------------------------------------------------
 This chapter provides the theory required for the project. On one hand, it is
-about image processing and filtering as well as communication via Ethernet. What
-kind of image operations are possible and the Wallis filter are explained in the
+about image processing and filtering as well as communication via Ethernet. The
+possible kinds of image operations and the Wallis filter are explained in 
 chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via
 Ethernet is provided in the chapter \ref{chapt:theory:ethernet}. Furthermore the
 on chip interfaces used in this project are explained.
@@ -45,11 +45,12 @@ Example for a point operation with $u$ and $v$ being pixel coordinates:
 
 \subsubsection*{Neighborhood Operations} \label{ch:th:neighborhood}
 Neighborhood operations use a certain amount of neighboring pixels as input (figure \ref{fig:image_operation}b).
-They calculate the result and store it at the reference point in the target
-image. Neighborhood operations are often used in convolutional filters. These
+They calculate and store the result at the reference point in the
+target image. Neighborhood operations are often used in convolutional filters.
+These
 filters can be used, for instance, to implement smoothing filters such as the
 Gauss filter. Convolutional filters can also be used to detect edges in an
-image. For example, this is possible with the Sobel filter.
+image. For instance, this is possible with the Sobel filter.
 
 Example to calculate the x-derivative and y-derivative with the Sobel matrix \cite{sobel_matrix}:
 
@@ -80,16 +81,18 @@ Example to calculate the x-derivative and y-derivative with the Sobel matrix \ci
 
 \textbf{Border Handling:}
 With the application of neighborhood filters, the so-called border handling
-problem occurs in every image (see figure \ref{fig:image_handling}). Because the filter protrudes beyond the original image.
+problem occurs in every image because the filter protrudes beyond the original
+image (see figure \ref{fig:image_handling}).
 
 There are several possible solutions to this issue:
 \begin{itemize}
 \item The border pixels are not considered. In the example image, the original image 
-is two pixels smaller in height and width than the original image. \ref{fig:image_handling}
+is two pixels smaller in height and width than the original image as shown in
+figure \ref{fig:image_handling}.
 \item If the filter exceeds the original image, the filter coefficients
-at the outside of the image are set to zero
-\item The pixels required outside the image are extrapolated according to the closest pixels
-\item The image is continued periodically
+at the outside of the image are set to zero.
+\item The pixels required outside the image are extrapolated according to the closest pixels.
+\item The image is continued periodically.
 \end{itemize}
     
 \begin{figure}[b!]
@@ -101,7 +104,10 @@ at the outside of the image are set to zero
 
 
 \subsubsection*{Global Operations}
-Image analysis often employs global image operations that uses the entire image as input data (figure \ref{fig:image_operation}c). It is often about finding regions or recognizing geometrical objects. A typical representative of this is the Hough transform and the Fourier transform.
+Image analysis employs global image operations that uses the entire image as
+input data (figure \ref{fig:image_operation}c). A typical application is finding
+regions or recognizing geometrical objects. Another representative of this is
+the Hough transform and the Fourier transform.
 
 \begin{figure}[tb!]
     \centering
@@ -132,7 +138,8 @@ The Wallis filter equation is \cite{wallis_filter}:
     $c              =$ & contrast factor \\
 \end{tabular} \\
 
-The two facotrs b and c can have the range from 0 to 1. The larger b is selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
+The two factors b and c can have the range from 0 to 1. The larger b is
+selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
 The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
 The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
 
@@ -305,7 +312,10 @@ core. These are block RAM or \gls{fifo} that can be used to read and process
 the data
 inside the IP core. These can also be used to store output data of the IP core 
 \cite{pragma}. \\
-Figure \ref{fig:p_interface} shows how the pragma \texttt{interface} is configured. First, the interface can be specified and whether it is an input or an output. Finally, the variable to which the pragma is to be applied.
+Figure \ref{fig:p_interface} shows how the pragma \texttt{interface} is
+configured. First, the interface can be specified and whether it is an input or
+an output. Second, the variable to which the pragma is to be applied has to be
+specified.
 
 \begin{figure}[tb!]
     \centering
@@ -354,8 +364,10 @@ Pipeline is used if not all data for processing is available in the loop. Figure
 This directive allows the entire loop to be parallelized. This is only possible if all data is available at the beginning of the loop. Figure \ref{fig:p_pipeline_unroll} shows that the processing of the loop only requires three clock cycles and the throughput could be increased in comparison to pipeline to three data per clock cycle.
 \end{description}
 
-With nested loops, note that if pipeline is applied to the top loop, the inner loops are automatically unrolled. \\
-You can also apply both directives in combination in a loop. This is useful if, for example, the data was previously split per \texttt{array\_partition} and it is now possible to read multiple data (but not all data) in one clock cycle. Since the unroll directive can specify a factor that unrolls the loop.
+With nested loops, note that if pipeline is applied to the outer loop, the inner
+loops are automatically unrolled. \\
+One can also apply both directives in combination in a loop. This is useful if,
+for example, the data was previously split per \texttt{array\_partition} and it is now possible to read multiple data (but not all data) in one clock cycle. Since the unroll directive can specify a factor that unrolls the loop.
 
 \begin{figure}[tb!]
     \centering
@@ -368,8 +380,10 @@ You can also apply both directives in combination in a loop. This is useful if, 
 Resources are limited in the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point in the FPGA \cite{floating}. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
 
 \textbf{Arbitrary Precision Integer:}
-Arbitrary Precision Integers are data types where it is possible to define any bit width. This has the advantage that resources can be reduced. Because it is not necessary to select the data types provided in C/C++ (8, 16, 32 bit or char, short, int etc.) \\
-To use these data types only the header file \texttt{ap\_int.h} must be included. The following example shows how a 11 bit signed integer and a 5 bit unsigned integer be defined \cite{ug902}.
+Arbitrary Precision Integers are data types which whom it is possible to define
+any bit width. This has the advantage that resources can be reduced. Because it is not necessary to select the data types provided in C/C++ (8, 16, 32 bit or char, short, int etc.) \\
+To use these data types only the header file \texttt{ap\_int.h} must be
+included. The following example shows how an 11 bit signed integer and a 5 bit unsigned integer are defined \cite{ug902}.
 
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle]
@@ -380,7 +394,8 @@ ap_uint<5> var2;
 
 \textbf{Arbitrary Precision Fixed-Point:}
 Floating Point can be used on the FPGA, but this usually requires a lot of resources. Viviado HLS has a library for Arbitrary Precision Fixed Point data types, which can be used to calculate sufficiently accurate. With these fixed point data types many resources can be saved. \\
-For this purpose there is the library \texttt{ap\_fixed.h} and must be included. The data types are defined so that the first number represents the whole data type width and the second number represents the above number of the binary point. The following example shows an unsigned 11 bit varibale with 3 bits representing the integer value and 8 bits representing the fractional value \cite{ug902}. 
+For this purpose there is the library \texttt{ap\_fixed.h} and has to be
+included. The data types are defined so that the first number represents the whole data type width and the second number represents the above number of the binary point. The following example shows an unsigned 11 bit variable with 3 bits representing the integer value and 8 bits representing the fractional value \cite{ug902}.
 
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle]
@@ -451,7 +466,8 @@ An AXI4 read transaction could run as followed:
     \item Slave responds with data on read data channel
 \end{itemize}
 
-A burst transacion allows to send or receive a range of data with a single write
+A burst transaction allows to send or receive a range of data with a single
+write
 request while a single beat transaction consists of one write request and one
 data word.
 

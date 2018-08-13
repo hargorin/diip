@@ -28,7 +28,7 @@ Field
 Programmable Gate Array (FPGA). FPGAs
 consist of thousands of logical elements that can be configured and connected
 together to form a complex logical operation. Together with on chip
-memory they offer high throughput by processing the data parallel in contrast to
+memory they offer high throughput by processing the data in parallel in contrast to
 sequential. The data is transfered to the FPGA over an Ethernet LAN connection
 for
 fast transfer rates. To accelerate the computing even further, the system needs
@@ -44,7 +44,8 @@ focuses on two main goals:
 
 % Primary objectives
 \begin{enumerate}
-    \item Increase throughput of the dataflow by improving the communication and putting thoughts on scalability
+    \item Increase throughput of the dataflow by improving the communication and
+    by putting thoughts on scalability
     \item Implement a more complex image processing algorithm to show the real
     benefit of using FPGA for image processing
 \end{enumerate}
@@ -59,10 +60,11 @@ focuses on two main goals:
 % What is used to realize...
 % NEW Dataflow
 The existing communication solution is file transfer oriented and stores
-received data in memory. This worked as a proof of concept but is not optimal
+received data in memory. This has worked as a proof of concept but is not
+optimal
 for high throughput image processing. The communication part is extended with an
 acknowledge mechanism that allows retransmission of lost packets and a streaming
-interface that enables immediate processing of the image data. Furthermore a
+interface which enables immediate processing of the image data. Furthermore a
 memory management unit is introduced that caches image data to reduce bandwidth
 usage.
 
@@ -70,7 +72,7 @@ usage.
 In the preceeding project a Sobel filter was implemented using Vivado HLS. It
 uses a simple convolution matrix for edge detection. This operation was well
 suited for the first image processing task and to become acquainted with a high
-level synthesis tool. For this thesis a new image processing task is realized: A
+level synthesis tool. For this thesis a new image processing task is realized: a
 local contrast enhancement operation. The algorithm is described and thoroughly
 tested in C/C++ and then synthesized to HDL by the Xilinx Vivado HLS toolchain.
 To improve throughput and compare the results of high level synthesis versus a
@@ -96,15 +98,14 @@ FPGA would work on a network.
 \\
 
 % NEW How the document is built up
-This report is split into six main parts: Theoretical background, mission,
+This report contains six main parts: Theoretical background, mission,
 image processing, dataflow, scalability and verification/benchmark.  The
-theoretical background starting on page \pageref{chapt:theoreticalback} explains
+theoretical background explains
 the basics of image processing, FPGA, Ethernet communication and on chip
-interfaces. Starting on page \pageref{chapt:mission} the chapter mission will
+interfaces. The chapter mission will
 cover the starting point and presents the concept. Chapters 
-\ref{chapt:image_processing} and \ref{chapt:dataflow} cover the actual
+image processing and dataflow cover the actual
 implementation process of the image processing and dataflow parts.
-Before verifying these components in chapter \ref{chapt:ver_bench} the
-scalability is studied in chapter \ref{chapt:scalability} starting on page
-\pageref{chapt:scalability}.
+Before verifying these components in the verification and benchmark chapter the
+scalability is studied.
 
