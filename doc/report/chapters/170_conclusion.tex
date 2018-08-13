@@ -32,11 +32,11 @@ The existing communication core was extended with acknowledge, user registers
 and AXI4-Stream interfaces. The new image processing algorithm requires the
 input data in a specific order. Therefore a controller was implemented using two
 different design flows. The HLS approach showed that complex interfaces such as
-AXI4 can be controller with a few lines of code and that state machines can be
+AXI4 can be implemented with a few lines of code and that state machines can be
 implemented as well. The unfavourable memory management and the lack of high
 throughput
 led to the implementation of a VHDL based controller and memory management unit.
-It caches necessary image data to obviate multiple image transmission and can
+It caches necessary image data to obviate multiple image transmissions and can
 support the full throughput of the image processing core.
 
 % ==============================================================================
@@ -45,7 +45,7 @@ support the full throughput of the image processing core.
 %
 % ==============================================================================
 \section{Overall}
-The final product called \gls{diip} is is based on the VHDL implementations of
+The final product called \gls{diip} is based on the VHDL implementations of
 image processing and dataflow parts. Images can be sent from the PC to the FPGA
 where
 the Wallis operation is applied and the image is sent back. Image data
@@ -78,12 +78,12 @@ interfaces (e.g. AXI4) and the reduced time in testbench development.
 %
 % ==============================================================================
 \section{Future Work}
-This scalability is proven on paper and can now be implemented onto the FPGA.
+The scalability is proven on paper and can now be implemented onto the FPGA.
 The controller core can be extended to send the data to multiple Wallis filter
 cores. After writing a computer application that can handle the fast transfer
 speeds the true benefit of using FPGA for image processing can be shown in
 praxis. Because the data transfer is Ethernet based a cluster of FPGAs can be
-built up to compete against high performance CPU and GPU based image processing
+built to compete against high performance CPU and GPU based image processing
 pipelines. Another method to increase throughput would be to implement a VHDL
 256bit image processing core that would be able to process 21 pixels per clock
 cycle and produce one pixel per clock cycle on the output. This would omit the
