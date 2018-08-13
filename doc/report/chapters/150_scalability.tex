@@ -13,7 +13,7 @@ Scalability in regard to this project can be divided into two terms:
 \end{itemize}
 
 In the following sections these two aspects are dissected theoretically. For
-calculations the VHDL controller and image processing core is used with the
+calculations the VHDL controller and VHDL image processing core is used with the
  metrics shown in table \ref{tab:sca:vhdlparams}.
 
 \begin{table}[h!]
@@ -120,7 +120,7 @@ consulted.
         \textbf{Concept} & \\
         Image data is sent line wise. Each image processing core handles one
         input line, starts as soon as enough data is transfered and jumps $N$ lines
-        downwards after line completion. Iinitialization transfer is done once
+        downwards after line completion. Initialization transfer is done once
         per image. The image cache stores $w_l+(N-1)$ full image lines.
         &
         Image data is sent coloumn wise with $w_l+(N-1)$ pixels per coloumn. All
@@ -182,7 +182,7 @@ consulted.
 \clearpage
 Before comparing the two proposals another metric has to be taken into
 consideration: The effective throughput of the image processing core. The way
-the wallis filter works is that it requires a neighbourhood of pixels. For each
+the Wallis filter works is that it requires a neighbourhood of pixels. For each
 line the core processes, the initial neighbourhood has to be sent. Equation
 \ref{eq:vhdlwallismaxb} derived in appendix 
 \ref{app:derivations:theomaxvhdlwallis} is used to calculate the effective
@@ -269,7 +269,7 @@ parameters that are used to compare the two inside FPGA scale proposals.
 
 Now the two proposals can be put in contrast. Starting with figure 
 \ref{fig:sca:compfixheight} the two proposals are compared against each other
-with an input image of fixed height and variable with. This was chosen because
+with an input image of fixed height and variable width. This was chosen because
 with the main limiting factor being \gls{bramtile} usage, the store size $s_s$ has to
 be observed and it is for both proposals independant of image height $i_h$.
 The image height $i_h$ is set to 10'000 arbitrary. The
@@ -359,7 +359,7 @@ is distributed to:
 \end{tabular} \\
 
 A last thought is put on the network infrastructure that is required to
-process iamges distributed. The network link of 1Gb/s on the FPGA's Ethernet
+process images distributed. The network link of 1Gb/s on the FPGA's Ethernet
 port is saturated. Therefore if multiple FPGAs are used on a network, the
 interconnecting network switch must be capable of an uplink to the PC or server
 with a multiple of the throughput of the FPGA downlink. Figure 

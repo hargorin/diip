@@ -123,7 +123,7 @@ the
 room image. This corresponds to an intensity value of 0.816 in the range of 0 -
 255. There is also only a deviation of 0.33\% in the mountain image. The VHDL
 verification is with 1.23\% respectively 0.49\% higher than the
-HLS versions. The intensity deviates by 3.14 pixels or 1.25 pixels respectively.
+HLS versions. The intensity deviates by 3.14 pixels or respectively 1.25 pixels.
 It is assumed that the deviation occurs due to rounding in the VHDL solution. In
 comparison to the HLS solution, the VHDL solution does not calculate the mean
 and the variance exactly. Further it is assumed that image contents play a
@@ -167,7 +167,7 @@ For this purpose, the throughput at the input of the filter is measured. This
 means how many pixels per clock are loaded into the Wallis filter. Again, the
 three different methods (HLS 8bit, HLS 256bit \& VHDL 8bit) of the Wallis filter
 are compared. Table \ref{tab:throughput} lists the three different methods. The
-8 bit versions should have a throughput of one pixel per clock, this is 125Mp/s
+8bit versions should have a throughput of one pixel per clock, this is 125Mp/s
 at 125MHz clock frequency. But the HLS 8 bit version only reaches 21 pixels in
 86 clocks. This results in a throughput of 30.5Mp/s. This is four times slower
 than the theoretical value. This has to do with the fact that the division
@@ -177,7 +177,7 @@ pixels (see chapter \ref{ch:hls:div} and \ref{ch:ip:axi}). For this reason the
 throughput. A throughput of 21 pixels in 11 clock cycles could be achieved. This
 is equivalent to 238.6Mp/s. in relation to the 8 bit version only a better
 throughput of a factor of 7.8 could be achieved. The limiting factor is still
-the division. With the VHDL version the theoretical maximum of 125Mp/s has been
+the dataflow in the image processing core of the pixel reading. With the VHDL version the theoretical maximum of 125Mp/s has been
 reached.
 
 \begin{table}[tb!]
@@ -301,7 +301,7 @@ time elapsed: 1.18s Speed: 0.859 MB/s Size: 1.012 MB\end{lstlisting}
 output correctly by the communication core, a \gls{ila} 
 was used. An ILA can be configured on the FPGA to record internal signals. The
 results are transferred to the PC over USB and displayed in \gls{vivadohlx}. All
-user registers (0 through 7) are written with differen values and the result
+user registers (0 through 7) are written with different values and the result
 observed using the ILA matched the sent data.
 
 \vspace{1ex}
@@ -318,8 +318,8 @@ This validation is split into the two solutions implemented using HLS (solution
 A) and VHDL (solution B).
 
 \vspace{1ex}
-\textbf{Solution A) HLS:} In Vivado HLS the validation was done in C and
-Co-simulation. A testbench C/C++ file generates pseudo random image data. This
+\textbf{Solution A) HLS:} In Vivado HLS the validation was done in C/C++ and
+RTL-simulation. A testbench C/C++ file generates pseudo random image data. This
 data is then processed using the controller core and in the testbench itself.
 The two results are then compared. Using different input data and image sizes,
 all output results matched. A test on the FPGA was omitted. This validation will
