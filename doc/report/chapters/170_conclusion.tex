@@ -17,8 +17,8 @@ A new image processing core was implemented that locally optimizes contrast
 (Wallis filter). Multiple implementations have been validated and compared.
 Using high level synthesis to describe an algorithm has proven that the desired
 operation can be achieved in little time. Nevertheless the theoretical possible
-throughput could not be achieved. The main reason being that the dataflow was
-not described well enough in C/C++ language to achieve the desired throughput.
+throughput could not be achieved due to the dataflow not being
+described well enough in C/C++ language to achieve the desired throughput.
 Therefore a VHDL implementation was written that processes pixels at 125Mp/s and
 uses about three percent of FPGA ressources.
 
@@ -63,7 +63,7 @@ scale proportional to the number of FPGAs used.
 % ==============================================================================
 \section{Working with High Level Synthesis}
 The time spent on working with \gls{vivadohls} has shown several advantages and
-disadvantages. It has shown that thinking close to hardwre is crucial. Using
+disadvantages. It has shown that thinking close to hardware is crucial. Using
 C/C++ as language is a trap to fall back and think of the code as if it would be
 executed sequentially. The function to be implemented should be split into
 building blocks the same way as it would be done using a hardware description
@@ -89,6 +89,6 @@ pipelines. Another method to increase throughput would be to implement a VHDL
 cycle and produce one pixel per clock cycle on the output. This would omit the
 scalability inside the FPGA because the Ethernet link would already be
 saturated. Furthermore the HLS implementations could be improved by describing
-the dataflow more hardware oriented and proove that using HLS the same
+the dataflow more hardware oriented and prove that using HLS the same
 throughput can be achieved as when using a hardware description language.
 

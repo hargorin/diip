@@ -5,7 +5,7 @@
 % ==============================================================================
 \chapter{Scalability} \label{chapt:scalability}
 The code for this project is written from the beginning with the possibility to
-scale it up in mind. The main idea being that the throughput can be increased.
+scale it up in mind. The main idea is that the throughput can be increased.
 Scalability in regard to this project can be divided into two terms:
 \begin{itemize}
     \item Inside FPGA
@@ -38,18 +38,18 @@ Every FPGA has a given amount of ressources (LUTs, memory and so forth, as
 described in table \ref{tab:XC7A200T}). The inside FPGA scalability aims towards
 optimal usage of these ressources. Before methods for scalability can be
 compared it must be clarified what can be scaled. The \gls{diip} project
-consists of three main parts. The communication, controller and image processing
+consists of three main parts: the communication, controller and image processing
 parts. The communication part is only implemented once to handle the
 communication to the PC and therefore can not be scaled. The image processing
 part however can be implemented multiple times inside the FPGA to increase
-throughput. Therefore the conrtoller part splits up the incomming image data and
+throughput. Therefore the controller part splits up the incomming image data and
 distributes it to the image processing cores. To summarize the inside FPGA
 scalability:
 \begin{itemize}
     \item Implement the communication part once
     \item Implement the image processing part as many times as the available
     ressources allow it
-    \item Adapt the controller to distribute data accross the processing cores
+    \item Adapt the controller to distribute data across the processing cores
 \end{itemize}
 
 Figure \ref{fig:insidefpgascaleconceptbd} clarifies the concept. Note that all
@@ -65,7 +65,7 @@ image processing cores are equal.
 \end{figure}
 
 Now that the concept is clarified, two possible solutions are compared to
-distribute the image data accross the image processing cores, proposal A and B.
+distribute the image data across the image processing cores, proposal A and B.
 They differ in the way in what order the data is sent to the FPGA and how it is
 cached by the controller inside the FPGA. For each proposal the following
 metrics are calculated.
@@ -88,7 +88,7 @@ metrics are calculated.
 \end{description}
 
 Table \ref{tab:insidefpgascalability} explains two proposals with a simplified
-window length of $w_l=3$ and two image processning cores ($N=2$). To understand
+window length of $w_l=3$ and two image processing cores ($N=2$). To understand
 the procedure of the Wallis core, chapter \ref{ch:ip:concept} should be
 consulted.
 
@@ -119,7 +119,7 @@ consulted.
         \\\midrule
         \textbf{Concept} & \\
         Image data is sent line wise. Each image processing core calculates one
-        output line, starts as soon as enough data is transfered and jumps $N$ lines
+        output line, starts as soon as enough data is transferred and jumps $N$ lines
         downwards after line completion. Initialization transfer is done once
         per image. The image cache stores $w_l+(N-1)$ full image lines.
         &
@@ -189,7 +189,7 @@ line the core processes, the initial neighborhood has to be sent. Equation
 throughput $b_r$ of a Wallis filter core. To simplify, the image height $i_h$ is
 considered to be much larger than the window length $w_l$ and therefore the
 equation can be noted as shown in equation \ref{eq:vhdlwallismaxb}.
-Equation \ref{eq:vhdlwallismaxb} makes sense in that the Wallis filter core
+Equation \ref{eq:vhdlwallismaxb} makes sense as the Wallis filter core
 requires $w_l$ pixels on the input to calculate one pixel on the output.
 Therefore the output throughput (or real throughput) $b_r$ is by a factor of $w_l$
 smaller than the input throughput $b_w$. Using the
@@ -224,7 +224,7 @@ Ethernet communication link is saturated.
 \end{align}
 
 To calculate the free memory the results from implementing the VHDL solution
-\footnote{some of which are listed in table \ref{tab:ressource}} 
+\footnote{Some of which are listed in table \ref{tab:ressource}} 
 are dissected to calculate the available memory. Table \ref{tab:membudget}
 lists the required block memory usage.
 
@@ -276,7 +276,7 @@ be observed and it is for both proposals independant of image height $i_h$.
 The image height $i_h$ is set to 10'000 arbitrary. The
 two proposals can be differentiated in that proposal A is optimized for low tx
 size $s_{tx}$ (and therefore optimized for throughput) while proposal B requires
-buch less memory (area optimized). 
+less memory (area optimized). 
 
 \begin{figure}[b!]
     \centering
@@ -291,13 +291,13 @@ buch less memory (area optimized).
 \clearpage
 The BRAM usage is best utilized by proposal A at approximately
 $i_w=32Kp$\footnote{32 is chosen because it is a power of two} while
-the necessary tx size is kept at the minimum. Its one disatvantage being the
+the necessary tx size is kept at the minimum. Its one disatvantage is the
 limited image width of 32Kp. Three workarounds can be considered to raise the
 limit in image width:
 \begin{itemize}
     \item Use less image processing cores. This would decrease the required
     block memory and the image width can be increased. However by decreasing the
-    number of image processing cores, the total throughput would also drop.
+    number of image processing cores, the total throughput will also drop.
     \item Use proposal B. Its BRAM usage is significantly smaller however the tx
     size will increase.
     \item Split the image on the PC and process each coloumn as if it was a
@@ -310,7 +310,7 @@ multiple FPGA.
 
 \section{Across FPGA}
 Now that one FPGA is capable of processing image data at the rate at which it is
-trasfered to it through Ethernet, the solution can be scaled on a Ethernet
+transferred to it through Ethernet, the solution can be scaled on a Ethernet
 network. This
 was the main reason to use Ethernet as communication basis. An input image is
 split into parts on the computer and processed individually by FPGAs. The
@@ -334,7 +334,7 @@ segments to omit the loss of pixels where the image is cut. To calculate the
 throughput of a distributed FPGA image processing solution, this multiple
 sending of data has to be taken into consideration. Equation 
 \ref{eq:sca:linesize} derives how the total line size $s_l$ is calculated in
-reference to the number of FPGAs $N_F$ the image is distributed to. Width the
+reference to the number of FPGAs $N_F$ the image is distributed to. With the
 image width $i_w$ being much greater than the window length $w_l$, 
 \ref{eq:sca:linesize} can be approximated.
 
@@ -418,7 +418,7 @@ other on one FPGA.
         4  & 4 &  11.2Kp & 3s  & 500Mp/s \\
         \bottomrule
     \end{tabular}
-    \caption{Example scalability accross FPGA}
+    \caption{Example scalability across FPGA}
     \label{tab:sca:exacrfpga}
 \end{table}
 

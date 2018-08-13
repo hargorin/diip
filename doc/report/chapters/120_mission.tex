@@ -19,7 +19,7 @@ realistic if the player could walk through the streets of a major city. Gatherin
 %
 % ==============================================================================
 \section{Starting Point}
-To accelerate intense image processing a dedicated hardware approach is investigated. To do so, a basic image processing algorithm such as the Wallis filter is implemented in an FPGA that communicates over a network with a host computer. The image processing task should later be distributed onto multiple FPGAs to accelerate the processing even more \cite{nomokoReqs}. Before listing possible solutions the available resources need to be dissected.
+For accelerating intense image processing a dedicated hardware approach is investigated. To do so, a basic image processing algorithm such as the Wallis filter is implemented in an FPGA that communicates over a network with a host computer. The image processing task should later be distributed onto multiple FPGAs to accelerate the processing even more \cite{nomokoReqs}. Before listing possible solutions the available resources need to be dissected.
 
 \subsection{FPGA Board} \label{chapt:mission:fpgaboard}
 \begin{figure}[tb!]
@@ -82,7 +82,7 @@ In the preceding project \cite{p5report} an Ethernet communcation between PC and
 FPGA was established. This included a UDP based protocol that was implemented on
 the PC and on the FPGA in form of an IP core. Basic file transfers are working
 but many features such as reliable transfer using acknowledge and retransmission
-exist only on paper. The work in this project is built
+only exist on paper. The work in this project is built
 upon the IP core from project 5 while improvements and modifications are made to
 the IP core.
 

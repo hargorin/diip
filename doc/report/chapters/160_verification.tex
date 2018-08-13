@@ -44,7 +44,7 @@ This chapter lists all the solutions that are compared in verification and bench
         \toprule
         Communication Memory based & Stores the received image data in block RAM using AX4 interface. \\
         \midrule
-        Communication Stream based & Received data is streamed directly to the controller. Data to send is also transfered using AXI4-Stream. \\
+        Communication Stream based & Received data is streamed directly to the controller. Data to send is also transferred using AXI4-Stream. \\
         \toprule
         \multicolumn{2}{l}{\textbf{Overall}}\\
         \toprule
@@ -116,7 +116,7 @@ for the images can be found in table \ref{tab:parameter}.
 Table \ref{tab:rmse_room} lists the RMSE values of the room image and table 
 \ref{tab:rmse_mountain} the RMSE
 values of the mountain image. They
-represent the deviation from the reference image in percent. The deviation from
+represent the deviation from the reference image in percent. The deviations from
 the C/C++ program with the 8 bit AXI4 stream and the 256 bit AXI4 stream do
 not differ from each other. A total deviation of 0.32\% has been measured for
 the
@@ -127,7 +127,7 @@ HLS versions. The intensity deviates by 3.14 or 1.25 pixel values respectively.
 It is assumed that the deviation occurs due to rounding in the VHDL solution. In
 comparison to the HLS solution, the VHDL solution does not calculate the mean
 and the variance exactly. Further it is assumed that image contents play a
-role. Meaning how strong the intensity in the image differs in regard to the
+role, meaning how strong the intensity in the image differs in regard to the
 location. The room image changes intensity more often, whereby the mountain
 image is bright at the top and dark at the bottom.
 
@@ -169,7 +169,7 @@ three different methods (HLS 8bit, HLS 256bit and VHDL 8bit) of the Wallis filte
 are compared. Table \ref{tab:throughput} lists the three different methods. The
 8bit versions should have a throughput of one pixel per clock, this is 125Mp/s
 at 125MHz clock frequency. But the HLS 8 bit version only reaches 21 pixels in
-86 clocks. This results in a throughput of 30.5Mp/s. This is four times slower
+86 clocks. This results in a throughput of 30.5Mp/s. It is four times slower
 than the theoretical value. This has to do with the fact that the division
 requires 23 clock cycles and that the loop cannot be pipelined by reading the
 pixels (see chapter \ref{ch:hls:div} and \ref{ch:ip:axi}). For this reason the
@@ -235,12 +235,12 @@ slices.
 \subsection{Dataflow}\label{ch:verification:dataflow}
 The dataflow part is again divided into two parts, the communication and
 controller parts. While in the communication part only the most recent version
-is tested (the stream based communication, reffering to chapter 
+is tested (the stream based communication, referring to chapter 
 \ref{chapt:dataflow} explaining the solution
 A and B with streaming interface), both versions of the controller are verified.
 
 \subsubsection*{Communication}
-The communication part was in a large part taken from the last semester project
+The communication part has in a large part been taken from the last semester project
 and has been thoroughly tested and validated in the project report 
 \cite{p5report}. The three new implemented features are verified in this
 chapter. They consist of:
@@ -300,7 +300,7 @@ time elapsed: 1.18s Speed: 0.859 MB/s Size: 1.012 MB\end{lstlisting}
 
 \vspace{1ex}
 \textbf{User register:} To test wether the user registers can be written and are
-output correctly by the communication core, a \gls{ila} 
+output correctly by the communication core, an \gls{ila} 
 was used. An ILA can be configured on the FPGA to record internal signals. The
 results are transferred to the PC over USB and displayed in \gls{vivadohlx}. All
 user registers (0 through 7) are written with different values and the result
@@ -314,7 +314,7 @@ verified.
 
 \subsubsection*{Controller} 
 The most important thing to verify in the controller core is the correct order
-of output pixel. This is done by generating input data representing an image,
+of output pixels. This is done by generating input data representing an image,
 feeding this data through the controller core and observing the output pixels.
 This validation is split into the two solutions implemented using HLS (solution
 A) and VHDL (solution B).
@@ -343,8 +343,9 @@ eight. The window length was reduced to three for simplicity. Figure
     \label{fig:vhdlcontrollerstimuli}
 \end{figure}
 
-Observed was the output stream that was stored in a text file by the VHDL
-testbench. The resulting pixel order was then validated using random samples.
+The output stream that was stored in a text file by the VHDL
+testbench was observed. The resulting pixel order was then validated using
+random samples.
 Listing \ref{lst:controlleroutstreamvhdl} shows the output pixel values of the
 first three lines.
 
@@ -387,7 +388,7 @@ deviation as the simulation on the PC (see chapter
 deviation across the entire system than the \gls{ghdl} simulation on the PC (see
 chapter \ref{ch:verification:imageprocessing}). It is assumed that the divider
 model used in simulation is not as accurate as the implemented version of the
-divider generator. Also to be seen here is that
+divider generator. Also shown here is that
 the room image has a larger deviation in the VHDL solution than the
 mountain image. This is to be justified with the same reasons as explained in
 chapter \ref{ch:verification:imageprocessing}. It is assumed that this depends on the rounding and the image content. 
@@ -416,7 +417,7 @@ To conclude the results of this work, the different solutions are compared in
 this chapter. The working implementations (including send and receive from PC)
 and theoretical limits are differentiated. Furthermore the throughput is
 compared to a CPU based solution.
-There are four different processing methods in total.
+There are four different processing methods in total:
 
 \begin{itemize}
     \item The solution using HLS with 8bit data bus
@@ -428,10 +429,11 @@ There are four different processing methods in total.
 
 Methods 1. and 3. are measured by processing an image stored on the computer
 which is sent to the FPGA, processed and sent back. The time required for the
-processing of an image divided by its pixel count result in the throughput
+processing of an image divided by its pixel count results in the throughput
 measured in megapixels per second ($Mp/s$, $1p\equiv1B$). To calculate the
 throughput of
-method 2. the results from \ref{ch:verification:imageprocessing} is used. Method
+method 2. the results from \ref{ch:verification:imageprocessing} are used.
+Method
 4. is written in C++ and uses OpenCV to read image data. Throughput is
 calculated the same as for methods 1. and 3.
 \\
