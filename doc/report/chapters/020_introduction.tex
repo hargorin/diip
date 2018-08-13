@@ -14,12 +14,12 @@ accelerate the development of the algorithm and virtual reality games are
 becoming more realistic. The Zurich based company Nomoko \footnote{
 \url{https://www.nomoko.world/}} is developing a
 technology that will enable the creation of digital copies of the world. They
-built a giga pixel camera and a 3D pipeline to make this happen. This pipeline
+built a giga pixel camera and a 3D image processing pipeline to make this happen. This pipeline
 consists among other things of high volume image processing. Modern computers
 and graphical processing units (GPU) are fast in sequentially processing data
 but are designed to serve many different tasks and not a specific one. A
 dedicated hardware approach designed for a specific image processing task would
-expedite the 3D pipeline of creating digital copies of the world.
+expedite the 3D processing pipeline of creating digital copies of the world.
 \\
 
 % Project goal/aims
@@ -58,7 +58,7 @@ focuses on two main goals:
 % Sections with NEW are written new in p6
 % What is used to realize...
 % NEW Dataflow
-The existing communication solution is based on file transfer and stores
+The existing communication solution is file transfer oriented and stores
 received data in memory. This worked as a proof of concept but is not optimal
 for high throughput image processing. The communication part is extended with an
 acknowledge mechanism that allows retransmission of lost packets and a streaming
@@ -73,7 +73,7 @@ suited for the first image processing task and to become acquainted with a high
 level synthesis tool. For this thesis a new image processing task is realized: A
 local contrast enhancment operation. The algorithm is described and thoroughly
 tested in C/C++ and then synthesized to HDL by the Xilinx Vivado HLS toolchain.
-To improve throughput and compare the results of a high level synthesis versus a
+To improve throughput and compare the results of high level synthesis versus a
 low level HDL approach, the same filter is implemented in VHDL.
 
 % NEW Scalability
@@ -89,7 +89,7 @@ elements and memory for both the communication and image processing task.
 % NEW What is the result of the project
 The result is a complete image processing pipeline that begins on a PC where the
 input image is sent via Ethernet to the FPGA where it is processed and sent pack
-to the PC. The achieved image throughput is 4.1MB/s primarily limited by the image processing core. The Wallis filter core
+to the PC. The achieved image throughput is 4.1MB/s primarily limited by the image processing core. The Wallis filter core alone
 is capable of processing up to 125 megapixels per second on the input. A benchmark shows the performance differences betwen a CPU based and FPGA based solution. Concepts on
 scalability show how the processing power of FPGAs can be exploited if multiple
 FPGA would work on a network.

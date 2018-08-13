@@ -6,7 +6,12 @@
 % -----------------------------------------------------------------------------
 \chapter{Theoretical Background} \label{chapt:theoreticalback}
 % -----------------------------------------------------------------------------
-This chapter provides the theory required for the project. On the one hand, it is about image processing and filtering as well as communication via Ethernet. What kind of image operations are possible and the Wallis filter are explained in the chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via Ethernet is provided in the chapter \ref{chapt:theory:ethernet}.
+This chapter provides the theory required for the project. On one hand, it is
+about image processing and filtering as well as communication via Ethernet. What
+kind of image operations are possible and the Wallis filter are explained in the
+chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via
+Ethernet is provided in the chapter \ref{chapt:theory:ethernet}. Furthermore the
+on chip interfaces used in this project are explained.
 
 
 % =============================================================================
@@ -15,8 +20,13 @@ This chapter provides the theory required for the project. On the one hand, it i
 %
 % =============================================================================
 \section{Image Processing} \label{chapt:theory:imageprocessing}
-In technical terms, image processing is the processing of image data. This includes image processing, image analysis and the output of image files \cite{image_processing}. Procedures that generate a new image can be distinguished into point operations, neighborhood operations and global operations based on their input data. \\
-The second part explains the Wallis filter used in this project.
+In technical terms, image processing is the processing of image data. This
+includes image processing, image analysis and the output of image files 
+\cite{image_processing}. Procedures that generate a new image can be
+distinguished into point operations, neighborhood operations and global
+operations based on their input data. The next chapter compares these three
+operations while the following chapter dissects the Wallis filter algorithm used
+in this project.
 
 % -----------------------------------------------------------------------------
 \subsection{Operations}
@@ -35,10 +45,11 @@ Example for a point operation with $u$ and $v$ being pixel coordinates:
 
 \subsubsection*{Neighborhood Operations} \label{ch:th:neighborhood}
 Neighborhood operations use a certain amount of neighboring pixels as input (figure \ref{fig:image_operation}b).
-They calculate the result and stored it at the reference point in the target
-image. Neighborhood operations are often used in convolution filters. These
+They calculate the result and store it at the reference point in the target
+image. Neighborhood operations are often used in convolutional filters. These
 filters can be used, for instance, to implement smoothing filters such as the
-Gauss filter. Convolution filters can also be used to detect edges in an image. For example, this is possible with the Sobel filter.
+Gauss filter. Convolutional filters can also be used to detect edges in an
+image. For example, this is possible with the Sobel filter.
 
 Example to calculate the x-derivative and y-derivative with the Sobel matrix \cite{sobel_matrix}:
 
@@ -68,7 +79,8 @@ Example to calculate the x-derivative and y-derivative with the Sobel matrix \ci
 
 
 \textbf{Border Handling:}
-With the application of filters, the so-called border handling problem occurs in every image (see figure \ref{fig:image_handling}). Because the filter protrudes beyond the original image.
+With the application of neighborhood filters, the so-called border handling
+problem occurs in every image (see figure \ref{fig:image_handling}). Because the filter protrudes beyond the original image.
 
 There are several possible solutions to this issue:
 \begin{itemize}
@@ -112,10 +124,10 @@ The Wallis filter equation is \cite{wallis_filter}:
 \begin{tabular}{rl}
     $I(x,y)         =$ & gray value pixel of the original image \\
     $I'(x,y)        =$ & calculated pixel with the Wallis algorithm \\
-    $\mu_{n}        =$ & mean from the neighborhood of the pixel I(x,y) \\
-    $\sigma_{n}^{2} =$ & variance from the neighborhood of the pixel I(x,y) \\
-    $\mu_{g}        =$ & mean from the destination image \\
-    $\sigma_{g}^{2} =$ & variance from the destination image \\
+    $\mu_{n}        =$ & mean value of the neighborhood of the pixel I(x,y) \\
+    $\sigma_{n}^{2} =$ & variance value of the neighborhood of the pixel I(x,y) \\
+    $\mu_{g}        =$ & mean value of the destination image \\
+    $\sigma_{g}^{2} =$ & variance value of the destination image \\
     $b              =$ & brightness factor \\
     $c              =$ & contrast factor \\
 \end{tabular} \\
@@ -252,15 +264,21 @@ guarantee that the message has been received by the client.
 
 \section{Vivado HLS} \label{ch:th:hls}
 Vivado HLS is a development environment that synthesizes C/C++ code to HDL. The
-C/C++ language is intended for sequential programming where the HDL language describes the hardware. This chapter deals with the design flow (\ref{ch:design_flow})of Vivado HLS. The directives (\ref{ch:directives}) that are for the compiler to synthesize the C/C++ code in HDL and finally arbritary data types (\ref{ch:ap}). Which can be used in the Vivado HLS for C/C++ code.
+C/C++ language is intended for sequential programming where the HDL language
+describes the hardware. This chapter deals with the design flow (
+\ref{ch:design_flow}) of Vivado HLS. The directives (\ref{ch:directives}) that
+are used for the compiler to synthesize the C/C++ code in HDL and finally arbritary data types (\ref{ch:ap}) which can be used in Vivado HLS for C/C++ code.
 
 \subsection{Design Flow} \label{ch:design_flow}
 In Vivado HLS it is possible to translate the C/C++ code into HDL and generate
-an IP core for Vivado HLx. To ensure that the algorithm is correct, it can be validated in various steps. These steps are the design flow of Vivado HLS and are shown in figure \ref{fig:hls_design_flow}.
+an \gls{ipcore} for Vivado HLx. To ensure that the algorithm works correct, it
+can be validated in various steps. These steps are the design flow of Vivado HLS and are shown in figure \ref{fig:hls_design_flow}.
 First of all, the C/C++ algorithm can be tested in a simulation. This requires a
 testbench in addition to the C/C++ algorithm. As soon as the algorithm works
-satisfyingly the design can be run through synthesis and generating a RTL design
-in HDL. HDL design can be verified in an RTL simulation. The results of the RTL
+satisfyingly the design can be run through synthesis and an \gls{rtl} design can
+be
+generated. HDL design can be verified in an RTL simulation. The results of the
+RTL
 simulation must match the results of the C/C++ simulation. If this is the case,
 an IP core can be generated from the HDL code and used in the Vivado HLx \cite{vivado_hls}.
 
@@ -283,7 +301,8 @@ finished its operation.
 AXI4 interfaces can also be added directly to the IP core using directives. The
 AX4-Lite, AXI4-Master or AXI4-Stream interface can be configuered.
 Among other things, memory elements can also be connected directly to the IP
-core. These are block RAM or FIFOs that can be used to read and process the data
+core. These are block RAM or \gls{fifo} that can be used to read and process
+the data
 inside the IP core. These can also be used to store output data of the IP core 
 \cite{pragma}. \\
 Figure \ref{fig:p_interface} shows how the pragma \texttt{interface} is configured. First, the interface can be specified and whether it is an input or an output. Finally, the variable to which the pragma is to be applied.
@@ -326,8 +345,10 @@ In Vivado HLS the FPGA is described with C/C++ language. Among others, it is als
 
 \begin{description}
 \item[Pipeline]\hfill \\
-This directive allows a loop to be pipelined. This increases the throughput and the area. Now more operations are happening in a signle clock cycle.
-Pipeline is used if not all data for processing is available in the loop. Figure \ref{fig:p_pipeline_unroll} (pipeline) shows that only one read access per clock can be made. The other operations can be pipelined. This will lead to a processing of the loop in five clock cycles. The throughput could therefore be increased from the sequential method with one third data per clock cycle to pipelined with one data per clock cycle.
+This directive allows a loop to be pipelined which increases throughput.
+Now more operations are happening in a signle clock cycle.
+Pipeline is used if not all data for processing is available in the loop. Figure
+\ref{fig:p_pipeline_unroll} (pipeline) shows that only one read access per clock cycle can be made. The other operations can be pipelined. This will lead to a processing of the loop in five clock cycles. The throughput could therefore be increased from the sequential method with one third data per clock cycle to pipelined with one data per clock cycle.
 
 \item[Unroll]\hfill \\ 
 This directive allows the entire loop to be parallelized. This is only possible if all data is available at the beginning of the loop. Figure \ref{fig:p_pipeline_unroll} shows that the processing of the loop only requires three clock cycles and the throughput could be increased in comparison to pipeline to three data per clock cycle.
@@ -442,7 +463,7 @@ transaction channels and handshake signals. AXI4 and AXI4-Lite are compatible
 and can be converted.
 
 \subsection{AXI4-Stream}
-AXI4-Stream is a stream based interfaces. Data is sent in one direction from
+AXI4-Stream is a stream based interface. Data is sent in one direction from
 master to slave. It is not address based and features only one transaction
 channel. There is also no burst size limit. There are four required signals as
 shown in table \ref{tab:axi4steramreqsig}.
