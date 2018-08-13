@@ -4,6 +4,8 @@
 %
 % ==============================================================================
 \chapter{Mission} \label{chapt:mission}
+With the theoretical background covered the mission of this project can be
+addressed.
 The following sections will first cover the starting point based on appendix \ref{app:aufgabenstellung} and the available resources (appendix \ref{app:technicial_requirements}). Different possible solutions will be covered in \ref{chapt:solutions} before presenting the concept in \ref{chapt:mission:concept}. \\
 
 In a world of self driving cars and virtual reality, having a digital copy of
@@ -76,7 +78,7 @@ called block memory, is used to have fast access to the data. Table
 
 
 \subsection{Communication} \label{chapt:mission:communication} 
-In the preceding project \cite{p5report} a Ethernet communcation between PC and
+In the preceding project \cite{p5report} an Ethernet communcation between PC and
 FPGA was established. This included a UDP based protocol that was implemented on
 the PC and on the FPGA in form of an IP core. Basic file transfers are working
 but many features such as reliable transfer using acknowledge and retransmission
@@ -101,14 +103,19 @@ The customer Nomoko has a camera with a resolution of 1500MPixel (\ref{app:techn
 \end{equation}
 
 \subsection{Wallis Filter} \label{chapt:mission:wallis}
-The employer, Nomoko, wants the Wallis filter to be implemented. The Wallis filter is used for local contrast enhancement. For example, the filter can compensate the house shadows in images and get more details from the image. 
+The employer, Nomoko, wants the Wallis filter to be implemented. The Wallis
+filter is used for local contrast enhancement. For example, the filter can compensate house shadows in images and get more details from the image. 
 The Wallis filter is based on the equation \ref{eq:wallis_filter} as explained in chapter \ref{ch:th_wallis_filter}.
 
 
 \subsection{Development Environment}
 The image processing algorithm is written in Vivado HLS (\ref{app:technicial_requirements}). With Vivado HLS, an IP core for the Vivado HLx can be generated from a C/C++ code. Vivado HLS is useful when programming algorithms and afterwards translating them into hardware description language. \\ 
 \\
-Communication is implemented with configurable IP blocks provided by Xilinx or third party providers. Vivado HLS is mainly used for the dataflow in the FPGA (\ref{app:technicial_requirements}).
+Communication is implemented with configurable IP blocks provided by Xilinx,
+third party providers and custom developed IP cores. Vivado HLS is mainly used
+for the dataflow inside the FPGA
+(see the technical requirements for more detail in appendix 
+\ref{app:technicial_requirements}).
 
 % ==============================================================================
 %
@@ -145,7 +152,7 @@ the Ethernet throughtput can reach its maximum. The downside to this solution
 is that such a soft microprocessor core may take more FPGA ressources than a
 dedicated approach.\\
 
-\textbf{Controller IP-core:} An IP core is developed that handles the specific
+\textbf{Controller IP core:} An IP core is developed that handles the specific
 task of managing the dataflow between the communication and Wallis cores. This
 approach takes little FPGA ressources but involves more time to develop.
 
@@ -173,14 +180,15 @@ are dissected, the way of proceeding can be concluded.\\
 \textbf{Image processing}
     \begin{itemize}
         \item The border pixels are not considered for simplicity. The destination image will be smaller than the source image.
-        \item The image is sent in several parts to the FPGA. Since 4.4GByte (see equation \ref{eq:filesize}) do not have space on the FPGA (see chapter \ref{chapt:mission:fpgaboard}).
+        \item The image is sent in several pieces to the FPGA since 4.4GB 
+        (see equation \ref{eq:filesize}) do not have space on the FPGA (see chapter \ref{chapt:mission:fpgaboard}).
     \end{itemize}
 
 \textbf{Dataflow}
     \begin{itemize}
-        \item Extend the communication with acknowledge and retransmission
-        \item Realize a controller IP-core to handle the dataflow between
-        communication and Wallis filter
+        \item The communication is extended with acknowledge and retransmission.
+        \item A controller IP core is realized to handle the dataflow between
+        communication and Wallis filter.
     \end{itemize}
 
 \textbf{Scalability}
