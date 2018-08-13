@@ -6,13 +6,16 @@
 % -----------------------------------------------------------------------------
 \chapter{Theoretical Background} \label{chapt:theoreticalback}
 % -----------------------------------------------------------------------------
-This chapter provides the theory required for the project. On one hand, it is
-about image processing and filtering as well as communication via Ethernet. The
-possible kinds of image operations and the Wallis filter are explained in 
-chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via
-Ethernet is provided in the chapter \ref{chapt:theory:ethernet}. Furthermore the
-on chip interfaces used in this project are explained.
-
+% This chapter provides the theory required for the project. On one hand, it is
+% about image processing and filtering as well as communication via Ethernet. The
+% possible kinds of image operations and the Wallis filter are explained in 
+% chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via
+% Ethernet is provided in the chapter \ref{chapt:theory:ethernet}. Furthermore the
+% on chip interfaces used in this project are explained.
+This chapter provides the theory required for the project. 
+It covers image processing and filtering in general and the Wallis filter in
+detail, communication via Ethernet,  the high level synthesis in Vivaldo HLS and 
+AXI4 interfaces.
 
 % =============================================================================
 %
@@ -77,7 +80,7 @@ Example to calculate the x-derivative and y-derivative with the Sobel matrix \ci
 \end{equation} 
 
 \end{minipage}\\
-
+\vspace{1ex}
 
 \textbf{Border Handling:}
 With the application of neighborhood filters, the so-called border handling
@@ -120,7 +123,9 @@ the Hough transform and the Fourier transform.
 % -----------------------------------------------------------------------------
 \subsection{Wallis Filter}\label{ch:th_wallis_filter}
 % -----------------------------------------------------------------------------
-The main goal of the Wallis filter is to adjust the mean and variance of an image and to map it to a given mean and variance of the output image. This is mainly used for local contrast enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
+The main goal of the Wallis filter is to adjust the mean and variance of an
+image and to map it to given values. This is mainly used for local contrast
+enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
 The Wallis filter equation is \cite{wallis_filter}:
 \begin{equation}
     I'(x,y) = \frac{( I(x,y) - \mu_{n})\cdot c \cdot \sigma_{g}^{2}}{c \cdot \sigma_{n}^{2} + (1 - c) \cdot \sigma_{g}^{2}} + b \cdot \mu_{g} + (1 - b) \cdot \mu_{n}
@@ -132,8 +137,8 @@ The Wallis filter equation is \cite{wallis_filter}:
     $I'(x,y)        =$ & calculated pixel with the Wallis algorithm \\
     $\mu_{n}        =$ & mean value of the neighborhood of the pixel I(x,y) \\
     $\sigma_{n}^{2} =$ & variance value of the neighborhood of the pixel I(x,y) \\
-    $\mu_{g}        =$ & mean value of the destination image \\
-    $\sigma_{g}^{2} =$ & variance value of the destination image \\
+    $\mu_{g}        =$ & given mean value\\
+    $\sigma_{g}^{2} =$ & given variance value\\
     $b              =$ & brightness factor \\
     $c              =$ & contrast factor \\
 \end{tabular} \\

@@ -8,7 +8,7 @@ With the Wallis filter implemented on the FPGA the problem occurs that the
 image data has to be sent from the computer to the FPGA and back. The following
 chapter explains the realization of said dataflow. It is split into two main
 parts: the communcation and control parts. But before diving into them the
-concept of the dataflow is briefly dissected in the following chapter.\\
+concept of the dataflow is briefly described in the following chapter.\\
 
 During the work on the project it has been discovered that the initial approach
 to
@@ -24,8 +24,8 @@ approach) and solution B (the second, more performant approach).
 As seen in the introduction the image data is sent to the FPGA over Ethernet.
 This means that on the FPGA side an IP stack has to be implemented to handle
 Ethernet
-communication. The received data then has to be sent to the Wallis filter for
-processing and its results have to be sent back to the host PC. To distinguish
+communication. The received data is sent to the Wallis filter for
+processing and its results are sent back to the host PC. To distinguish
 the
 data transmission from the dataflow inside the FPGA, the dataflow was split into
 two blocks: the communication and control block. The communication block handles
@@ -363,13 +363,15 @@ ports.
 \section{Control} \label{ch:control}
 Now that the image data is received by the UFT core it has to be sent to the
 Wallis filter in the right order. Reordering the pixel data is the main task of
-the controller besides caching data and controlling the UFT and Wallis cores. 
+the controller besides caching data and controlling the UFT and Wallis cores.
+This chapter describes the tasks to be solved.
 
 As already mentioned at the beginning of chapter \ref{chapt:dataflow}, two
 implementations were realized. Solution A was implemented using Vivado HLS and
 is documented in chapter \ref{ch:controller:hls} followed by solution B written
-in VHDL and delineated in chapter \ref{ch:controller:vhdl}. The problem is
-stated in the following chapter.
+in VHDL and described in detail in chapter \ref{ch:controller:vhdl}. 
+% The problem is
+% stated in the following chapter.
 
 % ==============================================================================
 %                             Concept
@@ -592,9 +594,9 @@ After both counter hit their compare value, the stream state is exited and the
 data is copied back to memory.
 
 \subsubsection*{Hurdles}
-The C/C++ code was written in little time. With less than 300 lines of code it
-is a
-very simple program. The C/C++ and RTL-simulation yielded no errors but the
+The C/C++ code was written in little time. With less than 300 lines it
+is a manageable amount of code.
+The C/C++ and RTL-simulation yielded no errors but the
 implemented core together with the Wallis filter core did not work as expected.
 Thanks to the \gls{ila} the signals connecting the controller
 and Wallis core could be inspected. Soon it was discovered that the controller

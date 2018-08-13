@@ -5,14 +5,14 @@
 % ==============================================================================
 \chapter{Scalability} \label{chapt:scalability}
 The code for this project is written from the beginning with the possibility to
-scale it up in mind. The main idea is that the throughput can be increased.
+scale it up. The main idea is that the throughput can be increased.
 Scalability in regard to this project can be divided into two terms:
 \begin{itemize}
     \item Inside FPGA
     \item Across multiple FPGAs
 \end{itemize}
 
-In the following sections these two aspects are dissected theoretically. For
+In the following sections these two aspects are discussed theoretically. For
 calculations the VHDL controller and VHDL image processing core is used with the
  metrics shown in table \ref{tab:sca:vhdlparams}.
 
@@ -291,7 +291,7 @@ less memory (area optimized).
 \clearpage
 The BRAM usage is best utilized by proposal A at approximately
 $i_w=32Kp$\footnote{32 is chosen because it is a power of two} while
-the necessary tx size is kept at the minimum. Its one disatvantage is the
+the necessary tx size is kept at the minimum. Its one disadvantage is the
 limited image width of 32Kp. Three workarounds can be considered to raise the
 limit in image width:
 \begin{itemize}

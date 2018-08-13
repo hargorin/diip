@@ -6,7 +6,7 @@
 \chapter{Mission} \label{chapt:mission}
 With the theoretical background covered the mission of this project can be
 addressed.
-The following sections will first cover the starting point based on appendix \ref{app:aufgabenstellung} and the available resources (appendix \ref{app:technicial_requirements}). Different possible solutions will be covered in \ref{chapt:solutions} before presenting the concept in \ref{chapt:mission:concept}. \\
+The following sections will first cover the starting point and the available resources. Different possible solutions will be covered in \ref{chapt:solutions} before presenting the concept in chapter \ref{chapt:mission:concept}. \\
 
 In a world of self driving cars and virtual reality, having a digital copy of
 the real world yields several benefits. Cars can be trained in a virtual city
@@ -19,7 +19,13 @@ realistic if the player could walk through the streets of a major city. Gatherin
 %
 % ==============================================================================
 \section{Starting Point}
-For accelerating intense image processing a dedicated hardware approach is investigated. To do so, a basic image processing algorithm such as the Wallis filter is implemented in an FPGA that communicates over a network with a host computer. The image processing task should later be distributed onto multiple FPGAs to accelerate the processing even more \cite{nomokoReqs}. Before listing possible solutions the available resources need to be dissected.
+The goal of this project is to investigate a dedicated hardware approach to
+accelerate intense image processing. To do so, a basic image processing
+algorithm such as the Wallis filter is implemented on an FPGA that communicates
+over a network with a host computer. The image processing task should later be
+distributed onto multiple FPGAs to accelerate the processing even more 
+\cite{nomokoReqs}. Before listing possible solutions the available resources and
+boundary conditions need to be analyzed.
 
 \subsection{FPGA Board} \label{chapt:mission:fpgaboard}
 \begin{figure}[tb!]
@@ -103,7 +109,7 @@ The customer Nomoko has a camera with a resolution of 1500MPixel (\ref{app:techn
 \end{equation}
 
 \subsection{Wallis Filter} \label{chapt:mission:wallis}
-The employer, Nomoko, wants the Wallis filter to be implemented. The Wallis
+The customer Nomoko wants the Wallis filter to be implemented. The Wallis
 filter is used for local contrast enhancement. For example, the filter can compensate house shadows in images and get more details from the image. 
 The Wallis filter is based on the equation \ref{eq:wallis_filter} as explained in chapter \ref{ch:th_wallis_filter}.
 
@@ -150,7 +156,8 @@ which results in a decrease of throughput.\\
 \textbf{Soft microprocessor core:} Image data is sent to the FPGA and stored in
 FPGA memory. A microcontroller implemented in FPGA logic then dissects the data
 and feeds it to the Wallis filter in the right order. Hence the data is buffered
-the Ethernet throughtput can reach its maximum. The downside to this solution
+the Ethernet throughtput can reach its maximum. The downside to this
+solution
 is that such a soft microprocessor core may take more FPGA ressources than a
 dedicated approach.\\
 
@@ -176,7 +183,7 @@ the image processing inside the FPGA.
 \clearpage
 \section{Concept} \label{chapt:mission:concept}
 Now that the possible solutions for dataflow, image processing and scalability
-are dissected, the way of proceeding can be concluded.\\
+have been discussed, the way of proceeding can be concluded.\\
 
 
 \textbf{Image processing}

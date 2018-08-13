@@ -24,7 +24,7 @@
                 (32768,291.5555556)
                 (64536,583.1111111)
             };
-            \addlegendentry{prosoal A}
+            \addlegendentry{proposal A}
 
             \addplot[mark=none,red] coordinates {
                 (8192, 0.186848958)
@@ -32,7 +32,7 @@
                 (32768,0.186848958)
                 (64536,0.186848958)
             };
-            \addlegendentry{prosoal B}
+            \addlegendentry{proposal B}
             
             \addplot[mark=none, black, dashed] coordinates {(8192,340.5) (64536,340.5)};
             \addlegendentry{available}
@@ -58,7 +58,7 @@
                 (32768, 805306368)
                 (64536, 1610612736)
             };
-            \addlegendentry{prosoal A}
+            \addlegendentry{proposal A}
 
             \addplot[mark=none,red,smooth] coordinates {
                 (8192, 127795360)
@@ -66,7 +66,7 @@
                 (32768, 2094497792)
                 (64536, 8383365120)
             };
-            \addlegendentry{prosoal B}
+            \addlegendentry{proposal B}
             
             \addplot[mark=none, black, dashed] coordinates {(8192,198967296) (64536,1610612736)};
             \addlegendentry{image size}
