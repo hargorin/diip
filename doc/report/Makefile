@@ -57,10 +57,12 @@ ifeq ($(UNAME),Linux)
 	$(call convert_to_png_lnx, build/$(patsubst %.tikz,%.pdf,$(notdir $(TNAME))) , build/$(patsubst %.tikz,%.png,$(notdir $(TNAME))))
 endif
 
-cleanall:
+cleanall: clean
 	rm -f *.dvi *.log *.bak *.aux *.bbl *.blg *.idx *.ps *.eps *.pdf *.toc *.out *.fdb_latexmk *.fls *~ build/*
 
 clean:
-	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/*
+	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/* *.glg *.glo *.gls *.ist *.lof *.lot 
 
 .PHONY: all pdf clean cleanall chunks open tikz
+
+
