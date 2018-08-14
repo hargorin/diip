@@ -18,6 +18,8 @@ doc:
   tags:
     - doc
   image: noah95/latex
+  before_script:
+    - sudo apt-get intall -y biber
   script:
     - pdflatex -v
     - cd doc/report/ && make
