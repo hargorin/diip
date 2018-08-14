@@ -166,8 +166,8 @@ in the appendix \ref{app:datatypes}.
 
 Now a closer look at the calculation of the division is taken. The equation
 of the Wallis filter results in the division of $\frac{x}{y}$. This means that
-the dividend and the divisor change with each pixel. This could be programmed in
-the FPGA with $\frac{x}{y}$. But as it is known, a multiplication in the FPGA is
+the dividend and the divisor change with each pixel. This could be programmed on
+the FPGA with $\frac{x}{y}$. But as it is known, a multiplication on the FPGA is
 faster than a division. Therefore the $\frac{x}{y}$ division is replaced with a
 reciprocal version $\frac{1}{y}$, where afterwards the dividend is multiplied by the result of the reciprocal division $(\frac{1}{y}) \cdot x$. The latency of these two methods were measured in Vivado HLS and are shown in Table \ref{tab:c_div}. \\
 
@@ -336,12 +336,12 @@ Wallis algorithm.
 The division and the storage of fractional numbers are discussed.
 
 \subsubsection*{Mean and variance value calculation}
-A division exists in the calculation of the mean and the variance. As already mentioned in chapter \ref{ch:hls:div}, a division in an FPGA is a complex task.
+A division exists in the calculation of the mean and the variance. As already mentioned in chapter \ref{ch:hls:div}, a division on an FPGA is a complex task.
 This division is relatively easy to solve. As can be seen from the equation of
 the two calculations (\ref{eq:mean} and \ref{eq:var}), the divisor is constant.
 This gives the possibility to calculate $1/N$ in advance and to store the
-obtained value as a constant in the FPGA. The result consinsts of a multiplication with
-two integers in the FPGA that are interpreted as fractionals and can be
+obtained value as a constant on the FPGA. The result consinsts of a multiplication with
+two integers on the FPGA that are interpreted as fractionals and can be
 calculated in one clock cycle. \\
 Calculated $1/441$ results in $\approx 0.00226757$. This number is converted to
 binary and results in $\approx 0.00000000100101001001101$. The following number

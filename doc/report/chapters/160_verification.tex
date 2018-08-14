@@ -201,11 +201,11 @@ reached.
 
 \subsubsection*{Ressource} \label{ch:ver:ip:ressource}
 For the implementation of the Wallis filter, another important factor is the
-resources it requires on the FPGA. The resources used in the FPGA for the
+resources it requires on the FPGA. The resources used on the FPGA for the
 implementation of the Wallis filter are listed in table \ref{tab:ressource} as
-absolute values and as percentage of the available in the FPGA (value in
+absolute values and as percentage of the available on the FPGA (value in
 parantheses).
-Slices, Block RAMs and DSPs are compared with each other. A slice in the FPGA 
+Slices, Block RAMs and DSPs are compared with each other. A slice on the FPGA 
 (XC7A200T) contains four LUTs and eight flip-flops \cite{ds180}.
 The VHDL implementation needs the least resources in the comparison. All
 three implementations need practically the same number of DSPs. Comparing
@@ -524,7 +524,7 @@ towards $b_e$. Altough as explained in the next chapter, the maximum throughput
 is limited by the Wallis filter core.
 
 \subsection{Compare theoretical limits}
-To show the real performance of a FPGA for image processing the theoretical
+To show the real performance of an FPGA for image processing the theoretical
 limits are put in contrast in this chapter without considering how the image
 data is sent to the FPGA.
 Before this can be done the maximum possible throughput of the three FPGA
