@@ -35,18 +35,18 @@
         % Left Arrows
         \path[draw,-{Latex[length=2.5mm]}] (-1,5.5) -- (0,5.5) 
             node[near start,anchor=east,align=right,xshift=-0.2cm] {\texttt{cache\_w\_ptr}};
-        \path[draw,-{Latex[length=2.5mm]}] (-1,0.5) -- (0,0.5) 
-            node[near start,anchor=east,align=right,xshift=-0.2cm] {};
-        \foreach \y in {1.5,2.5,3.5,4.5}            
-            \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (-0.5,\y) {};
+        % \path[draw,-{Latex[length=2.5mm]}] (-1,0.5) -- (0,0.5) 
+        %     node[near start,anchor=east,align=right,xshift=-0.2cm] {};
+        % \foreach \y in {1.5,2.5,3.5,4.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (-0.5,\y) {};
 
         % Top arrows
         \path[draw,-{Latex[length=2.5mm]}] (0.5,7.0) -- (0.5,6) 
             node[near start,anchor=west,align=right,xshift=-0.2cm,rotate=90] {\texttt{col\_w\_ptr}};
-        \path[draw,-{Latex[length=2.5mm]}] (8.5,7.0) -- (8.5,6) 
-            node[near start,anchor=west,align=right,xshift=-0.2cm,rotate=90] {};
-        \foreach \x in {1.5,2.5,3.5,4.5,5.5,6.5,7.5}            
-            \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (\x,6.5) {};
+        % \path[draw,-{Latex[length=2.5mm]}] (8.5,7.0) -- (8.5,6) 
+        %     node[near start,anchor=west,align=right,xshift=-0.2cm,rotate=90] {};
+        % \foreach \x in {1.5,2.5,3.5,4.5,5.5,6.5,7.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (\x,6.5) {};
 
         % Right arrows
         \path[draw,-{Latex[length=2.5mm]}] (10,5.5) -- (9,5.5) 
@@ -55,16 +55,16 @@
             node[near start,anchor=west,align=left,xshift=0.2cm] {\texttt{cache\_r\_tip}};
         \path[draw,-{Latex[length=2.5mm]}] (10,4.5) -- (9,4.5) 
             node[near start,anchor=west,align=left,xshift=0.2cm] {\texttt{cache\_r\_ptr}};
-        \foreach \y in {2.5,3.5}            
-            \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (9.5,\y) {};
+        % \foreach \y in {2.5,3.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (9.5,\y) {};
 
         % Bot arrows
         \path[draw,-{Latex[length=2.5mm]}] (0.5,-1) -- (0.5,0) 
             node[near start,anchor=east,align=left,xshift=0.2cm,yshift=.5cm,rotate=90] {\texttt{col\_r\_ptr}};
-        \path[draw,-{Latex[length=2.5mm]}] (8.5,-1) -- (8.5,0) 
-            node[near start,anchor=east,align=left,xshift=0.2cm,rotate=90] {};
-        \foreach \x in {1.5,2.5,3.5,4.5,5.5,6.5,7.5}            
-            \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (\x,-0.5) {};
+        % \path[draw,-{Latex[length=2.5mm]}] (8.5,-1) -- (8.5,0) 
+        %     node[near start,anchor=east,align=left,xshift=0.2cm,rotate=90] {};
+        % \foreach \x in {1.5,2.5,3.5,4.5,5.5,6.5,7.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (\x,-0.5) {};
 
 
         % Axis

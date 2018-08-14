@@ -8,7 +8,7 @@ The Wallis as a local contrast enhancement filter is implemented as an IP core. 
 During the work on the project it has been discovered that the throughput does not reach the maximum and therefore will not lead to the optimum solution (see chapter \ref{chapt:ver_bench}). This is why a second implementation of the Wallis filter was made using VHDL. This second implementation is explained in chapter \ref{ch:ip:imp_vhdl} with a concept of the VHDL design.
 
 \section{Concept} \label{ch:ip:concept}
-Figure \ref{fig:concept} shows the concept of the C/C++ code programmed in Vivado HLS. First, the local mean and variance values must be calculated so that the Wallis filter can be applied afterwards with the parameters and the pixel $I(x,y)$ that is to be calculated. The calculation of mean and variance is explained in chapter \ref{ch:ip:mean_var}. The calculated pixel is $I'(x,y)$. \\
+Figure \ref{fig:concept} shows the concept of the C/C++ code programmed in Vivado HLS. First, the local mean and variance values must be calculated so that the Wallis filter can be applied with the given parameters to the pixel $I(x,y)$. The calculation of mean and variance is explained in chapter \ref{ch:ip:mean_var}. The calculated pixel is $I'(x,y)$. \\
 The sequence of the code is shown in figure \ref{fig:sequence}. It consists of an initialization and an iteration. During the initialization, the complete neighborhood (here as an example 3x3) is read and the central pixel of the neighborhood is calculated. To calculate the next pixel, only one new column (gray marked) is read and the old column (hatched line) can be dismissed. This step is the so called iteration.\\
 The operation is row based. This means that each new output row of the image requires the initialization procedure.
 
@@ -51,7 +51,10 @@ This table lists constants which were used in the code and recur in the document
 
 
 \section{Implementation HLS and Optimization} \label{ch:ip:hls_opt}
-The following three chapters explain the implementation of the Wallis filter in C/C++ code. First, the simplification of the mean and the variance calculation is dissected. Then the fixed point calculation of the Wallis equation and the optimizations using pragmas in Viviado HLS is explained.
+The following three chapters explain the implementation of the Wallis filter in
+C/C++ code. The first chapter covers the simplification of the mean and the
+variance calculation. Then the fixed point calculation of the Wallis equation
+and the optimizations using pragmas in Viviado HLS are explained.
 
 \subsection{Mean and Variance} \label{ch:ip:mean_var}
 In this section the calculation of the mean and the variance values is
@@ -73,7 +76,7 @@ it is represented a little different equation
 \ref{eq:var3} can be noted. In this case it is to be recognized that in the second term the
 mean value results $\mu = \frac{1}{N} \sum_{i = 0}^{N - 1} x_{i}$. In the third term,
 the sum $\sum_{i = 0}^{N - 1} 1$ equals to $N$.
-This adjustment leads to equation \ref{eq:var} implemented on the FPGA. The
+This transformation leads to equation \ref{eq:var} implemented on the FPGA. The
 implementation of the equation is shown in the concept in figure \ref{fig:concept} in the mean and variance block. In other words, the mean and variance values can now be calculated simultaneously.
 \begin{align}
     \sigma^{2} & = \frac{1}{N} \sum_{i = 0}^{N - 1} (x_{i} - u)^{2} \label{eq:var1}\\ 
@@ -163,8 +166,8 @@ in the appendix \ref{app:datatypes}.
 
 Now a closer look at the calculation of the division is taken. The equation
 of the Wallis filter results in the division of $\frac{x}{y}$. This means that
-the dividend and the divisor change with each pixel. This could be programmed in
-the FPGA with $\frac{x}{y}$. But as it is known, a multiplication in the FPGA is
+the dividend and the divisor change with each pixel. This could be programmed on
+the FPGA with $\frac{x}{y}$. But as it is known, a multiplication on the FPGA is
 faster than a division. Therefore the $\frac{x}{y}$ division is replaced with a
 reciprocal version $\frac{1}{y}$, where afterwards the dividend is multiplied by the result of the reciprocal division $(\frac{1}{y}) \cdot x$. The latency of these two methods were measured in Vivado HLS and are shown in Table \ref{tab:c_div}. \\
 
@@ -208,7 +211,7 @@ div = num * den;
 After initialization the calculation of a new output pixel
 requires 21 pixels (one window length). Due to the initial AXI4-Stream data size
 (8 bits), 21 clock cycles had to be waited until the calculation could be
-started, since only one pixel was received per clock cycle. This also prevents
+started, since only one pixel is received per clock cycle. This also prevents
 the loops from unrolling, as not all data is available at the input (see chapter \ref{ch:directives}). \\
 The advantage of Vivado HLS is that interfaces can be adapted relatively easy
 and quick. The AXI4-Stream has therefore been enlarged to receive one column per
@@ -252,9 +255,9 @@ set_directive_array_partition -type cyclic -factor 21 -dim 1 "wallis" pixel
 
 \section{Implementation (VHDL)} \label{ch:ip:imp_vhdl}
 This chapter describes the Wallis filter with the calculation of the mean and
-variance values in the programming language VHDL. This makes it possible to
-check in chapter \ref{chapt:ver_bench} what the differences are of the FPGA
-description in the C/C++ language and Vivado HLS. \\
+variance values in the programming language VHDL. 
+The advantages of a VHDL implementation compared to a C/C++ with Vivado HLS is
+described in chapter \ref{chapt:ver_bench}. \\
 Chapter \ref{ch:concept_vhdl} dissects the concept of the VHDL code by using a
 block diagram. This is divided into the calculation of the mean and variance
 values, as well as the Wallis algorithm. The last chapter describes the
@@ -271,7 +274,7 @@ The pixel data is sent as 8 bit AXI4-Stream into the IP core. The data is
 received by the block \texttt{dir\_shift\_reg} . This block is used for
 initialization and iteration sequence, which is shown in figure 
 \ref{fig:sequence}. All pixels are passed directly to the plus output and
-through a FIFO with a delay of 441 pixels to the minus output (441 being the
+through a FiFo with a delay of 441 pixels to the minus output (441 being the
 window size or the
 square of the window length). This FiFo is later used to subtract the
 old pixels from the sum of the pixels, as shown in figure \ref{fig:sequence}.
@@ -333,12 +336,12 @@ Wallis algorithm.
 The division and the storage of fractional numbers are discussed.
 
 \subsubsection*{Mean and variance value calculation}
-A division exists in the calculation of the mean and the variance. As already mentioned in chapter \ref{ch:hls:div}, a division in an FPGA is a complex task.
+A division exists in the calculation of the mean and the variance. As already mentioned in chapter \ref{ch:hls:div}, a division on an FPGA is a complex task.
 This division is relatively easy to solve. As can be seen from the equation of
 the two calculations (\ref{eq:mean} and \ref{eq:var}), the divisor is constant.
 This gives the possibility to calculate $1/N$ in advance and to store the
-obtained value as a constant in the FPGA. The result consinsts of a multiplication with
-two integers in the FPGA that are interpreted as fractionals and can be
+obtained value as a constant on the FPGA. The result consinsts of a multiplication with
+two integers on the FPGA that are interpreted as fractionals and can be
 calculated in one clock cycle. \\
 Calculated $1/441$ results in $\approx 0.00226757$. This number is converted to
 binary and results in $\approx 0.00000000100101001001101$. The following number

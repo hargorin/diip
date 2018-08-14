@@ -8,10 +8,10 @@
 \section{Aufgabenstellung 2018 P6 Distributed FPGA} \label{app:aufgabenstellung}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/Aufgabenstellung_2017_P5_Distributed_FPGA_comb.pdf}
 
-\section{Technicial requirements} \label{app:technicial_requirements}
+\section{Technicial Requirements} \label{app:technicial_requirements}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/technical_requirements_P6.pdf}
 
-\section{Data types of the Wallis filter} \label{app:datatypes}
+\section{Data Types of Wallis Filter} \label{app:datatypes}
 \begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{l l}
@@ -46,10 +46,10 @@
 \section{UDP File Transfer} \label{app:uftspec}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/UDP_File_Transfer.pdf}
 
-\section{UDP file transfer calculation} \label{app:uftcalc}
+\section{UDP File Transfer Calculation} \label{app:uftcalc}
 \includepdf[pages=-,scale=1,linktodoc=false]{appendices/uftcalc.pdf}
 
-\section{Images for Wallis filter} \label{app:images_wallis}
+\section{Images for Wallis Filter} \label{app:images_wallis}
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{appendices/ref_room.png}
@@ -65,7 +65,7 @@
 \end{figure}
 
 \section{Derivations} \label{app:derivations}
-\subsection{Theoretical maximum throughput of VHDL solution} \label{app:derivations:theomax}
+\subsection{Theoretical maximum Throughput of VHDL Solution} \label{app:derivations:theomax}
 
 \begin{align}
     b  & = \frac{i_p}{t_t} \\
@@ -90,7 +90,20 @@
     $d_l   =$ & delay between sending two image lines \\
 \end{tabular} \\
 
-\subsection{Theoretical maximum throughput of VHDL Wallis core} 
+Throughput $b$ is calculated by dividing the total amount of data $i_p$ by the
+time required $t_t$ to process the data. This total time can be split into a
+single initialization time $t_i$ and a multiple of the iteration time $t_r$. The
+initialization time is only required once and the iteration is executed
+$i_h-w_l+1$ times (this is the image width subtracted by the window lendth,
+refer
+to border handling problem). For initialization, $w_l$ lines are sent with a
+transfer time of $\frac{i_w}{b_e} + d_l$ seconds. One iteration takes $
+\frac{i_w}{b_e} + d_l$ seconds (time for one line). Factoring out $i_h+1$ and
+assuming $i_w \gg 1$
+the final equation can be noted.
+\clearpage
+
+\subsection{Theoretical maximum Throughput of VHDL Wallis Core} 
 \label{app:derivations:theomaxvhdlwallis}
 
 \begin{align}
@@ -99,7 +112,7 @@
        & = \frac{i_w i_h b_w}{w_l i_w (i_h-w_l+1)} &\\
        & = \frac{i_hb_w}{w_l (i_h-w_l+1)} &\\
        & = \frac{b_w}{w_l (1-\frac{w_l}{i_h}+\frac{1}{i_h})} &\\
-       & \approx \frac{b_w}{w_l} &(i_h \to \infty)
+       & \approx \frac{b_w}{w_l} &(i_h \gg w_l)
     \label{eq:theomaxvhdlwallis}
 \end{align}
 \begin{tabular}{rl}
@@ -112,3 +125,12 @@
     $b_w   =$ & throughput of Wallis filter \\
     $w_l   =$ & window length \\
 \end{tabular} \\
+
+Throughput $b$ is calculated by dividing the total amount of data $i_p$ by the
+time required $t_w$ to process the data. The total time to compute the data is
+equivalent to the total amount of pixels $n_{ps}$ being processed divided by the
+input throughput $b_w$ of the Wallis filter core. The total amount of pixels is
+the number of output lines ($i_h-w_l+1$, border handling problem) times the
+input line size $w_l \cdot i_w$ ($w_l$ lines are required for the neighborhood
+operation). Assuming $i_h \gg w_l$, the final equation can be noted.
+\clearpage

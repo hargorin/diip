@@ -8,7 +8,7 @@ With the Wallis filter implemented on the FPGA the problem occurs that the
 image data has to be sent from the computer to the FPGA and back. The following
 chapter explains the realization of said dataflow. It is split into two main
 parts: the communcation and control parts. But before diving into them the
-concept of the dataflow is briefly dissected in the following chapter.\\
+concept of the dataflow is briefly described in the following chapter.\\
 
 During the work on the project it has been discovered that the initial approach
 to
@@ -24,8 +24,8 @@ approach) and solution B (the second, more performant approach).
 As seen in the introduction the image data is sent to the FPGA over Ethernet.
 This means that on the FPGA side an IP stack has to be implemented to handle
 Ethernet
-communication. The received data then has to be sent to the Wallis filter for
-processing and its results have to be sent back to the host PC. To distinguish
+communication. The received data is sent to the Wallis filter for
+processing and its results are sent back to the host PC. To distinguish
 the
 data transmission from the dataflow inside the FPGA, the dataflow was split into
 two blocks: the communication and control block. The communication block handles
@@ -285,7 +285,7 @@ interface for memory access (refer to \cite{p5report} for AXI master burst).
 
 \begin{figure}[b!]
     \centering
-    \includegraphics[width=0.5\textwidth] {images/dataflow/uftcoreaxilite.png}
+    \includegraphics[width=0.45\textwidth] {images/dataflow/uftcoreaxilite.png}
     \caption{UFT core with AXI4-Lite interface}
     \label{fig:uftcoreaxilite}
 \end{figure}
@@ -353,7 +353,7 @@ ports.
 
 \begin{figure}[b!]
     \centering
-    \includegraphics[width=0.5\textwidth] {images/dataflow/uftcorestream.png}
+    \includegraphics[width=0.45\textwidth] {images/dataflow/uftcorestream.png}
     \caption{UFT IP core with AXI4-Stream interface}
     \label{fig:uftipcoreaxistream}
 \end{figure}
@@ -363,13 +363,15 @@ ports.
 \section{Control} \label{ch:control}
 Now that the image data is received by the UFT core it has to be sent to the
 Wallis filter in the right order. Reordering the pixel data is the main task of
-the controller besides caching data and controlling the UFT and Wallis cores. 
+the controller besides caching data and controlling the UFT and Wallis cores.
+This chapter describes the tasks to be solved.
 
 As already mentioned at the beginning of chapter \ref{chapt:dataflow}, two
 implementations were realized. Solution A was implemented using Vivado HLS and
 is documented in chapter \ref{ch:controller:hls} followed by solution B written
-in VHDL and delineated in chapter \ref{ch:controller:vhdl}. The problem is
-stated in the following chapter.
+in VHDL and described in detail in chapter \ref{ch:controller:vhdl}. 
+% The problem is
+% stated in the following chapter.
 
 % ==============================================================================
 %                             Concept
@@ -592,9 +594,9 @@ After both counter hit their compare value, the stream state is exited and the
 data is copied back to memory.
 
 \subsubsection*{Hurdles}
-The C/C++ code was written in little time. With less than 300 lines of code it
-is a
-very simple program. The C and Co-simulation yielded no errors but the
+The C/C++ code was written in little time. With less than 300 lines it
+is a manageable amount of code.
+The C/C++ and RTL-simulation yielded no errors but the
 implemented core together with the Wallis filter core did not work as expected.
 Thanks to the \gls{ila} the signals connecting the controller
 and Wallis core could be inspected. Soon it was discovered that the controller
@@ -952,7 +954,7 @@ processes: \texttt{p\_out\_pix\_ctr} counts the number of pixels sent and
 
 
 \subsubsection*{Hurdles}
-After figuering out how to increment and wrap which pointer and when to allow
+After figuring out how to increment and wrap which pointer and when to allow
 reads and writes, the memory management unit worked well in simulation. The
 \texttt{dc\_control} and \texttt{axis\_fifo} block were quickly implemented. The
 core was tested using VHDL testbenches. A big advantage was that the controller
@@ -968,7 +970,7 @@ counter and to signal the last pixel sent to the Wallis core. The calculation is
 shown in equation \ref{eq:noutpix}.
 
 \begin{equation}
-    n_{out\_pix\_m1} = win\_len*img\_width - 1
+    n_{out\_pix\_m1} = img\_width \cdot win\_len - 1
     \label{eq:noutpix}
 \end{equation}
 
@@ -990,7 +992,7 @@ new memory layout to be realised for solution B. With the main difference being
 that now the behaviour was not described in C/C++ language but in VHDL. The
 total
 amount of time spent on the solutions were approximately the same. What had
-changed is on what the time was spent. While writig the code required the same
+changed is on what the time was spent. While writing the code required the same
 amount of time, debugging and fault finding differed. The HLS solution required
 time in understanding how the synthesis tool translated the C/C++ code (referring
 to the AXI4-Stream blocking access problem) while it did not require thoughts on

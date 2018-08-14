@@ -22,8 +22,8 @@
         \draw[red,line width=0.6mm,dashed] (0,3) rectangle (3,6);
         % \draw[black,line width=0.6mm,dotted] (0,2) rectangle (3,5);
         % resulting lines
-        \draw[cyan,line width=0.6mm] (1,5) rectangle (5,6);
-        \draw[magenta,line width=0.6mm,dashed] (1,4) rectangle (5,5);
+        \draw[cyan,line width=0.6mm] (1,5) rectangle (8,6);
+        \draw[magenta,line width=0.6mm,dashed] (1,4) rectangle (8,5);
         % \draw[black,line width=0.3mm,dotted] (1,3) rectangle (5,4);
 
         % Arrows
@@ -46,11 +46,11 @@
     % Background
     \begin{pgfonlayer}{background}
         % Init pixels
-        \draw[fill=gray!20] (0,3) rectangle (6,7);
+        \draw[fill=gray!20] (0,3) rectangle (9,7);
         % Iter pixels
-        \draw[pattern=north east lines, pattern color=gray!60] (0,2) rectangle (6,3);
+        \draw[pattern=north east lines, pattern color=gray!60] (0,2) rectangle (9,3);
         % Grid
-        \draw[step=1cm,black,thin] (0,0) grid (6,7);
+        \draw[step=1cm,black,thin] (0,0) grid (9,7);
     \end{pgfonlayer} 
 
 \end{tikzpicture}

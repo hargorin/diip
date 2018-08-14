@@ -20,7 +20,7 @@ operation can be achieved in little time. Nevertheless the theoretical possible
 throughput could not be achieved due to the dataflow not being
 described well enough in C/C++ language to achieve the desired throughput.
 Therefore a VHDL implementation was written that processes pixels at 125Mp/s and
-uses about three percent of FPGA ressources.
+uses approximately three percent of FPGA resources.
 
 % ==============================================================================
 %
@@ -36,22 +36,22 @@ AXI4 can be implemented with a few lines of code and that state machines can be
 implemented as well. The unfavourable memory management and the lack of high
 throughput
 led to the implementation of a VHDL based controller and memory management unit.
-It caches necessary image data to obviate multiple image transmissions and can
+It caches necessary image data to prevent multiple image transmissions and can
 support the full throughput of the image processing core.
 
 % ==============================================================================
 %
-%                             Overall
+%                             Complete System
 %
 % ==============================================================================
-\section{Overall}
+\section{Complete System}
 The final product called \gls{diip} is based on the VHDL implementations of
 image processing and dataflow parts. Images can be sent from the PC to the FPGA
 where
 the Wallis operation is applied and the image is sent back. Image data
 throughput of up to 4.1MB/s have been measured. The system is designed with
 scalability in mind. A dedicated theoretical examination shows that if the
-image processing core was implemented 21 times in the FPGA the full bandwidth of
+image processing core was implemented 21 times on the FPGA the full bandwidth of
 gigabit Ethernet could be used to process image data yielding 125MB/s
 throughput. Furthermore if multiple FPGAs were used, the total throughput would
 scale proportional to the number of FPGAs used.

@@ -8,7 +8,8 @@ With the image processing and dataflow parts implemented, they can be verified
 and benchmarked. The next chapters hold the verification process of both the
 image processing part and the dataflow part. After both components are verified
 they are benchmarked as one unity against a computer based implementation in
-chapter \ref{ch:benchmark}.
+chapter \ref{ch:benchmark}. Before starting, the following chapter summarizes
+all solutions developed in this project.
 
 % ==============================================================================
 %
@@ -91,7 +92,7 @@ During the verification an image is processed with the Wallis filter. The Wallis
 filter is run on the computer as a C/C++ program and has floating point
 variables. This Wallis filtering is used as a reference. Two images (room and
 mountain), added in appendix \ref{app:images_wallis}, are chosen as source images. \\
-The source images are passed through the DUV and compared with the reference
+The source images are passed through the \gls{duv} and compared with the reference
 images. The \gls{rmse} serves as a metric. The RMSE
 indicates how much the  Wallis filtered image deviates on average from the
 reference image \cite{rmse}. The parameters for the Wallis filter that were used
@@ -200,11 +201,11 @@ reached.
 
 \subsubsection*{Ressource} \label{ch:ver:ip:ressource}
 For the implementation of the Wallis filter, another important factor is the
-resources it requires on the FPGA. The resources used in the FPGA for the
+resources it requires on the FPGA. The resources used on the FPGA for the
 implementation of the Wallis filter are listed in table \ref{tab:ressource} as
-absolute values and as percentage of the available in the FPGA (value in
+absolute values and as percentage of the available on the FPGA (value in
 parantheses).
-Slices, Block RAMs and DSPs are compared with each other. A slice in the FPGA 
+Slices, Block RAMs and DSPs are compared with each other. A slice on the FPGA 
 (XC7A200T) contains four LUTs and eight flip-flops \cite{ds180}.
 The VHDL implementation needs the least resources in the comparison. All
 three implementations need practically the same number of DSPs. Comparing
@@ -222,7 +223,7 @@ slices.
         VHDL 8bit       & 253 & (0.8\%)   & 1 & (0.3\%)     & 16 & (2.2\%) \\
         \bottomrule
     \end{tabular}
-    \caption{Ressources of the three implemented Wallis filters}
+    \caption{Resources of the three implemented Wallis filters}
     \label{tab:ressource}
 \end{table}
 
@@ -451,7 +452,7 @@ limits of the three image processing solution are compared without the influence
 of a controller or the communication part. Finally the fastest image processing
 solution is put in comparison with a CPU based processing.
 
-\subsection{Compare implementations}
+\subsection{Compare Implementations}
 First the two working FPGA implementations are put in contrast (1. and 3.).
 Figure \ref{fig:benchmarkcompare} and table \ref{tab:throughputmeasuremetns}
 show the results of the throughput measurements. The missing value for HLS 8bit
@@ -465,7 +466,7 @@ that the full potential of the HLS 8bit image processing core is not taken
 advantage of. The VHDL implementation yields the
 highest
 throughput. This was to be expected for two
-reasons. First, the VHDL wallis filter core can process pixels at one pixel per
+reasons. First, the VHDL Wallis filter core can process pixels at one pixel per
 clock cycle which is more than the 8bit HLS version is capeable of (21 pixels
 per 86 clock cycles).
 Second, the memory management has been greatly improved from the HLS to the VHDL
@@ -522,8 +523,8 @@ If $d_l$ were to be reduced to zero, the throughput would theoretically strive
 towards $b_e$. Altough as explained in the next chapter, the maximum throughput
 is limited by the Wallis filter core.
 
-\subsection{Compare theoretical limits}
-To show the real performance of a FPGA for image processing the theoretical
+\subsection{Compare Theoretical Limits}
+To show the real performance of an FPGA for image processing the theoretical
 limits are put in contrast in this chapter without considering how the image
 data is sent to the FPGA.
 Before this can be done the maximum possible throughput of the three FPGA
@@ -574,14 +575,14 @@ maximum results.
 
 The HLS 8bit solution is the slowest of the three implementations. Its filter
 core accepts 21 pixels per 86 clock cycles as described in table \ref{tab:throughput}. 
-With the input width of the IP-core extended to 265bit,
+With the input width of the IP core extended to 265bit,
 a new throughput of around 11 MB/s is achieved. The third solution written
-in VHDL is placed in between the two HLS solutions. Its IP-core accepts one
+in VHDL is placed in between the two HLS solutions. Its IP core accepts one
 pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
 125MHz clock frequency.
 
 \clearpage
-\subsection{FPGA versus CPU}
+\subsection{FPGA against CPU}
 Now that the different implementations are compared against each other, the
 two implementations with the highest throughput (VHDL and HLS 256bit
 implementations) are put in contrast with a CPU based computation.  The CPU
@@ -623,7 +624,7 @@ be outrunned by one FPGA.
     \label{tab:throughputcompare}
 \end{table}
 
-\subsection{Throughput vs. Area Efficiency}
+\subsection{Throughput against Area Efficiency}
 Finally, the throughput efficiency of the Wallis filter is examined. The three
 Wallis filter implementations are compared. The efficiency of the
 implementations is examined depending on the area they use on the FPGA
@@ -649,7 +650,7 @@ described more prcise in VHDL leading to a higher throughput.
 The difference in the two HLS implementations can be explaind by the way the
 256bit differs from the 8bit version. The increase in input width resulted only
 in a minor increase in ressource usage. But it enabled the whole processing to be
-pipelined which requires little more ressources but yields high throughput
+pipelined which requires little more resources but yields high throughput
 increase. The strongly increased throughput lead to an efficiency increase of a
 factor of five.
 \\

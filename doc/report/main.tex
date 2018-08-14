@@ -26,6 +26,7 @@
 %
 % Memoir class loads useful packages by default (see manual).
 \documentclass[a4paper,11pt,reqno,twoside]{memoir} %add 'draft' to turn draft option on (see below)
+
 %
 %
 % Adding metadata:
@@ -47,8 +48,8 @@
 \fi
 %
 % Declare figure/table as a subfloat.
-\newsubfloat{figure}
-\newsubfloat{table}
+% \newsubfloat{figure}
+% \newsubfloat{table}
 % Better page layout for A4 paper, see memoir manual.
 \settrimmedsize{297mm}{210mm}{*}
 \setlength{\trimtop}{0pt} 
@@ -243,6 +244,8 @@
 % \usepackage[toc,style=longheader,nonumberlist]{glossaries}
 \makeglossaries
 \input{chapters/910_glossary}
+
+\usepackage{subfig}
  
 \definecolor{mGreen}{rgb}{0,0.6,0}
 \definecolor{mGray}{rgb}{0.5,0.5,0.5}
@@ -447,14 +450,14 @@
 }
 %
 % My subcaption style
-\newcommand{\mysubcaption}[2][\@empty]{
-	\subcaptionsize{\small}
-	\hangsubcaption
-	\subcaptionlabelfont{\rmfamily}
-	\sidecapstyle{\raggedright}
-	\setlength{\belowcaptionskip}{10pt}
-	\ifx \@empty#1 \subcaption{#2}\else \subcaption[#1]{#2}
-}
+% \newcommand{\mysubcaption}[2][\@empty]{
+% 	\subcaptionsize{\small}
+% 	\hangsubcaption
+% 	\subcaptionlabelfont{\rmfamily}
+% 	\sidecapstyle{\raggedright}
+% 	\setlength{\belowcaptionskip}{10pt}
+% 	\ifx \@empty#1 \subcaption{#2}\else \subcaption[#1]{#2}
+% }
 %
 %An initial of the very first character of the content
 \usepackage{lettrine}
