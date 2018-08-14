@@ -7,6 +7,7 @@
 set proj_top_function wallis
 # Set the solution to be used
 set proj_top_solution "sol14_S2P_BRAM"
+set proj_top_solution_directive "directives_sol14.tcl"
 
 # Set the clock period in [ns]
 set proj_clk_period 8
