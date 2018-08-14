@@ -148,6 +148,19 @@ selected, the closer it converges to the mean of the desired image $\mu_{g}$. Th
 The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
 The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
 
+\begin{figure}[t!]%
+    \centering
+    \subfloat[input image]{{\includegraphics[width=7cm]{images/mission/room.png}}}%
+    \qquad
+    \subfloat[output image]{{\includegraphics[width=7cm]{images/mission/room_fpga_vhdl_v20.png}}}%
+    \caption{Wallis filtered image}%
+    \label{fig:mission:wallisoutputimages}%
+\end{figure}
+
+Figure \ref{fig:mission:wallisoutputimages} shows an image before and after
+filtering by the Wallis filter. It can be seen that in image (b) more
+structural detail is visible thanks to the local contrast enhancement without
+overexposing bright areas.
 
 % =============================================================================
 %
