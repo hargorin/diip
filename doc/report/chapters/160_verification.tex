@@ -452,7 +452,7 @@ limits of the three image processing solution are compared without the influence
 of a controller or the communication part. Finally the fastest image processing
 solution is put in comparison with a CPU based processing.
 
-\subsection{Compare implementations}
+\subsection{Compare Implementations}
 First the two working FPGA implementations are put in contrast (1. and 3.).
 Figure \ref{fig:benchmarkcompare} and table \ref{tab:throughputmeasuremetns}
 show the results of the throughput measurements. The missing value for HLS 8bit
@@ -523,7 +523,7 @@ If $d_l$ were to be reduced to zero, the throughput would theoretically strive
 towards $b_e$. Altough as explained in the next chapter, the maximum throughput
 is limited by the Wallis filter core.
 
-\subsection{Compare theoretical limits}
+\subsection{Compare Theoretical Limits}
 To show the real performance of an FPGA for image processing the theoretical
 limits are put in contrast in this chapter without considering how the image
 data is sent to the FPGA.
@@ -582,7 +582,7 @@ pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
 125MHz clock frequency.
 
 \clearpage
-\subsection{FPGA versus CPU}
+\subsection{FPGA against CPU}
 Now that the different implementations are compared against each other, the
 two implementations with the highest throughput (VHDL and HLS 256bit
 implementations) are put in contrast with a CPU based computation.  The CPU
@@ -624,7 +624,7 @@ be outrunned by one FPGA.
     \label{tab:throughputcompare}
 \end{table}
 
-\subsection{Throughput vs. Area Efficiency}
+\subsection{Throughput against Area Efficiency}
 Finally, the throughput efficiency of the Wallis filter is examined. The three
 Wallis filter implementations are compared. The efficiency of the
 implementations is examined depending on the area they use on the FPGA
