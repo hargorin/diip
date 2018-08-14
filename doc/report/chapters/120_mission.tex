@@ -150,7 +150,7 @@ realisations may be considered for the control of the dataflow:\\
 
 \textbf{Data preparation on PC:} The image data is prepared on the PC and sent
 in the right order. This method is simple to realise and requires no
-additional FPGA ressources. On the other hand, data may be sent more than once
+additional FPGA resources. On the other hand, data may be sent more than once
 which results in a decrease of throughput.\\
 
 \textbf{Soft microprocessor core:} Image data is sent to the FPGA and stored in
@@ -158,12 +158,12 @@ FPGA memory. A microcontroller implemented in FPGA logic then dissects the data
 and feeds it to the Wallis filter in the right order. Hence the data is buffered
 the Ethernet throughtput can reach its maximum. The downside to this
 solution
-is that such a soft microprocessor core may take more FPGA ressources than a
+is that such a soft microprocessor core may take more FPGA resources than a
 dedicated approach.\\
 
 \textbf{Controller IP core:} An IP core is developed that handles the specific
 task of managing the dataflow between the communication and Wallis cores. This
-approach takes little FPGA ressources but involves more time to develop.
+approach takes little FPGA resources but involves more time to develop.
 
 \subsection{Scalability} \label{chapt:mission:scalability}
 Appendix \ref{app:technicial_requirements} lists two possible solutions to scale
