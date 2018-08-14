@@ -48,7 +48,7 @@
     \coordinate (c_plus_num)    at (1.5,-0.5);
     \coordinate (c_plus_den)    at (3.5,-5);
     \coordinate (c_plus_add)    at (3.5,-9.5);
-    \coordinate (c_plus)        at (17,-1.39);
+    \coordinate (c_plus)        at (17,-1.399);
     \coordinate (c_cross_num)   at (3.5,-0.5);
     \coordinate (c_cross_den)   at (1.5,-5);
     \coordinate (c_cross_add)   at (1.5,-9.5);
@@ -86,7 +86,7 @@
         \path[draw,-{Latex[length=2.5mm]}] (-2,-10.73) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$1-b$} -|  (cross_add.270);
         \path[draw,-{Latex[length=2.5mm]}] (-2,-11.6) node[anchor=west,xshift=-0.1cm,yshift=0.3cm]{$b \cdot \mu_g$} -|  (plus_add.270);
 
-        \path[draw,-{Latex[length=2.5mm]}] (plus.0) -- node[anchor=west,xshift=-0.6cm,yshift=0.3cm]{$I'(x,y)$} (20,-1.75)   ;
+        \path[draw,-{Latex[length=2.5mm]}] (plus.0) -- node[anchor=west,xshift=-0.6cm,yshift=0.3cm]{$I'(x,y)$} (20,-1.759)   ;
 
 
         % Interconnects
@@ -94,7 +94,7 @@
         \path[draw,-{Latex[length=2.5mm]}] (cross_den.0) -- (plus_den.180);
         \path[draw,-{Latex[length=2.5mm]}] (cross_add.0) -- (plus_add.180);
 
-        \path[draw,-{Latex[length=2.5mm]}] (cross_num.0) -- (div.163);
+        \path[draw,-{Latex[length=2.5mm]}] (cross_num.0) -- ($(div.162) + (0,-0.043)$);
         \path[draw,-{Latex[length=2.5mm]}] (plus_den.0) -| ++(3,2.72) -- (div.197);
         \path[draw,-{Latex[length=2.5mm]}] (div.0) -- (plus.180);
         \path[draw,-{Latex[length=2.5mm]}] (plus_add.0) -| (plus.270);

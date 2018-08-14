@@ -50,7 +50,7 @@
     \coordinate (c_square2)     at (12.5,-1.5);
     \coordinate (c_divide0)     at (11,-0.15);
     \coordinate (c_divide1)     at (11,-3.15);
-    \coordinate (c_fifo)        at (1.0,-0.5);
+    \coordinate (c_fifo)        at (1.0,-0.45);
 
     %nodes
 
@@ -77,11 +77,11 @@
         \path[draw,-{Latex[length=2.5mm]}] (plus) -- node[above,xshift=0.09cm,yshift=-0.09cm]{$\sigma_{n}^{2}$ \footnotesize$u[14]$} (15.2,-3.51);
 
         % Interconnects
-        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,0.15) -- ($(shift.0) + (0,1/6)$);
-        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,-0.225) -- (fifo.180);
-        \path[draw,-{Latex[length=2.5mm]}] (fifo.0) -| ++(0.4,0.06) -- ($(shift.0) + (0,-1/6)$);
-        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) node[anchor=west,xshift=0cm,yshift=0.19cm] {plus \footnotesize$u[8]$} -- ($(sum0.180) + (0,1/6)$);
-        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) node[anchor=west,xshift=0cm,yshift=0.18cm] {minus \footnotesize$u[8]$} -- ($(sum0.180) + (0,-1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,0.1) |- ($(shift.0) + (0,1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,-0.1) |- (fifo.180);
+        \path[draw,-{Latex[length=2.5mm]}] (fifo.0) -- ($(shift.0) + (0,-1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) node[anchor=west,xshift=0.1cm,yshift=0.17cm] {plus \footnotesize$u[8]$} -- ($(sum0.180) + (0,1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) node[anchor=west,xshift=0.1cm,yshift=0.165cm] {minus \footnotesize$u[8]$} -- ($(sum0.180) + (0,-1/6)$);
 
         \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) -| (square1.90);
         \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) -| (square0.90);
@@ -90,8 +90,8 @@
         \path[draw,-{Latex[length=2.5mm]}] (square1.270) node[anchor=west,xshift=0cm,yshift=-0.2cm] {\footnotesize$u[16]$} |- ($(sum1.180) + (0,1/6)$);
         \path[draw,-{Latex[length=2.5mm]}] (square0.270) node[anchor=west,xshift=0cm,yshift=-0.2cm] {\footnotesize$u[16]$} |- ($(sum1.180) + (0,-1/6)$);
 
-        \path[draw,-{Latex[length=2.5mm]}] (sum0.0) node[anchor=west,xshift=0cm,yshift=0.2cm] {\footnotesize$s[17]$} -- (divide0.180);
-        \path[draw,-{Latex[length=2.5mm]}] (sum1.0) node[anchor=west,xshift=0cm,yshift=0.2cm] {\footnotesize$s[25]$} -- (divide1.180);
+        \path[draw,-{Latex[length=2.5mm]}] (sum0.0) node[anchor=west,xshift=0cm,yshift=0.23cm] {\footnotesize$s[17]$} -- (divide0.180);
+        \path[draw,-{Latex[length=2.5mm]}] (sum1.0) node[anchor=west,xshift=0cm,yshift=0.23cm] {\footnotesize$s[25]$} -- (divide1.180);
 
         \path[draw,-{Latex[length=2.5mm]}] (divide1.0) node[above,xshift=0.2cm,yshift=-0.9cm]{\footnotesize$s[40,25]$} -- (plus.181);
         \path[draw,-{Latex[length=2.5mm]}] (divide0.0) node[above,xshift=0.6cm,yshift=-0.1cm]{\footnotesize$s[32,17]$} -| node[above,xshift=-0.6cm,yshift=-0.8cm]{\footnotesize$u[12,8]$} (square2.90);

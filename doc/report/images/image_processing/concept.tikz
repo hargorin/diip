@@ -32,8 +32,8 @@
     \coordinate (plus2)     at (6.5,-3.75);
     \coordinate (square0)   at (1,-3.95);
     \coordinate (square1)   at (6.5,-2.75);
-    \coordinate (divide0)   at (5,-1.5);
-    \coordinate (divide1)   at (5,-4);
+    \coordinate (divide0)   at (5,-1.43);
+    \coordinate (divide1)   at (5,-3.93);
 
     %nodes
     \node[draw, fill=white, minimum width=4.04cm, minimum height=4.04cm, anchor=south, align=center, label={[xshift=-1cm, yshift=0cm]Wallis Filter}] (wallis) at (wallis) {$I'(x,y)$};
@@ -70,6 +70,8 @@
     \path[draw,-{Latex[length=2.5mm]}] (9,-3.325) -- node[above,xshift=-0.15cm,yshift=0cm]{parameters} (wallis.211);
     \path[draw,-{Latex[length=2.5mm]}] (wallis) -- node[above,xshift=-0.2cm,yshift=0cm]{$I'(x,y)$} (16.75,-2.11);
 
+    \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (6.5,-0.99) {};
+    \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (1,-2) {};
 
 
 
