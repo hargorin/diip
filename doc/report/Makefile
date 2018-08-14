@@ -2,6 +2,7 @@
 
 PROJECT=main
 OUTPUT=p6_diip_huetter_stocker
+BIBER=biber
 PDFLATEX=pdflatex -file-line-error -interaction=nonstopmode -output-directory . -jobname $(OUTPUT) $(PROJECT)
 BIBTEX=bibtex
 GLOSSARY=makeglossaries p6_diip_huetter_stocker
@@ -11,7 +12,7 @@ CHAPTERS_DIR=chapters
 OUT_DIR=build
 
 # For tikz
-TNAME=images/validation/dataflow/stimuli.tikz
+TNAME=images/image_processing/wallis_vhdl.tikz
 
 SRC_FILES := $(wildcard $(CHAPTERS_DIR)/*.tex)
 PDF_FILES := $(patsubst $(CHAPTERS_DIR)/%.tex,$(OUT_DIR)/%.pdf,$(SRC_FILES))
@@ -29,7 +30,8 @@ all: $(OUTPUT).pdf
 
 $(OUTPUT).pdf : *.tex chapters/*.tex revision
 	$(PDFLATEX)
-	$(BIBTEX) $(OUTPUT)
+	# $(BIBTEX) $(OUTPUT)
+	$(BIBER) $(OUTPUT).bcf
 	$(GLOSSARY)
 	$(PDFLATEX)
 	$(PDFLATEX)
