@@ -19,7 +19,7 @@ doc:
     - doc
   image: noah95/latex
   before_script:
-    - apt-get intall -y biber
+    - apt-get install -y biber
   script:
     - pdflatex -v
     - cd doc/report/ && make
