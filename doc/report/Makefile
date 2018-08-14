@@ -2,6 +2,7 @@
 
 PROJECT=main
 OUTPUT=p6_diip_huetter_stocker
+BIBER=biber
 PDFLATEX=pdflatex -file-line-error -interaction=nonstopmode -output-directory . -jobname $(OUTPUT) $(PROJECT)
 BIBTEX=bibtex
 GLOSSARY=makeglossaries p6_diip_huetter_stocker
@@ -29,7 +30,8 @@ all: $(OUTPUT).pdf
 
 $(OUTPUT).pdf : *.tex chapters/*.tex revision
 	$(PDFLATEX)
-	$(BIBTEX) $(OUTPUT)
+	# $(BIBTEX) $(OUTPUT)
+	$(BIBER) $(OUTPUT).bcf
 	$(GLOSSARY)
 	$(PDFLATEX)
 	$(PDFLATEX)

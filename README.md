@@ -32,6 +32,7 @@ Project 5 at FHNW by Noah Hütter and Jan Stocker
 
 ```bash
 sudo apt install -y -qq texlive-full build-essential
+sudo apt install -y -qq biber
 cd doc/report
 make
 ```
