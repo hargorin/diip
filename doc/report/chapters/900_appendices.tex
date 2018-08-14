@@ -90,6 +90,19 @@
     $d_l   =$ & delay between sending two image lines \\
 \end{tabular} \\
 
+Throughput $b$ is calculated by dividing the total amount of data $i_p$ by the
+time required $t_t$ to process the data. This total time can be split into a
+single initialization time $t_i$ and a multiple of the iteration time $t_r$. The
+initialization time is only required once and the iteration is executed
+$i_h-w_l+1$ times (this is the image width subtracted by the window lendth,
+refer
+to border handling problem). For initialization, $w_l$ lines are sent with a
+transfer time of $\frac{i_w}{b_e} + d_l$ seconds. One iteration takes $
+\frac{i_w}{b_e} + d_l$ seconds (time for one line). Factoring out $i_h+1$ and
+assuming $i_w \gg 1$
+the final equation can be noted.
+\clearpage
+
 \subsection{Theoretical maximum Throughput of VHDL Wallis Core} 
 \label{app:derivations:theomaxvhdlwallis}
 
@@ -99,7 +112,7 @@
        & = \frac{i_w i_h b_w}{w_l i_w (i_h-w_l+1)} &\\
        & = \frac{i_hb_w}{w_l (i_h-w_l+1)} &\\
        & = \frac{b_w}{w_l (1-\frac{w_l}{i_h}+\frac{1}{i_h})} &\\
-       & \approx \frac{b_w}{w_l} &(i_h \to \infty)
+       & \approx \frac{b_w}{w_l} &(i_h \gg w_l)
     \label{eq:theomaxvhdlwallis}
 \end{align}
 \begin{tabular}{rl}
@@ -112,3 +125,12 @@
     $b_w   =$ & throughput of Wallis filter \\
     $w_l   =$ & window length \\
 \end{tabular} \\
+
+Throughput $b$ is calculated by dividing the total amount of data $i_p$ by the
+time required $t_w$ to process the data. The total time to compute the data is
+equivalent to the total amount of pixels $n_{ps}$ being processed divided by the
+input throughput $b_w$ of the Wallis filter core. The total amount of pixels is
+the number of output lines ($i_h-w_l+1$, border handling problem) times the
+input line size $w_l \cdot i_w$ ($w_l$ lines are required for the neighborhood
+operation). Assuming $i_h \gg w_l$, the final equation can be noted.
+\clearpage
