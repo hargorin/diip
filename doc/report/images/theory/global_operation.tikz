@@ -1,0 +1,37 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}     
+        % Center Pixel
+        \draw[fill=gray] (2,4) rectangle (3,5);
+        \draw[fill=gray!30] (11,4) rectangle (12,5);
+
+        % Arrows
+        \path[draw,-{Latex[length=3.5mm]},line width=0.8mm,black,dashed] (3,4.5) to[bend angle=20, bend left] (11,4.5);
+
+
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % operations are
+        \draw[pattern=north east lines, pattern color=gray] (0,0) rectangle (7,7);
+
+        % Grid
+        \draw[step=1cm,black,thin] (0,0) grid (7,7);
+        \draw[step=1cm,black,thin] (9,0) grid (16,7);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}
