@@ -57,6 +57,9 @@ ifeq ($(UNAME),Linux)
 	$(call convert_to_png_lnx, build/$(patsubst %.tikz,%.pdf,$(notdir $(TNAME))) , build/$(patsubst %.tikz,%.png,$(notdir $(TNAME))))
 endif
 
+docker: 
+	docker run -v `pwd`:/source noah95/latex /usr/bin/make
+
 cleanall:
 	rm -f *.dvi *.log *.bak *.aux *.bbl *.blg *.idx *.ps *.eps *.pdf *.toc *.out *.fdb_latexmk *.fls *~ build/*
 
