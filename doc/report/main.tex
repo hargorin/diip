@@ -25,7 +25,7 @@
 % preliminary pages) should normally be double-sided.
 %
 % Memoir class loads useful packages by default (see manual).
-\documentclass[a4paper,11pt,reqno,openbib,twoside]{memoir} %add 'draft' to turn draft option on (see below)
+\documentclass[a4paper,11pt,reqno,twoside]{memoir} %add 'draft' to turn draft option on (see below)
 %
 %
 % Adding metadata:
@@ -198,8 +198,10 @@
 \usepackage{verbatim}					%Permits pre-formated text insertion
 \usepackage{upgreek }					%Calls other kind of greek alphabet
 \usepackage{latexsym}					%Extra symbols
-\usepackage[square,numbers,
-		     sort&compress]{natbib}		%Calls bibliography commands 
+% \usepackage[square,numbers,
+% 		     sort&compress]{natbib}		%Calls bibliography commands 
+\usepackage[style=ieee,urldate=comp,backend=biber]{biblatex} % fhnw report
+\addbibresource{bibtex.bib}
 \usepackage{url}						%Supports url commands
 \usepackage{etex}						%eTeXÕs extended support for counters
 \usepackage{fixltx2e}					%Eliminates some in felicities of the 
@@ -612,8 +614,17 @@
 
 % <<< ----------------------------------------------------------- BIBLIOGRAPHY %
 % \addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{IEEEtran}
-\bibliography{bibtex}
+% \bibliographystyle{IEEEtran}
+% \bibliography{bibtex}
+
+%%---BIBLIOGRAPHY------------------------------------------------------------------------
+{\sloppypar
+\printbibliography[heading=bibintoc]
+\label{sec:lit}
+\selectlanguage{english}                %ngerman or english
+\printbibliography[heading=bibintoc]
+}
+
 % ------------------------------------------------------------------------->>> %
 
 % <<< -------------------------------------------------------- LIST of FIGURES %
