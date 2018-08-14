@@ -40,6 +40,10 @@
         % \foreach \x in {0,1,2,3,4}
         %     \node[anchor=north] at ($(-0.5,5)-(0,\x)$)  {$\x$};
 
+        \node[anchor=center] at (2,2) {FPGA 1};
+        \node[anchor=center] at (6,2) {FPGA 2};
+        \node[anchor=center] at (10,2) {FPGA 3};
+
     \end{pgfonlayer}
 
     % Foreground

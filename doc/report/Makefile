@@ -12,7 +12,7 @@ CHAPTERS_DIR=chapters
 OUT_DIR=build
 
 # For tikz
-TNAME=images/theory/osi.tikz
+TNAME=images/scalability/acrossfpgapart.tikz
 
 SRC_FILES := $(wildcard $(CHAPTERS_DIR)/*.tex)
 PDF_FILES := $(patsubst $(CHAPTERS_DIR)/%.tex,$(OUT_DIR)/%.pdf,$(SRC_FILES))
