@@ -4,7 +4,7 @@
 
 Project 5 at FHNW by Noah Hütter and Jan Stocker
 
-## Build Status [![pipeline status](https://gitlab.fhnw.ch/noah.huetter/diip/badges/doc_noah/pipeline.svg)](https://gitlab.fhnw.ch/noah.huetter/diip/commits/doc_noah)
+## Build Status [![pipeline status](https://gitlab.fhnw.ch/noah.huetter/diip/badges/doc/pipeline.svg)](https://gitlab.fhnw.ch/noah.huetter/diip/commits/doc_noah)
 
 | Part          | Download     |
 | ------------- |:-------------|
