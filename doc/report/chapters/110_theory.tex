@@ -57,6 +57,7 @@ image. For instance, this is possible with the Sobel filter.
 
 Example to calculate the x-derivative and y-derivative with the Sobel matrix \cite{sobel_matrix}:
 
+\vspace{1ex}
 \noindent\begin{minipage}{.5\linewidth}
 \begin{equation}
     G_{x} = I * \begin{bmatrix}
@@ -207,11 +208,9 @@ Its main purpose is to ensure a reliable transfer of data frames between two
 nodes connected by a physical layer. It may also provide means to detect errors
 that may occur in the physical layer. Ethernet is the protocol used in the data
 layer of local area networks and the layer is split into two sublayers, the logical link control (LLC) and the medium access control (MAC). The LLC provides means to allow multiple network protocols (OSI layer three) to be multiplexed onto the same medium. The MAC encapsulates higher level frames into frames appropriate to be transmitted by the physical layer.
-\\
 
 Figure \ref{fig:eth} shows an Ethernet frame. The first seven bytes consist of a fixed preamble. It allows devices on the network to easily synchronize their 
 clocks for bit-level synchronization. It is followed by the start frame delimiter (SFD) that marks the beginning of a frame. Sender and receiver MAC addresses ensure that the packet is received by the corresponding host and that it can reply to the sender. The type field indicates the protocol used on the next layer (network layer). After the data payload a frame check sequence in form of a CRC (cyclic redundancy check) is sent to provide error detection. The maximum data payload size is limited to 1500 bytes.
-\\
 
 \begin{figure}[tb!]
     \centering
@@ -232,30 +231,29 @@ network. As soon as the destination node is in another network, a network layer
 is required. Using logical device addresses, network packets can be routed
 across different networks and on different media. This allows data to be sent
 over long distances.
-\\
 
 The most commonly used network layer is the Internet Protocol version 4 (IPv4).
 It consists of a 20 byte sized header that contains destination and source IP
 addresses, total length, checksum and other fields. The protocol field indicates what layer four protocol is used. Figure \ref{fig:ip} shows a complete IPv4 header.
 
-\begin{figure}[tb!]
+\begin{figure}[b!]
     \centering
     \includegraphics[width=\textwidth]{images/theory/ip.png}
     \caption{IPv4 header \cite{ip}}
     \label{fig:ip}
 \end{figure}
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=\textwidth]{images/theory/tcp.png}
-    \caption{TCP Header \cite{tcpudp}}
-    \label{fig:tcp}
-\end{figure}
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=\textwidth]{images/theory/udp.png}
-    \caption{UDP Header \cite{tcpudp}}
-    \label{fig:udp}
-\end{figure}
+% \begin{figure}[tb!]
+%     \centering
+%     \includegraphics[width=\textwidth]{images/theory/tcp.png}
+%     \caption{TCP Header \cite{tcpudp}}
+%     \label{fig:tcp}
+% \end{figure}
+% \begin{figure}[tb!]
+%     \centering
+%     \includegraphics[width=\textwidth]{images/theory/udp.png}
+%     \caption{UDP Header \cite{tcpudp}}
+%     \label{fig:udp}
+% \end{figure}
 
 
 \subsection{Transport} 
@@ -264,7 +262,6 @@ the network. Its main purpose is to control the communication of different
 applications on two hosts. Therefore a port number is required to distinguish
 between the different applications utilizing the same network connection. The
 transport layer may also provide segmentation of the data, guarantee of delivery and flow control to avoid network jam.
-\\
 
 The two most used transport layer protocols are the Transmission Control
 Protocol (TCP) and the User Datagram Protocol (UDP). Table \ref{tab:tcpudp}
@@ -336,7 +333,8 @@ Among other things, memory elements can also be connected directly to the IP
 core. These are block RAM or \gls{fifo} that can be used to read and process
 the data
 inside the IP core. These can also be used to store output data of the IP core 
-\cite{pragma}. \\
+\cite{pragma}.
+\clearpage
 Figure \ref{fig:p_interface} shows how the pragma \texttt{interface} is
 configured. First, the interface can be specified and whether it is an input or
 an output. Second, the variable to which the pragma is to be applied has to be
@@ -394,13 +392,14 @@ loops are automatically unrolled. \\
 One can also apply both directives in combination in a loop. This is useful if,
 for example, the data was previously split per \texttt{array\_partition} and it is now possible to read multiple data (but not all data) in one clock cycle. Since the unroll directive can specify a factor that unrolls the loop.
 
-\begin{figure}[tb!]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.9\textwidth]{images/theory/pipeline_unroll.png}
     \caption{Pragma: pipeline / unroll}
     \label{fig:p_pipeline_unroll}
 \end{figure}
 
+\newpage
 \subsection{Arbitrary Precision} \label{ch:ap}
 Resources are limited on the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point on the FPGA \cite{floating}. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
 
@@ -447,7 +446,7 @@ The AXI4 interface is a memory mapped interface and consists of five transaction
 channels as shown in table
 \ref{tab:axi4transchan}. 
 
-\begin{table}[h]
+\begin{table}[t!]
     \centering
     \begin{tabular}{ l  l}
         \toprule
@@ -471,7 +470,7 @@ signal is set active if the sender has driven the INFORMATION lines with valid
 data. The receiver indicates with a READY impulse that it has read the
 information. 
 
-\begin{figure}[h!]
+\begin{figure}[b!]
     \centering
     \includegraphics[width=0.6\textwidth]{images/theory/axi4handshake.png}
     \caption{VALID before READY handshake \cite{axispecs}}
