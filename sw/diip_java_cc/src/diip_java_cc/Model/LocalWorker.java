@@ -99,66 +99,79 @@ public class LocalWorker extends Thread {
         	
         	// If enough data is here
         	if(rxLines >= 21) {
-        		System.out.println("Processing Wallis");
-        		sum_Pixel = 0;
-        		sum_Pixel2 = 0;
-        		outIndex = 0;
-        		// Process
-        		// ********************************************************************
-                // Initialization WIN
-                for(int x_win = 0; x_win < WIN_LENGTH; x_win++) {
-                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {
-//                    	pixelAt(x_win, y_win);
-//                        System.out.printf("%02x\n",pixelAt(x_win, y_win));
-                        sum_Pixel += pixelAt(x_win, y_win);
-                        sum_Pixel2 += pixelAt(x_win, y_win)*pixelAt(x_win, y_win);
-                    }
-                }
-                
-                // center pixel
-                w_pixel = pixelAt( (WIN_LENGTH-1)/2, (readCachePtr + (WIN_LENGTH-1)/2) % CACHE_N_LINES );
 
-                n_Mean = Cal_Mean(sum_Pixel);
-                n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
-                outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
-                
-
-
-                // ********************************************************************
-                // Calculate the whole width of the image
-                for(int x = 0; x < (wapar.imgWidth - 1); x++) {
-
-                    // Substract old data, add new data
-                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {                    	
-                        sum_Pixel -= pixelAt(x, y_win);
-                        sum_Pixel2 -= pixelAt(x, y_win) * pixelAt(x, y_win);
-                        
-                        sum_Pixel += pixelAt(x + WIN_LENGTH, y_win);
-                        sum_Pixel2 += Math.pow(pixelAt(x + WIN_LENGTH, y_win), 2);
-//                        System.out.printf("%02x\n", pixelAt(x + WIN_LENGTH, y_win));
-                    }
-
-                    
-                    w_pixel = pixelAt(x + (WIN_LENGTH-1)/2, (readCachePtr + (WIN_LENGTH-1)/2) % CACHE_N_LINES );
-
-                    n_Mean = Cal_Mean(sum_Pixel);
-                    n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
-                    outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
-                }
-                // Send data back
-                outPixSend = new byte[outIndex];
-                for(int i = 0; i < outIndex; i++) {
-                	outPixSend[i] = (byte)outPix[i];
-                }
-                udata.data = outPixSend;
-                udata.length = outIndex;
-                udata.tcid = 0;
-                UFT.send(udata, socket, udata.address, 2222);
-                
-                // Increment pointer
-                readCachePtr++;
-                readCachePtr%=CACHE_N_LINES;
-        		System.out.println("Processing Wallis Done");
+              // Send data back
+              outPixSend = new byte[udata.length];
+              for(int i = 0; i < udata.length-21+1; i++) {
+            	  outPixSend[i] = (byte)imcache[CACHE_N_LINES*(rxLinePtr-1)+i];
+              }
+              udata.data = outPixSend;
+              udata.length = udata.length-21+1;
+              udata.tcid = 0;
+              UFT.send(udata, socket, udata.address, 2222);
+              
+        		
+        		
+//        		System.out.println("Processing Wallis");
+//        		sum_Pixel = 0;
+//        		sum_Pixel2 = 0;
+//        		outIndex = 0;
+//        		// Process
+//        		// ********************************************************************
+//                // Initialization WIN
+//                for(int x_win = 0; x_win < WIN_LENGTH; x_win++) {
+//                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {
+////                    	pixelAt(x_win, y_win);
+////                        System.out.printf("%02x\n",pixelAt(x_win, y_win));
+//                        sum_Pixel += pixelAt(x_win, y_win);
+//                        sum_Pixel2 += pixelAt(x_win, y_win)*pixelAt(x_win, y_win);
+//                    }
+//                }
+//                
+//                // center pixel
+//                w_pixel = pixelAt( (WIN_LENGTH-1)/2, (readCachePtr + (WIN_LENGTH-1)/2) % CACHE_N_LINES );
+//
+//                n_Mean = Cal_Mean(sum_Pixel);
+//                n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
+//                outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
+//                
+//
+//
+//                // ********************************************************************
+//                // Calculate the whole width of the image
+//                for(int x = 0; x < (wapar.imgWidth - 1); x++) {
+//
+//                    // Substract old data, add new data
+//                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {                    	
+//                        sum_Pixel -= pixelAt(x, y_win);
+//                        sum_Pixel2 -= pixelAt(x, y_win) * pixelAt(x, y_win);
+//                        
+//                        sum_Pixel += pixelAt(x + WIN_LENGTH, y_win);
+//                        sum_Pixel2 += Math.pow(pixelAt(x + WIN_LENGTH, y_win), 2);
+////                        System.out.printf("%02x\n", pixelAt(x + WIN_LENGTH, y_win));
+//                    }
+//
+//                    
+//                    w_pixel = pixelAt(x + (WIN_LENGTH-1)/2, (readCachePtr + (WIN_LENGTH-1)/2) % CACHE_N_LINES );
+//
+//                    n_Mean = Cal_Mean(sum_Pixel);
+//                    n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
+//                    outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
+//                }
+//                // Send data back
+//                outPixSend = new byte[outIndex];
+//                for(int i = 0; i < outIndex; i++) {
+//                	outPixSend[i] = (byte)outPix[i];
+//                }
+//                udata.data = outPixSend;
+//                udata.length = outIndex;
+//                udata.tcid = 0;
+//                UFT.send(udata, socket, udata.address, 2222);
+//                
+//                // Increment pointer
+//                readCachePtr++;
+//                readCachePtr%=CACHE_N_LINES;
+//        		System.out.println("Processing Wallis Done");
         	}
         	
         	

@@ -3,6 +3,8 @@ package diip_java_cc.Model;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,18 +96,31 @@ public class DistributedProcessor extends Thread {
 	private BufferedImage processImage(BufferedImage i) {
 		int outW = (i.getWidth()-waPar.winLen+1);
 		int outH = (i.getHeight()-waPar.winLen+1);
-		int[] outData = new int[outW*outH];
+		int[][] outData = new int[outW][outH];
 		
-		// Split image accordingly
-		List<int[]> si = splitImage(i, workers.size());
+		// array test
+//		int[][] test = imageToArray(i);
+//		BufferedImage testout = arrayToImage(test, i.getWidth(), i.getHeight());
+		
+		// split test
+//		List<int[][]> si = splitImage(i, 3);
+//		return arrayToImage(si.get(1), i.getWidth()/3+(waPar.winLen-1), i.getHeight());
+		
+		
+//		// Split image accordingly
+		List<int[][]> si = splitImage(i, workers.size());
 		// Configure worker and start
 		int wnr = 0;
 		for (Worker w : workers) {
 			w.ih = i.getHeight();
-			w.iw = si.get(wnr).length/w.ih;
+			w.iw = si.get(wnr).length;
+//			System.out.printf("w.ih=%d\n",w.ih);
+//			System.out.printf("w.iw=%d\n",w.iw);
+//			System.out.printf("len=%d\n",si.get(wnr).length);
 			w.imData = si.get(wnr);
 			w.wapar = waPar;
 			w.start();
+			wnr++;
 		}
 		// Wait for all to complete
 		for (Worker w : workers) {
@@ -119,30 +134,33 @@ public class DistributedProcessor extends Thread {
 		// copy data back
 		int xoff = 0;
 		for (Worker w : workers) {
-			for(int y = 0; y < outH; y++) {
-				for(int x=0; x<outW; x++) {
-					outData[(x+xoff) + y*outW] = w.outPix[(x) + y*outW] & 0xFF;
+			for(int y = 0; y < (w.ih-waPar.winLen+1); y++) {
+				for(int x=0; x < (w.iw-waPar.winLen+1); x++) {
+					outData[(x+xoff)][y] = w.outPix[x][y];
 				}
 			}
+			xoff += w.iw-waPar.winLen+1;
 		}
 		
-		return arrayToImage(outData, outW);
+		BufferedImage outi = arrayToImage(outData, outW, outH);
+		return outi;
+//		return testout;
 		
 	}
 
 	/**
 	 * Splits input image to size overlapping chunks
 	 */
-	private List<int[]> splitImage(BufferedImage i, int n) {
+	private List<int[][]> splitImage(BufferedImage i, int n) {
 		int iw = i.getWidth();
 		int ih = i.getHeight();
 
-		int startendwidth = iw/n+waPar.winLen/2;
+		int startendwidth = iw/n+(waPar.winLen-1)/2;
 		int midwidth = iw/n+(waPar.winLen-1);
 		
-		int[] imData = imageToArray(i);
+		int[][] imData = imageToArray(i);
 		
-		List<int[]> si = new ArrayList<int[]>();
+		List<int[][]> si = new ArrayList<int[][]>();
 		
 		// If one then just put inside list
 		if(n == 1) {
@@ -151,24 +169,22 @@ public class DistributedProcessor extends Thread {
 		}
 
 		// if two 
-		if(n ==2) {
-			int[] i1 = new int[startendwidth*ih];
-			int[] i2 = new int[startendwidth*ih];
+		if(n == 2) {
+			int[][] i1 = new int[startendwidth][ih];
+			int[][] i2 = new int[startendwidth][ih];
 
 			// i1
 			int xoff = 0;
-			int ctr = 0;
 			for(int y = 0; y < ih; y++) {
 				for(int x=0; x<startendwidth; x++) {
-					i1[ctr++] = imData[(xoff+x)+y*iw];
+					i1[x][y] = imData[x+xoff][y];
 				}
 			}
 			// i2
-			xoff = iw/2-waPar.winLen/2;
-			ctr = 0;
+			xoff = iw/2-(waPar.winLen-1)/2;
 			for(int y = 0; y < ih; y++) {
 				for(int x=0; x<startendwidth; x++) {
-					i2[ctr++] = imData[(xoff+x)+y*iw];
+					i2[x][y] = imData[x+xoff][y];
 				}
 			}
 
@@ -178,42 +194,44 @@ public class DistributedProcessor extends Thread {
 		}
 		
 		// else
-		int[] itmp = new int[startendwidth*ih];
-		int xoff = 0;
-		int ctr = 0;
 		int nctr = 0;
+
+		int[][] it = new int[startendwidth][ih];
+
+		// first
+		int xoff = 0;
 		for(int y = 0; y < ih; y++) {
 			for(int x=0; x<startendwidth; x++) {
-				itmp[ctr++] = imData[(xoff+x)+y*iw];
+				it[x][y] = imData[x+xoff][y];
 			}
 		}
-		si.add(itmp);
+		si.add(it);
 		nctr++;
-		
+		xoff += iw/n-(waPar.winLen-1)/2;
+
 		// mid pieces
-		for(int mid = 0; mid < n-2; mid++) {
-			itmp = new int[midwidth*ih];
-			xoff = nctr*iw/n-waPar.winLen/2;
-			ctr = 0;
+		for(int mid = 0; mid < (n-2); mid++) {
+			it = new int[midwidth][ih];
+
 			for(int y = 0; y < ih; y++) {
 				for(int x=0; x<midwidth; x++) {
-					itmp[ctr++] = imData[(xoff+x)+y*iw];
+					it[x][y] = imData[x+xoff][y];
 				}
 			}
-			si.add(itmp);
+			si.add(it);
 			nctr++;
+			xoff += iw/n;
 		}
 		
 		// end piece
-		itmp = new int[startendwidth*ih];
-		xoff = nctr*iw/n-waPar.winLen/2;
-		ctr = 0;
+		it = new int[startendwidth][ih];
 		for(int y = 0; y < ih; y++) {
 			for(int x=0; x<startendwidth; x++) {
-				itmp[ctr++] = imData[(xoff+x)+y*iw];
+				it[x][y] = imData[x+xoff][y];
 			}
 		}
-		si.add(itmp);
+		
+		si.add(it);
 		
 		
 		return si;
@@ -221,32 +239,34 @@ public class DistributedProcessor extends Thread {
 
 	/**
 	 * Converts an image to grayscale 0-255 values
-	 * @param i
+	 * @param img
 	 * @return
 	 */
-	private int[] imageToArray(BufferedImage i) {
-		int[] ret = new int[i.getWidth()*i.getHeight()];
-		Color c;
+	private int[][] imageToArray(BufferedImage img) {
+		int width = img.getWidth();
+	    int height = img.getHeight();
+	    int[][] ret = new int[width][height];
+		Raster raster = img.getData();
 		
-		int ctr = 0;
-		for(int y = 0; y < i.getHeight(); y++) {
-			for(int x=0; x<i.getWidth(); x++) {
-				c = new Color(i.getRGB(x, y));
-				ret[ctr++] = (c.getRed() + c.getGreen() + c.getBlue())/3;
-			}
-		}
+		for (int x = 0; x < width; x++) {
+	        for (int y = 0; y < height; y++) {
+	        	ret[x][y] = raster.getSample(x, y, 0);
+	        }
+	    }
 		
 		return ret;
 	}
 	
-	private BufferedImage arrayToImage (int[] imData, int iw) {
-		BufferedImage i = new BufferedImage(iw, imData.length/iw, java.awt.image.BufferedImage.TYPE_INT_RGB);
+	private BufferedImage arrayToImage (int[][] imData, int iw, int ih) {
+		BufferedImage i = new BufferedImage(iw, ih, java.awt.image.BufferedImage.TYPE_INT_RGB);
+		//WritableRaster raster=i.getRaster();
+		
 		Color c;
 
-		for(int y = 0; y < imData.length/iw; y++) {
-			for(int x=0; x<iw; x++) {
-				c = new Color(imData[y*iw+x], imData[y*iw+x], imData[y*iw+x]);
-				i.setRGB(x, y, c.getRGB());
+		for(int y = 0; y < ih; y++) {
+			for(int x=0; x < iw; x++) {
+				//raster.setSample(x, y, 0, imData[x][y]);
+				i.setRGB(x, y, imData[x][y] | (imData[x][y]<<8) | (imData[x][y]<<16));
 			}
 		}
 		
