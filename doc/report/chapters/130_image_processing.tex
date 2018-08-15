@@ -31,7 +31,7 @@ The operation is row based. This means that each new output row of the image req
 \end{figure}
 
 \subsubsection*{Abbreviations}
-This table lists constants which were used in the code and recur in the documentation.
+Table \ref{tab:ip:abbreviations} lists constants which were used in the code and recur in the documentation.
 
 \begin{table}[tb!]
     \centering
@@ -46,7 +46,7 @@ This table lists constants which were used in the code and recur in the document
         \bottomrule
     \end{tabular}
     \caption{Constants of the code}
-    \label{tab:c_div}
+    \label{tab:ip:abbreviations}
 \end{table}
 
 
@@ -218,13 +218,13 @@ and quick. The AXI4-Stream has therefore been enlarged to receive one column per
 clock. This means that the AXI4-Stream has been extended to a data width of 256
 bits \cite{axi_stream}. This also made it possible to add the directive 
 \texttt{unroll} to the loops. With this solution the troughput could be
-increased.
+increased. Listing \ref{lst:ip:axistream} shows the expansion of the AXI4-Stream interface.
 
 % has increased by a factor of 7.8 to the 8 bit version. It should be
 % noted that the 256bit solution did not increase by a factor of 21. The problem is that the FPGA needs 11 clock cycles to provide the data to the Wallis filter and this cannot be pipelined.
 
 \begin{minipage}{\textwidth}
-\begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
+\begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:ip:axistream]
 typedef ap_axiu<8,1,1,1> AXI_VALUE;			// <TDATA, TUSER, TID, TDEST>
 typedef hls::stream<AXI_VALUE> AXI_STREAM;
 
