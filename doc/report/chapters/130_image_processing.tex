@@ -68,7 +68,7 @@ No adjustment is necessary for the equation for the mean value. It can be used a
     \label{eq:mean}
 \end{equation} 
 
-The equation known for variance (\ref{eq:var1}) is adjusted beore implementated
+The equation known for variance (\ref{eq:var1}) is adjusted before implementated
 on FPGA.
 As can be seen, the mean value must first be calculated so that the calculation of the
 variance can be started. The goal is to start the calculation of the mean
@@ -225,7 +225,7 @@ The advantage of Vivado HLS is that interfaces can be adapted relatively easy
 and quick. The AXI4-Stream has therefore been enlarged to receive one column per
 clock. This means that the AXI4-Stream has been extended to a data width of 256
 bits \cite{axi_stream}. This also made it possible to add the directive 
-\texttt{unroll} to the loops. With this solution the troughput could be
+\texttt{unroll} to the loops. With this solution the throughput could be
 increased. Listing \ref{lst:ip:axistream} shows the expansion of the AXI4-Stream interface.
 
 % has increased by a factor of 7.8 to the 8 bit version. It should be
@@ -273,7 +273,7 @@ problems with programming the algorithm.
 
 \subsection{Concept} \label{ch:concept_vhdl}
 This chapter presents the concept of the mean and variance value
-calcualation, as well as the Wallis filter. They are shown as a block diagram and briefly explained.
+calculation, as well as the Wallis filter. They are shown as a block diagram and briefly explained.
 
 \subsubsection*{Mean and Variance}
 Block diagram \ref{fig:mean_var_vhdl} is based on the two equations of the mean 
@@ -349,7 +349,7 @@ A division exists in the calculation of the mean and the variance. As already me
 This division is relatively easy to solve. As can be seen from the equation of
 the two calculations (\ref{eq:mean} and \ref{eq:var}), the divisor is constant.
 This gives the possibility to calculate $1/N$ in advance and to store the
-obtained value as a constant on the FPGA. The result consinsts of a multiplication with
+obtained value as a constant on the FPGA. The result consists of a multiplication with
 two integers on the FPGA that are interpreted as fractionals and can be
 calculated in one clock cycle. \\
 Calculated $1/441$ results in $\approx 0.00226757$. This number is converted to

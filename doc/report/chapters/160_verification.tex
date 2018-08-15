@@ -208,12 +208,12 @@ reached.
 \end{table}
 
 \clearpage
-\subsubsection*{Ressource} \label{ch:ver:ip:ressource}
+\subsubsection*{Resource} \label{ch:ver:ip:ressource}
 For the implementation of the Wallis filter, another important factor is the
 resources it requires on the FPGA. The resources used on the FPGA for the
 implementation of the Wallis filter are listed in table \ref{tab:ressource} as
 absolute values and as percentage of the available on the FPGA (value in
-parantheses).
+parentheses).
 \glspl{slice}, Block RAMs and DSPs are compared with each other. A slice on the FPGA 
 (XC7A200T) contains four LUTs and eight flip-flops \cite{ds180}.
 The VHDL implementation needs the least resources in the comparison. All
@@ -265,7 +265,7 @@ chapter. They consist of:
 FPGA from the computer
 and the Ethernet traffic was monitored with Wireshark Network Protocol Analyzer.
 Wiresharks packet dissections are exported to a json file that was then analyzed
-using the \texttt{uftcheck} utility. It was written to analyze network pacekts
+using the \texttt{uftcheck} utility. It was written to analyze network packets
 for UFT transfers. The first lines of output are shown in listing \ref{lst:uftcheckoutput}.
 
     % \begin{adjustbox}{max width=1.7\textwidth}
@@ -289,7 +289,7 @@ for UFT transfers. The first lines of output are shown in listing \ref{lst:uftch
 
 \vspace{1ex}
 The sending PC starts a file transmission with a file transfer start packet and
-the first data packet. The next packet (3) is comming from the FPGA to the PC
+the first data packet. The next packet (3) is coming from the FPGA to the PC
 and acknowledges the first data packet (sequence 0). To verify that all packets
 are acknowledged, the sending program reports an acknowledge status after the
 file has been sent. Listing \ref{lst:uftsenderout} shows the output of the UFT
@@ -309,7 +309,7 @@ time elapsed: 1.18s Speed: 0.859 MB/s Size: 1.012 MB\end{lstlisting}
 \end{minipage}
 
 \vspace{1ex}
-\textbf{User register:} To test wether the user registers can be written and are
+\textbf{User register:} To test whether the user registers can be written and are
 output correctly by the communication core, an \gls{ila} 
 was used. An ILA can be configured on the FPGA to record internal signals. The
 results are transferred to the PC over USB and displayed in \gls{vivadohlx}. All
@@ -427,7 +427,7 @@ chapter \ref{ch:verification:imageprocessing}. It is assumed that this depends o
 \section{Benchmark}\label{ch:benchmark}
 To conclude the results of this work, the different solutions are compared in
 this chapter. The working implementations (including send and receive from PC)
-and theoretical limits are differentiated. Furthermore the throughput is
+and theoretical limits are differentiated. Furthermore, the throughput is
 compared to a CPU based solution.
 There are four different processing methods in total:
 
@@ -436,7 +436,7 @@ There are four different processing methods in total:
     \item The solution using HLS with 256bit data bus. This method was not
     implemented on the FPGA hence simulation results were used
     \item The solution implemented using VHDL 8bit
-    \item A programm running on CPU written in C++
+    \item A program running on CPU written in C++
 \end{itemize}
 
 Methods 1. and 3. are measured by processing an image stored on the computer
@@ -458,7 +458,7 @@ the
 4k image standard. The content of the image does not influence the throughput.
 \\
 
-The benchmark is split into three seperate comparisons. First the two overall
+The benchmark is split into three separate comparisons. First the two overall
 working solutions are compared (diip and diip\_faster). Then the theoretical
 limits of the three image processing solution are compared without the influence
 of a controller or the communication part. Finally the fastest image processing
@@ -534,7 +534,7 @@ line. From there the theoretical maximum throughput can be calculated. Equation
 \end{tabular} \\
 
 If $d_l$ were to be reduced to zero, the throughput would theoretically strive
-towards $b_e$. Altough as explained in the next chapter, the maximum throughput
+towards $b_e$. Although as explained in the next chapter, the maximum throughput
 is limited by the Wallis filter core.
 
 \subsection{Compare Theoretical Limits}
@@ -602,7 +602,7 @@ pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
 Now that the different implementations are compared against each other, the
 two implementations with the highest throughput (VHDL and HLS 256bit
 implementations) are put in contrast with a CPU based computation.  The CPU
-programm was run multiple times for each image and the mean throughput was
+program was run multiple times for each image and the mean throughput was
 calculated. The program was running on an Intel Core i7-6700HQ running at 2.60
 GHz on a single core.  Figure \ref{fig:theoreticalmax} and table
 \ref{tab:throughputcompare} show the results.
@@ -660,12 +660,12 @@ every register and combinatorial logic was placed deliberate while the HLS
 synthesis tool optimizes C/C++ code to a certain degree but not perfect. This
 can be compared to writing microcontroller code in either C or assembly
 language. The second reason being that the dataflow inside the core could be
-described more prcise in VHDL leading to a higher throughput.
+described more precise in VHDL leading to a higher throughput.
 \\
 
-The difference in the two HLS implementations can be explaind by the way the
+The difference in the two HLS implementations can be explained by the way the
 256bit differs from the 8bit version. The increase in input width resulted only
-in a minor increase in ressource usage. But it enabled the whole processing to be
+in a minor increase in resource usage. But it enabled the whole processing to be
 pipelined which requires little more resources but yields high throughput
 increase. The strongly increased throughput lead to an efficiency increase of a
 factor of five.

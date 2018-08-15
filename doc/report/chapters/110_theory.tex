@@ -130,7 +130,7 @@ the Hough transform and the Fourier transform.
 % -----------------------------------------------------------------------------
 The main goal of the Wallis filter is to adjust the mean and variance of an
 image and to map it to given values. This is mainly used for local contrast
-enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
+enhancement in both low and high level regions. It also achieves similar brightness levels in the image.
 The Wallis filter equation is \cite{wallis_filter}:
 \begin{equation}
     I'(x,y) = \frac{( I(x,y) - \mu_{n})\cdot c \cdot \sigma_{g}^{2}}{c \cdot \sigma_{n}^{2} + (1 - c) \cdot \sigma_{g}^{2}} + b \cdot \mu_{g} + (1 - b) \cdot \mu_{n}
@@ -151,7 +151,7 @@ The Wallis filter equation is \cite{wallis_filter}:
 The two factors b and c can have the range from 0 to 1. The larger b is
 selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
 The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
-The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
+The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the signal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
 
 \begin{figure}[t!]%
     \centering
@@ -175,7 +175,7 @@ overexposing bright areas.
 \section{Ethernet Communication} \label{chapt:theory:ethernet}
 Exchanging data between two devices can be done using different approaches. The
 following section contains an overview of the communication standards used in
-local area networks (LAN). This section is taken from the preceeding project
+local area networks (LAN). This section is taken from the preceding project
 report \cite{p5report} to clarify the communication concept.
 
 
@@ -296,7 +296,7 @@ Vivado HLS is a development environment that synthesizes C/C++ code to HDL. The
 C/C++ language is intended for sequential programming where the HDL language
 describes the hardware. This chapter deals with the design flow (
 \ref{ch:design_flow}) of Vivado HLS. The directives (\ref{ch:directives}) that
-are used for the compiler to synthesize the C/C++ code in HDL and finally arbritary data types (\ref{ch:ap}) which can be used in Vivado HLS for C/C++ code.
+are used for the compiler to synthesize the C/C++ code in HDL and finally arbritrary data types (\ref{ch:ap}) which can be used in Vivado HLS for C/C++ code.
 
 \subsection{Design Flow} \label{ch:design_flow}
 In Vivado HLS it is possible to translate the C/C++ code into HDL and generate
@@ -328,7 +328,7 @@ The IP core can be controlled with the control interfaces. With this signal it
 can be started or stopped for example or send a handshake if the IP core has
 finished its operation. 
 AXI4 interfaces can also be added directly to the IP core using directives. The
-AX4-Lite, AXI4-Master or AXI4-Stream interface can be configuered.
+AX4-Lite, AXI4-Master or AXI4-Stream interface can be configured.
 Among other things, memory elements can also be connected directly to the IP
 core. These are block RAM or \gls{fifo} that can be used to read and process
 the data
@@ -379,7 +379,7 @@ In Vivado HLS the FPGA is described with C/C++ language. Among others, it is als
 \begin{description}
 \item[Pipeline]\hfill \\
 This directive allows a loop to be pipelined which increases throughput.
-Now more operations are happening in a signle clock cycle.
+Now more operations are happening in a single clock cycle.
 Pipeline is used if not all data for processing is available in the loop. Figure
 \ref{fig:p_pipeline_unroll} (pipeline) shows that only one read access per clock cycle can be made. The other operations can be pipelined. This will lead to a processing of the loop in five clock cycles. The throughput could therefore be increased from the sequential method with one third data per clock cycle to pipelined with one data per clock cycle.
 
@@ -498,7 +498,7 @@ data word.
 \subsection{AXI4-Lite}
 AXI4-Lite is a scaled-down version of AXI4. It allows single beat write and
 reads but no burst transaction. It therefore requires less signals and is suited
-for configuering IP cores and register values. It consists of the same
+for configuring IP cores and register values. It consists of the same
 transaction channels and handshake signals. AXI4 and AXI4-Lite are compatible
 and can be converted.
 

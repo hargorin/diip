@@ -44,7 +44,7 @@ consists of three main parts: the communication, controller and image processing
 parts. The communication part is only implemented once to handle the
 communication to the PC and therefore can not be scaled. The image processing
 part however can be implemented multiple times inside the FPGA to increase
-throughput. Therefore the controller part splits up the incomming image data and
+throughput. Therefore, the controller part splits up the incoming image data and
 distributes it to the image processing cores. To summarize the inside FPGA
 scalability:
 \begin{itemize}
@@ -127,10 +127,10 @@ consulted.
         downwards after line completion. Initialization transfer is done once
         per image. The image cache stores $w_l+(N-1)$ full image lines.
         &
-        Image data is sent coloumn wise with $w_l+(N-1)$ pixels per coloumn. All
+        Image data is sent column wise with $w_l+(N-1)$ pixels per column. All
         image processing cores start processing at the same time and progress
         $N$ lines downwards after completion. An initialization transfer has to be done
-        every time all cores finishe their line. The image cache stores only the currently required
+        every time all cores finish their line. The image cache stores only the currently required
         pixels for the Wallis cores.
         \\\midrule
         \textbf{Initial size} & \\
@@ -197,7 +197,7 @@ considered to be much larger than the window length $w_l$ and therefore the
 equation can be noted as shown in equation \ref{eq:vhdlwallismaxb}.
 Equation \ref{eq:vhdlwallismaxb} makes sense as the Wallis filter core
 requires $w_l$ pixels on the input to calculate one pixel on the output.
-Therefore the output throughput (or real throughput) $b_r$ is by a factor of $w_l$
+Therefore, the output throughput (or real throughput) $b_r$ is by a factor of $w_l$
 smaller than the input throughput $b_w$. Using the
 throughput of the VHDL Wallis filter implementation ($b_w=125Mp/s$) and the
 window length $w_l=21$ the real throughput $b_r$ is calculated:
@@ -256,7 +256,7 @@ lists the required block memory usage.
 
 The remaining block RAM that can be used for image caching inside the controller
 core to reduce multiple transmission of image data is 340.5
-block RAM tiles with 36Kb each resulings in 1'532KB. Table \ref{tab:parsum}
+block RAM tiles with 36Kb each resulting in 1'532KB. Table \ref{tab:parsum}
 summarizes the parameters that are used to compare the two inside FPGA scale
 proposals.
 
@@ -281,7 +281,7 @@ Now the two proposals can be put in contrast. Starting with figure
 \ref{fig:sca:compfixheight} the two proposals are compared against each other
 with an input image of fixed height and variable width. This was chosen because
 with the main limiting factor being \gls{bramtile} usage, the store size $s_s$ has to
-be observed and it is for both proposals independant of image height $i_h$.
+be observed and it is for both proposals independent of image height $i_h$.
 The image height $i_h$ is set to 10'000 arbitrary. The
 two proposals can be differentiated in that proposal A is optimized for low tx
 size $s_{tx}$ (and therefore optimized for throughput) while proposal B requires
@@ -305,11 +305,11 @@ limited image width of 32Kp. Three workarounds can be considered to raise the
 limit in image width:
 \begin{itemize}
     \item Use less image processing cores. This would decrease the required
-    block memory and the image width can be increased. However by decreasing the
+    block memory and the image width can be increased. However, by decreasing the
     number of image processing cores, the total throughput will also drop.
     \item Use proposal B. Its BRAM usage is significantly smaller however the tx
     size will increase.
-    \item Split the image on the PC and process each coloumn as if it was a
+    \item Split the image on the PC and process each column as if it was a
     single image.
 \end{itemize}
 
@@ -323,7 +323,7 @@ by the Ethernet link, the solution can be scaled on an Ethernet network. This
 was the main reason to use Ethernet as communication basis. An input image is
 split into parts on the computer and processed individually by FPGAs. The
 processed pixels are merged together on the PC to form the output image. Figure
-\ref{fig:sca:acrossfpgapart} illustrates a coloumn wise image splitting to three
+\ref{fig:sca:acrossfpgapart} illustrates a column wise image splitting to three
 parts. The colored boxes represent one Wallis filter processing a single line
 with the filled boxed representing the processed output pixels.
 
@@ -354,7 +354,7 @@ image width $i_w$ being much greater than the window length $w_l$,
     \label{eq:sca:linesize}
 \end{align}
 
-Concluding this finding it can be infered that the throughput of a distributed
+Concluding this finding it can be inferred that the throughput of a distributed
 image processing solution scales proportionally to the number of FPGAs the image
 is distributed to:
 \begin{align}
@@ -369,7 +369,7 @@ is distributed to:
 
 A last thought is put on the network infrastructure that is required to
 process images distributed. The network link of 1Gb/s on the FPGA's Ethernet
-port is saturated. Therefore if multiple FPGAs are used on a network, the
+port is saturated. Therefore, if multiple FPGAs are used on a network, the
 interconnecting network switch must be capable of an uplink to the PC or server
 with a multiple of the throughput of the FPGA downlink. Figure 
 \ref{fig:sca:network} illustrates a network where 10 FPGAs are connected to a
@@ -390,10 +390,10 @@ to connect to a PC.
 
 \section{Conclusion}
 By scaling the Wallis filter operation inside the FPGA full advantage can be
-taken of the available Ethernet bandwith. The controller core thereby caches as
+taken of the available Ethernet bandwidth. The controller core thereby caches as
 many input lines as can be fitted into block memory to reduce multiple
 transmissions of image data and increasing link efficiency. By dividing the input
-image into multiple coloumns it can be distributed onto multiple FPGAs on a
+image into multiple columns it can be distributed onto multiple FPGAs on a
 network. This scalability across FPGAs is only limited by the network
 infrastructure.
 \\
@@ -408,9 +408,9 @@ infrastructure.
 Taking a 1500Mp input image as specified in the technical requirements (see
 appendix \ref{app:technicial_requirements}) and a 4:3 aspect ratio the image
 width $i_w$ and height $i_h$ can be calculated. The resulting image width is
-split into $N_F$ coloumns. Table \ref{tab:sca:exacrfpga} shows the total
+split into $N_F$ columns. Table \ref{tab:sca:exacrfpga} shows the total
 processing time and throughput for one to four FPGAs. With only one FPGA used
-the image is too wide. It is split into two coloumns and processed one after the
+the image is too wide. It is split into two columns and processed one after the
 other on one FPGA.
 \\
 
@@ -421,7 +421,7 @@ processed within three seconds resulting in a total throughput of 500Mp/s.
     \centering
     \begin{tabular}{l l l l l}
         \toprule
-        $N_{FPGAs}$ & $N_{coloumns}$ & $i_w$ per FPGA &
+        $N_{FPGAs}$ & $N_{columns}$ & $i_w$ per FPGA &
         processing time & throughput \\
         \midrule
         1  & 2 &  22.4Kp & 12s & 62.5Mp/s \\

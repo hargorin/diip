@@ -7,7 +7,7 @@
 With the Wallis filter implemented on the FPGA the problem occurs that the
 image data has to be sent from the computer to the FPGA and back. The following
 chapter explains the realization of said dataflow. It is split into two main
-parts: the communcation and control parts. But before diving into them the
+parts: the communication and control parts. But before diving into them the
 concept of the dataflow is briefly described in the following chapter.\\
 
 During the work on the project it has been discovered that the initial approach
@@ -54,11 +54,11 @@ Following the path of dataflow it is easy to see that the data is stored
 multiple
 times: in the receiving FiFo of the UFT core, the block memory, then by the
 controller in the transmitting and receiving path, again in block memory and in
-a Tx FiFo of the UFT transmitter. This causes latency and high ressource usage.
+a Tx FiFo of the UFT transmitter. This causes latency and high resource usage.
 Because of that, in a second approach (solution B) the datapath was chosen more
 directly. Key elements are the AXI4-Stream interfaces. Figure \ref{fig:dataflowb}
 shows the new approach using said stream interfaces. The UFT stack outputs
-received data comming from the Ethernet line with low latency. The controller
+received data coming from the Ethernet line with low latency. The controller
 then only buffers the necessary data and starts streaming pixel data to the
 Wallis filter as soon as enough data is received. Processed data is buffered in
 the controller until the transmitter is ready to send data back.
@@ -91,7 +91,7 @@ missing:
 
 In the following chapters these four problems are addressed and the solutions
 explained. To read more about the communication core as it was used from the
-preceeding project the p5 project report can be consulted \cite{p5report}.
+preceding project the p5 project report can be consulted \cite{p5report}.
 Furthermore the UDP File Transfer (UFT) Protocol Specifications (appendix 
 \ref{app:uftspec}) and calculations (appendix \ref{app:uftcalc}) give
 information about the communication protocol.
@@ -102,9 +102,9 @@ information about the communication protocol.
 \subsection{Acknowledge}
 The communication is based on the User Datagram Protocol (UDP). This protocol
 features low overhead and is simple to implement. The main problem is that the
-data sent is not acknowledged hence the sender has no feedback wheather the data
+data sent is not acknowledged hence the sender has no feedback whether the data
 was received or not. This is one reason a custom session protocol (\gls{uft})
-was introduced in the preceeding project. It provides command packets for data
+was introduced in the preceding project. It provides command packets for data
 packet acknowledgment. Table \ref{tab:uftcommandlist} lists the UFT commands.
 
 
@@ -390,10 +390,10 @@ Image data coming from the PC is sent row wise with the left most pixel sent
 first. This is due to the fact that \gls{opencv} (which is used on PC
 side to access
 images) stores the image data in said layout \cite{opencv_structures}. The
-Wallis filter however, requires its input data to be coloumn wise with the top
+Wallis filter however, requires its input data to be column wise with the top
 most pixel sent first as described in chapter \ref{ch:ip:concept}. Figure 
 \ref{fig:memproblem} illustrates this issue. The blue ``write'' arrow shows the data
-comming from the UFT core and the red ``read'' arrow represents the order the
+coming from the UFT core and the red ``read'' arrow represents the order the
 data has to be sent to the Wallis filter. For illustration purposes a window
 length of five and image width of eight is used.
 
@@ -411,7 +411,7 @@ progression of the neighborhood across the input image is observed. We
 distinguish two scenarios: A) moving the neighborhood horizontally to the right
 and B) advancing the neighborhood to the next row vertically. The first
 scenario is illustrated in figure \ref{fig:memproblemgrowthx}. The green arrow
-marks the new coloumn of the neighborhood to be sent to the Wallis filter.
+marks the new column of the neighborhood to be sent to the Wallis filter.
 
 \begin{figure}[t!]
     \centering
@@ -422,8 +422,8 @@ marks the new coloumn of the neighborhood to be sent to the Wallis filter.
     \label{fig:memproblemgrowthx}
 \end{figure}
 
-This progression is made for each coloumn of the input image until the last
-coloumn was processed. Then scenario B) comes to play. Moving the neighborhood
+This progression is made for each column of the input image until the last
+column was processed. Then scenario B) comes to play. Moving the neighborhood
 vertically to the next row by one pixel requires new image data of one row
 and $WINDOW\_LENGTH-1$ rows of image data that had already been processed on the
 previous row. Figure \ref{fig:memproblemgrowthy} illustrates scenario B.
@@ -442,14 +442,14 @@ previous row. Figure \ref{fig:memproblemgrowthy} illustrates scenario B.
 From these two scenarios we can conclude two problems the controller has to
 solve:
 \begin{itemize}
-    \item Send the image data in the right order (coloumn wise with
-    $WINDOW\_LENGTH$ sized coloumns)
+    \item Send the image data in the right order (column wise with
+    $WINDOW\_LENGTH$ sized columns)
     \item Cache $WINDOW\_LENGTH-1$ rows for the computation of the next image
     row
 \end{itemize}
 
 In addition the controller has to start the UFT transmission if an image row has
-been processed and configure the Wallis filter with the parameters comming from
+been processed and configure the Wallis filter with the parameters coming from
 the UFT core.
 
 
@@ -494,7 +494,7 @@ processed pixels from the Wallis filter are stored inside a memory.
         Control the AXI4-Lite slave registers to control the UFT core
         \\
         \texttt{inData} & \texttt{AXI4-Stream} & Wallis filter &
-        Processed pixels comming from the Wallis filter
+        Processed pixels coming from the Wallis filter
         \\
         \texttt{outData} & \texttt{AXI4-Stream} & Wallis filter &
         Image data sent to the Wallis filter for processing
@@ -533,8 +533,8 @@ where the UFT core is configured and a transmission is started.
 According to Xilinx application note XAPP-1209 \cite{xapp1209} a state
 machine in Vivado HLS can be realized by using a switch statement in the C/C++
 code.
-The code in file \texttt{controller.cpp} implements the state machine behaviour.
-The state machine code is very straight foreward. More work went into the memory
+The code in file \texttt{controller.cpp} implements the state machine behavior.
+The state machine code is very straightforward. More work went into the memory
 layout. Because the memory bus to read and write pixels to and from memory is
 AXI4 based, multiple single byte access result in considerably less throughput
 than single burst access.
@@ -580,7 +580,7 @@ for(i = 0; i < WINDOW_LEN; i++) {
 
 To send the right order of output pixels, two counters are required. The first
 counter named \texttt{ms\_rctr} increments after every pixel sent and wraps at
-$WINDOW\_LENGTH$. Therefore it counts the current coloumn. The second counter
+$WINDOW\_LENGTH$. Therefore it counts the current column. The second counter
 named \texttt{ms\_cctr} increments every time the \texttt{ms\_rctr} wrappes
 around and counts up to $IMAGE\_WIDTH$. From these two counters the address of
 the pixel to be sent can be calculated as shown in listing \ref{lst:aaddrcalc}.
@@ -603,7 +603,7 @@ iPxl = inData.read();
 out_mem[sm_ctr++] = (uint8_t)iPxl.data;\end{lstlisting}
 \end{minipage}
 
-Everytime a pixel is read or written a corresponding counter is incremented.
+Every time a pixel is read or written a corresponding counter is incremented.
 After both counter hit their compare value, the stream state is exited and the
 data is copied back to memory.
 
@@ -623,7 +623,7 @@ valid on the stream, the code will wait until there is data on the stream. This
 led to the code waiting for an input byte and no output was generated. This
 issue was fixed by wrapping the read access with a query weather the input
 stream holds data. Listing \ref{lst:runinstream2} shows the adjusted pixel read.
-The same applied to the sending of data. It is first checked wheather the output
+The same applied to the sending of data. It is first checked whether the output
 stream is not full before sending new data.
 
 \begin{minipage}{\textwidth}
@@ -663,7 +663,7 @@ analysis results could not be interpreted.
 \textbf{2. Memory layout:} In solution A the image data is stored multiple time
 as already mentioned in chapter \ref{ch:concept}. The data is stored twice in
 the controller core alone: during read in the ping-pong buffer and during write
-in the output buffer. This increases the ressource usage.
+in the output buffer. This increases the resource usage.
 
 \vspace{1ex}
 These two issues were the motivation to rethink the memory layout and
@@ -711,14 +711,14 @@ implemented in VHDL.
 \subsection{Implementation VHDL} \label{ch:controller:vhdl}
 In a new implementation of the controller, the two drawbacks of solution A are
 addressed. The following chapter is structered likewise starting with the new
-requirements, how the core was realized, the hurdles accross the way and a
+requirements, how the core was realized, the hurdles across the way and a
 conclusion of the performance of the new controller core.
 
 The Wallis filter core was built from ground up with AXI4-Stream interfaces. A
 slave interface for input data and a master interface for output data. This
 stream based approach should be implemented in the controller as well to reduce
 buffering to a minimum to decrease memory usage. The use of streaming interfaces
-required a new memory structure. These two aspects form the requierements of the
+required a new memory structure. These two aspects form the requirements of the
 new controller core.
 
 \subsubsection*{Requirements}
@@ -880,9 +880,9 @@ Now that the mechanics of a FiFo are dissected, the memory layout of the
 MMU can be illustrated. Figure \ref{fig:solbmemlayout} shows the memory layout.
 At the core of the memory management unit is a two
 dimensional array (it is implemented as a simple array in VHDL for better
-synthesis results). Every line represents an input image line and every coloumn an
+synthesis results). Every line represents an input image line and every column an
 input
-image coloumn. The idea is to have a full block RAM for each line which is why
+image column. The idea is to have a full block RAM for each line which is why
 from now on a line is called cache. The input image data is received line by
 line. Each input line is stored in a cache. 
 
@@ -915,7 +915,7 @@ the start of a new line. \texttt{cache\_w\_ptr} is incremented if an image line
 is received and wraps at $CACHE\_N\_LINES$.
 
 The read mechanism consists of a total of four pointers. The \texttt{col\_r\_ptr}
-pointer points to the current image coloumn that is sent to the Wallis filter.
+pointer points to the current image column that is sent to the Wallis filter.
 It is incremented after $WINDOW\_LENGTH$ pixels are sent and set to zero at
 the beginning of a new line. \texttt{cache\_r\_base} points to the top most
 cache of image
@@ -1012,7 +1012,7 @@ inferred. Such timing issues had to be fixed for several signals.
 \subsubsection*{Conclusion}
 Because the requirements were already dissected from solution A there was only a
 new memory layout to be realised for solution B. With the main difference being
-that now the behaviour was not described in C/C++ language but in VHDL. The
+that now the behavior was not described in C/C++ language but in VHDL. The
 total
 amount of time spent on the solutions were approximately the same. What had
 changed is on what the time was spent. While writing the code required the same
@@ -1023,7 +1023,7 @@ timing
 and critical paths. With VHDL these accesses had to be implemented manually and
 worked on first try but some time had to be spent on fixing timing issues.
 
-Performance wise, there is the expected increase in throughtput. Output pixels
+Performance wise, there is the expected increase in throughput. Output pixels
 can be sent to the Wallis filter with every clock cycle as soon as there is
 enough image data in the cache. Figure \ref{fig:tracesolb} shows the output data
 stream with a $WINDOW\_LENGTH$ of three. 
