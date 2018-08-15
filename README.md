@@ -8,7 +8,7 @@ Project 5 at FHNW by Noah Hütter and Jan Stocker
 
 | Part          | Download     |
 | ------------- |:-------------|
-| Project Report| [PDF](https://gitlab.fhnw.ch/noah.huetter/diip/-/jobs/artifacts/doc_noah/raw/doc/report/p6_diip_huetter_stocker.pdf?job=doc) |
+| Project Report| [PDF](https://gitlab.fhnw.ch/noah.huetter/diip/-/jobs/artifacts/doc/raw/doc/report/p6_diip_huetter_stocker.pdf?job=doc) |
 
 
 ## Folder Structure
