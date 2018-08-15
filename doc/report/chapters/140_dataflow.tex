@@ -63,7 +63,7 @@ then only buffers the necessary data and starts streaming pixel data to the
 Wallis filter as soon as enough data is received. Processed data is buffered in
 the controller until the transmitter is ready to send data back.
 
-\begin{figure}[b!]
+\begin{figure}[h!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
         \input{images/controller/dataflowb.tikz}
@@ -71,6 +71,8 @@ the controller until the transmitter is ready to send data back.
     \caption{Dataflow inside FPGA for solution B}
     \label{fig:dataflowb}
 \end{figure}
+
+\pagebreak
 
 % ==============================================================================
 %                             Communication
@@ -106,7 +108,7 @@ was introduced in the preceeding project. It provides command packets for data
 packet acknowledgment. Table \ref{tab:uftcommandlist} lists the UFT commands.
 
 
-\begin{table}[t!]
+\begin{table}[b!]
     \centering
     \begin{tabular}{l l l l l}
         \toprule
@@ -144,7 +146,7 @@ acknowledge packet. After the packet was sent, the according
 \texttt{ack\_cmd\_nseq\_done}/\texttt{ack\_cmd\_ft\_done} signals are asserted.
 
 
-\begin{figure}[b!]
+\begin{figure}[t!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
         \input{images/dataflow/ufttop.tikz}
@@ -196,10 +198,10 @@ acknowledge packet. After the packet was sent, the according
 \subsection{Retransmission}
 Now that the FPGA sends an acknowledge packet for each data packet, the sending
 PC can check if all packets were received by the FPGA. Therefore the PC software
-was extended with retransmission. 
-
-Before sending data an array is allocated that will hold the information if a
-packet was received. Each element represents a data packet.
+was extended with retransmission. Before sending data an array is allocated that
+will hold the information if a packet was received. Each element represents a
+data packet. Listing \ref{lst:ackbufalloc} shows the allocation of the
+acknowledge buffer.
 
 \begin{minipage}{\linewidth}
     \begin{lstlisting}[
@@ -211,8 +213,12 @@ uint8_t *ack_buf = (uint8_t*)malloc( nseq * sizeof(uint8_t) );
 memset(ack_buf, 0, nseq * sizeof(uint8_t));\end{lstlisting}
 \end{minipage}
 
+\pagebreak
 During transmission, the sender checks the receiving buffer for data. If an
 acknowledge packet has been received, the acknowledge array is updated.
+This allows the sending routine to retransmit packets that were not
+acknowledged. Listing \ref{lst:ackupdate} shows the acknowledge buffer update
+after packet is received.
 
 \begin{minipage}{\linewidth}
     \begin{lstlisting}[
@@ -227,8 +233,6 @@ if(get_command(buf) == CONTROLL_ACKFP)
 }\end{lstlisting}
 \end{minipage}
 
-This allows the sending routine to retransmit packets that were not
-acknowledged.
 
 % ==============================================================================
 %                             Control Interface
@@ -355,7 +359,7 @@ the UFT protocol specifications:
 Figure \ref{fig:uftipcoreaxistream} shows the IP core with the AXI4-Stream
 ports.
 
-\begin{figure}[b!]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.45\textwidth] {images/dataflow/uftcorestream.png}
     \caption{UFT IP core with AXI4-Stream interface}
@@ -392,7 +396,7 @@ comming from the UFT core and the red ``read'' arrow represents the order the
 data has to be sent to the Wallis filter. For illustration purposes a window
 length of five and image width of eight is used.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \begin{adjustbox}{scale=0.7}
         \input{images/controller/memproblem.tikz}
@@ -400,7 +404,7 @@ length of five and image width of eight is used.
     \caption{Memory reordering problem}
     \label{fig:memproblem}
 \end{figure}
-
+\clearpage
 This is only one part of the problem. Another issue arises if the
 progression of the neighborhood across the input image is observed. We
 distinguish two scenarios: A) moving the neighborhood horizontally to the right
@@ -408,7 +412,7 @@ and B) advancing the neighborhood to the next row vertically. The first
 scenario is illustrated in figure \ref{fig:memproblemgrowthx}. The green arrow
 marks the new coloumn of the neighborhood to be sent to the Wallis filter.
 
-\begin{figure}[H]
+\begin{figure}[t!]
     \centering
     \begin{adjustbox}{scale=0.7}
         \input{images/controller/memproblemgrowthx.tikz}
@@ -423,7 +427,7 @@ vertically to the next row by one pixel requires new image data of one row
 and $WINDOW\_LENGTH-1$ rows of image data that had already been processed on the
 previous row. Figure \ref{fig:memproblemgrowthy} illustrates scenario B.
 
-\begin{figure}[H]
+\begin{figure}[h!]
     \centering
     \begin{adjustbox}{scale=0.7}
         \input{images/controller/memproblemgrowthy.tikz}
@@ -431,6 +435,8 @@ previous row. Figure \ref{fig:memproblemgrowthy} illustrates scenario B.
     \caption{Scenario B) Data growth in vertical direction}
     \label{fig:memproblemgrowthy}
 \end{figure}
+
+\pagebreak
 
 From these two scenarios we can conclude two problems the controller has to
 solve:
@@ -445,7 +451,7 @@ In addition the controller has to start the UFT transmission if an image row has
 been processed and configure the Wallis filter with the parameters comming from
 the UFT core.
 
-\clearpage
+
 
 % ==============================================================================
 %                             HLS
@@ -464,6 +470,15 @@ code is given and the main hurdles while developing the core are unfolded.
 Besides the dataflow described in \ref{ch:control:concept} the IP core
 interfaces must be defined. Table \ref{tab:controlleraports} lists the IP
 interfaces as defined in \texttt{controller.cpp}.
+The IP core implements a finite state machine as seen in figure 
+\ref{fig:controllerfsm}. After the initial state
+\texttt{INIT} where the UFT core is initialized, the state machine goes to its
+idle state \texttt{IDLE}. If the UFT core indicates the end of a file
+transfer the image width is stored and the state machine switches to the 
+\texttt{READ} state. There it fills the first junk of its buffers and
+switches to the \texttt{STREAM} state. Now the data is sent from the
+internal buffers to the Wallis filter in the correct order. Simultaneously the
+processed pixels from the Wallis filter are stored inside a memory. 
 
 \begin{table}[b!]
     \centering
@@ -497,22 +512,7 @@ interfaces as defined in \texttt{controller.cpp}.
 \footnotetext{Vivado HLS does not support AXI4-Lite master, but a AXI4 can
         be converted to AXI4-Lite}
 
-The IP core implements a finite state machine as seen in figure 
-\ref{fig:controllerfsm}. After the initial state
-\texttt{INIT} where the UFT core is initialized, the state machine goes to its
-idle state \texttt{IDLE}. If the UFT core indicates the end of a file
-transfer the image width is stored and the state machine switches to the 
-\texttt{READ} state. There it fills the first junk of its buffers and
-switches to the \texttt{STREAM} state. Now the data is sent from the
-internal buffers to the Wallis filter in the correct order. Simultaneously the
-processed pixels from the Wallis filter are stored inside a memory. If all
-pixels in one line are processed the state \texttt{WRITE} is activated. The
-processed pixels are stored in block memory using the \texttt{memp} AXI4 Master
-interface and the state machine switches to the \texttt{WAIT\_TO\_SEND}
-state. If the UFT core Tx is ready, the state \texttt{SEND} is activated
-where the UFT core is configured and a transmission is started.
-
-\begin{figure}[H]
+\begin{figure}[t!]
     \centering
     \begin{adjustbox}{scale=1}
         \input{images/controller/fsm.tikz}
@@ -520,6 +520,13 @@ where the UFT core is configured and a transmission is started.
     \caption{Controller solution A) simplified state machine}
     \label{fig:controllerfsm}
 \end{figure}
+
+If all
+pixels in one line are processed the state \texttt{WRITE} is activated. The
+processed pixels are stored in block memory using the \texttt{memp} AXI4 Master
+interface and the state machine switches to the \texttt{WAIT\_TO\_SEND}
+state. If the UFT core Tx is ready, the state \texttt{SEND} is activated
+where the UFT core is configured and a transmission is started.
 
 \subsubsection*{Realization}
 According to Xilinx application note XAPP-1209 \cite{xapp1209} a state
@@ -545,6 +552,8 @@ Figure \ref{fig:solamemlayout} shows the memory layout of
 solution A. The blue and red rectangles represent the two buffers. Visualized is
 an AXI burst length of eight and a window length of five.
 
+\clearpage
+
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{scale=0.7}
@@ -555,7 +564,7 @@ an AXI burst length of eight and a window length of five.
 \end{figure}
 
 Filling the buffer is done in the \texttt{fillBuff} routine
-as shown on listing \ref{lst:buf_fill}:
+as shown on listing \ref{lst:buf_fill}.
 
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Buffer fill simplified,
@@ -597,6 +606,7 @@ Everytime a pixel is read or written a corresponding counter is incremented.
 After both counter hit their compare value, the stream state is exited and the
 data is copied back to memory.
 
+\pagebreak
 \subsubsection*{Hurdles}
 The C/C++ code was written in little time. With less than 300 lines it
 is a manageable amount of code.
@@ -634,20 +644,19 @@ clearing some hurdles the controller core worked as expected with two drawbacks:
 
 \vspace{1ex}
 \textbf{1. Throughput:} The controller core outputs data at a rate of one byte
-every 9 clock cycles as can be seen in the result of the simulation in figure
-\ref{fig:shlowhlsoutput} (simulation clock period is 8ns).
+every 9 clock cycles as can be seen in the result of the simulation.
 In theory, using a block memory as internal buffer, it
 should be possible to output one byte per clock cycle. This issue could not be
 resolved in a forseeable time. The analysis view of Vivado HLS would give
 indications on what calculation is resulting in a reduced throughput but the
 analysis results could not be interpreted.
 
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=0.6\textwidth]{images/controller/hlscontrolleroutput.png}
-    \caption{Controller solution A) output data}
-    \label{fig:shlowhlsoutput}
-\end{figure}
+% \begin{figure}[tb!]
+%     \centering
+%     \includegraphics[width=0.6\textwidth]{images/controller/hlscontrolleroutput.png}
+%     \caption{Controller solution A) output data}
+%     \label{fig:shlowhlsoutput}
+% \end{figure}
 
 \vspace{1ex}
 \textbf{2. Memory layout:} In solution A the image data is stored multiple time
@@ -798,7 +807,7 @@ has to be valid. The third entity, \texttt{dc\_mmu} is where the image data is
 cached and sent to the Wallis filter in the right order, hence the name memory
 management unit.
 
-\begin{figure}[b!]
+\begin{figure}[h!]
     \centering
     \begin{adjustbox}{max width=1\textwidth}
         \input{images/controller/dctop.tikz}
@@ -807,6 +816,7 @@ management unit.
     \label{fig:dctop}
 \end{figure}
 
+\pagebreak
 The memory management unit works similar to a large FiFo with the addition that
 elements can be read multiple times. To explain its functionality, the operation
 of a simple FiFo has to be clarified. A FiFo has three main components: the
@@ -869,7 +879,10 @@ synthesis results). Every line represents an input image line and every coloumn 
 input
 image coloumn. The idea is to have a full block RAM for each line which is why
 from now on a line is called cache. The input image data is received line by
-line. Each input line is stored in a cache. If at least $WINDOW\_LENGTH$ lines
+line. Each input line is stored in a cache. 
+
+\pagebreak
+If at least $WINDOW\_LENGTH$ lines
 are received, there is enough data in the memory to start a Wallis operation for
 one input line. If one input line is processed the Wallis neighborhood
 window slides one pixel downwards. Observed in the Y-axis (top to bottom) this
@@ -882,7 +895,7 @@ data.
 
 \begin{figure}[tb!]
     \centering
-    \begin{adjustbox}{max width=\textwidth}
+    \begin{adjustbox}{max width=0.95\textwidth}
         \input{images/controller/memlayoutb.tikz}
     \end{adjustbox}
     \caption{Memory layout for solution B}
@@ -978,7 +991,8 @@ shown in equation \ref{eq:noutpix}.
     \label{eq:noutpix}
 \end{equation}
 
-$win\_len$ and $img\_width$ were chosen of a size that the multiplication could
+The parameters $win\_len$ and $img\_width$ were chosen of a size that the
+multiplication could
 be implemented in a DSP block. The subtraction of one is also done in the same
 DSP block. Synthesis results showed that this DSP calculation requires
 approximately 3.3ns
@@ -1009,16 +1023,16 @@ can be sent to the Wallis filter with every clock cycle as soon as there is
 enough image data in the cache. Figure \ref{fig:tracesolb} shows the output data
 stream with a $WINDOW\_LENGTH$ of three. 
 
-\begin{figure}[tb!]
+Another advantage of this solution is that the Wallis and controller components
+could be simulated together before implementation. This was not possible with
+the HLS based approach. Most of the issues could be resolved during simulation.
+
+\begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{images/controller/vhdlcontrollerout.png}
     \caption{Solution B output data stream}
     \label{fig:tracesolb}
 \end{figure}
-
-Another advantage of this solution is that the Wallis and controller components
-could be simulated together before implementation. This was not possible with
-the HLS based approach. Most of the issues could be resolved during simulation.
 
 
 

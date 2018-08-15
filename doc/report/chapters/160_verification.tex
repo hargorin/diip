@@ -10,6 +10,7 @@ image processing part and the dataflow part. After both components are verified
 they are benchmarked as one unity against a computer based implementation in
 chapter \ref{ch:benchmark}. Before starting, the following chapter summarizes
 all solutions developed in this project.
+\clearpage
 
 % ==============================================================================
 %
@@ -19,7 +20,7 @@ all solutions developed in this project.
 \section{Overview} \label{ch:overview}
 This chapter lists all the solutions that are compared in verification and benchmark. The solutions can be found in table \ref{tab:ver:overview}.
 
-\begin{table}[tb!]
+\begin{table}[h!]
     \centering
     \begin{tabular}{p{3.8cm} p{10cm}}
         % \toprule
@@ -34,18 +35,24 @@ This chapter lists all the solutions that are compared in verification and bench
         VHDL 8bit & This solution is a Wallis filter with an 8bit AXI4-Stream as input and using VHDL and is implemented on the FPGA.\\
         \midrule
         C/C++ Wallis filter & This solution is a Wallis filter using C/C++ on the Computer.\\
+        \bottomrule
+        \multicolumn{2}{l}{\vspace{1ex}}\\
         \toprule
         \multicolumn{2}{l}{\textbf{Controller}}\\
         \toprule
         Controller HLS &  The HLS controller reads image data stored in block RAM using AXI4 interface and sends it to the Wallis filter via AXI4-Stream. Works only with memory based communication. \\
         \midrule
         Controller VHDL & The VHDL controller receives image data directly from the communication part via AXI4-Stream and sends it to the Wallis filter via AXI4-Stream. Works only with stream based communication. \\
+        \bottomrule
+        \multicolumn{2}{l}{\vspace{1ex}}\\
         \toprule
         \multicolumn{2}{l}{\textbf{Communication}}\\
         \toprule
         Communication Memory based & Stores the received image data in block RAM using AX4 interface. \\
         \midrule
         Communication Stream based & Received data is streamed directly to the controller. Data to send is also transferred using AXI4-Stream. \\
+        \bottomrule
+        \multicolumn{2}{l}{\vspace{1ex}}\\
         \toprule
         \multicolumn{2}{l}{\textbf{Overall}}\\
         \toprule
@@ -57,6 +64,7 @@ This chapter lists all the solutions that are compared in verification and bench
     \caption{Overview of the solutions for the verification and benchmark}
     \label{tab:ver:overview}
 \end{table}
+\clearpage
 
 % ==============================================================================
 %
@@ -97,8 +105,9 @@ images. The \gls{rmse} serves as a metric. The RMSE
 indicates how much the  Wallis filtered image deviates on average from the
 reference image \cite{rmse}. The parameters for the Wallis filter that were used
 for the images can be found in table \ref{tab:parameter}.
+\\
 
-\begin{table}[tb!]
+\begin{table}[b!]
     \centering
     \begin{tabular}{l l l l l}
         \toprule
@@ -112,11 +121,7 @@ for the images can be found in table \ref{tab:parameter}.
     \label{tab:parameter}
 \end{table}
 
-
-
-Table \ref{tab:rmse_room} lists the RMSE values of the room image and table 
-\ref{tab:rmse_mountain} the RMSE
-values of the mountain image. They
+Table \ref{tab:rmse_room} lists the RMSE values of the room and mountain image. They
 represent the deviation from the reference image in percent. The deviations from
 the C/C++ program with the 8 bit AXI4 stream and the 256 bit AXI4 stream do
 not differ from each other. A total deviation of 0.32\% has been measured for
@@ -125,8 +130,10 @@ room image. This corresponds to an intensity value of 0.816 in the range of 0 -
 255. There is also only a deviation of 0.33\% in the mountain image. The VHDL
 verification is with 1.23\% respectively 0.49\% higher than the
 HLS versions. The intensity deviates by 3.14 or 1.25 pixel values respectively.
-It is assumed that the deviation occurs due to rounding in the VHDL solution. In
-comparison to the HLS solution, the VHDL solution does not calculate the mean
+It is assumed that the deviation occurs due to rounding in the VHDL solution.
+
+\pagebreak
+In comparison to the HLS solution, the VHDL solution does not calculate the mean
 and the variance exactly. Further it is assumed that image contents play a
 role, meaning how strong the intensity in the image differs in regard to the
 location. The room image changes intensity more often, whereby the mountain
@@ -134,33 +141,35 @@ image is bright at the top and dark at the bottom.
 
 \begin{table}[tb!]
     \centering
-    \begin{tabular}{l l l l}
+    \begin{tabular}{l l l l l l l}
         \toprule
-        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & VHDL Simulation (ghdl) \\
+         & \multicolumn{2}{c}{C/C++ Simulation (HLS)} & \multicolumn{2}{c}{RTL Simulation (HLS)} & \multicolumn{2}{c}{VHDL Simulation (ghdl)} \\
+        {image} & \multicolumn{1}{l}{room} & \multicolumn{1}{l}{mountain} & \multicolumn{1}{l}{room} & 
+        \multicolumn{1}{l}{mountain} & \multicolumn{1}{l}{room} & \multicolumn{1}{l}{mountain} \\
         \midrule
-        HLS  8bit    & 0.32\%    & 0.32\%    & {}\\
-        HLS  256bit  & 0.32\%    & 0.32\%    & {} \\
-        VHDL 8bit        & {}         & {}         & 1.23\% \\
+        HLS  8bit    & 0.32\% & 0.33\%    & 0.32\% & 0.33\%  & {} & {}\\
+        HLS  256bit  & 0.32\% & 0.33\%    & 0.32\% & 0.33\%  & {}& {} \\
+        VHDL 8bit    & {} & {}            & {} & {}          & 1.23\%  & 0.49\%\\
         \bottomrule
     \end{tabular}
-    \caption{RMSE of the Wallis filter verification using the room image}
+    \caption{RMSE of the Wallis filter verification}
     \label{tab:rmse_room}
 \end{table}
 
-\begin{table}[tb!]
-    \centering
-    \begin{tabular}{l l l l}
-        \toprule
-        DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & VHDL Simulation (ghdl) \\
-        \midrule
-        HLS  8bit    & 0.33\%    & 0.33\%    & {} \\
-        HLS  256bit  & 0.33\%    & 0.33\%    & {} \\
-        VHDL 8bit        & {}         & {}         & 0.49\% \\
-        \bottomrule
-    \end{tabular}
-    \caption{RMSE of the Wallis filter verification using the mountain image}
-    \label{tab:rmse_mountain}
-\end{table}
+% \begin{table}[tb!]
+%     \centering
+%     \begin{tabular}{l l l l}
+%         \toprule
+%         DUV & C/C++ Simulation (HLS) & RTL Simulation (HLS) & VHDL Simulation (ghdl) \\
+%         \midrule
+%         HLS  8bit    & 0.33\%    & 0.33\%    & {} \\
+%         HLS  256bit  & 0.33\%    & 0.33\%    & {} \\
+%         VHDL 8bit        & {}         & {}         & 0.49\% \\
+%         \bottomrule
+%     \end{tabular}
+%     \caption{RMSE of the Wallis filter verification using the mountain image}
+%     \label{tab:rmse_mountain}
+% \end{table}
 
 \subsubsection*{Throughput}
 During verification, the throughput of the Wallis filter is also evaluated.
@@ -182,7 +191,7 @@ throughput of a factor of 7.8 could be achieved. The limiting factor is still
 the dataflow in the image processing core of the pixel reading. With the VHDL version the theoretical maximum of 125Mp/s has been
 reached.
 
-\begin{table}[tb!]
+\begin{table}[h!]
     \centering
     \begin{tabular}{l l l l}
         \toprule
@@ -198,7 +207,7 @@ reached.
     \label{tab:throughput}
 \end{table}
 
-
+\clearpage
 \subsubsection*{Ressource} \label{ch:ver:ip:ressource}
 For the implementation of the Wallis filter, another important factor is the
 resources it requires on the FPGA. The resources used on the FPGA for the
@@ -257,15 +266,14 @@ FPGA from the computer
 and the Ethernet traffic was monitored with Wireshark Network Protocol Analyzer.
 Wiresharks packet dissections are exported to a json file that was then analyzed
 using the \texttt{uftcheck} utility. It was written to analyze network pacekts
-for UFT transfers. The first lines of output yielded:
+for UFT transfers. The first lines of output are shown in listing \ref{lst:uftcheckoutput}.
 
-\vspace{1ex}
     % \begin{adjustbox}{max width=1.7\textwidth}
 \begin{minipage}{1\linewidth}
     \begin{lstlisting}[
         style=TextStyle, 
-        % caption=, 
-        % label=
+        caption=Output of \texttt{uftcheck} for package acknowledgment, 
+        label=lst:uftcheckoutput
         ]
 +------+----------------------+----------------------+-----+------------+------+------+
 | Pack |         From         |          To          | D/C |  Control   | TCID | SEQ  | 
@@ -284,13 +292,14 @@ The sending PC starts a file transmission with a file transfer start packet and
 the first data packet. The next packet (3) is comming from the FPGA to the PC
 and acknowledges the first data packet (sequence 0). To verify that all packets
 are acknowledged, the sending program reports an acknowledge status after the
-file has been sent. 
+file has been sent. Listing \ref{lst:uftsenderout} shows the output of the UFT
+sender program.
 
 \begin{minipage}{1\linewidth}
     \begin{lstlisting}[
         style=TextStyle, 
-        % caption=ack buffer allocation, 
-        % label=lst:ackbufalloc
+        caption=UFT send console output, 
+        label=lst:uftsenderout
         ]
 $ ./sender 192.168.5.9 42042 payload/cat.jpg
 UFT Sender demo
@@ -320,7 +329,7 @@ feeding this data through the controller core and observing the output pixels.
 This validation is split into the two solutions implemented using HLS (solution
 A) and VHDL (solution B).
 
-\vspace{1ex}
+\clearpage
 \textbf{Solution A) HLS:} In Vivado HLS the validation was done in C/C++ and
 RTL-simulation. A testbench C/C++ file generates pseudo random image data. This
 data is then processed using the controller core and in the testbench itself.
@@ -335,7 +344,7 @@ stream sends an incrementing pixel value with an image width and height of
 eight. The window length was reduced to three for simplicity. Figure 
 \ref{fig:vhdlcontrollerstimuli} shows the input data values.
 
- \begin{figure}[h!]
+ \begin{figure}[t!]
     \centering
     \begin{adjustbox}{max width=\linewidth}
         \input{images/validation/dataflow/stimuli.tikz}
@@ -376,6 +385,7 @@ combined in a Vivado HLx project. Two projects are distinguished:
     implementation
 \end{itemize}
 
+\pagebreak
 On the computer side, the program \texttt{diip\_cc} written in C++ reads the
 pixels from an input image, splits the data into according UFT packets and sends
 them to the FPGA. The processed pixels are received and stored in the output
@@ -395,7 +405,7 @@ mountain image. This is to be justified with the same reasons as explained in
 chapter \ref{ch:verification:imageprocessing}. It is assumed that this depends on the rounding and the image content. 
 
 
-\begin{table}[tb!] \centering \begin{tabular}{l c c}
+\begin{table}[h!] \centering \begin{tabular}{l c c}
         \toprule
         Solution            & RMSE room [\%]    & RMSE mountain [\%]\\
         \midrule
@@ -413,6 +423,7 @@ chapter \ref{ch:verification:imageprocessing}. It is assumed that this depends o
 %                             Benchmark
 %
 % ==============================================================================
+\clearpage
 \section{Benchmark}\label{ch:benchmark}
 To conclude the results of this work, the different solutions are compared in
 this chapter. The working implementations (including send and receive from PC)
@@ -439,6 +450,7 @@ Method
 calculated the same as for methods 1. and 3.
 \\
 
+% \pagebreak
 As a source image a fixed aspect ration of 16:9 was chosen. This is a common
 format used among others for movies. The image was resized to four different
 heights: 480p, 720p, 1080p and 2160p with the largest one being equivalent to
@@ -452,6 +464,7 @@ limits of the three image processing solution are compared without the influence
 of a controller or the communication part. Finally the fastest image processing
 solution is put in comparison with a CPU based processing.
 
+\clearpage
 \subsection{Compare Implementations}
 First the two working FPGA implementations are put in contrast (1. and 3.).
 Figure \ref{fig:benchmarkcompare} and table \ref{tab:throughputmeasuremetns}
@@ -473,7 +486,7 @@ Second, the memory management has been greatly improved from the HLS to the VHDL
 controller in that image data is cached on the FPGA to reduce multiple
 transmissions of image data from PC to FPGA. 
 
-\begin{figure}[tb!]
+\begin{figure}[h!]
     \centering
     \begin{adjustbox}{max width=\linewidth}
         \input{images/benchmark/results.tikz}
@@ -482,7 +495,7 @@ transmissions of image data from PC to FPGA.
     \label{fig:benchmarkcompare}
 \end{figure}
 
-\begin{table}[tb!]
+\begin{table}[h!]
     \centering
     \begin{tabular}{l l l l l l}
         \toprule
@@ -498,6 +511,7 @@ transmissions of image data from PC to FPGA.
     \label{tab:throughputmeasuremetns}
 \end{table}
 
+\pagebreak
 The increase in throughput over image size on the VHDL solution can be explained
 by the way the
 PC program works. To prevent an overflow of the image cache inside the
@@ -549,7 +563,17 @@ appendix \ref{app:derivations:theomaxvhdlwallis}). Figure \ref{fig:theoresults}
 and table \ref{tab:FPGAimplementationstheoreticallimits} show the theoretical
 maximum results.
 
-\begin{figure}[b!]
+
+\pagebreak
+The HLS 8bit solution is the slowest of the three implementations. Its filter
+core accepts 21 pixels per 86 clock cycles as described in table \ref{tab:throughput}. 
+With the input width of the IP core extended to 265bit,
+a new throughput of around 11 MB/s is achieved. The third solution written
+in VHDL is placed in between the two HLS solutions. Its IP core accepts one
+pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
+125MHz clock frequency.
+
+\begin{figure}[h!]
     \centering
     \begin{adjustbox}{max width=\linewidth}
         \input{images/benchmark/theoresults.tikz}
@@ -558,7 +582,7 @@ maximum results.
     \label{fig:theoresults}
 \end{figure}
 
-\begin{table}[b!]
+\begin{table}[h!]
     \centering
     \begin{tabular}{l l l l l l l}
         \toprule
@@ -572,14 +596,6 @@ maximum results.
     \caption{FPGA implementations theoretical limits}
     \label{tab:FPGAimplementationstheoreticallimits}
 \end{table}
-
-The HLS 8bit solution is the slowest of the three implementations. Its filter
-core accepts 21 pixels per 86 clock cycles as described in table \ref{tab:throughput}. 
-With the input width of the IP core extended to 265bit,
-a new throughput of around 11 MB/s is achieved. The third solution written
-in VHDL is placed in between the two HLS solutions. Its IP core accepts one
-pixel per clock cycle. This yields a throughput of approximately 5.8MB/s at
-125MHz clock frequency.
 
 \clearpage
 \subsection{FPGA against CPU}
@@ -600,7 +616,7 @@ implementing the Wallis filter multiple times on one FPGA. By implementing the
 HLS solution twice or the VHDL solution three times, a regular CPU could already
 be outrunned by one FPGA.
 
-\begin{figure}[b!]
+\begin{figure}[h!]
     \centering
     \begin{adjustbox}{max width=\linewidth}
         \input{images/benchmark/theoreticalmax.tikz}
@@ -609,7 +625,7 @@ be outrunned by one FPGA.
     \label{fig:theoreticalmax}
 \end{figure}
 
-\begin{table}[b!]
+\begin{table}[h!]
     \centering
     \begin{tabular}{l l l l l l}
         \toprule
