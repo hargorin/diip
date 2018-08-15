@@ -85,9 +85,8 @@ Example to calculate the x-derivative and y-derivative with the Sobel matrix \ci
 \textbf{Border Handling:}
 With the application of neighborhood filters, the so-called border handling
 problem occurs in every image because the filter protrudes beyond the original
-image (see figure \ref{fig:image_handling}).
+image (see figure \ref{fig:image_handling}). There are several possible solutions to this issue:
 
-There are several possible solutions to this issue:
 \begin{itemize}
 \item The border pixels are not considered. In the example image, the original image 
 is two pixels smaller in height and width than the original image as shown in
@@ -98,10 +97,12 @@ at the outside of the image are set to zero.
 \item The image is continued periodically.
 \end{itemize}
     
-\begin{figure}[b!]
+\begin{figure}[b]
     \centering
-    \includegraphics[width=0.6\textwidth]{images/theory/border_handling.png}
-    \caption{Border problem with filter operations \cite{border_handling}}
+    \begin{adjustbox}{max width=0.7\textwidth}
+        \input{images/theory/border_handling.tikz}
+    \end{adjustbox}
+    \caption{Border problem with neighborhood filter operations}
     \label{fig:image_handling}
 \end{figure}
 
@@ -112,12 +113,15 @@ input data (figure \ref{fig:image_operation}c). A typical application is finding
 regions or recognizing geometrical objects. Another representative of this is
 the Hough transform and the Fourier transform.
 
-\begin{figure}[tb!]
+\begin{figure}[t!]%
     \centering
-    \includegraphics[width=\textwidth]{images/theory/image_operations.jpg}
-    \caption{(a) point, (b) neighborhood and (c) global image processing
-    operations \cite{image_operation}}
-    \label{fig:image_operation}
+    \subfloat[point operation]{{\begin{adjustbox}{max width=0.45\linewidth}\input{images/theory/point_operation.tikz}\end{adjustbox}}}%
+    \qquad
+    \subfloat[neighborhood operation]{{\begin{adjustbox}{max width=0.45\linewidth}\input{images/theory/neighborhood_operation.tikz}\end{adjustbox}}}%
+    \\
+    \subfloat[global operation]{{\begin{adjustbox}{max width=0.45\linewidth}\input{images/theory/global_operation.tikz}\end{adjustbox}}}%
+    \caption{Image processing operations}%
+    \label{fig:image_operation}%
 \end{figure}
 
 % -----------------------------------------------------------------------------

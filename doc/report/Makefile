@@ -12,7 +12,7 @@ CHAPTERS_DIR=chapters
 OUT_DIR=build
 
 # For tikz
-TNAME=images/scalability/acrossfpgapart.tikz
+TNAME=images/validation/dataflow/stimuli.tikz
 
 SRC_FILES := $(wildcard $(CHAPTERS_DIR)/*.tex)
 PDF_FILES := $(patsubst $(CHAPTERS_DIR)/%.tex,$(OUT_DIR)/%.pdf,$(SRC_FILES))
@@ -64,6 +64,8 @@ cleanall:
 	rm -f *.dvi *.log *.bak *.aux *.bbl *.blg *.idx *.ps *.eps *.pdf *.toc *.out *.fdb_latexmk *.fls *~ build/*
 
 clean:
-	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/*
+	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/* *.glg *.glo *.gls *.ist *.lof *.lot 
 
 .PHONY: all pdf clean cleanall chunks open tikz
+
+
