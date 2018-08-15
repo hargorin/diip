@@ -18,15 +18,22 @@
         \node[anchor=west] at (4.2,0.3)  {Iteration data};
 
         \draw[blue,line width=0.6mm] (7,0) rectangle (8,0.6);
+        \node[anchor=south] at (7.5,0.1) {$c0$};
         \draw[red,line width=0.6mm,dashed] (8.5,0) rectangle (9.5,0.6);
+        \node[anchor=south] at (9,0.1) {$c1$};
         % \draw[black,line width=0.4mm,dotted] (10,0) rectangle (11,0.6);
-        \node[anchor=west] at (9.7,0.3)  {Image processing cores};
+        \node[anchor=west] at (9.7,0.3)  {Image processing cores 0 and 1};
         % Iter pixels
         % \draw[pattern=north east lines, pattern color=gray!60] (3,2) rectangle (4,7);
 
         \draw[cyan,line width=0.6mm] (7,-1) rectangle (8,-0.4);
+        \node[anchor=south] at (7.5,-1) {$c0$};
         \draw[magenta,line width=0.6mm,dashed] (8.5,-1) rectangle (9.5,-0.4);
+        \node[anchor=south] at (9.0, -1) {$c1$};
         \node[anchor=west] at (9.7,-0.7)  {Processed output pixels};
+
+        \node[anchor=south west] at (0, -1) {$N_{cx}$};
+        \node[anchor=south west] at (1.2, -1) {$N$th output pixel of core $x$};
     \end{pgfonlayer}
 
     % Foreground

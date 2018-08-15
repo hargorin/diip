@@ -29,12 +29,20 @@
         % Arrows
         % \path[draw,-{Latex[length=2.5mm]}] (0,7.5) -- (4,7.5) 
         %     node[near start, above] () {iterate} ;
-        \path[draw,-{Latex[length=3.5mm]},line width=0.4mm] (-0.5,7) -- (-0.5,3) 
-            node[near start, above,rotate=270] () {send data} ;
+        % \path[draw,-{Latex[length=3.5mm]},line width=0.4mm] (-0.5,7) -- (-0.5,3) 
+        %     node[near start, above,rotate=270] () {send data} ;
 
         % Axis
-        % \foreach \x in {0,1,2,3,4}
-        %     \node[anchor=north] at ($(-0.5,5)-(0,\x)$)  {$\x$};
+        \foreach \y in {0,1,2,3,4,5,6}
+            \node[anchor=west] at ($(-0.5,6.5)-(0,\y)$)  {$\y$};
+        \foreach \x in {0,1,2,3,4,5,6,7,8}
+            \node[anchor=north] at ($(0.5,7.5)+(\x,0)$)  {$\x$};
+
+        % Out pixel
+        \foreach \x in {0,1,2,3,4,5,6}
+            \node[anchor=center] at ($(1.5,5.5)+(\x,0)$)  {$\x_{c0}$};
+        \foreach \x in {0,1,2,3,4,5,6}
+            \node[anchor=center] at ($(1.5,4.5)+(\x,0)$)  {$\x_{c1}$};
 
     \end{pgfonlayer}
 
