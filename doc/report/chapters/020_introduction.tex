@@ -28,7 +28,7 @@ Programmable Gate Array (FPGA). FPGAs
 consist of thousands of logical elements that can be configured and connected
 together to form a complex logical operation. Together with on chip
 memory they offer high throughput by processing the data in parallel in contrast to
-sequential. The data is transfered to the FPGA over an Ethernet LAN connection
+sequential. The data is transferred to the FPGA over an Ethernet LAN connection
 for
 fast transfer rates. To accelerate the computing even further, the system needs
 to be scalable to multiple FPGA boards to distribute the workload.
@@ -36,11 +36,12 @@ to be scalable to multiple FPGA boards to distribute the workload.
 % Build upon 
 In preparation for this thesis, a semester project focused on two building
 blocks for this work: The communication block and the image processing block
-\cite{p5report}. The results were two seperate parts working but neither
+\cite{p5report}. The results were two separate parts working but neither
 connected nor optimized. This thesis builds upon the results of said work and
 focuses on two main goals:
 
 % Primary objectives
+\clearpage
 \begin{enumerate}
     \item Increase throughput of the dataflow by improving the communication and
     by putting thoughts on scalability
@@ -62,12 +63,12 @@ received data in memory. This has worked as a proof of concept but is not
 optimal
 for high throughput image processing. The communication part is extended with an
 acknowledge mechanism that allows retransmission of lost packets and a streaming
-interface which enables immediate processing of the image data. Furthermore a
+interface which enables immediate processing of the image data. Furthermore, a
 memory management unit is introduced that caches image data to reduce bandwidth
 usage.
 
 % NEW Image processing
-In the preceeding project a Sobel filter was implemented using Vivado HLS. It
+In the preceding project a Sobel filter was implemented using Vivado HLS. It
 uses a simple convolution matrix for edge detection. This operation was well
 suited for the first image processing task and to become acquainted with a high
 level synthesis tool. For this thesis a new image processing task is realized: the

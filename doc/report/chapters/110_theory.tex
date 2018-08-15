@@ -57,6 +57,7 @@ image. For instance, this is possible with the Sobel filter.
 
 Example to calculate the x-derivative and y-derivative with the Sobel matrix \cite{sobel_matrix}:
 
+\vspace{1ex}
 \noindent\begin{minipage}{.5\linewidth}
 \begin{equation}
     G_{x} = I * \begin{bmatrix}
@@ -129,7 +130,7 @@ the Hough transform and the Fourier transform.
 % -----------------------------------------------------------------------------
 The main goal of the Wallis filter is to adjust the mean and variance of an
 image and to map it to given values. This is mainly used for local contrast
-enhancement in both low and high level regions. It also achieves similair brightness levels in the image.
+enhancement in both low and high level regions. It also achieves similar brightness levels in the image.
 The Wallis filter equation is \cite{wallis_filter}:
 \begin{equation}
     I'(x,y) = \frac{( I(x,y) - \mu_{n})\cdot c \cdot \sigma_{g}^{2}}{c \cdot \sigma_{n}^{2} + (1 - c) \cdot \sigma_{g}^{2}} + b \cdot \mu_{g} + (1 - b) \cdot \mu_{n}
@@ -150,7 +151,7 @@ The Wallis filter equation is \cite{wallis_filter}:
 The two factors b and c can have the range from 0 to 1. The larger b is
 selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
 The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
-The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the singal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
+The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the signal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
 
 \begin{figure}[t!]%
     \centering
@@ -174,7 +175,7 @@ overexposing bright areas.
 \section{Ethernet Communication} \label{chapt:theory:ethernet}
 Exchanging data between two devices can be done using different approaches. The
 following section contains an overview of the communication standards used in
-local area networks (LAN). This section is taken from the preceeding project
+local area networks (LAN). This section is taken from the preceding project
 report \cite{p5report} to clarify the communication concept.
 
 
@@ -207,11 +208,9 @@ Its main purpose is to ensure a reliable transfer of data frames between two
 nodes connected by a physical layer. It may also provide means to detect errors
 that may occur in the physical layer. Ethernet is the protocol used in the data
 layer of local area networks and the layer is split into two sublayers, the logical link control (LLC) and the medium access control (MAC). The LLC provides means to allow multiple network protocols (OSI layer three) to be multiplexed onto the same medium. The MAC encapsulates higher level frames into frames appropriate to be transmitted by the physical layer.
-\\
 
 Figure \ref{fig:eth} shows an Ethernet frame. The first seven bytes consist of a fixed preamble. It allows devices on the network to easily synchronize their 
 clocks for bit-level synchronization. It is followed by the start frame delimiter (SFD) that marks the beginning of a frame. Sender and receiver MAC addresses ensure that the packet is received by the corresponding host and that it can reply to the sender. The type field indicates the protocol used on the next layer (network layer). After the data payload a frame check sequence in form of a CRC (cyclic redundancy check) is sent to provide error detection. The maximum data payload size is limited to 1500 bytes.
-\\
 
 \begin{figure}[tb!]
     \centering
@@ -232,30 +231,29 @@ network. As soon as the destination node is in another network, a network layer
 is required. Using logical device addresses, network packets can be routed
 across different networks and on different media. This allows data to be sent
 over long distances.
-\\
 
 The most commonly used network layer is the Internet Protocol version 4 (IPv4).
 It consists of a 20 byte sized header that contains destination and source IP
 addresses, total length, checksum and other fields. The protocol field indicates what layer four protocol is used. Figure \ref{fig:ip} shows a complete IPv4 header.
 
-\begin{figure}[tb!]
+\begin{figure}[b!]
     \centering
     \includegraphics[width=\textwidth]{images/theory/ip.png}
     \caption{IPv4 header \cite{ip}}
     \label{fig:ip}
 \end{figure}
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=\textwidth]{images/theory/tcp.png}
-    \caption{TCP Header \cite{tcpudp}}
-    \label{fig:tcp}
-\end{figure}
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=\textwidth]{images/theory/udp.png}
-    \caption{UDP Header \cite{tcpudp}}
-    \label{fig:udp}
-\end{figure}
+% \begin{figure}[tb!]
+%     \centering
+%     \includegraphics[width=\textwidth]{images/theory/tcp.png}
+%     \caption{TCP Header \cite{tcpudp}}
+%     \label{fig:tcp}
+% \end{figure}
+% \begin{figure}[tb!]
+%     \centering
+%     \includegraphics[width=\textwidth]{images/theory/udp.png}
+%     \caption{UDP Header \cite{tcpudp}}
+%     \label{fig:udp}
+% \end{figure}
 
 
 \subsection{Transport} 
@@ -264,7 +262,6 @@ the network. Its main purpose is to control the communication of different
 applications on two hosts. Therefore a port number is required to distinguish
 between the different applications utilizing the same network connection. The
 transport layer may also provide segmentation of the data, guarantee of delivery and flow control to avoid network jam.
-\\
 
 The two most used transport layer protocols are the Transmission Control
 Protocol (TCP) and the User Datagram Protocol (UDP). Table \ref{tab:tcpudp}
@@ -299,7 +296,7 @@ Vivado HLS is a development environment that synthesizes C/C++ code to HDL. The
 C/C++ language is intended for sequential programming where the HDL language
 describes the hardware. This chapter deals with the design flow (
 \ref{ch:design_flow}) of Vivado HLS. The directives (\ref{ch:directives}) that
-are used for the compiler to synthesize the C/C++ code in HDL and finally arbritary data types (\ref{ch:ap}) which can be used in Vivado HLS for C/C++ code.
+are used for the compiler to synthesize the C/C++ code in HDL and finally arbritrary data types (\ref{ch:ap}) which can be used in Vivado HLS for C/C++ code.
 
 \subsection{Design Flow} \label{ch:design_flow}
 In Vivado HLS it is possible to translate the C/C++ code into HDL and generate
@@ -331,12 +328,13 @@ The IP core can be controlled with the control interfaces. With this signal it
 can be started or stopped for example or send a handshake if the IP core has
 finished its operation. 
 AXI4 interfaces can also be added directly to the IP core using directives. The
-AX4-Lite, AXI4-Master or AXI4-Stream interface can be configuered.
+AX4-Lite, AXI4-Master or AXI4-Stream interface can be configured.
 Among other things, memory elements can also be connected directly to the IP
 core. These are block RAM or \gls{fifo} that can be used to read and process
 the data
 inside the IP core. These can also be used to store output data of the IP core 
-\cite{pragma}. \\
+\cite{pragma}.
+\clearpage
 Figure \ref{fig:p_interface} shows how the pragma \texttt{interface} is
 configured. First, the interface can be specified and whether it is an input or
 an output. Second, the variable to which the pragma is to be applied has to be
@@ -381,7 +379,7 @@ In Vivado HLS the FPGA is described with C/C++ language. Among others, it is als
 \begin{description}
 \item[Pipeline]\hfill \\
 This directive allows a loop to be pipelined which increases throughput.
-Now more operations are happening in a signle clock cycle.
+Now more operations are happening in a single clock cycle.
 Pipeline is used if not all data for processing is available in the loop. Figure
 \ref{fig:p_pipeline_unroll} (pipeline) shows that only one read access per clock cycle can be made. The other operations can be pipelined. This will lead to a processing of the loop in five clock cycles. The throughput could therefore be increased from the sequential method with one third data per clock cycle to pipelined with one data per clock cycle.
 
@@ -394,13 +392,14 @@ loops are automatically unrolled. \\
 One can also apply both directives in combination in a loop. This is useful if,
 for example, the data was previously split per \texttt{array\_partition} and it is now possible to read multiple data (but not all data) in one clock cycle. Since the unroll directive can specify a factor that unrolls the loop.
 
-\begin{figure}[tb!]
+\begin{figure}[h!]
     \centering
     \includegraphics[width=0.9\textwidth]{images/theory/pipeline_unroll.png}
     \caption{Pragma: pipeline / unroll}
     \label{fig:p_pipeline_unroll}
 \end{figure}
 
+\newpage
 \subsection{Arbitrary Precision} \label{ch:ap}
 Resources are limited on the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point on the FPGA \cite{floating}. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
 
@@ -447,7 +446,7 @@ The AXI4 interface is a memory mapped interface and consists of five transaction
 channels as shown in table
 \ref{tab:axi4transchan}. 
 
-\begin{table}[h]
+\begin{table}[t!]
     \centering
     \begin{tabular}{ l  l}
         \toprule
@@ -471,7 +470,7 @@ signal is set active if the sender has driven the INFORMATION lines with valid
 data. The receiver indicates with a READY impulse that it has read the
 information. 
 
-\begin{figure}[h!]
+\begin{figure}[b!]
     \centering
     \includegraphics[width=0.6\textwidth]{images/theory/axi4handshake.png}
     \caption{VALID before READY handshake \cite{axispecs}}
@@ -499,7 +498,7 @@ data word.
 \subsection{AXI4-Lite}
 AXI4-Lite is a scaled-down version of AXI4. It allows single beat write and
 reads but no burst transaction. It therefore requires less signals and is suited
-for configuering IP cores and register values. It consists of the same
+for configuring IP cores and register values. It consists of the same
 transaction channels and handshake signals. AXI4 and AXI4-Lite are compatible
 and can be converted.
 
@@ -509,7 +508,7 @@ master to slave. It is not address based and features only one transaction
 channel. There is also no burst size limit. There are four required signals as
 shown in table \ref{tab:axi4steramreqsig}.
 
-\begin{table}[h]
+\begin{table}[b!]
     \centering
     \begin{tabular}{ l  l l}
         \toprule
@@ -530,9 +529,11 @@ shown in table \ref{tab:axi4steramreqsig}.
 \texttt{TVALID} and \texttt{TREADY} are the handshake signals as described in chapter 
 \ref{chapt:theory:axi4} and illustrated in figure \ref{fig:axihandshake}.
 AXI4-Stream defines further sideband signals, some of which are described in
-table \ref{tab:axi4steramside}.
+table \ref{tab:axi4steramside}. In this project the \texttt{TLAST} signal is
+used frequently to indicate for example the end of a file transfer of the
+communication core or the last pixel of an image line.
 
-\begin{table}[h]
+\begin{table}[b!]
     \centering
     \begin{tabular}{ l  l l}
         \toprule
@@ -547,7 +548,5 @@ table \ref{tab:axi4steramside}.
     \label{tab:axi4steramside}
 \end{table}
 
-In this project the \texttt{TLAST} signal is used frequently to indicate for
-example the end of a file transfer of the communication core or the last pixel
-of an image line.
+
 

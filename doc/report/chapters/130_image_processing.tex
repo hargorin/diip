@@ -14,7 +14,7 @@ The operation is row based. This means that each new output row of the image req
 
 \begin{figure}[tb!]
     \centering
-    \begin{adjustbox}{max width=\textwidth}
+    \begin{adjustbox}{max width=0.9\textwidth}
         \input{images/image_processing/concept.tikz}
     \end{adjustbox}
     \caption{Concept of the Wallis filter implementation}
@@ -23,7 +23,7 @@ The operation is row based. This means that each new output row of the image req
 
 \begin{figure}[tb!]
     \centering
-    \begin{adjustbox}{max width=\textwidth}
+    \begin{adjustbox}{max width=0.9\textwidth}
         \input{images/image_processing/init_iter.tikz}
     \end{adjustbox}
     \caption{Sequence of the implementation with initialization and iteration}
@@ -31,9 +31,12 @@ The operation is row based. This means that each new output row of the image req
 \end{figure}
 
 \subsubsection*{Abbreviations}
-This table lists constants which were used in the code and recur in the documentation.
+Table \ref{tab:ip:abbreviations} lists constants which were used in the code and
+recur in the documentation. WIN\_SIZE is the number of pixels inside the Wallis
+filter neighborhood. This neighborhood is square therefore the side length
+WIN\_LENGTH equals to the square root of WIN\_SIZE.
 
-\begin{table}[tb!]
+\begin{table}[h!]
     \centering
     \begin{tabular}{l l l}
         \toprule
@@ -46,7 +49,7 @@ This table lists constants which were used in the code and recur in the document
         \bottomrule
     \end{tabular}
     \caption{Constants of the code}
-    \label{tab:c_div}
+    \label{tab:ip:abbreviations}
 \end{table}
 
 
@@ -65,7 +68,7 @@ No adjustment is necessary for the equation for the mean value. It can be used a
     \label{eq:mean}
 \end{equation} 
 
-The equation known for variance (\ref{eq:var1}) is adjusted beore implementated
+The equation known for variance (\ref{eq:var1}) is adjusted before implementated
 on FPGA.
 As can be seen, the mean value must first be calculated so that the calculation of the
 variance can be started. The goal is to start the calculation of the mean
@@ -87,7 +90,9 @@ implementation of the equation is shown in the concept in figure \ref{fig:concep
     \label{eq:var}
 \end{align}
 
-\subsubsection*{Code}
+% \subsubsection*{Code}
+\pagebreak
+% \clearpage
 Listing \ref{lst:sum} shows the summing of pixels. The pixels are summed for the mean and squared summed for the variance at the same time. Furthermore, the pixels are temporarily stored in an array so that they can be used again at a later time. \\
 Because this is the initialization, the entire neighborhood (WIN\_SIZE) is read. During the iteration sequence only one pixel column (WIN\_LENGTH)) is read. \\
 \begin{minipage}{\textwidth}
@@ -134,7 +139,16 @@ based on the next larger data size. For security reasons, the data types are
 usually one bit larger. A table with a description of the variables can be found
 in the appendix \ref{app:datatypes}.
 
-\begin{table}[tb!]
+\clearpage
+Now a closer look at the calculation of the division is taken. The equation
+of the Wallis filter results in the division of $\frac{x}{y}$. This means that
+the dividend and the divisor change with each pixel. This could be programmed on
+the FPGA with $\frac{x}{y}$. But as it is known, a multiplication on the FPGA is
+faster than a division. Therefore the $\frac{x}{y}$ division is replaced with a
+reciprocal version $\frac{1}{y}$, where afterwards the dividend is multiplied by the result of the reciprocal division $(\frac{1}{y}) \cdot x$. The latency of these two methods were measured in Vivado HLS and are shown in Table \ref{tab:c_div}. \\
+
+
+\begin{table}[t!]
     \centering
     \begin{tabularx}{\textwidth}{l l l l l l}
         \toprule
@@ -164,13 +178,6 @@ in the appendix \ref{app:datatypes}.
     \label{tab:datatypes}
 \end{table}
 
-Now a closer look at the calculation of the division is taken. The equation
-of the Wallis filter results in the division of $\frac{x}{y}$. This means that
-the dividend and the divisor change with each pixel. This could be programmed on
-the FPGA with $\frac{x}{y}$. But as it is known, a multiplication on the FPGA is
-faster than a division. Therefore the $\frac{x}{y}$ division is replaced with a
-reciprocal version $\frac{1}{y}$, where afterwards the dividend is multiplied by the result of the reciprocal division $(\frac{1}{y}) \cdot x$. The latency of these two methods were measured in Vivado HLS and are shown in Table \ref{tab:c_div}. \\
-
 \begin{table}[tb!]
     \centering
     \begin{tabular}{l c}
@@ -187,11 +194,12 @@ reciprocal version $\frac{1}{y}$, where afterwards the dividend is multiplied by
     \label{tab:c_div}
 \end{table}
 
-\subsubsection*{Code}
+% \subsubsection*{Code}
 The reciprocal version was chosen because it has a lower latency. In addition,
 the accuracy of the division was limited. Because finally the calculated pixel
 is rounded to an integer between 0-255 and the simulation has shown that it is
-not necessary to calculate highly accurate. The code of the division and the data types used is below:
+not necessary to calculate highly accurate. The code of the division and the
+data types used is shown in listing \ref{lst:division}.
 
 \begin{minipage}{\textwidth}
 \begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
@@ -217,14 +225,14 @@ The advantage of Vivado HLS is that interfaces can be adapted relatively easy
 and quick. The AXI4-Stream has therefore been enlarged to receive one column per
 clock. This means that the AXI4-Stream has been extended to a data width of 256
 bits \cite{axi_stream}. This also made it possible to add the directive 
-\texttt{unroll} to the loops. With this solution the troughput could be
-increased.
+\texttt{unroll} to the loops. With this solution the throughput could be
+increased. Listing \ref{lst:ip:axistream} shows the expansion of the AXI4-Stream interface.
 
 % has increased by a factor of 7.8 to the 8 bit version. It should be
 % noted that the 256bit solution did not increase by a factor of 21. The problem is that the FPGA needs 11 clock cycles to provide the data to the Wallis filter and this cannot be pipelined.
 
 \begin{minipage}{\textwidth}
-\begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:division]
+\begin{lstlisting}[style=CStyle, caption=Calculation of the division for the Wallis filter, label=lst:ip:axistream]
 typedef ap_axiu<8,1,1,1> AXI_VALUE;			// <TDATA, TUSER, TID, TDEST>
 typedef hls::stream<AXI_VALUE> AXI_STREAM;
 
@@ -236,7 +244,7 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 \end{minipage}
 
 \subsection{Array Partition}
-The pixels are sent to the Wallis IP core via AXI4-Stream. An AXI4-Stream can be imagined as a FIFO. When the data is read, it is no longer available at the input of the AXI4-Stream. This means the pixels have to be temporarily stored, because the pixels are used again with every iteration (\ref{ch:ip:concept}). \\
+The pixels are sent to the Wallis IP core via AXI4-Stream. An AXI4-Stream can be imagined as a FIFO. When the data is read, it is no longer available at the input of the AXI4-Stream. This means the pixels have to be temporarily stored, because the pixels are used again with every iteration (\ref{ch:ip:concept}).
 The pixels are temporarily stored in a block RAM (BRAM). But this brings another
 problem. With a BRAM only 1 pixel per clock can be read. 21 pixels must be
 processed per iteration. The latency would be at least 21 clock cycles if it
@@ -265,7 +273,7 @@ problems with programming the algorithm.
 
 \subsection{Concept} \label{ch:concept_vhdl}
 This chapter presents the concept of the mean and variance value
-calcualation, as well as the Wallis filter. They are shown as a block diagram and briefly explained.
+calculation, as well as the Wallis filter. They are shown as a block diagram and briefly explained.
 
 \subsubsection*{Mean and Variance}
 Block diagram \ref{fig:mean_var_vhdl} is based on the two equations of the mean 
@@ -311,7 +319,6 @@ and the variance are passed to the Wallis filter.
     \label{fig:sim_shift_sum}
 \end{figure}
 
-
 \subsubsection*{Wallis Algorithm}
 Block diagram \ref{fig:wallis_vhdl} is based on the equations of the Wallis algorithm \ref{eq:wallis_filter}.
 The pixel to be calculated is connected to the IP core via AXI4-Stream. The constant parameters are connected to the \texttt{controller} and sent from the computer. \\
@@ -320,9 +327,11 @@ core
 by Xilinx that can be configuered to implement different algorithms for
 divisions. Once the pixel is calculated, it is sent to the controller via AXI4-Stream.
 
+\clearpage
+
 \begin{figure}[tb!]
     \centering
-    \begin{adjustbox}{max width=\textwidth}
+    \begin{adjustbox}{max width=0.95\textwidth}
         \input{images/image_processing/wallis_vhdl.tikz}
     \end{adjustbox}
     \caption{Concept of the Wallis filter implementation in VHDL}
@@ -340,7 +349,7 @@ A division exists in the calculation of the mean and the variance. As already me
 This division is relatively easy to solve. As can be seen from the equation of
 the two calculations (\ref{eq:mean} and \ref{eq:var}), the divisor is constant.
 This gives the possibility to calculate $1/N$ in advance and to store the
-obtained value as a constant on the FPGA. The result consinsts of a multiplication with
+obtained value as a constant on the FPGA. The result consists of a multiplication with
 two integers on the FPGA that are interpreted as fractionals and can be
 calculated in one clock cycle. \\
 Calculated $1/441$ results in $\approx 0.00226757$. This number is converted to
@@ -353,6 +362,8 @@ square brackets contain the entire data width. If there are two numbers in the
 square brackets, the first is the entire data width and the second is the
 integer width. The sign is in front of the brackets: u for unsigned and s for
 signed.
+
+\clearpage
 
 \begin{figure}[tb!]
     \centering
