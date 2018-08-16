@@ -103,11 +103,11 @@ public class Model extends Observable {
 	public void localWorkerSetEnabled(int i, boolean selected) {
 		if(selected) {
 			if(i==1) {
-				localWorker1 = new LocalWorker();
+				localWorker1 = new LocalWorker(2230);
 				localWorker1.start();
 			}
 			if(i==2) {
-				localWorker2 = new LocalWorker();
+				localWorker2 = new LocalWorker(2231);
 				localWorker2.start();
 			}
 		}
@@ -130,34 +130,34 @@ public class Model extends Observable {
 	
 
 
-	public void goRequest() {
+	public void goRequest(WallisParameters waparin) {
 		if(!dp.isRunning()) {
 			dp = new DistributedProcessor(this);
 			// Assemble list of workers
 			workers = new ArrayList<Worker>();
 			if(localWorker1!=null) {
-				workers.add(new Worker("localhost",localWorker1.getPort()));
+				workers.add(new Worker("localhost",localWorker1.getPort(),2230));
 			}
 			if(localWorker2!=null) {
-				workers.add(new Worker("localhost",localWorker2.getPort()));
+				workers.add(new Worker("localhost",localWorker2.getPort(),2231));
 			}
 			if(fpgaWorker1 != null) {
-				workers.add(new Worker(fpgaWorker1.ip, fpgaWorker1.port));
+				workers.add(new Worker(fpgaWorker1.ip, fpgaWorker1.port,2222));
 			}
 			if(fpgaWorker2 != null) {
-				workers.add(new Worker(fpgaWorker2.ip, fpgaWorker2.port));
+				workers.add(new Worker(fpgaWorker2.ip, fpgaWorker2.port,2221));
 			}
 			dp.setWorkers(workers);
 			inputImages.clear();
 			inputImages.add(sourceImage);
 			dp.setImagess(inputImages);
 
-			WallisParameters wapar = new WallisParameters();
-	    	wapar.brightness = 0.5;
-	    	wapar.contrast = 0.8125;
-	    	wapar.gMean = 127;
-	    	wapar.gVar = 3600;
-	    	wapar.winLen = 21;
+			WallisParameters wapar = waparin;
+//	    	wapar.brightness = 0.5;
+//	    	wapar.contrast = 0.8125;
+//	    	wapar.gMean = 127;
+//	    	wapar.gVar = 3600;
+//	    	wapar.winLen = 21;
 	    	
 	    	dp.setWaPar(wapar);
 			dp.start();
@@ -183,9 +183,9 @@ public class Model extends Observable {
 		
 		if(selected) {
 			if(i == 1)
-				fpgaWorker1 = new Worker(arrOfStr[0], Integer.parseInt(arrOfStr[1]));
+				fpgaWorker1 = new Worker(arrOfStr[0], Integer.parseInt(arrOfStr[1]), Integer.parseInt(arrOfStr[2]));
 			if(i == 2)
-				fpgaWorker2 = new Worker(arrOfStr[0], Integer.parseInt(arrOfStr[1]));
+				fpgaWorker2 = new Worker(arrOfStr[0], Integer.parseInt(arrOfStr[1]), Integer.parseInt(arrOfStr[2]));
 		}
 		else {
 			if(i == 1)
@@ -203,7 +203,7 @@ public class Model extends Observable {
 		DatagramSocket socket = null;
 		InetAddress address = null;
 		
-		LocalWorker lw = new LocalWorker();
+		LocalWorker lw = new LocalWorker(2222);
 		lw.start();
 		
 		// Create new socket
@@ -272,7 +272,7 @@ public class Model extends Observable {
 		DatagramSocket socket = null;
 		InetAddress address = null;
 		
-		LocalWorker lw = new LocalWorker();
+		LocalWorker lw = new LocalWorker(2222);
 		lw.start();
 		
 		// Create new socket

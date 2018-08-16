@@ -32,6 +32,7 @@ public class LocalWorker extends Thread {
     private boolean running = false;
     private byte[] buf = new byte[1500];
 	private int port;
+	private int txport;
     
     // Image cache
 	private byte[][] imcache = new byte[CACHE_N_LINES][BRAM_SIZE];
@@ -53,8 +54,9 @@ public class LocalWorker extends Thread {
 	// ================================================================================
     /**
      * Creates a new local worker
+     * @param txport 
      */
-    public LocalWorker() {
+    public LocalWorker(int txport) {
     	this.port = 5000;
     	boolean portFound = false;
     	while(!portFound) {
@@ -66,6 +68,7 @@ public class LocalWorker extends Thread {
 			}
     	}
     	System.out.printf("new localworker on port %d\n", this.port);
+    	this.txport = txport;
     	
     	wapar = new WallisParameters();
     	wapar.brightness = 0.5;
@@ -213,7 +216,7 @@ public class LocalWorker extends Thread {
                 udata.data = outPixSend;
                 udata.length = outIndex;
                 udata.tcid = 0;
-                UFT.send(udata, socket, replyAdr, 2222);
+                UFT.send(udata, socket, replyAdr, txport);
                 
                 // Increment pointer
                 readCachePtr++;

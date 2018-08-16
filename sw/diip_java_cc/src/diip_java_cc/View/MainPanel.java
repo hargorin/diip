@@ -19,6 +19,8 @@ import javax.swing.border.LineBorder;
 
 import diip_java_cc.Controller.Controller;
 import diip_java_cc.Model.Model;
+import diip_java_cc.Model.WallisParameters;
+
 import javax.swing.SwingConstants;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
@@ -57,6 +59,12 @@ public class MainPanel extends JPanel implements ActionListener {
 	private JLabel lblLW2;
 	private JLabel lblImageWidth;
 	private JLabel lblImageHeight, lblWorkers;
+
+	private JEngineerField spB;
+	private JEngineerField spC;
+	private JEngineerField spGMean;
+	private JEngineerField spGVar;
+	private JEngineerField spWinLen;
 	/**
 	 * Create the panel.
 	 */
@@ -166,56 +174,58 @@ public class MainPanel extends JPanel implements ActionListener {
 		panel_5.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		// Global Mean
-		JEngineerField spinner_5 = new JEngineerField();
-		spinner_5.setHorizontalAlignment(SwingConstants.RIGHT);
-		spinner_5.setValue(127.0);
-		spinner_5.setMinValue(0.0);
-		spinner_5.setMaxValue(255.0);
-		panel_5.add(spinner_5);
+		spGMean = new JEngineerField();
+		spGMean.setHorizontalAlignment(SwingConstants.RIGHT);
+		spGMean.setValue(127.0);
+		spGMean.setMinValue(0.0);
+		spGMean.setMaxValue(255.0);
+		panel_5.add(spGMean);
+
+		spGMean.addActionListener(this);
 			
 		JLabel label = new JLabel("Global Mean");
 		panel_5.add(label);
 		
 		// Global Variance
-		JEngineerField spinner_6 = new JEngineerField();
-		spinner_6.setHorizontalAlignment(SwingConstants.RIGHT);
-		spinner_6.setValue(3600.0);
-		spinner_6.setMinValue(0.0);
-		spinner_6.setMaxValue(16384.0);
-		panel_5.add(spinner_6);
+		spGVar = new JEngineerField();
+		spGVar.setHorizontalAlignment(SwingConstants.RIGHT);
+		spGVar.setValue(3600.0);
+		spGVar.setMinValue(0.0);
+		spGVar.setMaxValue(16384.0);
+		panel_5.add(spGVar);
 		
 		JLabel label_1 = new JLabel("Global Var");
 		panel_5.add(label_1);
 		
 		// Brightness
-		JEngineerField spinner_7 = new JEngineerField();
-		spinner_7.setValue(0.5);
-		spinner_7.setMinValue(0.0);
-		spinner_7.setMaxValue(1.0);
-		spinner_7.setHorizontalAlignment(SwingConstants.RIGHT);
-		panel_5.add(spinner_7);
+		spB = new JEngineerField();
+		spB.setValue(0.5);
+		spB.setMinValue(0.0);
+		spB.setMaxValue(1.0);
+		spB.setHorizontalAlignment(SwingConstants.RIGHT);
+		panel_5.add(spB);
 		
 		JLabel label_2 = new JLabel("Brightness");
 		panel_5.add(label_2);
 		
 		// Contrast
-		JEngineerField spinner_8 = new JEngineerField();
-		spinner_8.setHorizontalAlignment(SwingConstants.RIGHT);
-		spinner_8.setValue(0.8);
-		spinner_8.setMinValue(0.0);
-		spinner_8.setMaxValue(1.0);
-		panel_5.add(spinner_8);
+		spC = new JEngineerField();
+		spC.setHorizontalAlignment(SwingConstants.RIGHT);
+		spC.setValue(0.8);
+		spC.setMinValue(0.0);
+		spC.setMaxValue(1.0);
+		panel_5.add(spC);
 		
 		JLabel label_3 = new JLabel("Contrast");
 		panel_5.add(label_3);
 		
 		// Window Length
-		JEngineerField spinner_9 = new JEngineerField();
-		spinner_9.setHorizontalAlignment(SwingConstants.RIGHT);
-		spinner_9.setValue(21.0);
-		spinner_9.setMinValue(11.0);
-		spinner_9.setMaxValue(41.0);
-		panel_5.add(spinner_9);
+		spWinLen = new JEngineerField();
+		spWinLen.setHorizontalAlignment(SwingConstants.RIGHT);
+		spWinLen.setValue(21.0);
+		spWinLen.setMinValue(11.0);
+		spWinLen.setMaxValue(41.0);
+		panel_5.add(spWinLen);
 		
 		JLabel label_4 = new JLabel("Window Length");
 		panel_5.add(label_4);
@@ -413,7 +423,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		panel_8.add(cbFPGA1, gbc_cbFPGA1);
 		
 		tfFPGA1 = new JTextField();
-		tfFPGA1.setText("192.168.5.9:42042");
+		tfFPGA1.setText("192.168.5.9:42042:2222");
 		GridBagConstraints gbc_tfFPGA1 = new GridBagConstraints();
 		gbc_tfFPGA1.fill = GridBagConstraints.BOTH;
 		gbc_tfFPGA1.anchor = GridBagConstraints.WEST;
@@ -440,7 +450,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		panel_8.add(cbFPGA2, gbc_cbFPGA2);
 		
 		tfFPGA2 = new JTextField();
-		tfFPGA2.setText("192.168.5.8:42042");
+		tfFPGA2.setText("192.168.5.8:42042:2221");
 		GridBagConstraints gbc_tfFPGA2 = new GridBagConstraints();
 		gbc_tfFPGA2.fill = GridBagConstraints.BOTH;
 		gbc_tfFPGA2.anchor = GridBagConstraints.WEST;
@@ -504,7 +514,14 @@ public class MainPanel extends JPanel implements ActionListener {
 			controller.localWorkerChanged(2,cbLW2.isSelected());
 		}
 		if(e.getSource() == btGo) {
-			controller.goRequest();
+			// Fill wallis parameters
+			WallisParameters wapar = new WallisParameters();
+			wapar.brightness = spB.getValue();
+			wapar.contrast = spC.getValue();
+			wapar.gMean = spGMean.getValue();
+			wapar.gVar = spGVar.getValue();
+			wapar.winLen = (int) spWinLen.getValue();
+			controller.goRequest(wapar);
 		}
 		if(e.getSource() == btLoadImg) {
 			String fName = fileChooser.showFileChooser();

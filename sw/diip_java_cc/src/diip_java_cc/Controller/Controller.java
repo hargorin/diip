@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import diip_java_cc.Model.Model;
+import diip_java_cc.Model.WallisParameters;
 import diip_java_cc.View.MainView;
 
 public class Controller {
@@ -27,8 +28,8 @@ public class Controller {
 		model.loadSourceImage("res/mountain.png");
 	}
 
-	public void goRequest() {
-		model.goRequest();
+	public void goRequest(WallisParameters wapar) {
+		model.goRequest(wapar);
 	}
 	
 	public void loadFile(File file) {

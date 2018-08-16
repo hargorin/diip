@@ -7,12 +7,14 @@ import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 public class Worker extends Thread {
-	public Worker(String string, int port2) {
+	public Worker(String string, int port2, int rxport) {
 		ip = string;
 		port = port2;
+		this.rxport = rxport;
 	}
 	public String ip;
 	public int port;
+	public int rxport;
 	
 	public int[][] imData;
 	public int iw;
@@ -56,7 +58,7 @@ public class Worker extends Thread {
 			e.printStackTrace();
 		}
 		try {
-			rxsocket = new DatagramSocket(2222);
+			rxsocket = new DatagramSocket(rxport);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
