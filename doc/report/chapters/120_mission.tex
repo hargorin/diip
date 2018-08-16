@@ -43,7 +43,15 @@ hardware (see chapter \ref{chapt:theory:physical}). Storing data is possible in 
 module. Table \ref{tab:ac701} shows a summary of the important peripherals on
 the AC701 board.
 
-\begin{table}[b!]
+The XC7A200T FPGA is part of the Artix-7 family. It is optimized for high logic
+throughput at low costs. Important for this project is the number of logic cells
+and the amount of on-chip memory. With more logic cells available, data can be
+processed parallel and the throughput increases. Processing more data at the
+same time also requires the data to be stored. Therefore on-chip memory, also
+called block memory, is used to have fast access to the data. Table 
+\ref{tab:XC7A200T} lists the relevant numbers of resources.
+
+\begin{table}[h!]
     \centering
     \begin{tabular}{l l}
         \toprule
@@ -58,14 +66,6 @@ the AC701 board.
     \caption{Xilinx AC701 key board features \cite{xilinx_ac701}}
     \label{tab:ac701}
 \end{table}
-
-The XC7A200T FPGA is part of the Artix-7 family. It is optimized for high logic
-throughput at low costs. Important for this project is the number of logic cells
-and the amount of on-chip memory. With more logic cells available, data can be
-processed parallel and the throughput increases. Processing more data at the
-same time also requires the data to be stored. Therefore on-chip memory, also
-called block memory, is used to have fast access to the data. Table 
-\ref{tab:XC7A200T} lists the relevant numbers of resources.
 
 \begin{table}[tb!]
     \centering

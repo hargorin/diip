@@ -508,7 +508,14 @@ master to slave. It is not address based and features only one transaction
 channel. There is also no burst size limit. There are four required signals as
 shown in table \ref{tab:axi4steramreqsig}.
 
-\begin{table}[b!]
+\texttt{TVALID} and \texttt{TREADY} are the handshake signals as described in chapter 
+\ref{chapt:theory:axi4} and illustrated in figure \ref{fig:axihandshake}.
+AXI4-Stream defines further sideband signals, some of which are described in
+table \ref{tab:axi4steramside}. In this project the \texttt{TLAST} signal is
+used frequently to indicate for example the end of a file transfer of the
+communication core or the last pixel of an image line.
+
+\begin{table}[h!]
     \centering
     \begin{tabular}{ l  l l}
         \toprule
@@ -526,14 +533,7 @@ shown in table \ref{tab:axi4steramreqsig}.
     \label{tab:axi4steramreqsig}
 \end{table}
 
-\texttt{TVALID} and \texttt{TREADY} are the handshake signals as described in chapter 
-\ref{chapt:theory:axi4} and illustrated in figure \ref{fig:axihandshake}.
-AXI4-Stream defines further sideband signals, some of which are described in
-table \ref{tab:axi4steramside}. In this project the \texttt{TLAST} signal is
-used frequently to indicate for example the end of a file transfer of the
-communication core or the last pixel of an image line.
-
-\begin{table}[b!]
+\begin{table}[h!]
     \centering
     \begin{tabular}{ l  l l}
         \toprule

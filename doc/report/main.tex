@@ -153,6 +153,12 @@
 \setsecnumdepth{subsubsection}
 \pagestyle{myruled}
 
+\usepackage{afterpage}
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    % \addtocounter{page}{-1}%
+    \newpage}
 
 %
 % Oscar's command (it works):
@@ -613,9 +619,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             G L O S S A R Y                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \clearpage{\pagestyle{empty}\cleardoublepage}
+\afterpage{\blankpage}
 \printglossaries
-% \clearpage{\pagestyle{empty}\cleardoublepage}
+
 
 % <<< ----------------------------------------------------------- BIBLIOGRAPHY %
 % \addcontentsline{toc}{chapter}{Bibliography}
