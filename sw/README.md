@@ -1,13 +1,21 @@
 # diip - Software
 
-Contains software for testing.
+Contains PC software for testing and benchmark.
 
-| Project | Description |
-| ------- | :----------- |
-| image2file | Convert tiff to binary data for FPGA |
-| file2image | Convert binary data from FPGA to tiff |
-| uft | UDP file transfer stack |
 
+## Folder Structure
+```
+.
+├── clahe						# CLAHE filter PC program
+├── diip_cc 					# diip Control Center for diip_faster hlx project (VHDL)
+├── diip_cc_hls 				# diip Control Center for diip hlx project (HLS)
+├── file2image 					# Converts image file to binary file containing pixels
+├── image2file  				# Converts binary file to image (iverse of file2image)
+├── matlab 						# Contains Matlab scripts for testing
+├── uft 						# UDP file transfer stack library, used in diip_cc
+├── wallis_filter 				# C++ implementation of Wallis filter
+└── wallis_filter_datatxt_out 	# C++ implementation of Wallis filter with text output for VHDL tb
+```
 
 ## Build instructions
 ```
