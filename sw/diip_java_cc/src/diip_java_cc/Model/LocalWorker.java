@@ -41,6 +41,12 @@ public class LocalWorker extends Thread {
     private int readCachePtr = 0;
     
     private WallisParameters wapar;
+    
+    private double wa_par_c_gvar;
+    private double wa_par_c;
+    private double wa_par_ci_gvar;
+    private double wa_par_b_gmean;
+    private double wa_par_bi;
 
 	// ================================================================================
 	// Public methods
@@ -80,6 +86,7 @@ public class LocalWorker extends Thread {
     	int outW = 21;
     	int readPtr = 0;
     	
+    	
     	rxLines = 0;
     	readCachePtr = 0;
     	
@@ -96,6 +103,21 @@ public class LocalWorker extends Thread {
         		if(udata.uregAddress == 1) {
         			wapar.imgWidth = (int) udata.uregContent;
         			outW = wapar.imgWidth - wapar.winLen + 1;
+        		}
+        		else if(udata.uregAddress == 3) {
+        			wa_par_c_gvar = udata.uregContent/64;
+        		}
+        		else if(udata.uregAddress == 4) {
+        			wa_par_c = udata.uregContent/64;
+        		}
+        		else if(udata.uregAddress == 5) {
+        			wa_par_ci_gvar = udata.uregContent/64;
+        		}
+        		else if(udata.uregAddress == 6) {
+        			wa_par_b_gmean = udata.uregContent/64;
+        		}
+        		else if(udata.uregAddress == 7) {
+        			wa_par_bi = udata.uregContent/64;
         		}
         		continue;
         	}
@@ -114,7 +136,7 @@ public class LocalWorker extends Thread {
         	if(rxLinePtr == CACHE_N_LINES) rxLinePtr = 0;
         	rxLines++;
         	
-        	System.out.printf("Line received. rxLines=%d rxLinePtr=%d readLinePtr=%d\n", rxLines, rxLinePtr,readLinePtr);
+//        	System.out.printf("Line received. rxLines=%d rxLinePtr=%d readLinePtr=%d\n", rxLines, rxLinePtr,readLinePtr);
         	
         	// If enough data is here
         	if(rxLines >= 21) {
@@ -138,7 +160,7 @@ public class LocalWorker extends Thread {
 //        		if(readLinePtr == CACHE_N_LINES) readLinePtr = 0;
               
         		
-        		System.out.println("Processing Wallis");
+//        		System.out.println("Processing Wallis");
         		sum_Pixel = 0;
         		sum_Pixel2 = 0;
         		outIndex = 0;
@@ -195,7 +217,7 @@ public class LocalWorker extends Thread {
                 
                 // Increment pointer
                 readCachePtr++;
-        		System.out.println("Processing Wallis Done");
+//        		System.out.println("Processing Wallis Done");
         	
         	
         	
@@ -301,8 +323,8 @@ public class LocalWorker extends Thread {
     double Wallis(double v_pixel, double n_mean, double n_var) {
     	double w_Pixel;
 
-        double dgb = ((v_pixel - n_mean) * wapar.contrast * wapar.gVar) / (wapar.contrast * n_var + (1 - wapar.contrast) * wapar.gVar);
-        w_Pixel = dgb + wapar.brightness * wapar.gMean + (1 - wapar.brightness) * n_mean;
+        double dgb = ((v_pixel - n_mean) * wa_par_c_gvar) / (wa_par_c * n_var + wa_par_ci_gvar);
+        w_Pixel = dgb + wa_par_b_gmean + wa_par_bi * n_mean;
 
         if(w_Pixel > 255) w_Pixel = 255;
         if(w_Pixel < 0) w_Pixel = 0;

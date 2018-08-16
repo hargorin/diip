@@ -72,6 +72,17 @@ public class Worker extends Thread {
 		
     	// Send user registers
     	UFT.setUserReg(1, iw, socket, address, port);
+
+    	UFT.setUserReg(3, (long)(64*wapar.contrast*wapar.gVar),socket, address, port);
+    	UFT.setUserReg(4, (long)(64*wapar.contrast),socket, address, port);
+    	UFT.setUserReg(5, (long)(64*(1-wapar.contrast)*wapar.gVar),socket, address, port);
+    	UFT.setUserReg(6, (long)(64*wapar.brightness*wapar.gMean),socket, address, port);
+    	UFT.setUserReg(7, (long)(64*(1-wapar.brightness)),socket, address, port);
+
+    	// reset
+    	UFT.setUserReg(0, 0, socket, address, port);
+    	UFT.setUserReg(0, 1, socket, address, port);
+    	UFT.setUserReg(0, 0, socket, address, port);
     	// TODO fill rest
     	
     	// Send data
@@ -102,8 +113,8 @@ public class Worker extends Thread {
     		do {
     			udatarx = UFT.receive(rxsocket);
     		} while(udatarx.status != UFTData.Status.DATA);
-    		System.out.println("Result received!");
-    		System.out.printf("rx len=%d iw=%d\n",udatarx.data.length, outw);
+//    		System.out.println("Result received!");
+//    		System.out.printf("rx len=%d iw=%d\n",udatarx.data.length, outw);
     		// copy rx to buffer
     		for(int k = 0; k < outw; k++) {
     			outPix[k][outy] = udatarx.data[k] & 0xFF;
