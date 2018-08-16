@@ -539,7 +539,7 @@ layout. Because the memory bus to read and write pixels to and from memory is
 AXI4 based, multiple single byte access result in considerably less throughput
 than single burst access.
 To take advantage of these burst accesses, a ping-pong buffer structure was
-realized. There are two buffers, each of the size of $WINDOW\_LENGTH *
+realized. There are two buffers, each of the size of $WINDOW\_LENGTH \cdot
 AXI\_BURST\_SIZE$ bytes, where $AXI\_BURST\_SIZE$ represents the number of bytes
 read
 in one burst access. It requires $WINDOW\_LENGTH$ burst reads to fill one
