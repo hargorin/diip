@@ -13,11 +13,12 @@
 #include <iostream>
 using namespace cv;
 
-#define INPUT_IMAGE "mountain.tif"
+#define INPUT_IMAGE "room.tif"
 #define G_MEAN 		127
 #define G_VAR 		3600 // STD = 60
 #define CONTRAST 	0.8125 //0.75 0.82
 #define BRIGHTNESS	0.5	//0.8 0.49
+
 
 uint8_t C_Mean(uint8_t *pixel);
 uint16_t C_Var(uint8_t *pixel, uint8_t mean);
@@ -37,10 +38,10 @@ int main(int argc, const char * argv[]) {
 	// Edit Image
 	Mat src_gray;
 	cvtColor(src_img, src_gray, CV_BGR2GRAY);
-	//uint16_t img_width = src_gray.cols;
-	//uint16_t img_height = src_gray.rows;
-	uint16_t img_height = 23;
-	uint16_t img_width = 21;
+	uint16_t img_width = src_gray.cols;
+	uint16_t img_height = src_gray.rows;
+	//uint16_t img_height = 40;
+	//uint16_t img_width = 40;
 	uint16_t g_height = (img_height - WIN_LENGTH + 1);
 	uint16_t g_width = (img_width - WIN_LENGTH + 1);
 
@@ -91,6 +92,7 @@ int main(int argc, const char * argv[]) {
 
 			c_mean = C_Mean(c_pixel);
 			c_var = C_Var(c_pixel, c_mean);
+			//printf("Var %2d: %5d\n", i_wallis, c_var);
 			c_wallis[i_wallis++] = C_Wallis(c_pixel[(WIN_SIZE - 1) / 2], c_mean, c_var, G_MEAN, G_VAR, BRIGHTNESS, CONTRAST);
 		}
 	}
@@ -168,18 +170,18 @@ int main(int argc, const char * argv[]) {
 	printf("***********************************************************\n");
 
 	// Show image
-	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
+/*	Mat hw_dst_img = Mat(g_height, g_width, CV_8UC1, w_data);
 	Mat c_dst_img = Mat(g_height, g_width, CV_8UC1, c_wallis);
 
-	imwrite("wallis_hw.tif", hw_dst_img);
-	imwrite("wallis_sw.tif", c_dst_img);
-//	if (getenv("DISPLAY") != NULL)
-//	{
-//		imshow( "Original", src_gray );
-//		imshow( "HW - Wallis", hw_dst_img );
-//		imshow( "SW - Wallis", c_dst_img );
-//		waitKey(0);
-//	}
+	imwrite("wallis_hw_room.tif", hw_dst_img);
+	imwrite("wallis_sw_room.tif", c_dst_img);
+	if (getenv("DISPLAY") != NULL)
+	{
+		imshow( "Original", src_gray );
+		imshow( "HW - Wallis", hw_dst_img );
+		imshow( "SW - Wallis", c_dst_img );
+		waitKey(0);
+	}*/
 
 
     return 0;

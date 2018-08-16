@@ -48,3 +48,4 @@ typedef hls::stream<AXI_VALUE> AXI_STREAM;
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
 			ap_ufixed<5,1,AP_RND> brightness);
+

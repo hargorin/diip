@@ -19,10 +19,17 @@ apuint8_t Wallis_Filter(apuint8_t iPxl, apuint8_t n_Mean, apuint14_t n_Var,
 						ap_ufixed<5,1,AP_RND> brightness);
 
 
+
 void wallis(AXI_STREAM &inData, AXI_STREAM &outData, 
 			apuint8_t g_Mean, apuint14_t g_Var, ap_ufixed<5,1,AP_RND> contrast,
 			ap_ufixed<5,1,AP_RND> brightness) {
 
+
+	g_Mean = 127;
+	g_Var = 3600;
+	contrast = 0.8125;
+	brightness = 0.5;
+	
 	// ************************************************************************
 	// Variables
 	AXI_VALUE inPixel;
@@ -181,3 +188,6 @@ apuint8_t Wallis_Filter(apuint8_t iPxl, apuint8_t n_Mean, apuint14_t n_Var,
 
 	return (apuint8_t)w_Pixel;
 }
+
+
+
