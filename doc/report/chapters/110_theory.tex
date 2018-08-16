@@ -1,57 +1,42 @@
-% ==============================================================================
+% =============================================================================
 %
 %                             Theory
 %
-% ==============================================================================
+% =============================================================================
 % -----------------------------------------------------------------------------
 \chapter{Theoretical Background} \label{chapt:theoreticalback}
 % -----------------------------------------------------------------------------
-This chapter provides the basics of the project. On the one hand, it is about image and image processing as well as communication via Ethernet. How an image is recorded and what is necessary for filters and sensors is explained in the chapter \ref{chapt:imag}. Image processing follows in the chapter \ref{chapt:theroy_imageprocessing} and the communication in the chapter \ref{chapt:ethernet}
+% This chapter provides the theory required for the project. On one hand, it is
+% about image processing and filtering as well as communication via Ethernet. The
+% possible kinds of image operations and the Wallis filter are explained in 
+% chapter \ref{chapt:theory:imageprocessing}. An overview of the communication via
+% Ethernet is provided in the chapter \ref{chapt:theory:ethernet}. Furthermore the
+% on chip interfaces used in this project are explained.
+This chapter provides the theory required for the project. 
+It covers image processing and filtering in general and the Wallis filter in
+detail, communication via Ethernet,  the high level synthesis in Vivaldo HLS and 
+AXI4 interfaces.
 
-% ==============================================================================
+% =============================================================================
 %
-%                                   Image
+%                          Image Processing
 %
-% ==============================================================================
-\section{Image} \label{chapt:imag}
-This section explains how an image is recorded by the camera. Also, how an image filter is built for a color image.
-
-\subsection{Image Sensor}
-An image sensor is a light sensor array that detects light intensity.
-In this process light is converted into an electrical signal and saved. The most commonly used image sensors in the visible range are charge-coupled devices (CCD) and active pixel sensors (CMOS). In order not to distort the light intensities in the visible range, an IR filter is often placed in front of the sensor (see figure \ref{fig:image_sensor}).
-\\
-
-\textbf{CCD:} With the CCD sensor, each pixel is shifted to the output. At the output the signal is amplified by an amplifier. Manufacturing is therefore cheaper than the CMOS sensor and is used for cheap cameras \cite{ccd_cmos}.
-\\
-
-\textbf{CMOS:} CMOS sensors have an amplifier for each pixel. Thus CMOS sensors are faster than CCD sensors and are used in most cameras \cite{ccd_cmos}.
-
-\subsection{Bayer Filter}
-A bayer filter is a color filter array for arranging RGB color filters on a
-square grid of photosensors (see figure \ref{fig:image_sensor}). There are twice as many green as red and blue
-pixels in order to emulate the higher sensitivity of the human eye to green
-light. Each pixel only measures one color due to the filter. The two missing
-colors are interpolated in post processing from the color values of the eight adjacent pixels.
-This technique is called bayer demosaicing.
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=0.7\textwidth]{images/theory/image_sensor.png}
-    \caption{An image sensor with a bayer filter \cite{image_sensor}}
-    \label{fig:image_sensor}
-\end{figure}
-
-% ==============================================================================
-%
-%                            Image Processing
-%
-% ==============================================================================
-\section{Image Processing} \label{chapt:theroy_imageprocessing}
+% =============================================================================
+\section{Image Processing} \label{chapt:theory:imageprocessing}
 In technical terms, image processing is the processing of image data. This
 includes image processing, image analysis and the output of image files 
 \cite{image_processing}. Procedures that generate a new image can be
-distinguished into point operations, neighborhood operations and global operations based on their input data.
+distinguished into point operations, neighborhood operations and global
+operations based on their input data. The next chapter compares these three
+operations while the following chapter dissects the Wallis filter algorithm used
+in this project.
 
-\subsection{Point Operations}
+% -----------------------------------------------------------------------------
+\subsection{Operations}
+% -----------------------------------------------------------------------------
+The types of operations that can be applied to images to transform an input image I(u, v) to an output image I'(u, v) can be divided into three categories, which are explained in the following three sections.
+
+\subsubsection*{Point Operations}
 The point operations use the color or intensity information at a given pixel in the image as input, calculates a new intensity value as the result and stores it to the same point in the target image (figure \ref{fig:image_operation}a). Typical applications of point operations are, for example, the correction of contrast and brightness, color correction by rotating the color space or the application of different threshold value methods.
 
 Example for a point operation with $u$ and $v$ being pixel coordinates:
@@ -60,15 +45,19 @@ Example for a point operation with $u$ and $v$ being pixel coordinates:
     \label{eq:point_operation}
 \end{equation}
 
-\subsection{Neighborhood Operations}
+
+\subsubsection*{Neighborhood Operations} \label{ch:th:neighborhood}
 Neighborhood operations use a certain amount of neighboring pixels as input (figure \ref{fig:image_operation}b).
-They calculate the result and stored it at the reference point in the target
-image. Neighborhood operations are often used in convolution filters. These
+They calculate and store the result at the reference point in the
+target image. Neighborhood operations are often used in convolutional filters.
+These
 filters can be used, for instance, to implement smoothing filters such as the
-Gauss filter. Convolution filters can also be used to detect edges in an image. This is possible, for example, with the Sobel filter.
+Gauss filter. Convolutional filters can also be used to detect edges in an
+image. For instance, this is possible with the Sobel filter.
 
 Example to calculate the x-derivative and y-derivative with the Sobel matrix \cite{sobel_matrix}:
 
+\vspace{1ex}
 \noindent\begin{minipage}{.5\linewidth}
 \begin{equation}
     G_{x} = I * \begin{bmatrix}
@@ -76,7 +65,7 @@ Example to calculate the x-derivative and y-derivative with the Sobel matrix \ci
                 -2 & 0 & 2 \\ 
                 -1 & 0 & 1
                 \end{bmatrix}
-    \label{eq:neighborhood_operation}
+    \label{eq:neighborhood_operation1}
 \end{equation}
 
 \end{minipage}%
@@ -88,50 +77,107 @@ Example to calculate the x-derivative and y-derivative with the Sobel matrix \ci
                 0 & 0 & 0 \\ 
                 1 & 2 & 1
                 \end{bmatrix}
-    \label{eq:neighborhood_operation}
+    \label{eq:neighborhood_operation2}
 \end{equation} 
 
-\end{minipage}
+\end{minipage}\\
+\vspace{1ex}
 
-\subsubsection*{Border Handling}
-With the application of filters, the so-called border handling problem occurs in every image (see figure \ref{fig:image_handling}). Because the filter protrudes beyond the original image.
+\textbf{Border Handling:}
+With the application of neighborhood filters, the so-called border handling
+problem occurs in every image because the filter protrudes beyond the original
+image (see figure \ref{fig:image_handling}). There are several possible solutions to this issue:
 
-There are several possible solutions to this issue:
 \begin{itemize}
-\item The border pixels are not considered. However, the output image is two
-pixels smaller in its height and width than the original image
+\item The border pixels are not considered. In the example image, the original image 
+is two pixels smaller in height and width than the original image as shown in
+figure \ref{fig:image_handling}.
 \item If the filter exceeds the original image, the filter coefficients
-at the outside of the image are set to zero
-\item The pixels required outside the image are extrapolated according to the closest pixels
-\item The image is continued periodically
+at the outside of the image are set to zero.
+\item The pixels required outside the image are extrapolated according to the closest pixels.
+\item The image is continued periodically.
 \end{itemize}
     
-\begin{figure}[b!]
+\begin{figure}[b]
     \centering
-    \includegraphics[width=0.6\textwidth]{images/theory/border_handling.png}
-    \caption{Border problem with filter operations \cite{border_handling}}
+    \begin{adjustbox}{max width=0.7\textwidth}
+        \input{images/theory/border_handling.tikz}
+    \end{adjustbox}
+    \caption{Border problem with neighborhood filter operations}
     \label{fig:image_handling}
 \end{figure}
 
-\subsection{Global Operations}
-Image analysis often employs global image operations that uses the entire image as input data (figure \ref{fig:image_operation}c). It is often about finding regions or recognizing geometrical objects. A typical representative of this is the Hough transform and the Fourier transform.
-\begin{figure}[tb!]
+
+\subsubsection*{Global Operations}
+Image analysis employs global image operations that uses the entire image as
+input data (figure \ref{fig:image_operation}c). A typical application is finding
+regions or recognizing geometrical objects. Another representative of this is
+the Hough transform and the Fourier transform.
+
+\begin{figure}[t!]%
     \centering
-    \includegraphics[width=\textwidth]{images/theory/image_operations.jpg}
-    \caption{(a) point, (b) neighborhood and (c) global image processing
-    operations \cite{image_operation}}
-    \label{fig:image_operation}
+    \subfloat[point operation]{{\begin{adjustbox}{max width=0.45\linewidth}\input{images/theory/point_operation.tikz}\end{adjustbox}}}%
+    \qquad
+    \subfloat[neighborhood operation]{{\begin{adjustbox}{max width=0.45\linewidth}\input{images/theory/neighborhood_operation.tikz}\end{adjustbox}}}%
+    \\
+    \subfloat[global operation]{{\begin{adjustbox}{max width=0.45\linewidth}\input{images/theory/global_operation.tikz}\end{adjustbox}}}%
+    \caption{Image processing operations}%
+    \label{fig:image_operation}%
 \end{figure}
 
-% ==============================================================================
+% -----------------------------------------------------------------------------
+\subsection{Wallis Filter}\label{ch:th_wallis_filter}
+% -----------------------------------------------------------------------------
+The main goal of the Wallis filter is to adjust the mean and variance of an
+image and to map it to given values. This is mainly used for local contrast
+enhancement in both low and high level regions. It also achieves similar brightness levels in the image.
+The Wallis filter equation is \cite{wallis_filter}:
+\begin{equation}
+    I'(x,y) = \frac{( I(x,y) - \mu_{n})\cdot c \cdot \sigma_{g}^{2}}{c \cdot \sigma_{n}^{2} + (1 - c) \cdot \sigma_{g}^{2}} + b \cdot \mu_{g} + (1 - b) \cdot \mu_{n}
+    \label{eq:wallis_filter}
+\end{equation} 
+
+\begin{tabular}{rl}
+    $I(x,y)         =$ & gray value pixel of the original image \\
+    $I'(x,y)        =$ & calculated pixel with the Wallis algorithm \\
+    $\mu_{n}        =$ & mean value of the neighborhood of the pixel I(x,y) \\
+    $\sigma_{n}^{2} =$ & variance value of the neighborhood of the pixel I(x,y) \\
+    $\mu_{g}        =$ & given mean value\\
+    $\sigma_{g}^{2} =$ & given variance value\\
+    $b              =$ & brightness factor \\
+    $c              =$ & contrast factor \\
+\end{tabular} \\
+
+The two factors b and c can have the range from 0 to 1. The larger b is
+selected, the closer it converges to the mean of the desired image $\mu_{g}$. The smaller b is selected, the more it converges to the neighborhood mean $\mu_{n}$.
+The bigger the factor c is chosen, the larger is the range of the variance constant $\sigma_{g}^{2}$ \cite{wallis_filter}. \\
+The size of the neighborhood depends on the sensor resolution of the camera. The size can be selected from a minimum of 11 to a maximum of 41 \cite{zeng_2018}. Through the neighborhood operation the smoothing operator is introduced. This means it reduces noise and improves the signal to noise ratio of the image. This in turn enhances image quality \cite{wallis_filter}.
+
+\begin{figure}[t!]%
+    \centering
+    \subfloat[input image]{{\includegraphics[width=7cm]{images/mission/room.png}}}%
+    \qquad
+    \subfloat[output image]{{\includegraphics[width=7cm]{images/mission/room_fpga_vhdl_v20.png}}}%
+    \caption{Wallis filtered image}%
+    \label{fig:mission:wallisoutputimages}%
+\end{figure}
+
+Figure \ref{fig:mission:wallisoutputimages} shows an image before and after
+filtering by the Wallis filter. It can be seen that in image (b) more
+structural detail is visible thanks to the local contrast enhancement without
+overexposing bright areas.
+
+% =============================================================================
 %
 %                             Ethernet
 %
-% ==============================================================================
-\section{Ethernet Communication} \label{chapt:ethernet}
+% =============================================================================
+\section{Ethernet Communication} \label{chapt:theory:ethernet}
 Exchanging data between two devices can be done using different approaches. The
 following section contains an overview of the communication standards used in
-local area networks (LAN).
+local area networks (LAN). This section is taken from the preceding project
+report \cite{p5report} to clarify the communication concept.
+
 
 \subsection{Open Systems Interconnection (OSI) Model}
 Such a telecommunication system can be characterized by the Open Systems 
@@ -143,58 +189,41 @@ characterize the Ethernet standard.
 
 \begin{figure}[tb!]
     \centering
-    \includegraphics[width=0.5\textwidth]{images/theory/osi.png}
-    \caption{OSI Model \cite{osi}}
+    \begin{adjustbox}{max width=0.7\linewidth}
+        \input{images/theory/osi.tikz}
+    \end{adjustbox}
+    \caption{OSI Model}
     \label{fig:osi}
 \end{figure}
 
-\subsection{Physical} \label{chapt:physical}
-The first layer of the OSI model is the physical layer. It defines the 
-electrical and physical specification of the connection. In the case of local
-area networks the connection medium is usually copper. The circuitry required to
-implement
-the physical layer is done by the PHY-Chip. This integrated circuit provides 
-digital access through a media independent interface (MII) to the analog physical
-data link.
+
+\subsection{Physical} \label{chapt:theory:physical}
+The first layer of the OSI model is the physical layer. It defines the electrical and physical specification of the connection. In the case of local
+area networks the connection medium is usually copper. The circuitry required to implement the physical layer is done by the PHY-Chip. This integrated circuit provides digital access through a media independent interface (MII) to the analog physical data link.
+
 
 \subsection{Data Link} 
 The data served from the physical layer is then passed to the data link layer.
 Its main purpose is to ensure a reliable transfer of data frames between two
 nodes connected by a physical layer. It may also provide means to detect errors
 that may occur in the physical layer. Ethernet is the protocol used in the data
-layer of local area networks and the layer is split into two sublayers, the logical
-link control (LLC) and the medium access control (MAC). The LLC provides means
-to allow multiple network protocols (OSI layer three) to be multiplexed onto
-the same medium. The MAC encapsulates higher level frames into frames 
-appropriate to be transmitted by the physical layer.
-\\
+layer of local area networks and the layer is split into two sublayers, the logical link control (LLC) and the medium access control (MAC). The LLC provides means to allow multiple network protocols (OSI layer three) to be multiplexed onto the same medium. The MAC encapsulates higher level frames into frames appropriate to be transmitted by the physical layer.
 
-Figure \ref{fig:eth} shows an Ethernet frame. The first seven bytes consist of a
-fixed preamble. It allows devices on the network to easily synchronize their 
-clocks for bit-level synchronization. It is followed by the start frame delimiter
-(SFD) that marks the beginning of a frame. Sender and receiver MAC addresses 
-ensure that the packet is received by the corresponding host and that it can 
-reply to the sender. The type field indicates the protocol used on the next layer
-(network layer). After the data payload a frame check sequence in form of a CRC
-(cyclic redundancy check) is sent to provide error detection. The maximum data
-payload size is limited to 1500 bytes.
-\\
+Figure \ref{fig:eth} shows an Ethernet frame. The first seven bytes consist of a fixed preamble. It allows devices on the network to easily synchronize their 
+clocks for bit-level synchronization. It is followed by the start frame delimiter (SFD) that marks the beginning of a frame. Sender and receiver MAC addresses ensure that the packet is received by the corresponding host and that it can reply to the sender. The type field indicates the protocol used on the next layer (network layer). After the data payload a frame check sequence in form of a CRC (cyclic redundancy check) is sent to provide error detection. The maximum data payload size is limited to 1500 bytes.
 
-\clearpage
 \begin{figure}[tb!]
     \centering
     \begin{adjustbox}{max width=\textwidth}
         \input{images/theory/ethernetheader.tikz}
     \end{adjustbox}
     \caption{Ethernet Frame}
-    % \includegraphics[width=\textwidth]{images/theory/ethernet.png}
-    % \caption{Ethernet Frame \cite{ethernet}}
     \label{fig:eth}
 \end{figure}
-The medium access controller is implemented in hardware to ensure that every bit
-is received and stored. The transmit and receive data is commonly stored in
+The medium access controller is implemented in hardware to ensure that every bit is received and stored. The transmit and receive data is commonly stored in
 FiFo (first in first out) buffers. This way the next layer in the OSI model is
 not required to have low latency capability.
+
 
 \subsection{Network} 
 The data link layer provides means to send frames across nodes in the same
@@ -202,43 +231,37 @@ network. As soon as the destination node is in another network, a network layer
 is required. Using logical device addresses, network packets can be routed
 across different networks and on different media. This allows data to be sent
 over long distances.
-\\
 
 The most commonly used network layer is the Internet Protocol version 4 (IPv4).
 It consists of a 20 byte sized header that contains destination and source IP
-addresses, total length, checksum and other fields. The protocol field indicates
-what layer four protocol is used. Figure \ref{fig:ip} shows a complete IPv4
-header.
+addresses, total length, checksum and other fields. The protocol field indicates what layer four protocol is used. Figure \ref{fig:ip} shows a complete IPv4 header.
 
-\clearpage
-\begin{figure}[tb!]
+\begin{figure}[b!]
     \centering
     \includegraphics[width=\textwidth]{images/theory/ip.png}
     \caption{IPv4 header \cite{ip}}
     \label{fig:ip}
 \end{figure}
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=\textwidth]{images/theory/tcp.png}
-    \caption{TCP Header \cite{tcpudp}}
-    \label{fig:tcp}
-\end{figure}
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=\textwidth]{images/theory/udp.png}
-    \caption{UDP Header \cite{tcpudp}}
-    \label{fig:udp}
-\end{figure}
-\clearpage
+% \begin{figure}[tb!]
+%     \centering
+%     \includegraphics[width=\textwidth]{images/theory/tcp.png}
+%     \caption{TCP Header \cite{tcpudp}}
+%     \label{fig:tcp}
+% \end{figure}
+% \begin{figure}[tb!]
+%     \centering
+%     \includegraphics[width=\textwidth]{images/theory/udp.png}
+%     \caption{UDP Header \cite{tcpudp}}
+%     \label{fig:udp}
+% \end{figure}
+
 
 \subsection{Transport} 
 The transport layer is the first layer in the OSI model that is not required by
 the network. Its main purpose is to control the communication of different
 applications on two hosts. Therefore a port number is required to distinguish
 between the different applications utilizing the same network connection. The
-transport layer may also provide segmentation of the data, guarantee of delivery
-and flow control to avoid network jam.
-\\
+transport layer may also provide segmentation of the data, guarantee of delivery and flow control to avoid network jam.
 
 The two most used transport layer protocols are the Transmission Control
 Protocol (TCP) and the User Datagram Protocol (UDP). Table \ref{tab:tcpudp}
@@ -248,8 +271,7 @@ sent without setup), TCP establishes a connection between host and client
 prior to data transmission. This ensures a reliable data delivery hence all
 messages are acknowledged. UDP has its benefits in lower overhead and for that
 reason has slightly higher transmission speed but the protocol does not
-guarantee
-that the message has been received by the client.
+guarantee that the message has been received by the client.
 
 \begin{table}[h]
     \centering
@@ -269,26 +291,262 @@ that the message has been received by the client.
     \label{tab:tcpudp}
 \end{table}
 
-% ==============================================================================
+\section{Vivado HLS} \label{ch:th:hls}
+Vivado HLS is a development environment that synthesizes C/C++ code to HDL. The
+C/C++ language is intended for sequential programming where the HDL language
+describes the hardware. This chapter deals with the design flow (
+\ref{ch:design_flow}) of Vivado HLS. The directives (\ref{ch:directives}) that
+are used for the compiler to synthesize the C/C++ code in HDL and finally arbritrary data types (\ref{ch:ap}) which can be used in Vivado HLS for C/C++ code.
+
+\subsection{Design Flow} \label{ch:design_flow}
+In Vivado HLS it is possible to translate the C/C++ code into HDL and generate
+an \gls{ipcore} for Vivado HLx. To ensure that the algorithm works correct, it
+can be validated in various steps. These steps are the design flow of Vivado HLS and are shown in figure \ref{fig:hls_design_flow}.
+First of all, the C/C++ algorithm can be tested in a simulation. This requires a
+testbench in addition to the C/C++ algorithm. As soon as the algorithm works
+satisfyingly the design can be run through synthesis and an \gls{rtl} design can
+be
+generated. HDL design can be verified in an RTL simulation. The results of the
+RTL
+simulation must match the results of the C/C++ simulation. If this is the case,
+an IP core can be generated from the HDL code and used in the Vivado HLx \cite{vivado_hls}.
+
+\begin{figure}[tb!]
+    \centering
+    \input{images/theory/hls_design_flow.tikz}
+    \caption{Vivado HLS design flow}
+    \label{fig:hls_design_flow}
+\end{figure}
+
+\subsection{Directives} \label{ch:directives}
+If the FPGA is configured using C/C++ language, there is no way to get around directives. Directives are instructions to the compiler on how it should synthesize and optimize the code. Latency, throughput or area can be optimized \cite{pragma}. The following three chapters explain some important directives to reduce the latency and increase the throughput. \\
+Directives are also called pragmas and can be written directly into the C/C++ code or added as directives in a separate tcl-file.
+
+\subsubsection*{Interface}
+The directive \texttt{interface} specifies the input and output ports of the IP core. Different interfaces can be implemented in the IP core as input and output ports. Among others, these are control interfaces or interfaces for data. 
+The IP core can be controlled with the control interfaces. With this signal it
+can be started or stopped for example or send a handshake if the IP core has
+finished its operation. 
+AXI4 interfaces can also be added directly to the IP core using directives. The
+AX4-Lite, AXI4-Master or AXI4-Stream interface can be configured.
+Among other things, memory elements can also be connected directly to the IP
+core. These are block RAM or \gls{fifo} that can be used to read and process
+the data
+inside the IP core. These can also be used to store output data of the IP core 
+\cite{pragma}.
+\clearpage
+Figure \ref{fig:p_interface} shows how the pragma \texttt{interface} is
+configured. First, the interface can be specified and whether it is an input or
+an output. Second, the variable to which the pragma is to be applied has to be
+specified.
+
+\begin{figure}[tb!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/theory/interface.png}
+    \caption{Pragma: interface}
+    \label{fig:p_interface}
+\end{figure}
+
+\subsubsection*{Array Partition}
+The \texttt{array\_partition} directive splits an array into several smaller
+elements. This means that in RTL synthesis several smaller memories or registers
+are used to form a larger memory. This increases the throughput in the
+design but also the read and write ports for the storage. \\
+Figure \ref{fig:p_array_partition} shows the three different methods of partitioning an array.
+
+\begin{description}
+\item[Block]\hfill \\
+The whole array is split into several arrays of the same size. The elements are stored in the same order as in the array. The array is simply cropped apart.
+\item[Cyclic]\hfill \\ 
+The array is split into equal parts like \texttt{block}, but the storage order
+is different. As can be seen, each following element is stored in a different
+memory. This enables concurrent read of multiple successive elements.
+\item[Complete]\hfill \\ 
+This argument splits the complete array into individual elements.
+\end{description}
+
+
+\begin{figure}[tb!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/theory/array_partition.png}
+    \caption{Pragma: array\_partition}
+    \label{fig:p_array_partition}
+\end{figure}
+
+\subsubsection*{Pipeline / Unroll}
+In Vivado HLS the FPGA is described with C/C++ language. Among others, it is also possible to program  loops. These are still processed sequentially by the C/C++ simulation, as can be seen in figure \ref{fig:p_pipeline_unroll} (sequential) with nine clock cycles. The loop includes read and write access, as well as data processing. This loop is executed three times.  The directives can improve the performance of the loop. Two directives are available to increase the throughput of a loop. These are \texttt{pipeline} and \texttt{unroll}.
+
+\begin{description}
+\item[Pipeline]\hfill \\
+This directive allows a loop to be pipelined which increases throughput.
+Now more operations are happening in a single clock cycle.
+Pipeline is used if not all data for processing is available in the loop. Figure
+\ref{fig:p_pipeline_unroll} (pipeline) shows that only one read access per clock cycle can be made. The other operations can be pipelined. This will lead to a processing of the loop in five clock cycles. The throughput could therefore be increased from the sequential method with one third data per clock cycle to pipelined with one data per clock cycle.
+
+\item[Unroll]\hfill \\ 
+This directive allows the entire loop to be parallelized. This is only possible if all data is available at the beginning of the loop. Figure \ref{fig:p_pipeline_unroll} shows that the processing of the loop only requires three clock cycles and the throughput could be increased in comparison to pipeline to three data per clock cycle.
+\end{description}
+
+With nested loops, note that if pipeline is applied to the outer loop, the inner
+loops are automatically unrolled. \\
+One can also apply both directives in combination in a loop. This is useful if,
+for example, the data was previously split per \texttt{array\_partition} and it is now possible to read multiple data (but not all data) in one clock cycle. Since the unroll directive can specify a factor that unrolls the loop.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/theory/pipeline_unroll.png}
+    \caption{Pragma: pipeline / unroll}
+    \label{fig:p_pipeline_unroll}
+\end{figure}
+
+\newpage
+\subsection{Arbitrary Precision} \label{ch:ap}
+Resources are limited on the FPGA. Therefore it is often a big waste of resources when calculating with too large data types or even floating point on the FPGA \cite{floating}. Viviado HLS supports arbitrary precision data types using C/C++ code. With this it is possible to counteract the problem of large data types and floating point. \\
+
+\textbf{Arbitrary Precision Integer:}
+Arbitrary Precision Integers are data types which whom it is possible to define
+any bit width. This has the advantage that resources can be reduced. Because it is not necessary to select the data types provided in C/C++ (8, 16, 32 bit or char, short, int etc.) \\
+To use these data types only the header file \texttt{ap\_int.h} must be
+included. The following example shows how an 11 bit signed integer and a 5 bit unsigned integer are defined \cite{ug902}.
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle]
+ap_int<11> var1;
+ap_uint<5> var2;
+\end{lstlisting}
+\end{minipage} \\
+
+\textbf{Arbitrary Precision Fixed-Point:}
+Floating Point can be used on the FPGA, but this usually requires a lot of resources. Viviado HLS has a library for Arbitrary Precision Fixed Point data types, which can be used to calculate sufficiently accurate. With these fixed point data types many resources can be saved. \\
+For this purpose there is the library \texttt{ap\_fixed.h} and has to be
+included. The data types are defined so that the first number represents the whole data type width and the second number represents the above number of the binary point. The following example shows an unsigned 11 bit variable with 3 bits representing the integer value and 8 bits representing the fractional value \cite{ug902}.
+
+\begin{minipage}{\textwidth}
+\begin{lstlisting}[style=CStyle]
+ap_ufixed<11,3> fp_var;
+\end{lstlisting}
+\end{minipage}
+
+% =============================================================================
 %
-%                             FPGA
+%                          AXI4 Interfaces
 %
-% ==============================================================================
-% \section{FPGA}
+% =============================================================================
+\section{AXI4 Interfaces} \label{chapt:theory:axi4interfaces}
+Advanced eXtensible Interface or AXI is part of the Advanced Microcontroller Bus
+Architecture (AMBA\textregistered) introduced by ARM\textregistered  \cite{axispecs}. 
+It is intended for the interconnection of functional blocks inside a System on
+Chip or FPGA. IP cores offered by Xilinx implement these interfaces. Two types
+of AXI interfaces are destinguished: Memory mapped and stream. Memory mapped
+interfaces intend the bidirectional access to data stored in registers while
+streaming interfaces offer a unidirectional dataflow \cite{axistreamspecs}.
 
+\subsection{AXI4} \label{chapt:theory:axi4}
+The AXI4 interface is a memory mapped interface and consists of five transaction
+channels as shown in table
+\ref{tab:axi4transchan}. 
 
-% \subsection{Available Resources}
+\begin{table}[t!]
+    \centering
+    \begin{tabular}{ l  l}
+        \toprule
+        Transaction Channel & Use \\
+        \midrule
+        Write address channel & Generate write requests to slave \\
+        Write data channel & Write data to be sent to the slave \\
+        Write response channel & Write response from slave to master \\
+        Read address channel & Generate read requests to slave \\
+        Read data channel & Read data from slave to master \\
+        \bottomrule
+    \end{tabular}
+    \caption{AXI4 transaction channels}
+    \label{tab:axi4transchan}
+\end{table}
 
-% \subsection{Criteria}
-% Area, Speed, latency, throughput
+Each channel has its own handshake signals. Handshake signals are used to
+indicate that the sender has valid data and the receiver is ready to accept
+data. Figure \ref{fig:axihandshake} shows the handshake signals. The VALID
+signal is set active if the sender has driven the INFORMATION lines with valid
+data. The receiver indicates with a READY impulse that it has read the
+information. 
 
+\begin{figure}[b!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/theory/axi4handshake.png}
+    \caption{VALID before READY handshake \cite{axispecs}}
+    \label{fig:axihandshake}
+\end{figure}
 
-% ==============================================================================
-%
-%                             FPGA Bus
-%
-% ==============================================================================
-% \section{FPGA Bus}
-% \subsection{AXI4}
+An AXI4 write transaction could run as followed:
+\begin{itemize}
+    \item Master sends address and burst size through write address channel
+    \item Master sends data through write data channel
+    \item Slave responds with status on write response channel
+\end{itemize}
+
+An AXI4 read transaction could run as followed:
+\begin{itemize}
+    \item Master sends read address and burst size through read address channel
+    \item Slave responds with data on read data channel
+\end{itemize}
+
+A burst transaction allows to send or receive a range of data with a single
+write
+request while a single beat transaction consists of one write request and one
+data word.
+
+\subsection{AXI4-Lite}
+AXI4-Lite is a scaled-down version of AXI4. It allows single beat write and
+reads but no burst transaction. It therefore requires less signals and is suited
+for configuring IP cores and register values. It consists of the same
+transaction channels and handshake signals. AXI4 and AXI4-Lite are compatible
+and can be converted.
+
+\subsection{AXI4-Stream}
+AXI4-Stream is a stream based interface. Data is sent in one direction from
+master to slave. It is not address based and features only one transaction
+channel. There is also no burst size limit. There are four required signals as
+shown in table \ref{tab:axi4steramreqsig}.
+
+\texttt{TVALID} and \texttt{TREADY} are the handshake signals as described in chapter 
+\ref{chapt:theory:axi4} and illustrated in figure \ref{fig:axihandshake}.
+AXI4-Stream defines further sideband signals, some of which are described in
+table \ref{tab:axi4steramside}. In this project the \texttt{TLAST} signal is
+used frequently to indicate for example the end of a file transfer of the
+communication core or the last pixel of an image line.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ l  l l}
+        \toprule
+        Signal & Source & Description \\
+        \midrule
+        \texttt{ACLK} & Master & Rising edge sampled clock signal \\
+        \texttt{ARESETn} & Master & Global active low reset signal \\
+        \texttt{TVALID} & Master & indicates that the master is driving a valid transfer
+        \\
+        \texttt{TREADY} & Slave & indicates that the slave can accept a transfer \\
+        \texttt{TDATA[(8n-1):0]} & Master & Data payload \\
+        \bottomrule
+    \end{tabular}
+    \caption{AXI4-Stream required signals}
+    \label{tab:axi4steramreqsig}
+\end{table}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ l  l l}
+        \toprule
+        Signal & Source & Description \\
+        \midrule
+        \texttt{TLAST} & Master & indicates the boundary of a packet \\
+        \texttt{TDEST[(d-1):0]} & Master & provides routing information for the data stream \\
+        \texttt{TUSER[(u-1):0]} & Master & user defined sideband information \\
+        \bottomrule
+    \end{tabular}
+    \caption{AXI4-Stream sideband signals}
+    \label{tab:axi4steramside}
+\end{table}
+
 
 

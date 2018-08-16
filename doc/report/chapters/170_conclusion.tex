@@ -1,0 +1,94 @@
+% ==============================================================================
+%
+%                             Conclusion
+%
+% ==============================================================================
+\chapter{Conclusion}
+In this last chapter the project results are briefly summarized and
+a short outlook for possible future work is given.
+
+% ==============================================================================
+%
+%                             IP
+%
+% ==============================================================================
+\section{Image Processing}
+A new image processing core was implemented that locally optimizes contrast 
+(Wallis filter). Multiple implementations have been validated and compared.
+Using high level synthesis to describe an algorithm has proven that the desired
+operation can be achieved in little time. Nevertheless the theoretical possible
+throughput could not be achieved due to the dataflow not being
+described well enough in C/C++ language to achieve the desired throughput.
+Therefore a VHDL implementation was written that processes pixels at 125Mp/s and
+uses approximately three percent of FPGA resources.
+
+% ==============================================================================
+%
+%                             Dataflow
+%
+% ==============================================================================
+\section{Dataflow}
+The existing communication core was extended with acknowledge, user registers
+and AXI4-Stream interfaces. The new image processing algorithm requires the
+input data in a specific order. Therefore a controller was implemented using two
+different design flows. The HLS approach showed that complex interfaces such as
+AXI4 can be implemented with a few lines of code and that state machines can be
+implemented as well. The unfavourable memory management and the lack of high
+throughput
+led to the implementation of a VHDL based controller and memory management unit.
+It caches necessary image data to prevent multiple image transmissions and can
+support the full throughput of the image processing core.
+
+% ==============================================================================
+%
+%                             Complete System
+%
+% ==============================================================================
+\section{Complete System}
+The final product called \gls{diip} is based on the VHDL implementations of
+image processing and dataflow parts. Images can be sent from the PC to the FPGA
+where
+the Wallis operation is applied and the image is sent back. Image data
+throughput of up to 4.1MB/s have been measured. The system is designed with
+scalability in mind. A dedicated theoretical examination shows that if the
+image processing core was implemented 21 times on the FPGA the full bandwidth of
+gigabit Ethernet could be used to process image data yielding 125MB/s
+throughput. Furthermore, if multiple FPGAs were used, the total throughput would
+scale proportional to the number of FPGAs used.
+
+% ==============================================================================
+%
+%                             Working with High Level Synthesis
+%
+% ==============================================================================
+\section{Working with High Level Synthesis}
+The time spent on working with \gls{vivadohls} has shown several advantages and
+disadvantages. It has shown that thinking close to hardware is crucial. Using
+C/C++ as language is a trap to fall back and think of the code as if it would be
+executed sequentially. The function to be implemented should be split into
+building blocks the same way as it would be done using a hardware description
+language. If the code was written with the exact same line of thought as a HDL
+approach, then the same throughput should be achievable. And if that is managed,
+HLS would bring significant advantages like the simple implementation of complex
+interfaces (e.g. AXI4) and the reduced time in testbench development.
+
+% ==============================================================================
+%
+%                             Future Work
+%
+% ==============================================================================
+\section{Future Work}
+The scalability is proven on paper and can now be implemented onto the FPGA.
+The controller core can be extended to send the data to multiple Wallis filter
+cores. After writing a computer application that can handle the fast transfer
+speeds the true benefit of using FPGA for image processing can be shown in
+praxis. Because the data transfer is Ethernet based a cluster of FPGAs can be
+built to compete against high performance CPU and GPU based image processing
+pipelines. Another method to increase throughput would be to implement a VHDL
+256bit image processing core that would be able to process 21 pixels per clock
+cycle and produce one pixel per clock cycle on the output. This would omit the
+scalability inside the FPGA because the Ethernet link would already be
+saturated. Furthermore, the HLS implementations could be improved by describing
+the dataflow more hardware oriented and prove that using HLS the same
+throughput can be achieved as when using a hardware description language.
+

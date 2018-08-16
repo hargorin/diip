@@ -1,0 +1,65 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}
+        
+        % Braces
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (9.5,7) -- (9.5,3) node [black,midway,xshift=0.5cm,anchor=north,rotate=90] {$w_l+(N-1)$};
+        % \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-0pt,yshift=0pt] (8,-0.5) -- (0,-0.5) node [black,midway,yshift=-0.5cm,anchor=north] {Image width};
+        
+        % Center pixel
+        % \draw[black,line width=0.5mm] (2,2) rectangle (3,3);
+        
+        % Window sizes
+        \draw[blue,line width=0.6mm] (0,4) rectangle (3,7);
+        \draw[red,line width=0.6mm,dashed] (0,3) rectangle (3,6);
+        % \draw[black,line width=0.6mm,dotted] (0,2) rectangle (3,5);
+        % resulting lines
+        \draw[cyan,line width=0.6mm] (1,5) rectangle (8,6);
+        \draw[magenta,line width=0.6mm,dashed] (1,4) rectangle (8,5);
+        % \draw[black,line width=0.3mm,dotted] (1,3) rectangle (5,4);
+
+        % Arrows
+        % \path[draw,-{Latex[length=2.5mm]},line width=0.4mm] (0,7.5) -- (4,7.5) 
+        %     node[near start, above] () {send data} ;
+        % \path[draw,-{Latex[length=3.5mm]},line width=0.4mm] (-0.5,7) -- (-0.5,3) 
+        %     node[near start, above,rotate=270] () {init} ;
+
+        % Axis
+        \foreach \y in {0,1,2,3,4,5,6}
+            \node[anchor=west] at ($(-0.5,6.5)-(0,\y)$)  {$\y$};
+        \foreach \x in {0,1,2,3,4,5,6,7,8}
+            \node[anchor=north] at ($(0.5,7.5)+(\x,0)$)  {$\x$};
+
+        % out pixels
+        \foreach \x in {0,1,2,3,4,5,6}
+            \node[anchor=center] at ($(1.5,5.5)+(\x,0)$)  {$\x_{c0}$};
+        \foreach \x in {0,1,2,3,4,5,6}
+            \node[anchor=center] at ($(1.5,4.5)+(\x,0)$)  {$\x_{c1}$};
+
+
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % Init pixels
+        \draw[fill=gray!20] (0,3) rectangle (3,7);
+        % Iter pixels
+        \draw[pattern=north east lines, pattern color=gray!60] (3,3) rectangle (4,7);
+        % Grid
+        \draw[step=1cm,black,thin] (0,0) grid (9,7);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}

@@ -1,16 +1,18 @@
 # LaTeX Makefile
 
 PROJECT=main
-OUTPUT=p5_diip_huetter_stocker
+OUTPUT=p6_diip_huetter_stocker
+BIBER=biber
 PDFLATEX=pdflatex -file-line-error -interaction=nonstopmode -output-directory . -jobname $(OUTPUT) $(PROJECT)
 BIBTEX=bibtex
+GLOSSARY=makeglossaries p6_diip_huetter_stocker
 PDFVIEWER = evince
 
 CHAPTERS_DIR=chapters
 OUT_DIR=build
 
 # For tikz
-TNAME=images/theory/ethernetheader.tikz
+TNAME=images/validation/dataflow/stimuli.tikz
 
 SRC_FILES := $(wildcard $(CHAPTERS_DIR)/*.tex)
 PDF_FILES := $(patsubst $(CHAPTERS_DIR)/%.tex,$(OUT_DIR)/%.pdf,$(SRC_FILES))
@@ -28,7 +30,9 @@ all: $(OUTPUT).pdf
 
 $(OUTPUT).pdf : *.tex chapters/*.tex revision
 	$(PDFLATEX)
-	$(BIBTEX) $(OUTPUT)
+	# $(BIBTEX) $(OUTPUT)
+	$(BIBER) $(OUTPUT).bcf
+	$(GLOSSARY)
 	$(PDFLATEX)
 	$(PDFLATEX)
 
@@ -53,10 +57,15 @@ ifeq ($(UNAME),Linux)
 	$(call convert_to_png_lnx, build/$(patsubst %.tikz,%.pdf,$(notdir $(TNAME))) , build/$(patsubst %.tikz,%.png,$(notdir $(TNAME))))
 endif
 
+docker: 
+	docker run -v `pwd`:/source noah95/latex /usr/bin/make
+
 cleanall:
 	rm -f *.dvi *.log *.bak *.aux *.bbl *.blg *.idx *.ps *.eps *.pdf *.toc *.out *.fdb_latexmk *.fls *~ build/*
 
 clean:
-	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/*
+	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/* *.glg *.glo *.gls *.ist *.lof *.lot 
 
 .PHONY: all pdf clean cleanall chunks open tikz
+
+

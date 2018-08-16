@@ -1,0 +1,86 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    entity/.style={
+        draw,
+        minimum height=1.0cm,
+        minimum width=3cm,
+        fill=white,
+        anchor=north west,
+    },
+    entityold/.style={
+        draw=gray!60,
+        minimum height=1.0cm,
+        minimum width=3cm,
+        fill=gray!20,
+        anchor=north west,
+    },
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+    \coordinate (crx)       at (0,0);
+    \coordinate (crxmem)    at (5,0);
+
+    \coordinate (ctxctl)    at (0,-2.5);
+    \coordinate (ctxcmd)    at (5,-3.5);
+    \coordinate (ctxdat)    at (5,-5.5);
+    \coordinate (ctxarb)    at (10,-4.5);
+    \coordinate (caxilite)  at (-5,-2.5);
+
+    \coordinate (ctxamb)    at (0,-5.5);
+    \coordinate (crxamb)    at (10,0);
+    %nodes
+
+    \begin{pgfonlayer}{main}
+        % entities
+        \node[entity, label={uft\_rx}] (rx) at (crx) {};
+        \node[entity, label={[name=rxl] uft\_rx\_mem\_ctl}] (rxmem) at (crxmem) {};
+
+        \node[entity, label={[name=ltxctl] uft\_tx\_ctl}] (txctl) at (ctxctl) {};
+        \node[entity, label={[name=txcal]uft\_tx\_cmd\_assembler}] (txcmd) at (ctxcmd) {};
+        \node[entity, label={uft\_tx\_data\_assembler}] (txdat) at (ctxdat) {};
+        \node[entity, label={uft\_tx\_arbiter}] (txarb) at (ctxarb) {};
+
+        \node[entityold, label={axi\_master\_burst}] (ambrx) at (crxamb) {};
+        \node[entityold, label={axi\_master\_burst}] (ambtx) at (ctxamb) {};
+
+        % ports
+        \path[draw,{Latex[length=2.5mm]}-] ($(rx.180) + (0,1/6)$) -- ($(rx.180) + (-1.0,1/6)$) node[anchor=east] {rx\_hdr};
+        \path[draw=blue,line width=0.5mm,{Latex[length=2.5mm]}-] ($(rx.180) + (0,-1/6)$) -- ($(rx.180) + (-1.0,-1/6)$) node[anchor=east] {s\_axi};
+        \path[draw,{Latex[length=2.5mm]}-] ($(txctl.180) + (0,0)$) -- ($(txctl.180) + (-1.0,0)$) node[anchor=east] {controll};
+
+        \path[draw=blue,line width=0.5mm,-{Latex[length=2.5mm]}] ($(rxmem.0) + (0,0)$) -- ($(rxmem.0) + (6.5,0/6)$) node[anchor=west] {s\_axi\_rx};
+        \path[draw,-{Latex[length=2.5mm]}] ($(txctl.0) + (0,3.5/10)$) -- ($(txctl.0) + (11.5,3.5/10)$) node[anchor=west] {tx\_hdr};
+        \path[draw=red,line width=0.5mm,-{Latex[length=2.5mm]}] ($(txarb.0) + (0,0/10)$) -- ($(txarb.0) + (1.5,0/10)$) node[anchor=west] {s\_axi};
+
+        % Interconnects
+        \path[draw,-{Latex[length=2.5mm]}] ($(rx.0) + (0,1/6)$) -- ($(rxmem.180) + (0,1/6)$) node[anchor=east] {};
+        \path[draw=blue,line width=0.5mm,-{Latex[length=2.5mm]}] ($(rx.0) + (0,-1/6)$) -- ($(rxmem.180) + (0,-1/6)$) node[midway, anchor=north] {s\_axi};
+        % \node at ($(rx.180) + (-0.5,-1/6)$) [circle,fill,inner sep=1.5pt]{};
+
+        \path[draw,-{Latex[length=2.5mm]}] ($(txctl.0) + (0,1.5/10)$) -| ($(txcmd.180) + (-0.5,0)$) -- ($(txcmd.180) + (0,0)$) node[anchor=west] {};
+        \path[draw,-{Latex[length=2.5mm]}] ($(txctl.0) + (0,-1.5/10)$) -| ($(txarb.180) + (-6,0)$) -- ($(txarb.180) + (0,0)$) node[anchor=west] {};
+        \path[draw,-{Latex[length=2.5mm]}] ($(txctl.0) + (0,-3.5/10)$) -| ($(txdat.180) + (-1.5,1/6)$) -- ($(txdat.180) + (0,1/6)$) node[anchor=west] {};
+
+        \path[draw,-{Latex[length=2.5mm]}] ($(txcmd.0) + (0,0)$) -| node[anchor=south] {s\_axi} ($(txarb.180) + (-0.5,1/4)$)  -- ($(txarb.180) + (0,1/4)$);
+        \path[draw=red,line width=0.5mm,-{Latex[length=2.5mm]}] ($(txdat.0) + (0,0)$) -| node[anchor=north] {s\_axi}($(txarb.180) + (-0.5,-1/4)$) -- ($(txarb.180) + (0,-1/4)$);
+
+        \path[draw=red,line width=0.5mm,-{Latex[length=2.5mm]}] ($(txdat.180) + (-6,-1/6)$) node[anchor=east] {s\_axi\_tx} -- ($(txdat.180) + (0,-1/6)$) node[anchor=east] {};
+
+        % Ack
+        \path[draw,-{Latex[length=2.5mm]}] ($(crxmem.0) + (1.5,-1)$) |- ($(crxmem.0) + (-1,-2)$) -| ($(ctxctl.0) + (2.5,0)$) node[midway, anchor=east] {};
+
+
+    \end{pgfonlayer}
+
+    % tx box
+    \begin{pgfonlayer}{foreground}
+        \node [draw, fill=gray!20, inner sep=10, fit={(ltxctl) (txctl) (txcmd) (txdat) (txarb) (txcal)}, label={[label distance=0.0cm]150:uft\_tx\_top}] (tx) {};
+    \end{pgfonlayer} 
+
+    % Board box
+    \begin{pgfonlayer}{background}
+        \node [draw, fill=gray!40, inner sep=10, fit={(tx) (rx) (rxmem) (rxl)}, label=uft\_top] (tx) {};
+    \end{pgfonlayer} 
+
+\end{tikzpicture}

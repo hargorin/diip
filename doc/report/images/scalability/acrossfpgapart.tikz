@@ -1,0 +1,68 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}
+        
+        % Braces
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (12.5,4) -- (12.5,0) node [black,midway,xshift=0.5cm,anchor=west] {$i_h$};
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-0pt,yshift=0pt] (12,-0.3) -- (0,-0.3) node [black,midway,yshift=-0.5cm,anchor=north] {$i_w$};
+        
+        % Center pixel
+        % \draw[black,line width=0.5mm] (2,2) rectangle (3,3);
+        
+        % Window sizes
+        \draw[blue,line width=0.6mm] (0,3) rectangle (4.5,4);
+        \draw[red,line width=0.6mm] (3.5,3) rectangle (8.5,4);
+        \draw[green,line width=0.6mm] (7.5,3) rectangle (12,4);
+        % \draw[black,line width=0.6mm,dotted] (0,2) rectangle (3,5);
+
+        % Meas lines
+        \path[draw,-] (3.5,4) -- (3.5,4.8);
+        \path[draw,-] (4.0,4) -- (4.0,4.8);
+        \path[draw,-{Latex[length=2.5mm]}] (3,4.5) -- (3.5,4.5);
+        \path[draw,-] (3.5,4.5) -- (4.0,4.5);
+        \path[draw,-{Latex[length=2.5mm]}] (5,4.5) -- (4.0,4.5) 
+            node[near start, anchor=south west] {$\lfloor \frac{w_l}{2} \rfloor$};
+        % Arrows
+        % \path[draw,-{Latex[length=2.5mm]}] (0,7.5) -- (4,7.5) 
+        %     node[near start, above] () {iterate} ;
+        % \path[draw,-{Latex[length=3.5mm]},line width=0.4mm] (-0.5,7) -- (-0.5,3) 
+        %     node[near start, above,rotate=270] () {iterate} ;
+
+        % Axis
+        % \foreach \x in {0,1,2,3,4}
+        %     \node[anchor=north] at ($(-0.5,5)-(0,\x)$)  {$\x$};
+
+        \node[anchor=center] at (2,2) {FPGA 1};
+        \node[anchor=center] at (6,2) {FPGA 2};
+        \node[anchor=center] at (10,2) {FPGA 3};
+
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % resulting lines
+        \draw[blue,line width=0.3mm,fill=blue!20] (0.5,3.4) rectangle (4,3.6);
+        \draw[red,line width=0.3mm,fill=red!20] (4,3.4) rectangle (8,3.6);
+        \draw[green,line width=0.3mm,fill=green!20] (8,3.4) rectangle (11.5,3.6);
+        % % Init pixels
+        % \draw[fill=gray!20] (0,3) rectangle (6,7);
+        % % Iter pixels
+        % \draw[pattern=north east lines, pattern color=gray!60] (0,2) rectangle (6,3);
+        % Grid
+        \draw[step=4cm,black] (0,0) grid (12,4);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}

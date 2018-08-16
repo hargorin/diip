@@ -22,6 +22,9 @@
 *.mtc1
 *.out
 *.synctex.gz
+*.glsdefs
+*.bcf
+*.xml
 
 # Latexmk
 *.fdb_latexmk

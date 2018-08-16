@@ -1,0 +1,167 @@
+% \tikzsetnextfilename{system-overview}
+
+% Define box and box title style
+\tikzstyle{mybox} = [draw=black, fill=blue!20, very thick,
+    rectangle, rounded corners=3mm, inner sep=5pt, inner ysep=10pt,
+    execute at begin node={\begin{varwidth}{15cm}},
+    execute at end node={\end{varwidth}}]
+\tikzstyle{fancytitle} =[fill=white, text=black, very thick, draw=black, rounded corners=1mm]
+
+\tikzstyle{myboxlight} = [draw=black, fill=blue!20, thick,
+    rectangle, rounded corners=3mm, inner sep=2pt, inner ysep=10pt,
+    execute at begin node={\begin{varwidth}{3cm}},
+    execute at end node={\end{varwidth}}]
+
+
+
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]   
+
+    % For Color Version
+    % \definecolor{fill1}{RGB}{102,255,102}
+    % \definecolor{fill2}{RGB}{102,255,102}
+    % \definecolor{fill3}{RGB}{102,255,102}
+    % \definecolor{fill4}{RGB}{153,255,153}
+    % \definecolor{fill5}{RGB}{255,241, 86}
+    % \definecolor{fill6}{RGB}{255,153, 51}
+    % \definecolor{fill7}{RGB}{255, 51, 51}
+
+    % For sad BW
+    \definecolor{fill1}{gray}{0.9}
+    \definecolor{fill2}{gray}{0.9}
+    \definecolor{fill3}{gray}{0.9}
+    \definecolor{fill4}{gray}{0.8}
+    \definecolor{fill5}{gray}{0.7}
+    \definecolor{fill6}{gray}{0.6}
+    \definecolor{fill7}{gray}{0.5}
+
+    % Layer boxes
+    \node [mybox, fill=fill1] (app){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Network Process to Application
+        \end{minipage}
+    };
+    \node[fancytitle, right=10pt] at (app.north west) {\textbf{Application}};
+
+    \node [mybox, below=.4cm of app, fill=fill2] (pres){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Data representation and Encryption
+        \end{minipage}
+    };
+    \node[fancytitle, right=10pt] at (pres.north west) {\textbf{Presentation}};
+
+    \node [mybox, below=.4cm of pres, fill=fill3] (ses){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Interhost communication
+        \end{minipage}
+    };
+    \node[fancytitle, right=10pt] at (ses.north west) {\textbf{Session}};
+
+    \node [mybox, below=.4cm of ses, fill=fill4] (trans){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            End-to-End connections and Reliability
+        \end{minipage}
+    };
+    \node[fancytitle, right=10pt] at (trans.north west) {\textbf{Transport}};
+
+    \node [mybox, below=.4cm of trans, fill=fill5] (net){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Path Determination and IP (Logical addressing)
+        \end{minipage}
+    };
+    \node[fancytitle, right=10pt] at (net.north west) {\textbf{Network}};
+
+    \node [mybox, below=.4cm of net, fill=fill6] (datali){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            MAC and LLC (Physical addressing)
+        \end{minipage}
+    };
+    \node[fancytitle, right=10pt] at (datali.north west) {\textbf{Data Link}};
+
+    \node [mybox, below=.4cm of datali, fill=fill7] (phy){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Media, Signal and Binary Transmission
+        \end{minipage}
+    };
+    \node[fancytitle, right=10pt] at (phy.north west) {\textbf{Physical}};
+
+    % Data boxes
+    \node [myboxlight, fill=fill1!70, left=0.2cm of app] (ddata1){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Data
+        \end{minipage}
+    };
+    \node [myboxlight, fill=fill2!70, left=0.2cm of pres] (ddata2){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Data
+        \end{minipage}
+    };
+    \node [myboxlight, fill=fill3!70, left=0.2cm of ses] (ddata3){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Data
+        \end{minipage}
+    };
+    \node [myboxlight, fill=fill4!70, left=0.2cm of trans] (seg){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Segments
+        \end{minipage}
+    };
+    \node [myboxlight, fill=fill5!70, left=0.2cm of net] (pack){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Packets
+        \end{minipage}
+    };
+    \node [myboxlight, fill=fill6!70, left=0.2cm of datali] (frames){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Frames
+        \end{minipage}
+    };
+    \node [myboxlight, fill=fill7!70, left=0.2cm of phy] (bits){% 
+        \begin{minipage}{0.50\textwidth}
+            \centering
+            Bits
+        \end{minipage}
+    };
+
+    % Titles
+    % \node[] (layer) at (0,1.5) {\LARGE{\textbf{Layer}}};
+    % \node[] (data) at (-3.1,1.5) {\LARGE{\textbf{Data}}};
+
+    % Braces
+    \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] ($(bits.180) +(-0.2,0)$) -- ($(pack.180)+(-0.2,0)$) node [black,midway,xshift=-0.2cm,anchor=east,text width=2cm,align=center] {\large{Media\\Layers}};
+    \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] ($(seg.180) +(-0.2,0)$) -- ($(ddata1.180)+(-0.2,0)$) node [black,midway,xshift=-0.2cm,anchor=east,text width=2cm,align=center] {\large{Host\\Layers}};
+
+    % Layer numbers
+    \node[right=0.2cm of phy]  {\large{\textbf{L1}}};
+    \node[right=0.2cm of datali]  {\large{\textbf{L2}}};
+    \node[right=0.2cm of net]  {\large{\textbf{L3}}};
+    \node[right=0.2cm of trans]  {\large{\textbf{L4}}};
+    \node[right=0.2cm of ses]  {\large{\textbf{L5}}};
+    \node[right=0.2cm of pres]  {\large{\textbf{L6}}};
+    \node[right=0.2cm of app]  {\large{\textbf{L7}}};
+
+    \begin{pgfonlayer}{main}
+    \end{pgfonlayer}
+
+    % FPGA box
+    \begin{pgfonlayer}{main}
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{foreground}
+    \end{pgfonlayer} 
+
+
+\end{tikzpicture}

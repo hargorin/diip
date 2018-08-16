@@ -2,17 +2,25 @@
 \usepackage[pdftex,active,tightpage]{preview}
 \setlength\PreviewBorder{0mm}
 
-\usepackage{tikz}
+\usepackage{xintbinhex}
+\usepackage{xintexpr}
+\usepackage{tikz,pgfplots}
 \usepackage{xcolor}
+\usepackage{adjustbox}
+\usepackage{fmtcount}
 \usetikzlibrary{arrows,shapes,snakes,
-               automata,backgrounds, 
-               petri,topaths,
-               positioning, spy,
-               fit, external ,calc}             %To use diverse features from tikz
+		       automata,backgrounds,
+		       petri,topaths,
+		       positioning, spy,
+		       fit, external ,calc,
+		       arrows.meta, patterns}				%To use diverse features from tikz
 
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,foreground,main}
-
+% To print roman numbers
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
 \begin{document}
 \begin{preview}

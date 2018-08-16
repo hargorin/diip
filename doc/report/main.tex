@@ -25,7 +25,8 @@
 % preliminary pages) should normally be double-sided.
 %
 % Memoir class loads useful packages by default (see manual).
-\documentclass[a4paper,11pt,leqno,openbib,twoside]{memoir} %add 'draft' to turn draft option on (see below)
+\documentclass[a4paper,11pt,reqno,twoside]{memoir} %add 'draft' to turn draft option on (see below)
+
 %
 %
 % Adding metadata:
@@ -35,7 +36,7 @@
 \pdfinfo{
    /Author (Jan Stocker and Noah H\"utter)
    /Title (Bachelor Thesis)
-   /Keywords (FPGA; UDP; Image Processing; Sobel filter)
+   /Keywords (FPGA; UDP; Image Processing; Wallis filter)
    /CreationDate (D:\pdfdate)
 }
 \fi
@@ -47,8 +48,8 @@
 \fi
 %
 % Declare figure/table as a subfloat.
-\newsubfloat{figure}
-\newsubfloat{table}
+% \newsubfloat{figure}
+% \newsubfloat{table}
 % Better page layout for A4 paper, see memoir manual.
 \settrimmedsize{297mm}{210mm}{*}
 \setlength{\trimtop}{0pt} 
@@ -152,6 +153,12 @@
 \setsecnumdepth{subsubsection}
 \pagestyle{myruled}
 
+\usepackage{afterpage}
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    % \addtocounter{page}{-1}%
+    \newpage}
 
 %
 % Oscar's command (it works):
@@ -198,8 +205,10 @@
 \usepackage{verbatim}					%Permits pre-formated text insertion
 \usepackage{upgreek }					%Calls other kind of greek alphabet
 \usepackage{latexsym}					%Extra symbols
-\usepackage[square,numbers,
-		     sort&compress]{natbib}		%Calls bibliography commands 
+% \usepackage[square,numbers,
+% 		     sort&compress]{natbib}		%Calls bibliography commands 
+\usepackage[style=ieee,urldate=comp,backend=biber]{biblatex} % fhnw report
+\addbibresource{bibtex.bib}
 \usepackage{url}						%Supports url commands
 \usepackage{etex}						%eTeXÕs extended support for counters
 \usepackage{fixltx2e}					%Eliminates some in felicities of the 
@@ -219,21 +228,32 @@
 \usepackage{setspace}
 									%verbatim-like environment
 \usepackage[version=0.96]{pgf}			%PGF/TikZ is a tandem of languages for producing vector graphics from a 
-\usepackage{tikz}						%geometric/algebraic description.
+\usepackage{tikz,pgfplots}						%geometric/algebraic description.
 \usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{fmtcount}
 \usetikzlibrary{arrows,shapes,snakes,
 		       automata,backgrounds,
 		       petri,topaths,
 		       positioning, spy,
 		       fit, external ,calc,
-		       arrows.meta}				%To use diverse features from tikz
+		       arrows.meta, patterns}				%To use diverse features from tikz
 \pgfdeclarelayer{background}
 \pgfdeclarelayer{foreground}
 \pgfsetlayers{background,foreground,main}
 \tikzset{>=latex}
 
+\usepackage{xintbinhex}
+\usepackage{xintexpr}
 \usepackage{listings}
 \usepackage{color}
+\usepackage[toc,nopostdot,style=altlist,nonumberlist]{glossaries}
+% \usepackage[toc,style=longheader,nonumberlist]{glossaries}
+\makeglossaries
+\input{chapters/910_glossary}
+
+\usepackage{subfig}
+\usepackage{cclicenses}
  
 \definecolor{mGreen}{rgb}{0,0.6,0}
 \definecolor{mGray}{rgb}{0.5,0.5,0.5}
@@ -258,6 +278,21 @@
     showtabs=false,                  
     tabsize=2,
     language=C
+}
+
+\lstdefinestyle{TextStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=false,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    % numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
 }
 
 \lstdefinestyle{VHDLStyle}{
@@ -317,6 +352,10 @@
     showtabs=false,                  
     tabsize=2
 }
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
 % Reduce line skip in itemize env
 \let\tempone\itemize
@@ -419,14 +458,14 @@
 }
 %
 % My subcaption style
-\newcommand{\mysubcaption}[2][\@empty]{
-	\subcaptionsize{\small}
-	\hangsubcaption
-	\subcaptionlabelfont{\rmfamily}
-	\sidecapstyle{\raggedright}
-	\setlength{\belowcaptionskip}{10pt}
-	\ifx \@empty#1 \subcaption{#2}\else \subcaption[#1]{#2}
-}
+% \newcommand{\mysubcaption}[2][\@empty]{
+% 	\subcaptionsize{\small}
+% 	\hangsubcaption
+% 	\subcaptionlabelfont{\rmfamily}
+% 	\sidecapstyle{\raggedright}
+% 	\setlength{\belowcaptionskip}{10pt}
+% 	\ifx \@empty#1 \subcaption{#2}\else \subcaption[#1]{#2}
+% }
 %
 %An initial of the very first character of the content
 \usepackage{lettrine}
@@ -434,6 +473,10 @@
 	\lettrine[lines=3,lhang=0.33,nindent=0em]{
 		\color{gray}
      		{\textsc{#1}}}{}}
+% To print roman numbers
+\makeatletter
+\newcommand*{\rom}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
 %
 % Theorem styles used in my thesis
 %
@@ -478,7 +521,7 @@
 % ------------------------------------------------------------------------->>> %
 
 % <<< ------------------------------------------------------------------- INFO %
-\input{chapters/005_info}
+\input{chapters/001_info}
 % ------------------------------------------------------------------------->>> %
 
 % <<< --------------------------------------------------------------- ABSTRACT %
@@ -491,6 +534,16 @@
 
 \pagestyle{plain}
 \renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+
+
+%
+\input{chapters/015_dedication}
+\clearemptydoublepage
+%
+\input{chapters/017_declarations}
+\clearemptydoublepage
+%
+
 
 \newpage
 % ------------------------------------------------------------------------->>> %
@@ -542,61 +595,46 @@
 \input{chapters/130_image_processing}
 % ------------------------------------------------------------------------->>> %
 
-% <<< ---------------------------------------------------------- COMMUNICATION %
-\input{chapters/140_communication}
+% <<< ------------------------------------------------ COMMUNICATION & CONTROL %
+\input{chapters/140_dataflow}
 % ------------------------------------------------------------------------->>> %
 
-% <<< ----------------------------------------------------------- VERIFICATION %
-\input{chapters/150_verification}
+% <<< ------------------------------------------------------------ SCALABILITY %
+\input{chapters/150_scalability}
+% ------------------------------------------------------------------------->>> %
+
+% <<< ----------------------------------------------- BENCHMARK & VERIFICATION %
+\input{chapters/160_verification}
 % ------------------------------------------------------------------------->>> %
 
 % <<< ------------------------------------------------------------- CONCLUSION %
-\input{chapters/160_conclusion}
+\input{chapters/170_conclusion}
 % ------------------------------------------------------------------------->>> %
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                        D E V E L O P E R   G U I D E  					   %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \part{Developer Guide}
-% \label{part:Developer_Guide}
-
-% % <<< ------------------------------------------------------- FOLDER STRUCTURE %
-% \input{chapters/210_folder_structure}
-% % ------------------------------------------------------------------------->>> %
-
-% % <<< ---------------------------------------------------------- BUILD PROCESS %
-% \input{chapters/220_build_process}
-% % ------------------------------------------------------------------------->>> %
-
-% % <<< ------------------------------------------------------------- VIVADO HLS %
-% \input{chapters/230_vivado_hls}
-% % ------------------------------------------------------------------------->>> %
-
-% % <<< --------------------------------------------------------- HDL SIMULATION %
-% \input{chapters/240_hdl_simulation}
-% % ------------------------------------------------------------------------->>> %
-
-% % <<< --------------------------------------------------------- FPGA DEBUGGING %
-% \input{chapters/250_fpga_debugging}
-% % ------------------------------------------------------------------------->>> %
-
-% % <<< ---------------------------------------------------------------- AXI BUS %
-% \input{chapters/260_axi_bus}
-% % ------------------------------------------------------------------------->>> %
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                        	    R E S O U R C E  							   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \phantomsection
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             G L O S S A R Y                                  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\afterpage{\blankpage}
+\printglossaries
+
+
 % <<< ----------------------------------------------------------- BIBLIOGRAPHY %
 % \addcontentsline{toc}{chapter}{Bibliography}
-\bibliographystyle{IEEEtran}
-\bibliography{bibtex}
+% \bibliographystyle{IEEEtran}
+% \bibliography{bibtex}
+
+%%---BIBLIOGRAPHY------------------------------------------------------------------------
+{\sloppypar
+\label{sec:lit}
+\selectlanguage{english}                %ngerman or english
+\printbibliography[heading=bibintoc]
+}
+
 % ------------------------------------------------------------------------->>> %
 
 % <<< -------------------------------------------------------- LIST of FIGURES %
@@ -608,7 +646,6 @@
 % ------------------------------------------------------------------------->>> %
  
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             A P P E N D I C E S							   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -617,8 +654,6 @@
 \input{chapters/900_appendices}
 \end{appendix}
 \clearpage{\pagestyle{empty}\cleardoublepage}
-
-
 
 
 % ==============================================================================

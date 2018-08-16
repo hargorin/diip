@@ -4,19 +4,14 @@
 %
 % ==============================================================================
 \chapter{Mission} \label{chapt:mission}
-The following sections will
-first cover the starting point based on appendix \ref{app:aufgabenstellung} and the available resources (appendix \ref{app:technicial_requirements}). Different possible
-solutions will be covered in \ref{chapt:solutions} before presenting the concept
-in \ref{chapt:mission:concept}.
-\\
+With the theoretical background covered the mission of this project can be
+addressed.
+The following sections will first cover the starting point and the available resources. Different possible solutions will be covered in \ref{chapt:solutions} before presenting the concept in chapter \ref{chapt:mission:concept}. \\
 
 In a world of self driving cars and virtual reality, having a digital copy of
 the real world yields several benefits. Cars can be trained in a virtual city
 to increase the performance of their algorithms and video games could get more
-realistic if the player could walk through the streets of a major city. Gathering
-this data is one problem and processing the images is another. Pictures have
-to be converted, analyzed and processed. This requires a great deal of
-computational power for a task that is repeated several times.
+realistic if the player could walk through the streets of a major city. Gathering this data is one problem and processing the images is another. Pictures have to be converted, analyzed and processed. This requires a great deal of computational power for a task that is repeated several times.
 
 % ==============================================================================
 %
@@ -24,14 +19,15 @@ computational power for a task that is repeated several times.
 %
 % ==============================================================================
 \section{Starting Point}
-To accelerate intense image processing a dedicated hardware approach is
-investigated. To do so, a basic image processing algorithm such as edge
-detection is implemented in an FPGA that communicates over a network with a host
-computer. The image processing task should later be distributed onto multiple
-FPGAs to accelerate the processing even more \cite{nomokoReqs}. Before listing possible solutions the available resources need to
-be dissected.
+The goal of this project is to investigate a dedicated hardware approach to
+accelerate intense image processing. To do so, a basic image processing
+algorithm such as the Wallis filter is implemented on an FPGA that communicates
+over a network with a host computer. The image processing task should later be
+distributed onto multiple FPGAs to accelerate the processing even more 
+\cite{nomokoReqs}. Before listing possible solutions the available resources and
+boundary conditions need to be analyzed.
 
-\subsection{FPGA Board} \label{chapt:fpgaboard}
+\subsection{FPGA Board} \label{chapt:mission:fpgaboard}
 \begin{figure}[tb!]
     \centering
     \includegraphics[width=\textwidth]{images/mission/ac701.png}
@@ -43,11 +39,19 @@ The Xilinx AC701 Evaluation Kit is used as development platform. It features an
 Artix-7 FPGA and several useful on-board peripherals. The JTAG interface is used
 for configuration and debugging of the FPGA. To connect the platform to the
 network, a Gigabit Ethernet PHY handles the first layer of the OSI model in
-hardware (see chapter \ref{chapt:physical}). Storing data is possible in the DDR3 memory
+hardware (see chapter \ref{chapt:theory:physical}). Storing data is possible in the DDR3 memory
 module. Table \ref{tab:ac701} shows a summary of the important peripherals on
 the AC701 board.
-\\
-\begin{table}[b!]
+
+The XC7A200T FPGA is part of the Artix-7 family. It is optimized for high logic
+throughput at low costs. Important for this project is the number of logic cells
+and the amount of on-chip memory. With more logic cells available, data can be
+processed parallel and the throughput increases. Processing more data at the
+same time also requires the data to be stored. Therefore on-chip memory, also
+called block memory, is used to have fast access to the data. Table 
+\ref{tab:XC7A200T} lists the relevant numbers of resources.
+
+\begin{table}[h!]
     \centering
     \begin{tabular}{l l}
         \toprule
@@ -62,14 +66,6 @@ the AC701 board.
     \caption{Xilinx AC701 key board features \cite{xilinx_ac701}}
     \label{tab:ac701}
 \end{table}
-
-The XC7A200T FPGA is part of the Artix-7 family. It is optimized for high logic
-throughput at low costs. Important for this project is the number of logic cells
-and the amount of on-chip memory. With more logic cells available, data can be
-processed parallel and the throughput increases. Processing more data at the
-same time also requires the data to be stored. Therefore on-chip memory, also
-called block memory, is used to have fast access to the data. Table 
-\ref{tab:XC7A200T} lists the relevant numbers of resources.
 
 \begin{table}[tb!]
     \centering
@@ -86,187 +82,137 @@ called block memory, is used to have fast access to the data. Table
     \label{tab:XC7A200T}
 \end{table}
 
-\subsection{Communication} \label{chapt:mission:communication}
-The communication between host computer and FPGA is built up over Ethernet.
-This way, the system can be expanded quickly and it requires little effort to
-implement the communication on the computer.
 
-Connecting multiple boards and a host computer on a network requires a network
-switch. A switch analyzes the information stored in the Ethernet header (sender
-and receiver MAC address) and forwards the package to the proper port. For this
-system to work, the Ethernet protocol has to be implemented in the FPGA.
+\subsection{Communication} \label{chapt:mission:communication} 
+In the preceding project \cite{p5report} an Ethernet communication between PC and
+FPGA was established. This included a UDP based protocol that was implemented on
+the PC and on the FPGA in form of an IP core. Basic file transfers are working
+but many features such as reliable transfer using acknowledge and retransmission
+only exist on paper. The work in this project is built
+upon the IP core from project 5 while improvements and modifications are made to
+the IP core.
 
-\begin{figure}[h]
-    \centering
-    \input{images/mission/network.tikz}
-    \caption{FPGA Network}
-    \label{fig:fpganetwork}
-\end{figure}
-% To send and receive packets from and to a computer, it is preferable to use the
-% internet protocol (IP). Sending data over UDP or TCP requires only a few lines
-% of code. 
-% kommunikation von PC auf den FPGA und zurück ist über ethernet zu realisieren 
-
-\subsection{Image} \label{chapt:image}
-Section \ref{chapt:fpgaboard} shows that the FPGA only has 1642 KB block memory. Therefore, it is important to know how large the image is. The file size of a 1500MPixel image with 24bit RGB values is calculated in the following equation:
-
+\subsection{Image Size}
+The customer Nomoko has a camera with a resolution of 1500MPixel (\ref{app:technicial_requirements}). If this is a color image with 24 bit RGB values, the following file size will result:
 \begin{equation}
-	File Size = Pixel_{tot} * Pixel_{size} = 1500MPixel * 24bit = 36Gbit \cong 4.4GByte
+    File Size = Pixel_{tot} \cdot Pixel_{size} = 1500MPixel \cdot 24bit = 36Gbit \cong 4.4GByte
     \label{eq:filesize}
 \end{equation}
 
-As shown in equation \ref{eq:filesize} a picture does not have space on the FPGA. The image must therefore be processed piecewise in the FPGA. 
-The images to be processed have the format TIFF or DNG. 
-\\
+\subsection{Wallis Filter} \label{chapt:mission:wallis}
+The customer Nomoko wants the Wallis filter to be implemented. The Wallis
+filter is used for local contrast enhancement. For example, the filter can compensate house shadows in images and get more details from the image. 
+The Wallis filter is based on the equation \ref{eq:wallis_filter} as explained in chapter \ref{ch:th_wallis_filter}.
 
-\textbf{TIFF (Tagged Image File Format):}
-TIFF files can be divided into three sections, the Image File Header (IFH), the Image File Directory (IFD) and the bitmap data. The IFH and  IFD are mandatory in every TIFF file. The bitmap data is not essential. 
-The IFH is constant in each TIFF file and consists of eight bytes. It is composed of the byte order, the special number 42 and an offset to the first IFD.
-Visible in figure \ref{fig:tiff_format}, several images can be stored in a TIFF file and thus consist of several IFDs. The IFD contains information about an image. This information consists of tags that describe, for example, the width or the color system of the image. At the end of the IFD is the offset to the next IFD \cite{tiff_format}.
-\\
-
-\begin{figure}[tb!]
-    \centering
-    \includegraphics[width=0.9\textwidth]{images/mission/tiff_format.png}
-    \caption{TIFF file format \cite{tiff_format}}
-    \label{fig:tiff_format}
-\end{figure}
-
-\textbf{DNG (Digital Negative):}
-DNG is a lossless raw data format by Adobe. It is compatible with the format and the standard of TIFF 6.0. It can also be saved with the file extension *. tif \cite{dng_format}. 
-The TIFF 6.0 format differs from the previous formats mainly in the tags \cite{tiff_format}.
 
 \subsection{Development Environment}
-The image processing algorithm is written in Vivado HLS. With Vivado HLS, an IP core for the Vivado HLx can be generated from a C/C++ code. Vivado HLS is useful when programming algorithms and afterwards translating them into hardware description language. 
-\clearpage
+The image processing algorithm is written in Vivado HLS (\ref{app:technicial_requirements}). With Vivado HLS, an IP core for the Vivado HLx can be generated from a C/C++ code. Vivado HLS is useful when programming algorithms and afterwards translating them into hardware description language. \\ 
+\\
+Communication is implemented with configurable IP blocks provided by Xilinx,
+third party providers and custom developed IP cores. Vivado HLS is mainly used
+for the dataflow inside the FPGA
+(see the technical requirements for more detail in appendix 
+\ref{app:technicial_requirements}).
+
 % ==============================================================================
 %
 %                             Possible Solutions
 %
 % ==============================================================================
 \section{Possible Solutions} \label{chapt:solutions}
-\subsection{Image Processing} \label{chapt:mission_imageprocessing}
-There are many different image processing algorithms. However, it is important to filter the different algorithms and decide which one is meaningful and has a big advantage. The chapter \ref{chapt:theroy_imageprocessing} lists the three image processing operations and how many pixels of an image are required for processing. It's a good start to narrow down the algorithms.
-\\
+With the starting point dissected the possible solutions to the problem can be
+stated. They are split into the two parts of image processing and dataflow.
 
-\textbf{Global Operations:} This requires the entire image. Chapter \ref{chapt:image} shows that there is not enough memory on the FPGA for the whole image. This operation is not suitable in this case.
-\\
+\subsection{Image Processing} \label{chapt:mission:ip}
+The Wallis algorithm is based on the neighborhood operation (\ref{ch:th_wallis_filter}). Therefore, the borders of the image must be considered separately (\ref{ch:th:neighborhood}). There are three possible solutions to the border problem:
 
-\textbf{Point Operations:} This operation is conceivable. However, it is quite undemanding and poorly shows which advantages a distributed FPGA system has. 
-\\
+\begin{itemize}
+\item The border pixels are not considered. This means that the destination image will be smaller depending on the size of the neighborhood
+\item The pixels required outside the image are extrapolated according to the closest pixels
+\item The image is continued periodically
+\end{itemize}
 
-\textbf{Neighborhood Operations:} In image analysis, it is helpful if edges, corners or objects can be detected. With these keywords you will find Feature Detection. Feature detection is a collection of algorithms which contain edges, corners, regions of interest, points or ridges. From all these different types, edge detection is most useful for image analysis. Edge detection can be used to detect objects (houses, windows, etc.).
-With edge detection, the Sobel filter is a simple algorithm which is used frequently. The Sobel filter is also a basic building component for very good edge detection, such as canny edge detection \cite{canny_edge}. Altough it is not the best edge detector, it is very promising for setting up and testing the entire system.
+\subsection{Dataflow} \label{chapt:mission:dataflow}
+As described in \ref{ch:th_wallis_filter} the Wallis filter requires a
+neighborhood of pixels to do its calculations. Therefore the data coming from
+the communication part must be buffered and fed to the Wallis filter in a given
+order. Further details are described in chapter \ref{chapt:dataflow}. Following
+realizations may be considered for the control of the dataflow:\\
 
-\subsection{Communication} \label{chapt:mission:possible:communication}
-% Die Vor- und Nachteile folgender Punkte werden aufgezeigt:
-% UDP, TCP, fertige IPs, bestehende Protokolle
-As mentioned in chapter \ref{chapt:mission:communication} a part of the OSI
-model must be managed by the FPGA. The first layer is handled by the
-on-board PHY chip but the data link, network, transport and session layers have
-to be operated by the FPGA. Per layer the following options may be considered:
-\\
+\textbf{Data preparation on PC:} The image data is prepared on the PC and sent
+in the right order. This method is simple to realize and requires no
+additional FPGA resources. On the other hand, data may be sent more than once
+which results in a decrease of throughput.\\
 
-\textbf{Own Implementation:}
-The functionality is developed from scratch in hardware description language.
-This method requires the most time of the three options. But in advance, the
-functionality can be implemented exactly to the needs.
-\\
+\textbf{Soft microprocessor core:} Image data is sent to the FPGA and stored in
+FPGA memory. A microcontroller implemented in FPGA logic then dissects the data
+and feeds it to the Wallis filter in the right order. Hence the data is buffered
+the Ethernet throughput can reach its maximum. The downside to this
+solution
+is that such a soft microprocessor core may take more FPGA resources than a
+dedicated approach.\\
 
-\textbf{Opencore:} \url{https://opencores.org/} is a community for the
-development of IP (Intellectual Properties) Cores. An IP Core is a piece of code
-that can be used in an FPGA design. It advertises specific functionality and is
-tested to certain specifications. The code is open source licensed and free to
-use. Disadvantages are the uncertainty about the proper operation and the
-portability to a specific FPGA.
-\\
+\textbf{Controller IP core:} An IP core is developed that handles the specific
+task of managing the dataflow between the communication and Wallis cores. This
+approach takes little FPGA resources but involves more time to develop.
 
-\textbf{Xilinx IP Core:} The FPGA manufacturer offers ready to use IP Cores.
-They can be quickly added to the design because they are part of the development
-environment. These cores are tested by the manufacturer and often come with an
-example design for the evaluation kit. In disadvantage these cores often come at
-a price and require a license.
-\\
+\subsection{Scalability} \label{chapt:mission:scalability}
+As the thesis title suggests the image processing is distributed, meaning that
+the data to be processed is split among multiple image processing cores. This
+can be done inside an FPGA and across multiple FPGAs.
+Chapter 6.6 in appendix \ref{app:technicial_requirements} suggests two possible
+solutions to scale the image processing inside the FPGA.
+\begin{itemize}
+    \item Store the image in block memory and distribute it to the image
+    processing's local memory for processing
+    \item Data is streamed from the communication part directly to the different
+    image processing cores
+\end{itemize}
 
-Table \ref{tab:commsol} lists the layers to be implemented and the possible
-solutions that may be considered. The underlaying layer of the Data Link layer
-does not feature any data buffering. Therefore the implementation of the Data
-Link layer is time-critical. Xilinx offers the Tri-Mode Ethernet Media Access
-Controller (TEMAC) \cite{temac}. It is suited for Gigabit Ethernet communication
-and offers an example design for the AC701 evaluation kit. This solution is
-chosen to omit the critical timing requirements and because it works out of the
-box. 
-To manage the tasks of the Network and Transport layers the 1G eth UDP / IP Stack
-from \url{https://opencores.org/} is picked \cite{udpipstack}. It implements the
-UDP and IPv4 protocols and couples directly to the TEMAC. UDP was chosen for
-transport protocol because it does not require a handshake to establish a
-connection which means less implementation effort. 
-
-Finally, the Session layer is custom implemented. A lightweight file transfer
-protocol on top of UDP that is suitable for efficient implementation
-on FPGA is required. This is very application specific and therefore no suitable IP Cores
-exist.
-
-\begin{table}[h!]
-    \centering
-    \begin{tabular}{l l l l l}
-        \toprule
-        Layer & Protocol & Possible Solutions & & \\
-        \midrule
-        Data Link & Ethernet & 
-        Own implementation & Opencore & Xilinx Core
-        \\
-        Network & IPv4 &
-        Own implementation & Opencore & 
-        \\
-        Transport & TCP or UDP &
-        Own implementation & Opencore & 
-        \\
-        Session & {} &
-        Own implementation & &
-        \\
-        \bottomrule
-    \end{tabular}
-    \caption{Communication layer possible solutions}
-    \label{tab:commsol}
-\end{table}
+Scalability across multiple FPGA is analyzed in theory.
 
 % ==============================================================================
 %
 %                             Concept
 %
 % ==============================================================================
-\clearpage
+
 \section{Concept} \label{chapt:mission:concept}
-Having compared the possible solutions for both the image processing and
-communication part, the way of proceeding can be concluded.
-\\
+Now that the possible solutions for dataflow, image processing and scalability
+have been discussed, the way of proceeding can be concluded.\\
 
-\textbf{Image Processing}
+
+\textbf{Image processing}
     \begin{itemize}
-        \item Use high level synthesis
-        \item Describe the processing task in C/C++
-        \item Implement a Sobel filter
-        \item Read and write data from FPGA block memory
+        \item The border pixels are not considered for simplicity. The destination image will be smaller than the source image.
+        \item The image is sent in several pieces to the FPGA since 4.4GB 
+        (see equation \ref{eq:filesize}) do not have space on the FPGA (see chapter \ref{chapt:mission:fpgaboard}).
     \end{itemize}
 
-\textbf{Communication} 
+\textbf{Dataflow}
     \begin{itemize}
-        \item Use the Xilinx Tri-Mode Ethernet MAC for layer 2
-        \item Use the 1G eth UDP / IP Stack from 
-        \url{https://opencores.org/} for layer 3 and 4
-        \item Define a custom layer 5 protocol and implement it accordingly
-        \item Read and write data from FPGA block memory
+        \item The communication is extended with acknowledge and retransmission.
+        \item A controller IP core is realized to handle the dataflow between
+        communication and Wallis filter.
     \end{itemize}
 
-Figure \ref{fig:blockdiagram} shows the top level block diagram. The image data
-is sent over Ethernet to the AC701 evaluation board. The on board PHY handles
-layer 1 of the OSI model before passing the data to the FPGA. The communication
-stack handles the file transfer and stores the data in FPGA block memory. The
-image processing block then runs its task and the communication block sends the
-data back to the computer.
+\textbf{Scalability}
+    \begin{itemize}
+        \item Use stream interfaces on the image processing and dataflow parts
+        to enable stream based scalability
+        \item Assess the inside and across FPGA scalability in theory
+    \end{itemize}
 
-\begin{figure}[h!]
+
+Figure \ref{fig:blockdiagram} shows the conceptual block diagram. Image data is
+sent from the PC to the FPGA over Ethernet. The communication block handles the
+file transfer and stores the image data in FPGA block memory. A controller core
+then feeds the data in the right order to the Wallis filter and stores the
+results again in block memory. The controller sends a command to the
+communication cores which then starts sending the processed image data back to
+the PC.
+
+\begin{figure}[b!]
     \centering
     \input{images/mission/block_diagram.tikz}
     \caption{Block diagram}

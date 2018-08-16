@@ -1,0 +1,115 @@
+% \tikzsetnextfilename{system-overview}
+
+\tikzset{%
+  do path picture/.style={%
+    path picture={%
+      \pgfpointdiff{\pgfpointanchor{path picture bounding box}{south west}}%
+        {\pgfpointanchor{path picture bounding box}{north east}}%
+      \pgfgetlastxy\x\y%
+      \tikzset{x=\x/2,y=\y/2}%
+      #1
+    }
+  },
+  sin wave/.style={do path picture={    
+    \draw [line cap=round] (-3/4,0)
+      sin (-3/8,1/2) cos (0,0) sin (3/8,-1/2) cos (3/4,0);
+  }},
+  cross/.style={do path picture={    
+    \draw [line cap=round] (-1,-1) -- (1,1) (-1,1) -- (1,-1);
+  }},
+  plus/.style={do path picture={    
+    \draw [line cap=round] (-3/4,0) -- (3/4,0) (0,-3/4) -- (0,3/4);
+  }}
+}
+
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    entity/.style={
+        draw,
+        minimum height=1.0cm,
+        minimum width=3cm,
+        fill=white,
+        anchor=north west,
+    },
+    entity_c/.style={
+        circle,
+        draw,
+        minimum height=1.0cm,
+        minimum width=1cm,
+        fill=white,
+        anchor=north west,
+    },
+]
+    %coordinates
+    \coordinate (c_shift)      at (0,0);
+    \coordinate (c_sum0)        at (7,0);
+    \coordinate (c_sum1)        at (7,-3);
+    \coordinate (c_plus)        at (12.5,-3.14);
+    \coordinate (c_square0)     at (4,-1.5);
+    \coordinate (c_square1)     at (5.5,-1.5);
+    \coordinate (c_square2)     at (12.5,-1.5);
+    \coordinate (c_divide0)     at (11,-0.15);
+    \coordinate (c_divide1)     at (11,-3.15);
+    \coordinate (c_fifo)        at (1.0,-0.423);
+
+    %nodes
+
+    \begin{pgfonlayer}{main}
+        % entities
+        \node[entity, label={dir\_shift\_reg}] (shift) at (c_shift) {};
+        \node[entity, label={sum\_diff}] (sum0) at (c_sum0) {\huge $\Sigma$};
+        \node[entity, label={sum\_diff}] (sum1) at (c_sum1) {\huge $\Sigma$};
+
+        \node[entity_c] (square0) at (c_square0) {$()^2$};
+        \node[entity_c] (square1) at (c_square1) {$()^2$};
+        \node[entity_c] (square2) at (c_square2) {$()^2$};
+
+        \node[entity_c] (divide0) at (c_divide0) {$\frac{1}{N}$};
+        \node[entity_c] (divide1) at (c_divide1) {$\frac{1}{N}$};
+
+        \node [entity_c, plus] (plus) at (c_plus) {};
+        \node [draw, fill=white, minimum width=0.5cm, minimum height=0.2cm, anchor=north west, align=center] (fifo) at (c_fifo) {\small FiFo};
+
+
+        % ports
+        \path[draw,-{Latex[length=2.5mm]}] (-2,-0.51) node[above,xshift=0.8cm,yshift=-0.1cm]{pixel \footnotesize$u[8]$} -- (shift.180);
+        \path[draw,-{Latex[length=2.5mm]}] (divide0) -- node[above,xshift=0.75cm,yshift=-0.1cm]{$\mu_n$ \footnotesize$u[8]$} (15.2,-0.51);
+        \path[draw,-{Latex[length=2.5mm]}] (plus) -- node[above,xshift=0.09cm,yshift=-0.09cm]{$\sigma_{n}^{2}$ \footnotesize$u[14]$} (15.2,-3.50);
+
+        % Interconnects
+        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,0.1) |- ($(shift.0) + (0,1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] (shift.180) -| ++(0.5,-0.1) |- (fifo.180);
+        \path[draw,-{Latex[length=2.5mm]}] (fifo.0) -- ($(shift.0) + (0,-1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) node[anchor=west,xshift=0.1cm,yshift=0.17cm] {plus \footnotesize$u[8]$} -- ($(sum0.180) + (0,1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) node[anchor=west,xshift=0.1cm,yshift=0.165cm] {minus \footnotesize$u[8]$} -- ($(sum0.180) + (0,-1/6)$);
+
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,1/6)$) -| (square1.90);
+        \path[draw,-{Latex[length=2.5mm]}] ($(shift.0) + (0,-1/6)$) -| (square0.90);
+
+
+        \path[draw,-{Latex[length=2.5mm]}] (square1.270) node[anchor=west,xshift=0cm,yshift=-0.2cm] {\footnotesize$u[16]$} |- ($(sum1.180) + (0,1/6)$);
+        \path[draw,-{Latex[length=2.5mm]}] (square0.270) node[anchor=west,xshift=0cm,yshift=-0.2cm] {\footnotesize$u[16]$} |- ($(sum1.180) + (0,-1/6)$);
+
+        \path[draw,-{Latex[length=2.5mm]}] (sum0.0) node[anchor=west,xshift=0cm,yshift=0.23cm] {\footnotesize$s[17]$} -- (divide0.180);
+        \path[draw,-{Latex[length=2.5mm]}] (sum1.0) node[anchor=west,xshift=0cm,yshift=0.23cm] {\footnotesize$s[25]$} -- (divide1.180);
+
+        \path[draw,-{Latex[length=2.5mm]}] (divide1.0) node[above,xshift=0.2cm,yshift=-0.9cm]{\footnotesize$s[40,25]$} -- (plus.181);
+        \path[draw,-{Latex[length=2.5mm]}] (divide0.0) node[above,xshift=0.6cm,yshift=-0.1cm]{\footnotesize$s[32,17]$} -| node[above,xshift=-0.6cm,yshift=-0.8cm]{\footnotesize$u[12,8]$} (square2.90);
+        \path[draw,-{Latex[length=2.5mm]}] (square2.270) node[above,xshift=-0.6cm,yshift=-0.5cm]{\footnotesize$u[24,16]$} -| node[above,xshift=-0.25cm,yshift=-0.71cm] {$-$} (plus.90);
+
+        %points
+        \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (0.5,-0.509) {};
+        \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (4.359,-0.674) {};
+        \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (5.859,-0.344) {};
+        \node[circle, draw=black, fill=black, inner sep=0pt,minimum size=1.6pt] (b) at (12.859,-0.510) {};
+
+        % Mean and Variance Block
+        \begin{pgfonlayer}{foreground}
+            \node [draw, fill=gray!20, inner sep=10, fit={(shift) ($(shift.north)+(0,8pt)$) (sum0) (sum1) (plus) (square0) (square1) (square2) (divide0) (divide1)}, label=Mean \& Variance] (mv) {};
+        \end{pgfonlayer}
+
+
+
+    \end{pgfonlayer}
+
+\end{tikzpicture}

@@ -1,0 +1,80 @@
+% \tikzsetnextfilename{system-overview}
+
+%-----ABoxes
+%-----#1 height, #2 width, #3 aspect, #4 name of the node, #5
+%-----coordinate, #6 label
+\def\memory[#1,#2,#3,#4,#5]#6{%
+  \node[draw, cylinder, alias=cyl, shape border rotate=90, aspect=#3, %
+  minimum height=#1, minimum width=#2, outer sep=-0.5\pgflinewidth, %
+  color=white!40!black, left color=white!70, right color=white!80, middle
+  color=white] (#4) at #5 {};%
+  \node at #5 {#6};%
+  \fill [white!30] let \p1 = ($(cyl.before top)!0.5!(cyl.after top)$), \p2 =
+  (cyl.top), \p3 = (cyl.before top), \n1={veclen(\x3-\x1,\y3-\y1)},
+  \n2={veclen(\x2-\x1,\y2-\y1)} in (\p1) ellipse (\n1 and \n2); }
+
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    \coordinate (ccom)       at (0,0);
+    \coordinate (cbram)       at (6,0);
+    \coordinate (cip)       at (3,-2);
+
+
+    %nodes
+
+    \begin{pgfonlayer}{main}
+
+        % Blocks
+        \memory[45,40,1.6,bram,(cbram)] {BRAM};
+
+        \node[draw, fill=white, minimum width=3.5cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center] (com) at (ccom) {UFT core};
+
+        \node[draw, fill=white, minimum width=3.5cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, below = 1cm of bram] (control)  {Controller};
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 2cm of control] (ip)  {Image\\Processing};
+        
+        % Paths
+        % UFT to BRAM
+        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] 
+            ($(ccom.0) + (3.5,0)$) -- ($(cbram.180) + (-0.7,0.0)$) 
+            node [midway, above] () {AXI} ;
+        % control to BRAM
+        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] 
+            ($(control.0) + (-1.75,0.5)$) -- ($(cbram.180) + (0,-0.7)$) 
+            node [midway, right] () {AXI} ;
+        % control to ip
+        \path[draw,-{Latex[length=2.5mm]}] 
+            ($(control.0) + (0,0.3)$) -- ($(ip.180) + (0,0.3)$) 
+            node [midway, above] () {Stream} ;
+        \path[draw,-{Latex[length=2.5mm]}] 
+            ($(ip.180) + (0,-0.3)$) -- ($(control.0) + (0,-0.3)$)
+            node [midway, above] () {Stream} ;
+        % Control paths
+        \path[draw,-{Latex[length=2.5mm]}] 
+            ($(control.0) + (-3.5,0)$) -| ($(ccom.0) + (1.75,-0.5)$) 
+            node [near start, above] () {control} ;
+        \path[draw,-{Latex[length=2.5mm]}] 
+            ($(control.0) + (-1.75,-0.5)$) |- ($(control.0) + (0,-1)$) node [near end, above] () {control} -| ($(ip.0) + (-1.75,-0.5)$) 
+             ;
+        
+        % \path[draw,{Latex[length=2.5mm]}-] ($(mon.0) + (0,-0.2)$) -- ($(com.180) + (0,-0.2)$) node[near end, below] () {4.} ;
+
+        % \path[draw,-{Latex[length=2.5mm]}] ($(com.0) + (0,0.2)$) -- ($(ip.180) + (0,0.2)$) node[midway, above] () {2.} ;
+        % \path[draw,{Latex[length=2.5mm]}-] ($(com.0) + (0,-0.2)$) -- ($(ip.180) + (0,-0.2)$) node[midway, below] () {3.} ;
+
+    
+    \end{pgfonlayer}
+
+    % FPGA box
+    \begin{pgfonlayer}{main}
+        % \node[above = 0.2cm of com, xshift=-1.5cm] (fpga) { FPGA };
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{foreground}
+        % \node (f_fpga) [draw=black, fill=gray!20, inner sep=20, fit={(com) (ip) }] {};
+    \end{pgfonlayer} 
+
+    
+
+\end{tikzpicture}

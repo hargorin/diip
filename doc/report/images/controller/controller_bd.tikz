@@ -1,0 +1,72 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+]
+    %coordinates
+    \coordinate (corig)      at (0,0);
+
+
+    %nodes
+
+    \begin{pgfonlayer}{main}
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=north, text width=2.8cm, align=center] (bram) {BRAM};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=north, text width=2.8cm, align=center, right=2cm of bram] (readcol) {Read Coloumns};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=north, text width=2.8cm, align=center, left=2cm of bram] (writeline) {Write Lines};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=north, text width=2.8cm, align=center, below=1cm of bram] (fifo) {FiFo};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=north, text width=2.8cm, align=center, below=1cm of fifo] (hc) {House Keeping};
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=north, text width=2.8cm, align=center] (wallis) at (10,-1) {Wallis};
+
+
+
+        % \node[draw, fill=white, minimum width=3.2cm, minimum height=1.8cm, anchor=west, align=center, rounded corners=1mm] (mon) at (cmonitor) {};
+
+        % \node[draw, fill=white, minimum width=2.1cm, minimum height=0.4cm, anchor=west, align=center, rounded corners=2mm, below=0.2cm of mon] (stand) {};
+        % \node[draw, fill=white, minimum width=0.2cm, minimum height=0.1cm, anchor=south, align=center] (stange) at ($(stand.90) + (0,-0.04)$) {};
+
+
+
+        % \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 2cm of mon] (com) at (ccom) {Communication};
+
+        % \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 1cm of com] (ip) {Image\\Processing};
+        
+
+        % \node[inner sep=0pt, anchor=west] (whitehead) at ($(cmonitor) + (0.1,0)$)
+        %     {\includegraphics[width=1.4cm]{images/introduction/street1024.png}};
+        % \node[inner sep=0pt, anchor=west] (whitehead) at ($(cmonitor) + (1.7,0)$)
+        %     {\includegraphics[width=1.4cm]{images/introduction/c_street1024.png}};
+
+        % \node[] (eth) at ($(cmonitor) + (4.5, 1.0)$) {LAN};
+        
+        % \draw[line width = 0.5mm] ($(eth) + (0,-1.0)$) ellipse (0.2cm and 0.5cm);
+    \end{pgfonlayer}
+
+    % Controller box
+    \begin{pgfonlayer}{main}
+        \node[above = 0.6cm of bram, xshift=0cm] (controller) { Controller };
+    \end{pgfonlayer}
+    \begin{pgfonlayer}{foreground}
+        \node (f_fpga) [draw=black, fill=gray!20, inner sep=10, fit={(readcol) (writeline) (fifo) (hc) }] {};
+    \end{pgfonlayer} 
+
+    
+    % \path[draw,-{Latex[length=2.5mm]}] ($(mon.0) + (0,0.2)$) -- ($(com.180) + (0,0.2)$) node[near end, above] () {1.} ;
+    % \path[draw,-{Latex[length=2.5mm]}] ($(writeline.0) + (0,0.2)$) -- ($(com.180) + (0,0.2)$) node[near end, above] () {1.} ;
+    \path[draw,->] ($(writeline.0) + (0,0.0)$) -- ($(bram.180) + (0,0)$) node[near end, above] () {} ;
+    \path[draw,->] ($(bram.0) + (0,0.0)$) -- ($(readcol.180) + (0,0)$) node[near end, above] () {} ;
+    \path[draw,->] ($(readcol.0) + (0,0.0)$) -| ($(wallis.90) + (0,0)$) node[near end, above] () {} ;
+    \path[draw,->] ($(wallis.270) + (0,0.0)$) |- ($(fifo.0) + (0,0)$) node[near end, above] () {} ;
+
+
+    \node[fill=white, minimum width=3cm, anchor=east, text width=2.8cm, align=center] (os) at (-8,-2.5) {output stream};
+    \node[fill=white, minimum width=3cm, anchor=east, text width=2.8cm, align=center] (is) at (-8,-0.5) {input stream};
+
+    \path[draw,->] ($(fifo.180) + (0,0.0)$) -- ($(os.0) + (0,0.0)$);
+    \path[draw,->] ($(is.0) + (0,0.0)$) -- ($(writeline.180) + (0,0.0)$);
+    % \path[draw,{Latex[length=2.5mm]}-] ($(mon.0) + (0,-0.2)$) -- ($(com.180) + (0,-0.2)$) node[near end, below] () {4.} ;
+
+    % \path[draw,-{Latex[length=2.5mm]}] ($(com.0) + (0,0.2)$) -- ($(ip.180) + (0,0.2)$) node[midway, above] () {2.} ;
+    % \path[draw,{Latex[length=2.5mm]}-] ($(com.0) + (0,-0.2)$) -- ($(ip.180) + (0,-0.2)$) node[midway, below] () {3.} ;
+
+\end{tikzpicture}

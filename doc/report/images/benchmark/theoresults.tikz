@@ -1,0 +1,90 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}
+        \begin{axis}[
+                % domain=-2:6,
+                xtick={0,500,...,2500},
+                ytick={0,2,...,18},
+                ymin=0,
+                xmajorgrids=true,ymajorgrids=true,
+                xlabel={image height [$p$]},
+                ylabel={throughput [$MB/s$]},
+                title={Image Processing Theoretical Maximums},
+                legend style={
+                    cells={anchor=east},
+                    legend pos=outer north east,
+                },
+                legend cell align=left,
+                scatter/classes={
+                    a={mark=triangle*,fill=black,draw=black},
+                    b={mark=square*,fill=red,draw=red},
+                    c={mark=diamond*,fill=blue,draw=blue}
+                    % d={mark=*,fill=brown,draw=brown}
+                }
+            ]
+            \addplot[scatter,only marks, scatter src=explicit symbolic]
+            table[meta=label] {
+                x    y   label
+                %% HLS 8 bit
+                480  1.45 a
+                720  1.41 a
+                1080 1.43 a
+                2160 1.40 a
+                %% HLS 256bit
+                480  11.3 b
+                720  11.1 b
+                1080 11.0 b
+                2160 10.9 b
+                %% VHDL
+                480  5.92 c
+                720  5.84 c
+                1080 5.78 c
+                2160 5.73 c
+                %% CPU
+                % 480  12.56 d
+                % 720  16.23 d
+                % 1080 15.99 d
+                % 2160 15.91 d
+            };
+            \addlegendentry{HLS 8bit}
+            \addlegendentry{HLS 256bit}
+            \addlegendentry{VHDL}
+            % \addlegendentry{CPU}
+        \end{axis}
+
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % Grid
+        % \draw[step=0.5cm,gray] (0,0) grid (4,4);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}
+
+
+% | Solution | Image | Throughput | Image File |
+% |----------|-------|------------|------------|
+% | HLS      | mountain | 0.168MB/s | mountain_fpga_hls.tif |
+% | HLS      | room     | 0.170MB/s | room_fpga_hls.tif |
+% | HLS      | cat480p  | 0.170MB/s |  |
+% | HLS      | cat720p  | diip_cc error |  |
+% | HLS      | cat1080p  | 0.168MB/s |  |
+% | HLS      | cat2160p  | 0.161MB/s |  |
+% | VHDL     | cat480p  | 0.89MB/s |  |
+% | VHDL     | cat720p  | 1.291MB/s |  |
+% | VHDL     | cat1080p  | 2.348MB/s |  |
+% | VHDL     | cat2160p  | 4.115MB/s |  |

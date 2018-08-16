@@ -1,0 +1,115 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[]
+
+    % \coordinate (cff1)      at (0,3);
+    % \coordinate (cff2)      at (4,3);
+    % \coordinate (cff3)      at (8,3);
+    % \coordinate (cff4)      at (2,0);
+    % \coordinate (cff5)      at (6,0);
+    \coordinate (cff1)      at (0,0);
+    \coordinate (cff2)      at (3.5,0);
+    \coordinate (cff3)      at (7,0);
+    \coordinate (cff4)      at (10.5,0);
+    \coordinate (cff5)      at (14,0);
+
+    
+
+    \begin{pgfonlayer}{main}
+        
+        %% State 1
+        % Grid
+        % 
+        \foreach \x in {0,1,2,3,4,5}
+            \filldraw[fill=white, draw=black] ($(cff1) + \x*(0.5,0)$) rectangle ($(cff1) + \x*(0.5,0) + (0.5,1)$);
+        % Read and write pointer
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff1) + (0,0) + (0.25,1.5)$) -- ($(cff1) + (0,0) + (0.25,1)$) node[near start, anchor=east] {w};
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff1) + (0,0) + (0.25,-0.5)$) -- ($(cff1) + (0,0) + (0.25,0)$) node[near start, anchor=east] {r};
+        % Filled elements
+
+
+        
+        %% State 2
+        % Grid
+        % 
+        \foreach \x in {0,1,2,3,4,5}
+            \filldraw[fill=white, draw=black] ($(cff2) + \x*(0.5,0)$) rectangle ($(cff2) + \x*(0.5,0) + (0.5,1)$);
+        % Read and write pointer
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff2) + (1,0) + (0.25,1.5)$) -- ($(cff2) + (1,0) + (0.25,1)$) node[near start, anchor=east] {w};
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff2) + (0,0) + (0.25,-0.5)$) -- ($(cff2) + (0,0) + (0.25,0)$) node[near start, anchor=east] {r};
+        % Filled elements
+        \filldraw[fill=gray, draw=black] ($(cff2) + 0*(0.5,0)$) rectangle ($(cff2) + 0*(0.5,0) + (0.5,1)$);
+        \filldraw[fill=gray, draw=black] ($(cff2) + 1*(0.5,0)$) rectangle ($(cff2) + 1*(0.5,0) + (0.5,1)$);
+
+        
+        %% State 3
+        % Grid
+        % 
+        \foreach \x in {0,1,2,3,4,5}
+            \filldraw[fill=white, draw=black] ($(cff3) + \x*(0.5,0)$) rectangle ($(cff3) + \x*(0.5,0) + (0.5,1)$);
+        % Read and write pointer
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff3) + (0.5,0) + (0.25,1.5)$) -- ($(cff3) + (0.5,0) + (0.25,1)$) node[near start, anchor=east] {w};
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff3) + (1.5,0) + (0.25,-0.5)$) -- ($(cff3) + (1.5,0) + (0.25,0)$) node[near start, anchor=east] {r};
+        % Filled elements
+        \filldraw[fill=gray, draw=black] ($(cff3) + 0*(0.5,0)$) rectangle ($(cff3) + 0*(0.5,0) + (0.5,1)$);
+        \filldraw[fill=gray, draw=black] ($(cff3) + 3*(0.5,0)$) rectangle ($(cff3) + 3*(0.5,0) + (0.5,1)$);
+        \filldraw[fill=gray, draw=black] ($(cff3) + 4*(0.5,0)$) rectangle ($(cff3) + 4*(0.5,0) + (0.5,1)$);
+        \filldraw[fill=gray, draw=black] ($(cff3) + 5*(0.5,0)$) rectangle ($(cff3) + 5*(0.5,0) + (0.5,1)$);
+
+
+        
+        %% State 4
+        % Grid
+        % 
+        \foreach \x in {0,1,2,3,4,5}
+            \filldraw[fill=white, draw=black] ($(cff4) + \x*(0.5,0)$) rectangle ($(cff4) + \x*(0.5,0) + (0.5,1)$);
+        % Read and write pointer
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff4) + (1.5,0) + (0.25,1.5)$) -- ($(cff4) + (1.5,0) + (0.25,1)$) node[near start, anchor=east] {w};
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff4) + (0,0) + (0.25,-0.5)$) -- ($(cff4) + (0,0) + (0.25,0)$) node[near start, anchor=east] {r};
+        % Filled elements
+        \filldraw[fill=gray, draw=black] ($(cff4) + 0*(0.5,0)$) rectangle ($(cff4) + 0*(0.5,0) + (0.5,1)$);
+        \filldraw[fill=gray, draw=black] ($(cff4) + 1*(0.5,0)$) rectangle ($(cff4) + 1*(0.5,0) + (0.5,1)$);
+        \filldraw[fill=gray, draw=black] ($(cff4) + 2*(0.5,0)$) rectangle ($(cff4) + 2*(0.5,0) + (0.5,1)$);
+
+
+        
+        %% State 5
+        % Grid
+        % 
+        \foreach \x in {0,1,2,3,4,5}
+            \filldraw[fill=white, draw=black] ($(cff5) + \x*(0.5,0)$) rectangle ($(cff5) + \x*(0.5,0) + (0.5,1)$);
+        % Read and write pointer
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff5) + (1.5,0) + (0.25,1.5)$) -- ($(cff5) + (1.5,0) + (0.25,1)$) node[near start, anchor=east] {w};
+        \path[draw,-{Latex[length=2.5mm]}] ($(cff5) + (1.5,0) + (0.25,-0.5)$) -- ($(cff5) + (1.5,0) + (0.25,0)$) node[near start, anchor=east] {r};
+        % Filled elements
+
+        %% State names
+        \node[align=right,anchor=south east] (s1) at ($(cff1) + (0,2.5)$) {State:}; 
+        \node[align=center,anchor=south] (s1) at ($(cff1) + (1.5,2.5)$) {\rom{1}}; 
+        \node[align=center,anchor=south] (s1) at ($(cff2) + (1.5,2.5)$) {\rom{2}}; 
+        \node[align=center,anchor=south] (s1) at ($(cff3) + (1.5,2.5)$) {\rom{3}}; 
+        \node[align=center,anchor=south] (s1) at ($(cff4) + (1.5,2.5)$) {\rom{4}}; 
+        \node[align=center,anchor=south] (s1) at ($(cff5) + (1.5,2.5)$) {\rom{5}};  
+        %% Looped
+        \node[align=right,anchor=south east] (s1) at ($(cff1) + (0,2)$) {Looped:}; 
+        \node[align=center,anchor=south] (s1) at ($(cff1) + (1.5,2)$) {false}; 
+        \node[align=center,anchor=south] (s1) at ($(cff2) + (1.5,2)$) {false}; 
+        \node[align=center,anchor=south] (s1) at ($(cff3) + (1.5,2)$) {true}; 
+        \node[align=center,anchor=south] (s1) at ($(cff4) + (1.5,2)$) {false}; 
+        \node[align=center,anchor=south] (s1) at ($(cff5) + (1.5,2)$) {false};        
+
+
+        % \draw[step=1cm,gray,very thin] (0,0) grid (20,2);
+
+        % \node[label={uft\_rx}] (rx) at (cff4) {};
+
+        % \path[draw,-{Latex[length=2.5mm]}] ($(txctl.0) + (0,1.5/10)$) -| ($(txcmd.180) + (-0.5,0)$) -- ($(txcmd.180) + (0,0)$) node[anchor=west] {};
+    \end{pgfonlayer}
+
+    \begin{pgfonlayer}{foreground}
+    
+    \end{pgfonlayer} 
+
+
+\end{tikzpicture}
+
+    

@@ -3,47 +3,58 @@
     rounded corners=0mm,
 ]
     %coordinates
-    \coordinate (orig)   at (0,0);
-    \coordinate (pc)    at (0,0);
-    \coordinate (phy)    at (3,0);
-    \coordinate (eth)    at (9,0);
-    \coordinate (mem1)    at (12,-2);
-    \coordinate (mem2)    at (6,-2);
-    \coordinate (sob)    at (9,-2);
+    \coordinate (corig)      at (0,0);
+    \coordinate (cmonitor)   at (0,0);
+    \coordinate (ccom)       at (5,0);
+    \coordinate (cip)        at (10,0);
+
 
     %nodes
-    \begin{pgfonlayer}{main}
-        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.5cm, align=center] (A) at (pc) {PC};
-        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.5cm, align=center] (B) at (phy) {PHY};
-        \node[draw, fill=white, minimum width=8cm, minimum height=1cm, anchor=south, text width=4cm, align=center] (C) at (eth) {Communication};
-        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.7cm, align=center] (D) at (mem1) {Memory};
-        \node[draw, fill=white, minimum width=2.5cm, minimum height=1cm, anchor=south, text width=1.7cm, align=center] (E) at (sob) {Processing};
-        \node[draw, fill=white, minimum width=2cm, minimum height=1cm, anchor=south, text width=1.7cm, align=center] (F) at (mem2) {Memory};
-    \end{pgfonlayer}
 
     \begin{pgfonlayer}{main}
-        \node (FPGA) at (5.6, 1.5) { FPGA };
-    \end{pgfonlayer} 
+        \node[draw, fill=white, minimum width=3.2cm, minimum height=1.8cm, anchor=west, align=center, rounded corners=1mm] (mon) at (cmonitor) {};
+
+        \node[draw, fill=white, minimum width=2.1cm, minimum height=0.4cm, anchor=west, align=center, rounded corners=2mm, below=0.2cm of mon] (stand) {};
+        \node[draw, fill=white, minimum width=0.2cm, minimum height=0.1cm, anchor=south, align=center] (stange) at ($(stand.90) + (0,-0.04)$) {};
+
+
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 2cm of mon] (com) at (ccom) {Communication};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, right = 1cm of com] (mem)  {Memory};
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, below = 1cm of mem] (control)  {Controller};
+
+        \node[draw, fill=white, minimum width=3cm, minimum height=1cm, anchor=west, text width=2.8cm, align=center, left = 1cm of control] (ip) {Image\\Processing};
+        
+
+        \node[inner sep=0pt, anchor=west] (whitehead) at ($(cmonitor) + (0.1,0)$)
+            {\includegraphics[width=1.4cm]{images/mission/room.png}};
+        \node[inner sep=0pt, anchor=west] (whitehead) at ($(cmonitor) + (1.7,0)$)
+            {\includegraphics[width=1.4cm]{images/mission/room_fpga_vhdl_v20.png}};
+
+        \node[] (eth) at ($(cmonitor) + (4.5, 1.0)$) {LAN};
+        
+        \draw[line width = 0.5mm] ($(eth) + (0,-1.0)$) ellipse (0.2cm and 0.5cm);
+    \end{pgfonlayer}
+
+    % FPGA box
+    \begin{pgfonlayer}{main}
+        \node[above = 0.2cm of com, xshift=-1.5cm] (fpga) { FPGA };
+    \end{pgfonlayer}
     \begin{pgfonlayer}{foreground}
-        \node (f_fpga) [draw=black, fill=gray!20, inner sep=10, fit={(FPGA) (C) (D) (E) (F)}] {};
+        \node (f_fpga) [draw=black, fill=gray!20, inner sep=20, fit={(com) (ip) (mem) (control) }] {};
     \end{pgfonlayer} 
+
     
-    \begin{pgfonlayer}{main}
-        \node (eva) at (3.45 , 2.5) { Evaluation Board };
-    \end{pgfonlayer}    
+    \path[draw,-{Latex[length=2.5mm]}] ($(mon.0) + (0,0.2)$) -- ($(com.180) + (0,0.2)$) node[near end, above] () {1.} ;
+    \path[draw,{Latex[length=2.5mm]}-] ($(mon.0) + (0,-0.2)$) -- ($(com.180) + (0,-0.2)$) node[near end, below] () {8.} ;
 
-    \begin{pgfonlayer}{background}
-        \node [draw=black, fill=gray!40, inner sep=10, fit={(eva) (f_fpga)}] {};
-    \end{pgfonlayer}
+    \path[draw,-{Latex[length=2.5mm]}] ($(control.180) + (0,-0.2)$) -- ($(ip.0) + (0,-0.2)$) node[midway, below] () {4.} ;
+    \path[draw,{Latex[length=2.5mm]}-] ($(control.180) + (0,0.2)$) -- ($(ip.0) + (0,+0.2)$) node[midway, above] () {5.} ;
 
+    \path[draw,-{Latex[length=2.5mm]}] ($(control.90) + (-0.2,0)$) -- ($(mem.270) + (-0.2,0)$) node[midway, left] () {6.} ;
+    \path[draw,{Latex[length=2.5mm]}-] ($(control.90) + (0.2,0)$) -- ($(mem.270) + (0.2,0)$) node[midway, right] () {3.} ;
 
-    \begin{pgfonlayer}{main}
-        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (A) -- (B);
-        \path[draw,{Latex[length=2.5mm]}-{Latex[length=2.5mm]}] (B) -- (C);
-        \path[draw,-{Latex[length=2.5mm]}] ($(C.south)!0.75!(C.south east)$) -- (D);
-        \path[draw,-{Latex[length=2.5mm]}] (D) -- (E);
-        \path[draw,-{Latex[length=2.5mm]}] (E) -- (F);
-        \path[draw,-{Latex[length=2.5mm]}] (F) -- ($(C.south)!0.75!(C.south west)$);
-    \end{pgfonlayer}
+    \path[draw,-{Latex[length=2.5mm]}] ($(com.0) + (0,0.2)$) -- ($(mem.180) + (0,0.2)$) node[midway, above] () {2.} ;
+    \path[draw,{Latex[length=2.5mm]}-] ($(com.0) + (0,-0.2)$) -- ($(mem.180) + (0,-0.2)$) node[midway, below] () {7.} ;
 
 \end{tikzpicture}

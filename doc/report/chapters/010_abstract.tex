@@ -2,35 +2,49 @@
 \begin{abstract}
 % \linespread{2}\selectfont
 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Motivation:
 In the world of self-driving cars and virtual reality games it is becoming
 increasingly important to represent digitally what we see.
 Therefore, using high resolution
 cameras, images of the environment have been recorded.
 These large images are processed to be presented three dimensionally. 
-This image processing task needs to be accelerated to have a fast work flow. 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Problem statement:
+This image processing task needs to be accelerated to get a fast work flow. 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Approach:
 A dedicated hardware approach using Field Programmable Gate Arrays (FPGA) was
 implemented that is scalable onto multiple FPGAs.
-High level synthesis was used to describe a Sobel filter operation in
-C language that was then synthesized to hardware description language.
-Simulations were used to ensure correct operation. The result is an image
+% How
+% Using HLS: Wallis and controller
+% Using VHDL: Wallis and controller
+% 
+In a first approach High Level Synthesis was used to describe a Wallis local contrast enhancement filter in C/C++ language that was then synthesized to hardware description language. In order to further improve throughput a VHDL solution was implemented. A memory management unit was introduced to cache necessary image data to reduce Ethernet bandwidth usage.
+% High level synthesis was used to describe a Sobel filter operation in
+% C language that was then synthesized to hardware description language.
+% Simulations were used to ensure correct operation. 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Results:
+The result is an image
 processing core and a file transfer protocol stack on top of the User Datagram
-Protocol (UDP) to transfer the images from a computer to the FPGA. The
-processing core takes image data from FPGA block memory and processes data at
-one
-pixel per clock at 100MHz which corresponds to 100 megapixels per second. The
-project
-runs on
-an Artix 7 evaluation board and can simply be extended due to a clean source code
-structure. 
+Protocol (UDP) to transfer the images from a computer to the FPGA over gigabit Ethernet. 
+The Wallis filter core processes data at a rate of one
+pixel per clock at 125MHz which corresponds to 125 megapixels per second. 
+Studies on scalability show how the processing load can be distributed onto multiple FPGA on a local area network and benchmarks present the performance against CPU based image processing.
+% The
+% code runs on an Xilinx Artix 7 evaluation board and can simply be extended due to a clean source code structure. 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+% Conclusions:
 With some additions, workload distribution is possible. This study proves 
 that a dedicated hardware approach for image processing is possible and will
-speed up the process of creating virtual representations of
-reality.
+speed up the process of creating virtual representations of reality.
 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 \vspace{3em}
 \begin{tabular}{l p{.95\textwidth}}
     \textbf{Team members}  & Noah H\"utter, Jan Stocker \\
-    \textbf{Keywords}      & FPGA, UDP, Image Processing, Sobel Filter \\
+    \textbf{Keywords}      & FPGA, UDP, Image Processing, Wallis Filter \\
 \end{tabular}
 
 \end{abstract}

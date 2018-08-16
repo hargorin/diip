@@ -1,0 +1,90 @@
+% \tikzsetnextfilename{system-overview}
+\begin{tikzpicture}[
+    rounded corners=0mm,
+    triangle/.style = {fill=blue!20, regular polygon, regular polygon sides=3 },
+    node rotated/.style = {rotate=180},
+    border rotated/.style = {shape border rotate=180}
+]
+    %coordinates
+    \coordinate (orig)      at (0,0);
+
+    \begin{pgfonlayer}{main}
+        
+        % % Write path
+        % \path[draw={rgb:red,1;green,2;blue,3},-{Latex[length=5mm]},line width=1.0mm] (0.5,4.5)  -- (7.5,4.5);
+        % \path[draw={rgb:red,3;green,1;blue,2},-{Latex[length=5mm]},line width=1.0mm] (8.5,4.5)  -- (15.5,4.5);
+        
+        % % Text
+        % \node[] (write) at (-2,5) {Write};
+
+        % Braces
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-4pt,yshift=0pt] (12.5,6) -- (12.5,0) node [black,midway,xshift=0.5cm,anchor=west] {Cache N Lines};
+        \draw [line width=0.5mm,decorate,decoration={brace,amplitude=10pt},xshift=-0pt,yshift=0pt] (9,-2) -- (0,-2) node [black,midway,yshift=-0.5cm,anchor=north] {Block RAM size};
+        
+        % Center pixel
+        \draw[black,line width=0.5mm] (2,3) rectangle (3,4);
+        % Window size
+        \draw[black,line width=0.5mm] (0,1) rectangle (5,6);
+        
+        % Buffer A
+        % \draw[draw={rgb:red,1;green,2;blue,3},line width=1mm] (-0.05,-0.05) rectangle (7.95,5.05);
+        
+        % Buffer B
+        % \draw[draw={rgb:red,3;green,1;blue,2},line width=1mm] (8.05,-0.05) rectangle (16.05,5.05);
+        
+        % Left Arrows
+        \path[draw,-{Latex[length=2.5mm]}] (-1,5.5) -- (0,5.5) 
+            node[near start,anchor=east,align=right,xshift=-0.2cm] {\texttt{cache\_w\_ptr}};
+        % \path[draw,-{Latex[length=2.5mm]}] (-1,0.5) -- (0,0.5) 
+        %     node[near start,anchor=east,align=right,xshift=-0.2cm] {};
+        % \foreach \y in {1.5,2.5,3.5,4.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (-0.5,\y) {};
+
+        % Top arrows
+        \path[draw,-{Latex[length=2.5mm]}] (0.5,7.0) -- (0.5,6) 
+            node[near start,anchor=west,align=right,xshift=-0.2cm,rotate=90] {\texttt{col\_w\_ptr}};
+        % \path[draw,-{Latex[length=2.5mm]}] (8.5,7.0) -- (8.5,6) 
+        %     node[near start,anchor=west,align=right,xshift=-0.2cm,rotate=90] {};
+        % \foreach \x in {1.5,2.5,3.5,4.5,5.5,6.5,7.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (\x,6.5) {};
+
+        % Right arrows
+        \path[draw,-{Latex[length=2.5mm]}] (10,5.5) -- (9,5.5) 
+            node[near start,anchor=west,align=left,xshift=0.2cm] {\texttt{cache\_r\_base}};
+        \path[draw,-{Latex[length=2.5mm]}] (10,1.5) -- (9,1.5) 
+            node[near start,anchor=west,align=left,xshift=0.2cm] {\texttt{cache\_r\_tip}};
+        \path[draw,-{Latex[length=2.5mm]}] (10,4.5) -- (9,4.5) 
+            node[near start,anchor=west,align=left,xshift=0.2cm] {\texttt{cache\_r\_ptr}};
+        % \foreach \y in {2.5,3.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (9.5,\y) {};
+
+        % Bot arrows
+        \path[draw,-{Latex[length=2.5mm]}] (0.5,-1) -- (0.5,0) 
+            node[near start,anchor=east,align=left,xshift=0.2cm,yshift=.5cm,rotate=90] {\texttt{col\_r\_ptr}};
+        % \path[draw,-{Latex[length=2.5mm]}] (8.5,-1) -- (8.5,0) 
+        %     node[near start,anchor=east,align=left,xshift=0.2cm,rotate=90] {};
+        % \foreach \x in {1.5,2.5,3.5,4.5,5.5,6.5,7.5}            
+        %     \node[circle,fill=gray,minimum size=0.2cm,inner sep=0pt] () at (\x,-0.5) {};
+
+
+        % Axis
+        \foreach \y in {0,1,2,3,4,5}
+            \node[anchor=north] at ($(-0.2,6)-(0,\y)$)  {$\y$};
+        % Axis
+        \foreach \x in {0,1,2,3,4,5,6,7,8}
+            \node[anchor=south] at ($(0.1,6.0)+(\x,0)$)  {$\x$};
+
+    \end{pgfonlayer}
+
+    % Foreground
+    \begin{pgfonlayer}{foreground}
+        
+    \end{pgfonlayer} 
+
+    % Background
+    \begin{pgfonlayer}{background}
+        % Grid
+        \draw[step=1cm,black,thin] (0,0) grid (9,6);
+    \end{pgfonlayer} 
+
+\end{tikzpicture}
