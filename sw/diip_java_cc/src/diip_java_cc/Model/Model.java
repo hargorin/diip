@@ -39,6 +39,10 @@ public class Model extends Observable {
 	private Worker fpgaWorker1;
 	private Worker fpgaWorker2;
 	
+	private long starttime = 0;
+	private long endtime = 0;
+	private double throughput = 0;
+	
 	// ================================================================================
 	// Private Functions
 	// ================================================================================
@@ -161,6 +165,7 @@ public class Model extends Observable {
 	    	
 	    	dp.setWaPar(wapar);
 			dp.start();
+			starttime = System.nanoTime();
 		}
 		
 		setChanged();
@@ -171,8 +176,14 @@ public class Model extends Observable {
 	public DistributedProcessor getDP() { 
 		return dp;
 	}
+	
+	public double getThroughput() {
+		return throughput;
+	}
 
 	public void notifyDpDone() {
+		endtime = System.nanoTime();
+		throughput = (sourceImage.getHeight()*sourceImage.getWidth()/((endtime-starttime) / 1.0e9) / 1024 / 1024);
 		outputImage = dp.getOutImages().get(0);
 		setChanged();
 		notifyObservers();

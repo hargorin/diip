@@ -58,7 +58,7 @@ public class MainPanel extends JPanel implements ActionListener {
 	private JLabel lblLW1;
 	private JLabel lblLW2;
 	private JLabel lblImageWidth;
-	private JLabel lblImageHeight, lblWorkers;
+	private JLabel lblImageHeight, lblWorkers, lblSplitInto;
 
 	private JEngineerField spB;
 	private JEngineerField spC;
@@ -288,7 +288,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		gbc_lblSplitIntoStatic.gridy = 2;
 		panel_6.add(lblSplitIntoStatic, gbc_lblSplitIntoStatic);
 		
-		JLabel lblSplitInto = new JLabel("-");
+		lblSplitInto = new JLabel("-");
 		GridBagConstraints gbc_lblSplitInto = new GridBagConstraints();
 		gbc_lblSplitInto.anchor = GridBagConstraints.NORTH;
 		gbc_lblSplitInto.insets = new Insets(0, 0, 5, 0);
@@ -495,6 +495,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		btGo.setEnabled(!model.getDP().isRunning());
 		pnlLTop.updateme();
 		pnlLBot.updateme();
+		
+		lblSplitInto.setText(String.format("%.2f MB/s", model.getThroughput()));
 	}
 
 	@Override
