@@ -124,5 +124,6 @@ public class Worker extends Thread {
     		outy++;
     	}
     	socket.close();
+    	rxsocket.close();
     }
 }
