@@ -28,13 +28,15 @@ void printProgress(int current, int max)
 
 void printUsage()
 {
-    printf("usage: ./diip_cc infile.jpg\n");
+    printf("usage: ./diip_cc infile.jpg [-s]\n");
+    printf("usage: ./diip_cc infile.jpg IP rxport [-s]\n");
 }
 
 int main(int argc, char const *argv[])
 {
     const char* infilename;
     const char* ip = "192.168.5.9";
+    int rxport = 2222;
     // const char* ip = "127.0.0.1";
     bool showImage = false;
 
@@ -61,6 +63,24 @@ int main(int argc, char const *argv[])
     if(argc > 2)
     {
         if(strcmp(argv[2], "-s") == 0)
+        {
+            showImage = true;
+        }
+    }
+
+    // format ./bin/diip_cc res/room.tif 192.168.5.9 2222
+    if(argc == 4)
+    {
+        ip = argv[2];
+        rxport = atoi(argv[3]);
+    }
+
+    // format ./bin/diip_cc res/room.tif 192.168.5.9 2222 -s
+    if(argc == 5)
+    {
+        ip = argv[2];
+        rxport = atoi(argv[3]);
+        if(strcmp(argv[4], "-s") == 0)
         {
             showImage = true;
         }
@@ -105,7 +125,7 @@ int main(int argc, char const *argv[])
     //     printProgress(currline, ih->getHeight()-WINDOW_SIZE+1);
         
     //     // Start receiver
-    //     com->setupReceive(2222, &ih->outBuf[currline*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
+    //     com->setupReceive(rxport, &ih->outBuf[currline*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
     //     std::thread rxth(& Com::receive, com);
         
     //     // start transmitter
@@ -125,7 +145,7 @@ int main(int argc, char const *argv[])
     int currline = 0;
 
     int outsize = (ih->getWidth()-WINDOW_SIZE+1)*(ih->getHeight()-WINDOW_SIZE+1);
-    com->setupReceive(2222, ih->outBuf, outsize);
+    com->setupReceive(rxport, ih->outBuf, outsize);
     std::thread rxth(& Com::contReceive, com);
 
     tic(&tt);
@@ -153,7 +173,7 @@ int main(int argc, char const *argv[])
         
         // Start receiver
         // printf("start rx idx=%d, size=%d\n", (currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1), (ih->getWidth()-WINDOW_SIZE+1));
-        // com->setupReceive(2222, &ih->outBuf[(currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
+        // com->setupReceive(rxport, &ih->outBuf[(currline-(WINDOW_SIZE-1))*(ih->getWidth()-WINDOW_SIZE+1)], (ih->getWidth()-WINDOW_SIZE+1));
         // std::thread rxth(& Com::receive, com);
         // printf("rx start, ");
         // start transmitter
