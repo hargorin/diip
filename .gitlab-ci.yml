@@ -1,18 +1,3 @@
-# cores:
-#   stage: test
-#   tags:
-#     - vivado
-#   image: noah-vivado:latest
-#   before_script:
-#     - sudo apt-get install libgnat-4.9
-#     - wget https://github.com/ghdl/ghdl/releases/download/v0.33/ghdl_0.33-1jessie1_amd64.deb
-#     - sudo dpkg -i ghdl_0.33-1jessie1_amd64.deb
-#     - rm ghdl_0.33-1jessie1_amd64.deb
-#   script:
-#     - cd fpga/hlx/
-#     - make TOP=uft_top_tb sim
-
-
 doc:
   stage: build
   tags:
@@ -28,26 +13,36 @@ doc:
     paths:
     - doc/report/p6_diip_huetter_stocker.pdf
 
-# fpga:
-#   stage: build
-#   tags:
-#     - vivado
-#   image: docker-vivado:2017.3
-#   before_script:
-#     # The following is because of a bug in vivado HLS (http://svn.clifford.at/handicraft/2017/vivadobugs/vivadobug04.txt)
-#     - sudo apt-get --yes --force-yes remove libgmp-dev
-#   script: 
-#     - source /opt/Xilinx/Vivado/2017.3/settings64.sh
-#     - pwd
-#     - echo $PATH
-#     - id
-#     - cd fpga/hlx/
-#     - time make NAME=diip_faster impl
-#   artifacts:
-#     paths:
-#     - "fpga/hlx/build/projects/*/*/*.dcp"
-#     - "fpga/hlx/build/*.bit"
-#     - "fpga/hlx/build/*.ltx"
+fpga:
+  stage: build
+  tags:
+    - vivado
+  image: docker-vivado:2017.3
+  before_script:
+    # The following is because of a bug in vivado HLS (http://svn.clifford.at/handicraft/2017/vivadobugs/vivadobug04.txt)
+    - sudo apt-get --yes --force-yes remove libgmp-dev
+  script: 
+    # Just for debugging
+    - source /opt/Xilinx/Vivado/2017.3/settings64.sh
+    - pwd
+    - echo $PATH
+    - id
+    # Build HLS cores
+    - pushd fpga/hls/
+    - time make NAME=diip_faster impl
+    - make NAME=wallis_8b export
+    - make NAME=controller export
+    - popd
+    # Build HLX projects
+    - pushd fpga/hlx/
+    - time make NAME=diip impl
+    - time make NAME=diip_faster impl
+    - popd
+  artifacts:
+    paths:
+    - "fpga/hlx/build/projects/*/*/*.dcp"
+    - "fpga/hlx/build/*.bit"
+    - "fpga/hlx/build/*.ltx"
 
 # sw:
 #   stage: build
