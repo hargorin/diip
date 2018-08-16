@@ -6,7 +6,7 @@
 -- Author      : User Name <user.email@user.company.com>
 -- Company     : User Company Name
 -- Created     : Mon Jul 16 13:31:02 2018
--- Last update : Thu Jul 19 13:48:56 2018
+-- Last update : Wed Aug  8 10:59:20 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -119,6 +119,17 @@ begin
         -- start stim
         i1_axis_tdata <= std_logic_vector(to_unsigned(20,24));
         i2_axis_tdata <= std_logic_vector(to_unsigned(5,16));
+        
+        i1_axis_tvalid <= '1';
+        i2_axis_tvalid <= '1';
+        waitfor(1);
+        i1_axis_tvalid <= '0';
+        i2_axis_tvalid <= '0';
+        waitfor(10);
+
+
+        i1_axis_tdata <= std_logic_vector(to_unsigned(21,24));
+        i2_axis_tdata <= std_logic_vector(to_unsigned(6,16));
         
         i1_axis_tvalid <= '1';
         i2_axis_tvalid <= '1';

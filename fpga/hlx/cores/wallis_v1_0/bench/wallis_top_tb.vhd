@@ -6,7 +6,7 @@
 -- Author      : Jan Stocker (jan.stocker@students.fhnw.ch)
 -- Company     : User Company Name
 -- Created     : Thu Jul 19 16:06:12 2018
--- Last update : Wed Jul 25 08:39:16 2018
+-- Last update : Wed Aug  8 14:34:51 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -36,9 +36,9 @@ end entity wallis_top_tb;
 architecture testbench of wallis_top_tb is
 
    -- image width, must be matching test file
-    constant IMG_WIDTH : natural := 128;
+    constant IMG_WIDTH : natural := 680;
     -- image height, must be matching test file
-    constant IMG_HEIGHT : natural := 128;
+    constant IMG_HEIGHT : natural := 558;
 
 
 	-- Testbench DUT generics as constants
@@ -58,11 +58,11 @@ architecture testbench of wallis_top_tb is
 	-- Testbench DUT ports as signals
     signal clk                    : std_logic;
     signal rst_n                  : std_logic;
-    signal wa_par_c_gvar          : std_logic_vector (19 downto 0) := "00101101101101000000"; --2925
-    signal wa_par_c               : std_logic_vector (5 downto 0) := "110100"; --0.8125
-    signal wa_par_ci_gvar         : std_logic_vector (19 downto 0) := "00001010100011000000"; --675
-    signal wa_par_b_gmean         : std_logic_vector (13 downto 0) := "00111101100001"; --61.515625
-    signal wa_par_bi              : std_logic_vector (5 downto 0) := "100001"; --0.515625
+    signal wa_par_c_gvar          : std_logic_vector (19 downto 0) := "00101101101101000000"; --2925 <20,14>
+    signal wa_par_c               : std_logic_vector (5 downto 0) := "110100"; --0.8125 <6,0>
+    signal wa_par_ci_gvar         : std_logic_vector (19 downto 0) := "00001010100011000000"; --675 <20,14>
+    signal wa_par_b_gmean         : std_logic_vector (13 downto 0) := "00111111100000"; --63.5 <14,8>
+    signal wa_par_bi              : std_logic_vector (5 downto 0) := "100000"; --0.5 <6,0>
     signal i_axis_tlast           : std_logic;
     signal i_axis_tready          : std_logic;
     signal i_axis_tvalid          : std_logic;
