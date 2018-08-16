@@ -1,12 +1,13 @@
 # @Author: Noah
 # @Date:   2018-04-27 14:46:24
-# @Last Modified by:   Noah
-# @Last Modified time: 2018-04-27 16:12:13
+# @Last Modified by:   Noah Huetter
+# @Last Modified time: 2018-08-16 11:01:25
 
 # Set the function that will be implemented
 set proj_top_function wallis
 # Set the solution to be used
 set proj_top_solution "sol11_ecc"
+set proj_top_solution_directive "directives_sol11.tcl"
 
 # Set the clock period in [ns]
 set proj_clk_period 8
