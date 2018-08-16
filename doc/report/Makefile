@@ -64,7 +64,7 @@ cleanall:
 	rm -f *.dvi *.log *.bak *.aux *.bbl *.blg *.idx *.ps *.eps *.pdf *.toc *.out *.fdb_latexmk *.fls *~ build/*
 
 clean:
-	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/* *.glg *.glo *.gls *.ist *.lof *.lot 
+	rm -f *.log *.bak *.aux *.bbl *.blg *.idx *.toc *.out *~ build/* *.glg *.glo *.gls *.ist *.lof *.lot *.xml *.bcf
 
 .PHONY: all pdf clean cleanall chunks open tikz
 
