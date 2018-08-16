@@ -29,7 +29,6 @@ fpga:
     - id
     # Build HLS cores
     - pushd fpga/hls/
-    - time make NAME=diip_faster impl
     - make NAME=wallis_8b export
     - make NAME=controller export
     - popd
