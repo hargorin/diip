@@ -1,8 +1,8 @@
 # Distributed FPGA for enhanced Image Processing
 
-![](https://i.imgur.com/2Qo1YLc.png "")
+![](https://i.imgur.com/bDxWlX4.png "")
 
-Project 5 at FHNW by Noah Hütter and Jan Stocker
+Bachelor Thesis at FHNW by Noah Hütter and Jan Stocker
 
 ## Build Status [![pipeline status](https://gitlab.fhnw.ch/noah.huetter/diip/badges/doc/pipeline.svg)](https://gitlab.fhnw.ch/noah.huetter/diip/commits/doc_noah)
 
@@ -15,14 +15,12 @@ Project 5 at FHNW by Noah Hütter and Jan Stocker
 ```
 .
 ├── doc             # Documentation
-│   └── report      # Project report
+│   ├── report      # Project report
+│   └── poster      # Poster for exhibition
 ├── fpga            # FPGA code
 │   ├── hls         # Vivado High Level Synthesis code
 │   └── hlx         # Vivado HLx code
 └── sw              # Computer software
-    ├── file2image  # binary file to tiff image
-    ├── image2file  # tiff image to binary file
-    └── uft         # UDP file transfer stack
 ```
 
 
