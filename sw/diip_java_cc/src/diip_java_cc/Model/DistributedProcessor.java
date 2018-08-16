@@ -75,7 +75,8 @@ public class DistributedProcessor extends Thread {
     	outImages = new ArrayList<BufferedImage>();
     	for (BufferedImage i : images) {
     		
-    		
+
+			System.out.println("Starting...");
     		
     		outImages.add(processImage(i));
 		}

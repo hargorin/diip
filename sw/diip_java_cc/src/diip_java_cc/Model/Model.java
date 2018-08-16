@@ -134,7 +134,7 @@ public class Model extends Observable {
 		if(!dp.isRunning()) {
 			dp = new DistributedProcessor(this);
 			// Assemble list of workers
-			workers.clear();
+			workers = new ArrayList<Worker>();
 			if(localWorker1!=null) {
 				workers.add(new Worker("localhost",localWorker1.getPort()));
 			}
@@ -148,6 +148,7 @@ public class Model extends Observable {
 				workers.add(new Worker(fpgaWorker2.ip, fpgaWorker2.port));
 			}
 			dp.setWorkers(workers);
+			inputImages.clear();
 			inputImages.add(sourceImage);
 			dp.setImagess(inputImages);
 
