@@ -6,7 +6,7 @@
 -- Author      : Noah Huetter <noahhuetter@gmail.com>
 -- Company     : User Company Name
 -- Created     : Wed Nov 29 11:43:40 2017
--- Last update : Tue Jul 24 14:05:39 2018
+-- Last update : Thu Aug 16 11:14:37 2018
 -- Platform    : Default Part Number
 -- Standard    : <VHDL-2008 | VHDL-2002 | VHDL-1993 | VHDL-1987>
 -------------------------------------------------------------------------------
@@ -122,7 +122,8 @@ architecture structural of uft_tx_control is
     --  division can be done by shifting 
     constant c_nbytes_per_packet : integer := 1024;
     constant c_nbytes_per_packet_div4 : integer := c_nbytes_per_packet / 4;
-    constant c_src_port : std_logic_vector (15 downto 0) := x"a43b"; -- 42043
+    -- Tx source port must match listen port for propper socket connection
+    constant c_src_port : std_logic_vector (15 downto 0) := x"a43a"; -- 42042
 
     -- Delay between packets
     signal delay_ctr : integer range 0 to 15000;
