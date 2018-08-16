@@ -162,7 +162,7 @@
   set udp_ip_stack [ create_bd_cell -type ip -vlnv ime:diip:udp_ip_stack:1.0 udp_ip_stack ]
 
   # Create instance: uft_stack, and set properties
-  set uft_stack [ create_bd_cell -type ip -vlnv ime:diip:uft_stack:1.3 uft_stack ]
+  set uft_stack [ create_bd_cell -type ip -vlnv ime:diip:uft_stack_mem:1.3 uft_stack ]
 
   # Create instance: wallis, and set properties
   set wallis [ create_bd_cell -type ip -vlnv ime:diip:wallis:0.2 wallis ]

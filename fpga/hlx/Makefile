@@ -25,6 +25,7 @@ CORES = axi_master_burst_v2_0		\
 		wallis_model_v1_0 			\
 		diip_controller_v1_0    	\
 		udp_ip_stack_v1_0			\
+		uft_stack_mem_v1_0			\
 		uft_stack_v2_0				\
 		debounce_v1_0				\
 		impulse_generator_v1_0
