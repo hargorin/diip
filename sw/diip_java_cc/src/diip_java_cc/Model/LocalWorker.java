@@ -78,9 +78,13 @@ public class LocalWorker extends Thread {
     	byte outPixSend[];
     	int outIndex = 0;
     	int outW = 21;
+    	int readPtr = 0;
+    	
     	rxLines = 0;
+    	readCachePtr = 0;
     	
     	InetAddress replyAdr;
+    	
     	
     	running = true;
         while (running) {
@@ -115,87 +119,87 @@ public class LocalWorker extends Thread {
         	// If enough data is here
         	if(rxLines >= 21) {
 
-        		// Send data back
-        		outPixSend = new byte[outW];
-        		for(int i = 0; i < outW; i++) {
-        			outPixSend[i] = imcache[readLinePtr][i];
-        		}
-        		System.out.printf("reply to port %d len %d\n", 2222, outW);
-        		udata = new UFTData();
-        		udata.data = outPixSend;
-        		udata.length = outW;
-        		udata.tcid = 0;
-        		UFT.send(udata, socket, replyAdr, 2222);
-
-        		// inc and wrap read line ptr
-        		readLinePtr++;
-        		if(readLinePtr == CACHE_N_LINES) readLinePtr = 0;
+        		// TEST: Send data back
+//        		outPixSend = new byte[outW];
+//        		for(int i = 0; i < outW; i++) {
+////        			outPixSend[i] = imcache[readLinePtr][i];
+//        			outPixSend[i] = (byte) pixelAt(i, readPtr);
+//        		}
+//        		System.out.printf("reply to port %d len %d\n", 2222, outW);
+//        		udata = new UFTData();
+//        		udata.data = outPixSend;
+//        		udata.length = outW;
+//        		udata.tcid = 0;
+//        		UFT.send(udata, socket, replyAdr, 2222);
+//
+//        		// inc and wrap read line ptr
+//        		readPtr++;
+//        		readLinePtr++;
+//        		if(readLinePtr == CACHE_N_LINES) readLinePtr = 0;
               
         		
-//        		System.out.println("Processing Wallis");
-//        		sum_Pixel = 0;
-//        		sum_Pixel2 = 0;
-//        		outIndex = 0;
-//        		// Process
-//        		// ********************************************************************
-//                // Initialization WIN
-//                for(int x_win = 0; x_win < WIN_LENGTH; x_win++) {
-//                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {
-////                    	pixelAt(x_win, y_win);
-////                        System.out.printf("%02x\n",pixelAt(x_win, y_win));
-//                        sum_Pixel += pixelAt(x_win, y_win);
-//                        sum_Pixel2 += pixelAt(x_win, y_win)*pixelAt(x_win, y_win);
-//                    }
-//                }
-//                
-//                // center pixel
-//                w_pixel = pixelAt( (WIN_LENGTH-1)/2, (readCachePtr + (WIN_LENGTH-1)/2) % CACHE_N_LINES );
-//
-//                n_Mean = Cal_Mean(sum_Pixel);
-//                n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
-//                outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
-//                
-//
-//
-//                // ********************************************************************
-//                // Calculate the whole width of the image
-//                for(int x = 0; x < (wapar.imgWidth - 1); x++) {
-//
-//                    // Substract old data, add new data
-//                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {                    	
-//                        sum_Pixel -= pixelAt(x, y_win);
-//                        sum_Pixel2 -= pixelAt(x, y_win) * pixelAt(x, y_win);
-//                        
-//                        sum_Pixel += pixelAt(x + WIN_LENGTH, y_win);
-//                        sum_Pixel2 += Math.pow(pixelAt(x + WIN_LENGTH, y_win), 2);
-////                        System.out.printf("%02x\n", pixelAt(x + WIN_LENGTH, y_win));
-//                    }
-//
-//                    
-//                    w_pixel = pixelAt(x + (WIN_LENGTH-1)/2, (readCachePtr + (WIN_LENGTH-1)/2) % CACHE_N_LINES );
-//
-//                    n_Mean = Cal_Mean(sum_Pixel);
-//                    n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
-//                    outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
-//                }
-//                // Send data back
-//                outPixSend = new byte[outIndex];
-//                for(int i = 0; i < outIndex; i++) {
-//                	outPixSend[i] = (byte)outPix[i];
-//                }
-//                udata.data = outPixSend;
-//                udata.length = outIndex;
-//                udata.tcid = 0;
-//                UFT.send(udata, socket, udata.address, 2222);
-//                
-//                // Increment pointer
-//                readCachePtr++;
-//                readCachePtr%=CACHE_N_LINES;
-//        		System.out.println("Processing Wallis Done");
-        	}
+        		System.out.println("Processing Wallis");
+        		sum_Pixel = 0;
+        		sum_Pixel2 = 0;
+        		outIndex = 0;
+        		// Process
+        		// ********************************************************************
+                // Initialization WIN
+                for(int x_win = 0; x_win < WIN_LENGTH; x_win++) {
+                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {
+                        sum_Pixel += pixelAt(x_win, y_win + readCachePtr);
+                        sum_Pixel2 += pixelAt(x_win, y_win + readCachePtr)*pixelAt(x_win, y_win + readCachePtr);
+                    }
+                }
+                
+                // center pixel
+                w_pixel = pixelAt( (WIN_LENGTH-1)/2, (readCachePtr + (WIN_LENGTH-1)/2));
+
+                n_Mean = Cal_Mean(sum_Pixel);
+                n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
+                outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
+                
+
+
+                // ********************************************************************
+                // Calculate the whole width of the image
+                for(int x = 0; x < outW-1; x++) {
+
+                    // Substract old data, add new data
+                    for(int y_win = 0; y_win < WIN_LENGTH; y_win++) {                    	
+                        sum_Pixel -= pixelAt(x, y_win + readCachePtr);
+                        sum_Pixel2 -= pixelAt(x, y_win + readCachePtr) * pixelAt(x, y_win + readCachePtr);
+                        
+                        sum_Pixel += pixelAt(x + WIN_LENGTH, y_win + readCachePtr);
+                        sum_Pixel2 += pixelAt(x + WIN_LENGTH, y_win + readCachePtr)*pixelAt(x + WIN_LENGTH, y_win + readCachePtr);
+                    }
+
+                    
+                    w_pixel = pixelAt(x + (WIN_LENGTH-1)/2 + 1, (readCachePtr + (WIN_LENGTH-1)/2) );
+
+                    n_Mean = Cal_Mean(sum_Pixel);
+                    n_Var = Cal_Variance((n_Mean * n_Mean), sum_Pixel2);
+                    outPix[outIndex++] = Wallis(w_pixel, n_Mean, n_Var);
+                }
+                // Send data back
+                outPixSend = new byte[outIndex];
+                for(int i = 0; i < outIndex; i++) {
+                	if(outPix[i] < 0)outPixSend[i] = (byte)0;
+                	else if (outPix[i] > 255)outPixSend[i] = (byte) (255); 
+                	else outPixSend[i] = (byte)outPix[i];
+                }
+                udata.data = outPixSend;
+                udata.length = outIndex;
+                udata.tcid = 0;
+                UFT.send(udata, socket, replyAdr, 2222);
+                
+                // Increment pointer
+                readCachePtr++;
+        		System.out.println("Processing Wallis Done");
         	
         	
         	
+        	// UDP socket TEST
 //            DatagramPacket packet = new DatagramPacket(buf, buf.length);
 //            
 //            // timeout in ms
@@ -232,7 +236,8 @@ public class LocalWorker extends Thread {
 //			} catch (IOException e) {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
-//			}
+
+        	}
         }
         System.out.printf("lw on port %d closing\n", this.port);
         socket.close();
@@ -265,8 +270,8 @@ public class LocalWorker extends Thread {
      * @param y loc of pixel
      * @return
      */
-    private byte pixelAt(int x, int y) {
-    	return imcache[((readCachePtr+y)%CACHE_N_LINES)][x];
+    private int pixelAt(int x, int y) {
+    	return imcache[y%CACHE_N_LINES][x] & 0xFF;
     }
     /*
      * Calculate the mean
