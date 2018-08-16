@@ -34,9 +34,10 @@ public class LocalWorker extends Thread {
 	private int port;
     
     // Image cache
-	 private byte[] imcache = new byte[BRAM_SIZE*CACHE_N_LINES];
+	private byte[][] imcache = new byte[CACHE_N_LINES][BRAM_SIZE];
     private int rxLines = 0;
     private int rxLinePtr = 0;
+    private int readLinePtr = 0;
     private int readCachePtr = 0;
     
     private WallisParameters wapar;
@@ -76,6 +77,10 @@ public class LocalWorker extends Thread {
     	double outPix[] = new double[BRAM_SIZE];
     	byte outPixSend[];
     	int outIndex = 0;
+    	int outW = 21;
+    	rxLines = 0;
+    	
+    	InetAddress replyAdr;
     	
     	running = true;
         while (running) {
@@ -84,33 +89,48 @@ public class LocalWorker extends Thread {
         	if(udata.status == UFTData.Status.TIMEOUT) continue;
         	if(udata.status == UFTData.Status.USER) {
         		System.out.printf("User reg %d set to %d\n", udata.uregAddress, udata.uregContent);
-        		if(udata.uregAddress == 1) wapar.imgWidth = (int) udata.uregContent;
+        		if(udata.uregAddress == 1) {
+        			wapar.imgWidth = (int) udata.uregContent;
+        			outW = wapar.imgWidth - wapar.winLen + 1;
+        		}
         		continue;
         	}
         	
+        	// store reply address
+        	replyAdr = udata.address;
+        	
         	// Copy to image buffer
-        	System.arraycopy(udata.data, 0, imcache, CACHE_N_LINES*rxLinePtr, udata.length);
+        	for (int i = 0; i < udata.data.length; i++) {
+        		imcache[rxLinePtr][i] = udata.data[i];
+			}
+//        	System.arraycopy(udata.data, 0, imcache, CACHE_N_LINES*rxLinePtr, udata.length);
         	
+        	// increment and wrap input pointer
         	rxLinePtr++;
-        	rxLines++;
         	if(rxLinePtr == CACHE_N_LINES) rxLinePtr = 0;
+        	rxLines++;
         	
-        	System.out.printf("Line received. rxLines=%d\n", rxLines);
+        	System.out.printf("Line received. rxLines=%d rxLinePtr=%d readLinePtr=%d\n", rxLines, rxLinePtr,readLinePtr);
         	
         	// If enough data is here
         	if(rxLines >= 21) {
 
-              // Send data back
-              outPixSend = new byte[udata.length];
-              for(int i = 0; i < udata.length-21+1; i++) {
-            	  outPixSend[i] = (byte)imcache[CACHE_N_LINES*(rxLinePtr-1)+i];
-              }
-              udata.data = outPixSend;
-              udata.length = udata.length-21+1;
-              udata.tcid = 0;
-              UFT.send(udata, socket, udata.address, 2222);
+        		// Send data back
+        		outPixSend = new byte[outW];
+        		for(int i = 0; i < outW; i++) {
+        			outPixSend[i] = imcache[readLinePtr][i];
+        		}
+        		System.out.printf("reply to port %d len %d\n", 2222, outW);
+        		udata = new UFTData();
+        		udata.data = outPixSend;
+        		udata.length = outW;
+        		udata.tcid = 0;
+        		UFT.send(udata, socket, replyAdr, 2222);
+
+        		// inc and wrap read line ptr
+        		readLinePtr++;
+        		if(readLinePtr == CACHE_N_LINES) readLinePtr = 0;
               
-        		
         		
 //        		System.out.println("Processing Wallis");
 //        		sum_Pixel = 0;
@@ -246,7 +266,7 @@ public class LocalWorker extends Thread {
      * @return
      */
     private byte pixelAt(int x, int y) {
-    	return imcache[((readCachePtr+y)%CACHE_N_LINES)*BRAM_SIZE + x];
+    	return imcache[((readCachePtr+y)%CACHE_N_LINES)][x];
     }
     /*
      * Calculate the mean
