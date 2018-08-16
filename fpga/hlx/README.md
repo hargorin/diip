@@ -7,19 +7,26 @@
 │   └── cores                       # Generated cores
 ├── config                          # Board configuration
 ├── cores                           # IP core definitions
-│   ├── axi_master_burst_v2_0
-│   ├── debounce_v1_0
-│   ├── impulse_generator_v1_0
-│   ├── temac_support_v1_0
-│   ├── udp_ip_stack_v1_0
-│   └── uft_stack_v1_0
+│   ├── axi_master_burst_v2_0       # axi master burst ip interface
+│   ├── debounce_v1_0               # debouncer
+│   ├── diip_controller_v1_0        # VHDL controller and mmu for diip_faster
+│   ├── impulse_generator_v1_0      # impulse generator
+│   ├── temac_support_v1_0          # Tri mode ethernet mac support layer
+│   ├── templates                   # entity templates
+│   ├── udp_ip_stack_v1_0           # UDP ip stack from opencores
+│   ├── uft_stack_mem_v1_0          # UFT network stack memory based
+│   ├── uft_stack_v2_0              # UFT network stack stram based
+│   ├── wallis_model_v1_0           # Wallis dummy filter model
+│   └── wallis_v1_0                 # Wallis filter image processing core
 ├── projects                        # Projects
 │   ├── diip                        # diip full project
 │   ├── diip_faster                 # diip full project using plain VHDL
 │   ├── vhdl_controller             # Test the vhdl controller implementation
 │   ├── diip                        # diip full project using HLS components
 │   ├── comm                        # diip communication project
-│   └── sobel                       # diip sobel filter project
+│   ├── sobel                       # diip sobel filter project
+│   ├── control                     # HLS controller test project
+│   └── vhdl_controller             # VHDL controller test project
 ├── scripts                         # Used for build process
 ├── simulation                      # Simulation ressources
 ├── src
