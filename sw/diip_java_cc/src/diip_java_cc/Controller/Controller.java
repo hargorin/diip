@@ -25,7 +25,7 @@ public class Controller {
 	public void contol() {
 		
 
-		model.loadSourceImage("res/mountain.png");
+//		model.loadSourceImage("res/mountain.png");
 	}
 
 	public void goRequest(WallisParameters wapar) {

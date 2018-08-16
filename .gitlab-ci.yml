@@ -58,3 +58,12 @@ sw:
   artifacts:
     paths:
       - "sw/diip_cc/bin/*"
+
+java:
+  stage: build
+  image: maven:latest
+  script:
+    - mvn install -j sw/diip_java_cc/pom.xml
+  artifacts:
+    paths:
+      - "sw/diip_java_cc/target/*.jar"
