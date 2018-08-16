@@ -82,7 +82,9 @@ public class ImagePanel extends JPanel implements ComponentListener {
 	            Graphics2D g2 = resizedImage.createGraphics();
 	            g2.drawImage(image, 0, 0, newImageWidth , newImageHeight , null);
 	            g2.dispose();
-	            g.drawImage(resizedImage, 0, 0, this); // see javadoc for more info on the parameters
+	            int x = (this.getWidth() - newImageWidth) / 2;
+	            int y = (this.getHeight() - newImageHeight) / 2;
+	            g.drawImage(resizedImage, x, y, this); // see javadoc for more info on the parameters
 	            
 //	            g.drawImage(image, 0, 0, this); // see javadoc for more info on the parameters
 	            componentChanged = false;
@@ -91,6 +93,12 @@ public class ImagePanel extends JPanel implements ComponentListener {
 			}     
         }
     }
+    
+	public void updateme() {
+		componentChanged = true;
+		super.repaint();
+	}
+	
     @Override
 	public void componentResized(ComponentEvent e) {
 		componentChanged = true;

@@ -80,6 +80,17 @@ public class Model extends Observable {
 		this.setChanged();
 		this.notifyObservers();
 	}
+	
+	public void newInputFile(File file) {
+		try {
+			sourceImage = ImageIO.read(file);
+		} catch (Exception e) {
+			System.err.println("FATAL: Error read file");
+		}
+		
+		this.setChanged();
+		this.notifyObservers();
+}
 
 	public BufferedImage getSourceImage() {
 		return sourceImage;
@@ -154,6 +165,7 @@ public class Model extends Observable {
 		setChanged();
 		notifyObservers();
 	}
+
 	
 	public DistributedProcessor getDP() { 
 		return dp;

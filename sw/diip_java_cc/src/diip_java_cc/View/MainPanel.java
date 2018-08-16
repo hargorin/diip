@@ -22,7 +22,11 @@ import diip_java_cc.Model.Model;
 import javax.swing.SwingConstants;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
+
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 
 public class MainPanel extends JPanel implements ActionListener {
@@ -32,6 +36,8 @@ public class MainPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private Controller controller;
+	
+	private FileChooser fileChooser;
 	
 	private ImagePanel pnlLTop;
 	private ImagePanel pnlLBot;
@@ -43,6 +49,8 @@ public class MainPanel extends JPanel implements ActionListener {
 	private JCheckBox cbLW1;
 	private JCheckBox cbLW2;
 	private JButton btGo;
+	private JButton btLoadImg;
+	private JButton btStoreImg;
 	private JLabel lblFPGA1;
 	private JLabel lblFPGA2;
 	private JLabel lblLW1;
@@ -136,12 +144,17 @@ public class MainPanel extends JPanel implements ActionListener {
 		panel_3.add(panel_4, gbc_panel_4);
 		panel_4.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		JButton button = new JButton("Load Image");
-		panel_4.add(button);
 		
-		JButton button_1 = new JButton("Store Image");
-		panel_4.add(button_1);
+		// Load Image
+		btLoadImg = new JButton("Load Image");
+		btLoadImg.addActionListener(this);
+		panel_4.add(btLoadImg);		
 		
+		//Store Image
+		btStoreImg = new JButton("Store Image");
+		btStoreImg.addActionListener(this);
+		panel_4.add(btStoreImg);
+				
 		JPanel panel_5 = new JPanel();
 		panel_5.setBorder(new LineBorder(new Color(0, 0, 0), 1, true));
 		GridBagConstraints gbc_panel_5 = new GridBagConstraints();
@@ -152,34 +165,59 @@ public class MainPanel extends JPanel implements ActionListener {
 		panel_3.add(panel_5, gbc_panel_5);
 		panel_5.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		JSpinner spinner_5 = new JSpinner();
+		// Global Mean
+		JEngineerField spinner_5 = new JEngineerField();
+		spinner_5.setHorizontalAlignment(SwingConstants.RIGHT);
+		spinner_5.setValue(127.0);
+		spinner_5.setMinValue(0.0);
+		spinner_5.setMaxValue(255.0);
 		panel_5.add(spinner_5);
-		
+			
 		JLabel label = new JLabel("Global Mean");
 		panel_5.add(label);
 		
-		JSpinner spinner_6 = new JSpinner();
+		// Global Variance
+		JEngineerField spinner_6 = new JEngineerField();
+		spinner_6.setHorizontalAlignment(SwingConstants.RIGHT);
+		spinner_6.setValue(3600.0);
+		spinner_6.setMinValue(0.0);
+		spinner_6.setMaxValue(16384.0);
 		panel_5.add(spinner_6);
 		
 		JLabel label_1 = new JLabel("Global Var");
 		panel_5.add(label_1);
 		
-		JSpinner spinner_7 = new JSpinner();
+		// Brightness
+		JEngineerField spinner_7 = new JEngineerField();
+		spinner_7.setValue(0.5);
+		spinner_7.setMinValue(0.0);
+		spinner_7.setMaxValue(1.0);
+		spinner_7.setHorizontalAlignment(SwingConstants.RIGHT);
 		panel_5.add(spinner_7);
 		
 		JLabel label_2 = new JLabel("Brightness");
 		panel_5.add(label_2);
 		
-		JSpinner spinner_8 = new JSpinner();
+		// Contrast
+		JEngineerField spinner_8 = new JEngineerField();
+		spinner_8.setHorizontalAlignment(SwingConstants.RIGHT);
+		spinner_8.setValue(0.8);
+		spinner_8.setMinValue(0.0);
+		spinner_8.setMaxValue(1.0);
 		panel_5.add(spinner_8);
 		
 		JLabel label_3 = new JLabel("Contrast");
 		panel_5.add(label_3);
 		
-		JSpinner spinner_9 = new JSpinner();
+		// Window Length
+		JEngineerField spinner_9 = new JEngineerField();
+		spinner_9.setHorizontalAlignment(SwingConstants.RIGHT);
+		spinner_9.setValue(21.0);
+		spinner_9.setMinValue(11.0);
+		spinner_9.setMaxValue(41.0);
 		panel_5.add(spinner_9);
 		
-		JLabel label_4 = new JLabel("Image Width");
+		JLabel label_4 = new JLabel("Window Length");
 		panel_5.add(label_4);
 		
 		JPanel panel_6 = new JPanel();
@@ -425,6 +463,11 @@ public class MainPanel extends JPanel implements ActionListener {
 		gbc_verticalGlue.gridx = 0;
 		gbc_verticalGlue.gridy = 5;
 		panel_3.add(verticalGlue, gbc_verticalGlue);
+		
+		
+		// FileChooser
+		this.fileChooser = new FileChooser(controller);
+		fileChooser.fileFilter();
 
 	}
 	
@@ -440,6 +483,8 @@ public class MainPanel extends JPanel implements ActionListener {
 		lblWorkers.setText(String.valueOf(model.getNWorkers()));
 		
 		btGo.setEnabled(!model.getDP().isRunning());
+		pnlLTop.updateme();
+		pnlLBot.updateme();
 	}
 
 	@Override
@@ -460,6 +505,13 @@ public class MainPanel extends JPanel implements ActionListener {
 		}
 		if(e.getSource() == btGo) {
 			controller.goRequest();
+		}
+		if(e.getSource() == btLoadImg) {
+			String fName = fileChooser.showFileChooser();
+			File f = fileChooser.getFile();
+			if (fName != null) {
+				controller.loadFile(f);
+			}
 		}
 		
 	}
