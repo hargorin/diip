@@ -14,7 +14,8 @@ public class UFT {
 	// ================================================================================
 	// Settings
 	// ================================================================================
-	public static final int TX_PACKET_SIZE = 1024;
+	public static final int TX_PACKET_DATA_SIZE = 1024;
+	public static final int UFT_CONTROLL_SIZE = 34;
 
 	// How many times the UDP receive socket can timeout before the send/receive is 
 	// aborted
@@ -149,43 +150,60 @@ public class UFT {
 
 	    byte[] buf = new byte[1500];
 	    
+	    udata.tcid = 12;
+	    
 	    // calculate nseq
 	    len = udata.data.length;
-	    nseq = (int) Math.ceil(len/(double)TX_PACKET_SIZE);
+	    nseq = (int) Math.ceil(len/(double)TX_PACKET_DATA_SIZE);
 	    		
 	    // assemble start packet
 	    buf[0] = 0;
-	    buf[1] = 0; buf [2] = 0; buf[3] = (byte) udata.tcid;
+	    buf[1] = 0; buf [2] = 0; buf[3] = (byte)( udata.tcid & 0x7f);
 	    int nseqt = nseq;
-	    buf[4] = (byte)(nseqt / (1<<24));
-	    nseqt = nseqt - buf[4]/(1<<24);
-	    buf[5] = (byte)(nseqt / (1<<16));
-	    nseqt = nseqt - buf[5]/(1<<16);
-	    buf[6] = (byte)(nseqt / (1<<8));
-	    nseqt = nseqt - buf[6]/(1<<8);
-	    buf[7] = (byte)(nseqt);
+	    
+
+	    buf[4] = (byte) ((nseq & 0xff000000) >> 24);
+	    buf[5] = (byte) ((nseq & 0x00ff0000) >> 16);
+	    buf[6] = (byte) ((nseq & 0x0000ff00) >>  8);
+	    buf[7] = (byte) ((nseq & 0x000000ff) >>  0);
+	    
+//	    buf[4] = (byte)(nseqt / (1<<24));
+//	    nseqt = nseqt - buf[4]/(1<<24);
+//	    buf[5] = (byte)(nseqt / (1<<16));
+//	    nseqt = nseqt - buf[5]/(1<<16);
+//	    buf[6] = (byte)(nseqt / (1<<8));
+//	    nseqt = nseqt - buf[6]/(1<<8);
+//	    buf[7] = (byte)(nseqt);
+	    System.out.printf("nseq=%d\n", nseq);
+	    System.out.printf("buf[4]=%d buf[5]=%d buf[6]=%d buf[7]=%d\n", buf[4], buf[5], buf[6], buf[7]);
 	    // send start packet
-	    p = new DatagramPacket(buf, 8, a, port);
+	    p = new DatagramPacket(buf, UFT_CONTROLL_SIZE, a, port);
         Util.sendDatagram(s, p);
         
         // Send data packets
         for(int pctr = 0; pctr < nseq; pctr++) {
-        	buf[0] = (byte) (0x80 | (byte)udata.tcid);
+//        	buf[0] = (byte) (0x80 | (byte)udata.tcid);
 
-    	    int pctrt = pctr;
-    	    buf[1] = (byte)(pctrt / (1<<16));
-    	    pctrt = pctrt - buf[1]/(1<<16);
-    	    buf[2] = (byte)(pctrt / (1<<8));
-    	    pctrt = pctrt - buf[2]/(1<<8);
-    	    buf[3] = (byte)(pctrt);
+            buf[0] = (byte) ((byte)(udata.tcid & 0x7f) | 0x80);
+
+            buf[1] = (byte) ((pctr & 0x00ff0000) >> 16);
+            buf[2] = (byte)((pctr & 0x0000ff00) >>  8);
+            buf[3] = (byte)((pctr & 0x000000ff) >>  0);
+            
+//    	    int pctrt = pctr;
+//    	    buf[1] = (byte)(pctrt / (1<<16));
+//    	    pctrt = pctrt - buf[1]/(1<<16);
+//    	    buf[2] = (byte)(pctrt / (1<<8));
+//    	    pctrt = pctrt - buf[2]/(1<<8);
+//    	    buf[3] = (byte)(pctrt);
     	    
-        	if( len-(pctr*TX_PACKET_SIZE) >  TX_PACKET_SIZE) {
-        		System.arraycopy(udata.data, pctr*TX_PACKET_SIZE, buf, 4, TX_PACKET_SIZE);
-        		p = new DatagramPacket(buf, TX_PACKET_SIZE+4, a, port);
+        	if( len-(pctr*TX_PACKET_DATA_SIZE) >  TX_PACKET_DATA_SIZE) {
+        		System.arraycopy(udata.data, pctr*TX_PACKET_DATA_SIZE, buf, 4, TX_PACKET_DATA_SIZE);
+        		p = new DatagramPacket(buf, TX_PACKET_DATA_SIZE+4, a, port);
         	}
         	else {
-        		System.arraycopy(udata.data, pctr*TX_PACKET_SIZE, buf, 4, len-(pctr*TX_PACKET_SIZE));
-        		p = new DatagramPacket(buf, len-(pctr*TX_PACKET_SIZE)+4, a, port);
+        		System.arraycopy(udata.data, pctr*TX_PACKET_DATA_SIZE, buf, 4, len-(pctr*TX_PACKET_DATA_SIZE));
+        		p = new DatagramPacket(buf, len-(pctr*TX_PACKET_DATA_SIZE)+4, a, port);
         	}
         		
     	    
@@ -193,15 +211,15 @@ public class UFT {
         }
 	    
         // Send stop packet
-	    buf[0] = 1;
-	    buf[1] = 0; buf [2] = 0; buf[3] = (byte) udata.tcid;
-	    buf[4] = 0;
-	    buf[5] = 0;
-	    buf[6] = 0;
-	    buf[7] = 0;
-	    // send stop packet
-	    p = new DatagramPacket(buf, 8, a, port);
-        Util.sendDatagram(s, p);		
+//	    buf[0] = 1;
+//	    buf[1] = 0; buf [2] = 0; buf[3] = (byte) udata.tcid;
+//	    buf[4] = 0;
+//	    buf[5] = 0;
+//	    buf[6] = 0;
+//	    buf[7] = 0;
+//	    // send stop packet
+//	    p = new DatagramPacket(buf, 8, a, port);
+//        Util.sendDatagram(s, p);		
 	}
 	
 	/**
@@ -217,7 +235,7 @@ public class UFT {
 		int nseq, len;
 		DatagramPacket p;
 
-	    byte[] buf = new byte[8];
+	    byte[] buf = new byte[UFT_CONTROLL_SIZE];
 	    
 	    // assemble start packet
 	    buf[0] = 4;
@@ -231,7 +249,7 @@ public class UFT {
 	    regdata = regdata - buf[6]/(1<<8);
 	    buf[7] = (byte)(regdata);
 	    // send start packet
-	    p = new DatagramPacket(buf, 8, a, port);
+	    p = new DatagramPacket(buf, UFT_CONTROLL_SIZE, a, port);
 //	    System.out.println(Arrays.toString(buf));
         Util.sendDatagram(s, p);
 	}

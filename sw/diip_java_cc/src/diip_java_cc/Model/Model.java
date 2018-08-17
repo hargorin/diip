@@ -190,7 +190,7 @@ public class Model extends Observable {
 	}
 
 	public void fpgaChanged(int i, boolean selected, String ipport) {
-		String [] arrOfStr = ipport.split(":", 2);
+		String [] arrOfStr = ipport.split(":", 3);
 		
 		if(selected) {
 			if(i == 1)
