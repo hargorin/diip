@@ -58,7 +58,7 @@ public class Worker extends Thread {
 			e.printStackTrace();
 		}
 		try {
-			System.out.printf("Open rx socket on %d\n", rxport);
+//			System.out.printf("Open rx socket on %d\n", rxport);
 			rxsocket = new DatagramSocket(rxport);
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
@@ -74,9 +74,9 @@ public class Worker extends Thread {
 		}
 		
     	// Send user registers
-		System.out.printf("Setting user reg %d to %d\n", 1, wapar.winLen);
+//		System.out.printf("Setting user reg %d to %d\n", 1, wapar.winLen);
     	UFT.setUserReg(1, wapar.winLen, socket, address, port);
-		System.out.printf("Setting user reg %d to %d\n", 2, iw);
+//		System.out.printf("Setting user reg %d to %d\n", 2, iw);
     	UFT.setUserReg(2, iw, socket, address, port);
 
     	UFT.setUserReg(3, (long)(64*wapar.contrast*wapar.gVar),socket, address, port);
@@ -94,8 +94,8 @@ public class Worker extends Thread {
     	// Send data
     	int y = 0;
     	int outy = 0;
-    	int ctr = 0;
-    	int rxctr = 0;
+    	y = 0;
+    	outy = 0;
     	for(y = 0; y < wapar.winLen-1; y++) {
     		udata = new UFTData();
     		udata.data = new byte[iw];
@@ -119,8 +119,8 @@ public class Worker extends Thread {
     		do {
     			udatarx = UFT.receive(rxsocket);
     		} while(udatarx.status != UFTData.Status.DATA);
-    		System.out.println("Result received!");
-    		System.out.printf("rx len=%d iw=%d\n",udatarx.data.length, outw);
+//    		System.out.println("Result received!");
+//    		System.out.printf("rx len=%d iw=%d\n",udatarx.data.length, outw);
     		// copy rx to buffer
     		for(int k = 0; k < outw; k++) {
     			outPix[k][outy] = udatarx.data[k] & 0xFF;

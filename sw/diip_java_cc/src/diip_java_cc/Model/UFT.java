@@ -174,8 +174,8 @@ public class UFT {
 //	    buf[6] = (byte)(nseqt / (1<<8));
 //	    nseqt = nseqt - buf[6]/(1<<8);
 //	    buf[7] = (byte)(nseqt);
-	    System.out.printf("nseq=%d\n", nseq);
-	    System.out.printf("buf[4]=%d buf[5]=%d buf[6]=%d buf[7]=%d\n", buf[4], buf[5], buf[6], buf[7]);
+//	    System.out.printf("nseq=%d\n", nseq);
+//	    System.out.printf("buf[4]=%d buf[5]=%d buf[6]=%d buf[7]=%d\n", buf[4], buf[5], buf[6], buf[7]);
 	    // send start packet
 	    p = new DatagramPacket(buf, UFT_CONTROLL_SIZE, a, port);
         Util.sendDatagram(s, p);

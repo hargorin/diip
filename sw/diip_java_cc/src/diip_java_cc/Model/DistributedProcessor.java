@@ -22,6 +22,9 @@ public class DistributedProcessor extends Thread {
 	
 	private boolean isRunning = false;
 	
+	private long starttime = 0;
+	private long endtime = 0;
+	
 	// ================================================================================
 	// Public methods
 	// ================================================================================
@@ -82,8 +85,12 @@ public class DistributedProcessor extends Thread {
 		}
     	
     	done();
+    	isRunning = false;
     }
 
+    public long getTimeElapsed() {
+    	return endtime-starttime;
+    }
 	// ================================================================================
 	// Private methods
 	// ================================================================================
@@ -121,6 +128,7 @@ public class DistributedProcessor extends Thread {
 			w.imData = si.get(wnr);
 			w.wapar = waPar;
 			w.start();
+			starttime = System.nanoTime();
 			wnr++;
 		}
 		// Wait for all to complete
@@ -142,6 +150,8 @@ public class DistributedProcessor extends Thread {
 			}
 			xoff += w.iw-waPar.winLen+1;
 		}
+
+		endtime = System.nanoTime();
 		
 		BufferedImage outi = arrayToImage(outData, outW, outH);
 		return outi;

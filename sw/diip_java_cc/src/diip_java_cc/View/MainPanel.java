@@ -53,8 +53,6 @@ public class MainPanel extends JPanel implements ActionListener {
 	private JButton btGo;
 	private JButton btLoadImg;
 	private JButton btStoreImg;
-	private JLabel lblFPGA1;
-	private JLabel lblFPGA2;
 	private JLabel lblLW1;
 	private JLabel lblLW2;
 	private JLabel lblImageWidth;
@@ -122,7 +120,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		panel_2.add(pnlLTop, gbc_pnlLTop);
 		
 		pnlLBot = new ImagePanel();
-		pnlLBot.setBorder(new LineBorder(Color.RED));
+		pnlLBot.setBorder(new LineBorder(Color.BLACK));
 		GridBagConstraints gbc_pnlLBot = new GridBagConstraints();
 		gbc_pnlLBot.fill = GridBagConstraints.BOTH;
 		gbc_pnlLBot.gridx = 0;
@@ -139,7 +137,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		gbl_panel_3.columnWidths = new int[]{237, 0};
 		gbl_panel_3.rowHeights = new int[]{59, 59, 59, 59, 0, 67, 0};
 		gbl_panel_3.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_3.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		panel_3.setLayout(gbl_panel_3);
 		
 		JPanel panel_4 = new JPanel();
@@ -279,7 +277,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		gbc_lblImageHeight.gridy = 1;
 		panel_6.add(lblImageHeight, gbc_lblImageHeight);
 		
-		JLabel lblSplitIntoStatic = new JLabel("Split into");
+		JLabel lblSplitIntoStatic = new JLabel("Throughput");
 		lblSplitIntoStatic.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblSplitIntoStatic = new GridBagConstraints();
 		gbc_lblSplitIntoStatic.anchor = GridBagConstraints.NORTHWEST;
@@ -399,9 +397,9 @@ public class MainPanel extends JPanel implements ActionListener {
 		gbc_panel_8.gridy = 4;
 		panel_3.add(panel_8, gbc_panel_8);
 		GridBagLayout gbl_panel_8 = new GridBagLayout();
-		gbl_panel_8.columnWidths = new int[]{31, 154, 48, 0};
+		gbl_panel_8.columnWidths = new int[]{31, 154, 0};
 		gbl_panel_8.rowHeights = new int[]{0, 0, 0, 0};
-		gbl_panel_8.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_panel_8.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		gbl_panel_8.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_8.setLayout(gbl_panel_8);
 		
@@ -409,7 +407,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_lblFpgaWorkers = new GridBagConstraints();
 		gbc_lblFpgaWorkers.anchor = GridBagConstraints.WEST;
 		gbc_lblFpgaWorkers.gridwidth = 2;
-		gbc_lblFpgaWorkers.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFpgaWorkers.insets = new Insets(0, 0, 5, 0);
 		gbc_lblFpgaWorkers.gridx = 0;
 		gbc_lblFpgaWorkers.gridy = 0;
 		panel_8.add(lblFpgaWorkers, gbc_lblFpgaWorkers);
@@ -427,19 +425,11 @@ public class MainPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_tfFPGA1 = new GridBagConstraints();
 		gbc_tfFPGA1.fill = GridBagConstraints.BOTH;
 		gbc_tfFPGA1.anchor = GridBagConstraints.WEST;
-		gbc_tfFPGA1.insets = new Insets(0, 0, 5, 5);
+		gbc_tfFPGA1.insets = new Insets(0, 0, 5, 0);
 		gbc_tfFPGA1.gridx = 1;
 		gbc_tfFPGA1.gridy = 1;
 		panel_8.add(tfFPGA1, gbc_tfFPGA1);
 		tfFPGA1.setColumns(10);
-		
-		lblFPGA1 = new JLabel("-");
-		GridBagConstraints gbc_lblFPGA1 = new GridBagConstraints();
-		gbc_lblFPGA1.anchor = GridBagConstraints.WEST;
-		gbc_lblFPGA1.insets = new Insets(0, 0, 5, 0);
-		gbc_lblFPGA1.gridx = 2;
-		gbc_lblFPGA1.gridy = 1;
-		panel_8.add(lblFPGA1, gbc_lblFPGA1);
 		
 		cbFPGA2 = new JCheckBox("");
 		cbFPGA2.addActionListener(this);
@@ -454,18 +444,10 @@ public class MainPanel extends JPanel implements ActionListener {
 		GridBagConstraints gbc_tfFPGA2 = new GridBagConstraints();
 		gbc_tfFPGA2.fill = GridBagConstraints.BOTH;
 		gbc_tfFPGA2.anchor = GridBagConstraints.WEST;
-		gbc_tfFPGA2.insets = new Insets(0, 0, 0, 5);
 		gbc_tfFPGA2.gridx = 1;
 		gbc_tfFPGA2.gridy = 2;
 		panel_8.add(tfFPGA2, gbc_tfFPGA2);
 		tfFPGA2.setColumns(10);
-		
-		lblFPGA2 = new JLabel("-");
-		GridBagConstraints gbc_lblFPGA2 = new GridBagConstraints();
-		gbc_lblFPGA2.anchor = GridBagConstraints.WEST;
-		gbc_lblFPGA2.gridx = 2;
-		gbc_lblFPGA2.gridy = 2;
-		panel_8.add(lblFPGA2, gbc_lblFPGA2);
 		
 		Component verticalGlue = Box.createVerticalGlue();
 		GridBagConstraints gbc_verticalGlue = new GridBagConstraints();
@@ -492,7 +474,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		
 		lblWorkers.setText(String.valueOf(model.getNWorkers()));
 		
-		btGo.setEnabled(!model.getDP().isRunning());
+		btGo.setEnabled(model.isDone);
 		pnlLTop.updateme();
 		pnlLBot.updateme();
 		
@@ -517,6 +499,7 @@ public class MainPanel extends JPanel implements ActionListener {
 		}
 		if(e.getSource() == btGo) {
 			// Fill wallis parameters
+			btGo.setEnabled(false);
 			WallisParameters wapar = new WallisParameters();
 			wapar.brightness = spB.getValue();
 			wapar.contrast = spC.getValue();

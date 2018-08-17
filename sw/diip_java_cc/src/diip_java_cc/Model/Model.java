@@ -43,6 +43,8 @@ public class Model extends Observable {
 	private long endtime = 0;
 	private double throughput = 0;
 	
+	public boolean isDone = true;
+	
 	// ================================================================================
 	// Private Functions
 	// ================================================================================
@@ -136,6 +138,7 @@ public class Model extends Observable {
 
 	public void goRequest(WallisParameters waparin) {
 		if(!dp.isRunning()) {
+			isDone = false;
 			dp = new DistributedProcessor(this);
 			// Assemble list of workers
 			workers = new ArrayList<Worker>();
@@ -183,8 +186,9 @@ public class Model extends Observable {
 
 	public void notifyDpDone() {
 		endtime = System.nanoTime();
-		throughput = (sourceImage.getHeight()*sourceImage.getWidth()/((endtime-starttime) / 1.0e9) / 1024 / 1024);
+		throughput = (sourceImage.getHeight()*sourceImage.getWidth()/((dp.getTimeElapsed()) / 1.0e9) / 1024 / 1024);
 		outputImage = dp.getOutImages().get(0);
+		isDone = true;
 		setChanged();
 		notifyObservers();
 	}
