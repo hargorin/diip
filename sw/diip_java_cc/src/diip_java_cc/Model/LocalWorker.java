@@ -108,19 +108,19 @@ public class LocalWorker extends Thread {
         			outW = wapar.imgWidth - wapar.winLen + 1;
         		}
         		else if(udata.uregAddress == 3) {
-        			wa_par_c_gvar = udata.uregContent/64;
+        			wa_par_c_gvar = (double)udata.uregContent/64.0;
         		}
         		else if(udata.uregAddress == 4) {
-        			wa_par_c = udata.uregContent/64;
+        			wa_par_c = (double)udata.uregContent/64.0;
         		}
         		else if(udata.uregAddress == 5) {
-        			wa_par_ci_gvar = udata.uregContent/64;
+        			wa_par_ci_gvar = (double)udata.uregContent/64.0;
         		}
         		else if(udata.uregAddress == 6) {
-        			wa_par_b_gmean = udata.uregContent/64;
+        			wa_par_b_gmean = (double)udata.uregContent/64.0;
         		}
         		else if(udata.uregAddress == 7) {
-        			wa_par_bi = udata.uregContent/64;
+        			wa_par_bi = (double)udata.uregContent/64.0;
         		}
         		continue;
         	}
