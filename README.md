@@ -4,12 +4,12 @@
 
 Bachelor Thesis at FHNW by Noah Hütter and Jan Stocker
 
-## Build Status [![pipeline status](https://gitlab.fhnw.ch/noah.huetter/diip/badges/master/pipeline.svg)](https://gitlab.fhnw.ch/noah.huetter/diip/commits/master)
+## Build Status [![pipeline status](https://gitlab.beeblebrox.ch/noah.huetter/diip/badges/master/pipeline.svg)](https://gitlab.beeblebrox.ch/noah.huetter/diip/commits/master)
 
 | Part          | Download     |
 | ------------- |:-------------|
-| Project Report| [PDF](https://gitlab.fhnw.ch/noah.huetter/diip/-/jobs/artifacts/master/raw/doc/report/p6_diip_huetter_stocker.pdf?job=doc) |
-| diip java cc  | [.jar](https://gitlab.fhnw.ch/noah.huetter/diip/-/jobs/artifacts/master/raw/sw/diip_java_cc/target/diip_java_cc-0.0.1-SNAPSHOT-jar-with-dependencies.jar?job=java) |
+| Project Report| [PDF](https://gitlab.beeblebrox.ch/noah.huetter/diip/-/jobs/artifacts/master/raw/doc/report/p6_diip_huetter_stocker.pdf?job=doc) |
+| diip java cc  | [.jar](https://gitlab.beeblebrox.ch/noah.huetter/diip/-/jobs/artifacts/master/raw/sw/diip_java_cc/target/diip_java_cc-0.0.1-SNAPSHOT-jar-with-dependencies.jar?job=java) |
 
 ## Folder Structure
 ```
