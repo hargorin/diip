@@ -506,7 +506,7 @@ public class MainPanel extends JPanel implements ActionListener {
 			tfFPGA1.setEnabled(!cbFPGA1.isSelected()); 
 		}
 		if(e.getSource() == cbFPGA2) {
-			controller.fpgaChanged(2,cbFPGA1.isSelected(),tfFPGA2.getText());
+			controller.fpgaChanged(2,cbFPGA2.isSelected(),tfFPGA2.getText());
 			tfFPGA2.setEnabled(!cbFPGA2.isSelected()); 
 		}
 		if(e.getSource() == cbLW1) {

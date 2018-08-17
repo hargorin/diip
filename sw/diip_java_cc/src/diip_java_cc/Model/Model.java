@@ -192,6 +192,9 @@ public class Model extends Observable {
 	public void fpgaChanged(int i, boolean selected, String ipport) {
 		String [] arrOfStr = ipport.split(":", 3);
 		
+		if(selected) System.out.printf("%d 1\n",i);		
+		else System.out.printf("%d 0\n",i);
+		
 		if(selected) {
 			if(i == 1)
 				fpgaWorker1 = new Worker(arrOfStr[0], Integer.parseInt(arrOfStr[1]), Integer.parseInt(arrOfStr[2]));
