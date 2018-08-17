@@ -104,6 +104,8 @@ if '-j' in sys.argv:
 			continue
 		data = json.load(open(fname))
 		i=0
+		seq=-1
+		tcid=-1
 		for pack in data:
 			i = i + 1
 			if "arp" in pack["_source"]["layers"]:
@@ -134,13 +136,15 @@ if '-j' in sys.argv:
 					if p[0] == 0:
 						cmd = 'FT Start'
 						seq = p[4]*pow(2,24) + p[5]*pow(2,16) + p[6]*pow(2,8) + p[7]
-					if p[0] == 1:
+					elif p[0] == 1:
 						cmd = 'FT Stop'
-					if p[0] == 2:
+					elif p[0] == 2:
 						cmd = 'ACK packet'
 						seq = p[4]*pow(2,24) + p[5]*pow(2,16) + p[6]*pow(2,8) + p[7]
-					if p[0] == 3:
+					elif p[0] == 3:
 						cmd = 'ACK transfer'
+					else:
+						cmd = 'unknown'
 					tcid = p[1]*pow(2,16) + p[2]*pow(2,8) + p[3]
 					# uftt.add_row([str(i), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])
 					uftt.add_row([int(filter(str.isdigit, str(i))), uftfrom, uftto, dc, cmd, str(tcid), str(seq)])

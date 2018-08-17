@@ -43,15 +43,12 @@ fpga:
     - "fpga/hlx/build/*.bit"
     - "fpga/hlx/build/*.ltx"
 
-# sw:
-#   stage: build
-#   image: ubuntu:16.04
-#   before_script:
-#     - apt-get update
-#     - apt-get install -y gcc g++ build-essential
-#     - apt-get install -y libopencv-dev
-#   script:
-#     - pushd sw/diip_cc/ && make && popd
-#   artifacts:
-#     paths:
-#       - "sw/diip_cc/bin/*"
+
+java:
+  stage: build
+  image: maven:latest
+  script:
+    - mvn install -f sw/diip_java_cc/pom.xml
+  artifacts:
+    paths:
+      - "sw/diip_java_cc/target/*.jar"
