@@ -3,8 +3,6 @@ package diip_java_cc;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import com.sun.java.swing.plaf.motif.MotifDesktopIconUI;
-
 import diip_java_cc.Controller.Controller;
 import diip_java_cc.Model.Model;
 import diip_java_cc.View.MainView;

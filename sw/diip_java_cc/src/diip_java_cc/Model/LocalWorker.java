@@ -103,7 +103,7 @@ public class LocalWorker extends Thread {
         	if(udata.status == UFTData.Status.TIMEOUT) continue;
         	if(udata.status == UFTData.Status.USER) {
         		System.out.printf("User reg %d set to %d\n", udata.uregAddress, udata.uregContent);
-        		if(udata.uregAddress == 1) {
+        		if(udata.uregAddress == 2) {
         			wapar.imgWidth = (int) udata.uregContent;
         			outW = wapar.imgWidth - wapar.winLen + 1;
         		}
