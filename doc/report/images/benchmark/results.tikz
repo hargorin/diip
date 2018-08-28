@@ -55,7 +55,7 @@
             };
             \addlegendentry{HLS 8bit}
             % \addlegendentry{HLS 256bit}
-            \addlegendentry{VHDL}
+            \addlegendentry{VHDL 8bit}
             % \addlegendentry{CPU}
         \end{axis}
 
