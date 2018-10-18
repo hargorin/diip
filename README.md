@@ -8,7 +8,7 @@ Bachelor Thesis at FHNW by Noah Hütter and Jan Stocker
 
 | Part          | Download     |
 | ------------- |:-------------|
-| Project Report| [PDF](https://github-production-release-asset-2e65be.s3.amazonaws.com/150583109/3eed1700-d2e1-11e8-827f-e9a0311d2bfb?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20181018%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20181018T122248Z&X-Amz-Expires=300&X-Amz-Signature=bf5ce5b13e4288e80cfa0de1ab44613d480c4d3d6360658b1415faeabf93d5ad&X-Amz-SignedHeaders=host&actor_id=3391933&response-content-disposition=attachment%3B%20filename%3Dp6_diip_huetter_stocker.pdf&response-content-type=application%2Foctet-stream) |
+| Project Report| [PDF](https://github.com/hargorin/diip/releases/download/v3.1/p6_diip_huetter_stocker.pdf) |
 | diip java cc  | .jar |
 
 ## Folder Structure
